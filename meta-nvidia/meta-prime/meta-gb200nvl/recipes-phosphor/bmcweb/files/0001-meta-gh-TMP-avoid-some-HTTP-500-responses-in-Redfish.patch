@@ -1,7 +1,7 @@
-From f3fb3a9f9b387c47ed9180830d3bd790d1d70f9a Mon Sep 17 00:00:00 2001
+From 46782c3be5e0c7e2051ec5b4fc8235a4133d5ab7 Mon Sep 17 00:00:00 2001
 From: "Radivoje (Ogi) Jovanovic" <rjovanovic@nvidia.com>
 Date: Fri, 22 Mar 2024 18:55:39 -0700
-Subject: [PATCH] [meta-gh] TMP avoid some HTTP 500 responses in Redfish
+Subject: [PATCH] TMP avoid some HTTP 500 responses in Redfish
 
 Avoid observed HTTP 500 responses soon after power transitions
 in /redfish/v1/Systems/<system>.  Need a real fix later.
@@ -17,7 +17,7 @@ Signed-off-by: Radivoje (Ogi) Jovanovic <rjovanovic@nvidia.com>
  2 files changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/redfish-core/include/utils/sw_utils.hpp b/redfish-core/include/utils/sw_utils.hpp
-index 95e690c4..822b59fa 100644
+index 3ceeea06..3529e048 100644
 --- a/redfish-core/include/utils/sw_utils.hpp
 +++ b/redfish-core/include/utils/sw_utils.hpp
 @@ -153,7 +153,9 @@ inline void populateSoftwareInformation(
@@ -32,10 +32,10 @@ index 95e690c4..822b59fa 100644
                      }
                      // example propertiesList
 diff --git a/redfish-core/lib/systems.hpp b/redfish-core/lib/systems.hpp
-index a5f81a7c..c56aafd0 100644
+index 2b736321..41b7fa09 100644
 --- a/redfish-core/lib/systems.hpp
 +++ b/redfish-core/lib/systems.hpp
-@@ -352,7 +352,8 @@ inline void
+@@ -317,7 +317,8 @@ inline void
          if (ec2)
          {
              BMCWEB_LOG_ERROR("DBUS response error {}", ec2);
@@ -44,17 +44,17 @@ index a5f81a7c..c56aafd0 100644
 +            //messages::internalError(asyncResp->res);
              return;
          }
-         processMemoryProperties(asyncResp, service, path, properties);
-@@ -467,7 +468,8 @@ inline void
-                             if (ec3)
-                             {
-                                 BMCWEB_LOG_ERROR("DBUS response error {}", ec3);
--                                messages::internalError(asyncResp->res);
-+                                //Don't return HTTP 500 here
-+                                //messages::internalError(asyncResp->res);
-                                 return;
-                             }
-                             BMCWEB_LOG_DEBUG("Got {} UUID properties.", properties.size());
+         processMemoryProperties(asyncResp, properties);
+@@ -331,7 +332,8 @@ inline void afterGetUUID(const std::shared_ptr<bmcweb::AsyncResp>& asyncResp,
+     if (ec)
+     {
+         BMCWEB_LOG_ERROR("DBUS response error {}", ec);
+-        messages::internalError(asyncResp->res);
++        //Don't return HTTP 500 here
++        //messages::internalError(asyncResp->res);
+         return;
+     }
+     BMCWEB_LOG_DEBUG("Got {} UUID properties.", properties.size());
 -- 
 2.43.0
 
