@@ -1,0 +1,6 @@
+[Unit]
+Description=CPU boot done service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'control-bios-host-interface.sh boot-done'

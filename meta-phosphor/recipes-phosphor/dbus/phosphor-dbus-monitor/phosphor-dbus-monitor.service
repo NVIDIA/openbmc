@@ -1,0 +1,10 @@
+[Unit]
+Description=Phosphor DBus Monitor
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/env phosphor-dbus-monitor
+SyslogIdentifier=phosphor-dbus-monitor
+
+[Install]
+WantedBy=multi-user.target

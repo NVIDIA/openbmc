@@ -1,0 +1,16 @@
+[Unit]
+Description=NVIDIA BMC FPGA Ready Monitor Service
+Requires=hmc-boot-complete.service
+After=mapper-wait@-xyz-openbmc_project-state-chassis0.service
+After=hmc-boot-complete.service
+StartLimitIntervalSec=1
+
+[Service]
+Restart=always
+Type=simple
+ExecStart=/usr/bin/env fpga_ready_monitor.sh
+SyslogIdentifier=nvidia-fpga-ready-monitor
+
+[Install]
+WantedBy=hmc-boot-complete.service
+

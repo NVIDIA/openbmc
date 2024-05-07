@@ -1,0 +1,16 @@
+[Unit]
+Description=Create RF event log based on uboot env variable
+After=xyz.openbmc_project.Logging.service
+
+ConditionFileNotEmpty=/etc/fw_env.config
+RequiresMountsFor=/run /sbin /etc
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+Restart=no
+
+ExecStart=/bin/sh -c "rf-log.sh"
+
+[Install]
+WantedBy=multi-user.target

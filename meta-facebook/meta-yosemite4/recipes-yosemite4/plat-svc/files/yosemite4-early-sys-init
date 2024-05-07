@@ -1,0 +1,56 @@
+#!/bin/bash -e
+# shellcheck source=meta-facebook/meta-yosemite4/recipes-yosemite4/plat-tool/files/yosemite4-common-functions
+source /usr/libexec/yosemite4-common-functions
+
+
+enable_all_fan_input()
+{
+    for file in /sys/bus/i2c/devices/*/hwmon/*/fan*_enable
+    do
+      echo 1 > "${file}"
+    done
+}
+
+# probe devices behind mux for management board cpld
+
+rev_id_gpiochip=$(basename "/sys/bus/i2c/devices/13-0020/"*gpiochip*)
+rev_id_bit0=$(gpioget "$rev_id_gpiochip" 0)
+rev_id_bit1=$(gpioget "$rev_id_gpiochip" 1)
+rev_id_bit2=$(gpioget "$rev_id_gpiochip" 2)
+rev_id_bit3=$(gpioget "$rev_id_gpiochip" 3)
+
+# Default devicetree was set for EVT and later, only POC will do following manual devices' probing
+if [ "$rev_id_bit0" -eq 0 ] && [ "$rev_id_bit1" -eq 0 ] && [ "$rev_id_bit2" -eq 0 ] && [ "$rev_id_bit3" -eq 0 ]
+then
+    echo 24c128 "0x50" > /sys/bus/i2c/devices/i2c-12/new_device
+    echo 24c64 "0x54" > /sys/bus/i2c/devices/i2c-12/new_device
+    echo tmp75 "0x48" > /sys/bus/i2c/devices/i2c-12/new_device
+    echo nct3018y "0x6f" > /sys/bus/i2c/devices/i2c-12/new_device
+fi
+
+# set initial value for GPIO output pins
+set_gpio EN_P5V_USB_CPLD_R    1
+set_gpio EN_NIC0_POWER_BMC_R  1
+set_gpio EN_NIC1_POWER_BMC_R  1
+set_gpio EN_NIC2_POWER_BMC_R  1
+set_gpio EN_NIC3_POWER_BMC_R  1
+set_gpio FM_BMC_RTCRST_R      0
+set_gpio RST_USB_HUB_R_N      1
+set_gpio FM_BMC_READY_R2      1
+set_gpio SPI_LOCK_REQ_BMC_N   1
+set_gpio EN_P3V_BAT_SCALED_R  0
+
+set_gpio NIC0_MAIN_PWR_EN 1
+set_gpio NIC1_MAIN_PWR_EN 1
+set_gpio NIC2_MAIN_PWR_EN 1
+set_gpio NIC3_MAIN_PWR_EN 1
+
+# short-term set gpio v0~v3 to input pin for slot5~8 reset button
+mknod -m 660 /dev/mem c 1 1
+chown root:kmem /dev/mem
+devmem 0x1e78008c 32 0x19000000
+
+# Enable all fan input as early as possible
+enable_all_fan_input
+
+exit 0

@@ -1,0 +1,8 @@
+{
+  "FwMctpMap":{
+	"/xyz/openbmc_project/software/FW_FPGA_0": 13,
+	"/xyz/openbmc_project/software/CPU_0": 14,
+	"/xyz/openbmc_project/software/FW_GPU_0": 15,
+	"/xyz/openbmc_project/software/PEXSW": 16
+  }
+}

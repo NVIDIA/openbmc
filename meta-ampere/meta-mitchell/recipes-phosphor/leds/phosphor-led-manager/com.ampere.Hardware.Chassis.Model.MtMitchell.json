@@ -1,0 +1,175 @@
+{
+	"leds": [
+		{
+			"group": "bmc_booted",
+			"members": [
+				{
+					"Name": "bmc_ready",
+					"Action": "On",
+					"DutyOn": 50,
+					"Period": 0,
+					"Priority": "On"
+				},
+				{
+					"Name": "sw_heartbeat",
+					"Action": "Blink",
+					"DutyOn": 50,
+					"Period": 2000,
+					"Priority": "On"
+				}
+			]
+		},
+		{
+			"group": "power_on",
+			"members": [
+			]
+		},
+		{
+			"group": "systemFault",
+			"members": [
+				{
+					"Name": "fault",
+					"Action": "On",
+					"DutyOn": 50,
+					"Period": 0,
+					"Priority": "Blink"
+				}
+			]
+		},
+		{
+			"group": "enclosure_identify",
+			"members": [
+				{
+					"Name": "identify",
+					"Action": "On",
+					"DutyOn": 50,
+					"Period": 1000
+				}
+			]
+		},
+		{
+			"group": "enclosure_identify_blink",
+			"members": [
+				{
+					"Name": "identify",
+					"Action": "Blink",
+					"DutyOn": 50,
+					"Period": 1000
+				}
+			]
+		},
+		{
+			"group": "fan0_fault",
+			"members": [
+				{
+					"Name": "fan_fault",
+					"Action": "On",
+					"DutyOn": 50,
+					"Period": 1000
+				},
+				{
+					"Name": "fault",
+					"Action": "On",
+					"DutyOn": 50,
+					"Period": 1000
+				}
+			]
+		},
+		{
+			"group": "fan1_fault",
+			"members": [
+				{
+					"Name": "fan_fault",
+					"Action": "On",
+					"DutyOn": 50,
+					"Period": 1000
+				},
+				{
+					"Name": "fault",
+					"Action": "On",
+					"DutyOn": 50,
+					"Period": 1000
+				}
+			]
+		},
+		{
+			"group": "fan2_fault",
+			"members": [
+				{
+					"Name": "fan_fault",
+					"Action": "On",
+					"DutyOn": 50,
+					"Period": 1000
+				},
+				{
+					"Name": "fault",
+					"Action": "On",
+					"DutyOn": 50,
+					"Period": 1000
+				}
+			]
+		},
+		{
+			"group": "fan3_fault",
+			"members": [
+				{
+					"Name": "fan_fault",
+					"Action": "On",
+					"DutyOn": 50,
+					"Period": 1000
+				},
+				{
+					"Name": "fault",
+					"Action": "On",
+					"DutyOn": 50,
+					"Period": 1000
+				}
+			]
+		},
+		{
+			"group": "fan4_fault",
+			"members": [
+				{
+					"Name": "fan_fault",
+					"Action": "On",
+					"DutyOn": 50,
+					"Period": 1000
+				},
+				{
+					"Name": "fault",
+					"Action": "On",
+					"DutyOn": 50,
+					"Period": 1000
+				}
+			]
+		},
+		{
+			"group": "fan5_fault",
+			"members": [
+				{
+					"Name": "fan_fault",
+					"Action": "On",
+					"DutyOn": 50,
+					"Period": 1000
+				},
+				{
+					"Name": "fault",
+					"Action": "On",
+					"DutyOn": 50,
+					"Period": 1000
+				}
+			]
+		},
+		{
+			"group": "overtemp_fault",
+			"members": [
+				{
+					"Name": "fault",
+					"Action": "On",
+					"DutyOn": 50,
+					"Period": 1000
+				}
+			]
+		}
+	]
+}

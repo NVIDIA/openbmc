@@ -1,0 +1,14 @@
+[Unit]
+Description=Set %i gigabit link speed
+After=network.target
+ConditionPathExists=/sys/class/net/%i
+
+[Service]
+TimeoutSec=90s
+Restart=no
+ExecStart=/usr/libexec/ncsi-wait-and-set-speed %i
+SyslogIdentifier=nsci-linkspeed
+Type=oneshot
+
+[Install]
+WantedBy=network.target

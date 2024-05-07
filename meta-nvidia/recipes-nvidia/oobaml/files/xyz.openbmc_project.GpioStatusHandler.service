@@ -1,0 +1,12 @@
+[Unit]
+Description=GPIO pins status monitor
+After=dbus.service
+
+[Service]
+Restart=always
+Type=dbus
+BusName=xyz.openbmc_project.GpioStatusHandler
+ExecStart=/usr/bin/gpio-status-handlerd /usr/share/gpio-config.json
+
+[Install]
+WantedBy=multi-user.target

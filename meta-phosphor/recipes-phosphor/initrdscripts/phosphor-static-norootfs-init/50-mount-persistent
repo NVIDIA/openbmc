@@ -1,0 +1,21 @@
+#!/bin/sh
+
+PERSIST=/run/mnt-persist
+
+if [ ! -d $PERSIST ]; then
+    exit 0
+fi
+
+# shellcheck disable=SC2043 # @@ pattern will be replaced by recipe
+for m in @NOROOTFS_PERSISTENT_DIRS@; do
+    if [ ! -d $PERSIST/$m-data ]; then
+        mkdir -p $PERSIST/$m-data
+    fi
+
+    if [ ! -d $PERSIST/$m-work ]; then
+        mkdir -p $PERSIST/$m-work
+    fi
+
+    mount overlay /$m -t overlay -o \
+        lowerdir=/$m,upperdir=$PERSIST/$m-data,workdir=$PERSIST/$m-work
+done

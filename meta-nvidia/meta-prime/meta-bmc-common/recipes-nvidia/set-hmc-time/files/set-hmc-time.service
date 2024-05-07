@@ -1,0 +1,16 @@
+[Unit]
+Description=Set HMC time Service
+Requires=bmc-boot-complete.service
+After=bmc-boot-complete.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/env set-hmc-time.sh 
+SyslogIdentifier=set-hmc-time
+
+#
+# This is also started periodically by set-hmc-time.timer
+#
+
+[Install]
+WantedBy=multi-user.target

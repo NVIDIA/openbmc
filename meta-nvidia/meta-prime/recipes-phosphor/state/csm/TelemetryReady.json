@@ -1,0 +1,29 @@
+{
+    "InterfaceName" : "xyz.openbmc_project.State.FeatureReady",
+    "TypeInCategory": "xyz.openbmc_project.State.FeatureReady.FeatureTypes.Manager",
+    "ServicesToBeMonitored": {
+        "xyz.openbmc_project.State.BMC": ["/xyz/openbmc_project/state/bmc0"]
+    },
+    "State": {
+        "State_property": "State",
+        "Default": "xyz.openbmc_project.State.FeatureReady.States.StandbyOffline",
+        "States": {
+            "xyz.openbmc_project.State.FeatureReady.States.Starting": {
+                "Conditions": {
+                    "xyz.openbmc_project.State.BMC": {
+                        "Property" : "CurrentBMCState",
+                        "Value" : "xyz.openbmc_project.State.BMC.BMCState.NotReady"
+                    }
+                }
+            },
+            "xyz.openbmc_project.State.FeatureReady.States.Enabled": {
+                "Conditions": {
+                    "xyz.openbmc_project.State.BMC": {
+                        "Property" : "CurrentBMCState",
+                        "Value" : "xyz.openbmc_project.State.BMC.BMCState.Ready"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,13 @@
+[Unit]
+Description=NVIDIA Standby Power Status Monitor Service
+StartLimitIntervalSec=1
+
+[Service]
+Restart=always
+Type=notify
+ExecStart=/usr/bin/env standby_power_status_monitor.sh
+ExecStop=/usr/bin/env rm /run/bmc-state/STANDBY_POWER_PG
+SyslogIdentifier=standby-power-status
+
+[Install]
+WantedBy=multi-user.target

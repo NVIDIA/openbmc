@@ -1,0 +1,37 @@
+From c771fd547e477be2661fd03d0806102c618462d5 Mon Sep 17 00:00:00 2001
+From: Chinmay Shripad Hegde <chinmays@nvidia.com>
+Date: Mon, 21 Aug 2023 17:08:03 +0530
+Subject: [PATCH] Patch: Switched vector in list of sigclhd_service.
+
+This patch is taken from
+https://github.com/boostorg/process/commit/f3b163a93378f46a8d0e50dfd056147a7d7ad46f
+to fix issue https://github.com/boostorg/process/pull/175.
+
+Upstream-Status: Backport [1.8.2]
+
+Signed-off-by: Chinmay Shripad Hegde <chinmays@nvidia.com>
+---
+ boost/process/detail/posix/sigchld_service.hpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/boost/process/detail/posix/sigchld_service.hpp b/boost/process/detail/posix/sigchld_service.hpp
+index 7e92f569f..4eb6de6cb 100644
+--- a/boost/process/detail/posix/sigchld_service.hpp
++++ b/boost/process/detail/posix/sigchld_service.hpp
+@@ -15,6 +15,7 @@
+ #include <signal.h>
+ #include <functional>
+ #include <sys/wait.h>
++#include <list>
+ 
+ namespace boost { namespace process { namespace detail { namespace posix {
+ 
+@@ -23,7 +24,7 @@ class sigchld_service : public boost::asio::detail::service_base<sigchld_service
+     boost::asio::strand<boost::asio::io_context::executor_type> _strand{get_io_context().get_executor()};
+     boost::asio::signal_set _signal_set{get_io_context(), SIGCHLD};
+ 
+-    std::vector<std::pair<::pid_t, std::function<void(int, std::error_code)>>> _receivers;
++    std::list<std::pair<::pid_t, std::function<void(int, std::error_code)>>> _receivers;
+     inline void _handle_signal(const boost::system::error_code & ec);
+ public:
+     sigchld_service(boost::asio::io_context & io_context)

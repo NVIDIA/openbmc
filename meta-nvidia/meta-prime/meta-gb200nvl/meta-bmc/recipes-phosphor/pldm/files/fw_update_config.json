@@ -1,0 +1,57 @@
+{
+    "entries": [
+        {
+            "match": {
+                "Interface":"xyz.openbmc_project.Common.UUID",
+                "Properties":[
+                    {
+                        "Name":"UUID",
+                        "Type":"s",
+                        "Value":"ad4c836b-c54c-11eb-8529-0242ac130003"
+                    }
+                ]
+            },
+            "device_inventory": {
+                "create": {
+                    "object_path": "/xyz/openbmc_project/inventory/system/chassis/ERoT_BMC_0",
+                    "associations": [
+                        {
+                            "forward": "parent_chassis",
+                            "reverse": "all_chassis",
+                            "endpoint": "/xyz/openbmc_project/inventory/system/chassis/Chassis_0"
+                        },
+                        {
+                            "forward": "inventory",
+                            "reverse": "associated_ROT",
+                            "endpoint": "/xyz/openbmc_project/inventory/system/bmc/BMC_0"
+                        }
+                    ]
+                },
+                "update": {
+                    "object_path": "/xyz/openbmc_project/inventory/system/bmc/BMC_0"
+                }
+            },
+            "firmware_inventory": {
+                "create": {
+                    "FW_ERoT_BMC_0": {
+                        "component_id": 65280,
+                        "associations": [
+                            {
+                                "forward": "inventory",
+                                "reverse": "activation",
+                                "endpoint": "/xyz/openbmc_project/inventory/system/chassis/ERoT_BMC_0"
+                            }
+                        ]
+                    }
+                },
+                "update": {
+                    "FW_BMC_0": 16
+                }
+            },
+            "component_info": {
+                "FW_ERoT_BMC_0": 65280,
+                "FW_BMC_0": 16
+            }
+        }
+    ]
+}

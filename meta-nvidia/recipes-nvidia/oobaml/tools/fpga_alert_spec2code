@@ -1,0 +1,535 @@
+#! /usr/bin/env python3
+
+"""
+A FPGA alert spec2code tool for device monitor & eventing support.
+"""
+
+import sys
+import argparse
+import csv
+
+FPGA_REGTBL_TOOL_NAME = "fpga_regtbl"
+
+fpga_redfish_event_templ = """
+    {{
+      "event": "{dev_name_pattern} {evt_name} Abnormal State Change",
+      "device_type": "{dev_name_pattern}",
+      "fault_id": "{fault_id}",
+      "category": [
+        "{evt_category}"
+      ],
+      "event_trigger": {{
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/GpioStatusHandler",
+        "interface": "xyz.openbmc_project.GpioStatus",
+        "property": "{alert_gpio}",
+        "check": {{
+          "equal": "false"
+        }}
+      }},
+      "accessor": {{
+        "type": "CMDLINE",
+        "executable": "{regtbl_tool}",
+        "arguments": "{reg_name} {dev_id}",
+        "check": {{
+          "equal": "1"
+        }}
+      }},
+      "severity": "{evt_severity}",
+      "resolution": "{evt_resolution}"
+      "trigger_count": 0,
+      "event_counter_reset": {{
+        "type": "",
+        "metadata": ""
+      }},
+      "redfish": {{
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "{evt_ooc}",
+        "message_args": {{
+          "patterns": [
+            "{dev_name_pattern} {evt_name}",
+            "Abnormal State Change"
+          ],
+          "parameters": []
+        }}
+      }},
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "{descr}"
+    }},
+"""
+
+fpga_regtbl_tool_templ = """
+#!/usr/bin/env/bash
+
+#######################################################################
+### WARNING!! Auto-generated script! All modification will be lost! ###
+#######################################################################
+
+# Copyright (c) 2024, NVIDIA CORPORATION.  All rights reserved.
+#
+#  NVIDIA CORPORATION and its licensors retain all intellectual property
+#  and proprietary rights in and to this software, related documentation
+#  and any modifications thereto.  Any use, reproduction, disclosure or
+#  distribution of this software and related documentation without an express
+#  license agreement from NVIDIA CORPORATION is strictly prohibited.
+
+set -o pipefail
+
+APP_NAME={app_name}
+APP_VER=0.1
+
+[ -z "$REGTBL_BUS" ] && REGTBL_BUS=0x01
+[ -z "$REGTBL_SADDR"] && REGTBL_SADDR=0x11
+
+show_help()
+{{
+    echo "A tool to access FPGA regtbl with Prettier Human-readable Register Names, version=$APP_VER"
+    echo "<usage>"
+    echo "  ./$APP_NAME <reg_name> <device_id>"
+    echo "output:"
+    echo "(raw data of the register bit(s))"
+    echo
+    echo "For supported reg_name list,"
+    echo "  ./$APP_NAME show_reg_list"
+    echo
+}}
+
+# Format,
+#   reg_name, byte_off, byte_len, bit_mask(hex), byte_range, bit_range
+# e.g.,
+#   MOD_VR_FAULT,384,11,0x00fffff0,128-131,4-23
+#   GPU_THERM_OVERT_INT,75,2,0x1,25,1
+#
+reg_list="
+{reg_list}
+"
+
+show_reg_list()
+{{
+    local format="%-25s%-10s%-10s%-15s%-10s%-10s"
+    printf "$format\\n" "RegName" "ByteOff" "ByteLen" "Bitmask(Hex)" "ByteRange" "BitRange"
+    printf "===============================================================================\n"
+    local reg
+    for reg in $reg_list; do
+        [ -z "$reg" ] && continue  # skip empty line.
+        [ "${{reg::1}}" = "#" ] && continue  # skip line commented by leading '#'.
+        printf "$format\\n" ${{reg//,/ }}
+    done
+}}
+
+# FPGA regtbl dump cmds (4 pages for example),
+#   i2ctransfer -y 1 w2@0x11 0x00 0x00 r256 | sed 's/0x//g' | grep -Eo '.{{1,48}}'
+#   i2ctransfer -y 1 w2@0x11 0x00 0x01 r256 | sed 's/0x//g' | grep -Eo '.{{1,48}}'
+#   i2ctransfer -y 1 w2@0x11 0x00 0x02 r256 | sed 's/0x//g' | grep -Eo '.{{1,48}}'
+#   i2ctransfer -y 1 w2@0x11 0x00 0x03 r256 | sed 's/0x//g' | grep -Eo '.{{1,48}}'
+# Or,
+#   i2ctransfer -y 1 w2@0x11 0x00 0x00 r1024 | sed 's/0x//g' | grep -Eo '.{{1,48}}'
+#
+
+lookup_reg() #(reg_name)
+{{
+    local reg_name=$1;shift
+
+    local reg
+    for reg in $reg_list; do
+        [ -z "$reg" ] && continue  # skip empty line.
+        [ "${{reg::1}}" = "#" ] && continue  # skip line commented by leading '#'.
+        
+        local rname=${{reg%%,*}}
+        [ "$rname" = "$reg_name" ] || continue
+        echo "${{reg//,/ }}" | cut -d' ' -f2,3,4
+        return 0
+    done
+    return 1
+}}
+
+REGT_CACHE="/tmp/regtbl.cache"
+get_reg_data() #(byte_off, byte_len, bit_mask)
+{{
+    local byte_off=$1;shift
+    local byte_len=$1;shift
+    local bit_mask=$1;shift
+    
+    local rc=0
+    
+    # No cache needed by now, disable it.
+    #local is_cache_valid=0
+
+    #local old_data
+    #if [ -f "$REGT_CACHE" ]; then
+    #    old_data=`cat $REGT_CACHE 2>/dev/null`;rc=$?
+    #    [ "$rc" -eq 0 ] && is_cache_valid=1
+    #fi
+
+    #if [ "$is_cache_valid" -eq 1 ]; then
+    #    old_data=${{old_data:$byte_off:$byte_len}}
+    #fi
+    
+    local cur_data;cur_data=`i2ctransfer -y $REGTBL_BUS w2@$REGTBL_SADDR 0x00 0x00 r1024 | sed 's/0x//g' | tee $REGT_CACHE`;rc=$?
+    [ "$rc" -ne 0 ] && return $rc
+    
+    cur_data=${{cur_data:$byte_off:$byte_len}}
+    
+    local reg_value=$((cur_data & $bit_mask))
+
+    # Account for any bit offsets in the masked reg data
+    while [ $(($bit_mask & 1)) -eq  0 ]
+    do
+        bit_mask=$(($bit_mask>>1))
+        reg_value=$(($reg_value>>1))
+    done
+
+    # Isolate the bit corresponding to the device
+    local dev_mask=$((1<<$dev_id))
+    reg_value=$(($reg_value & $dev_mask))
+
+    local intr_state
+    [ "$reg_value" -ne 0 ] && intr_state=1 || intr_state=0
+    echo $intr_state
+
+    # TODO: clear alert right away after getting the value.
+    #if [ "$intr_state" -eq 1 ]; then
+    #    i2ctransfer -y i2ctransfer -y $REGTBL_BUS w2@$REGTBL_SADDR xxx
+    #fi
+    
+    return 0
+}}
+
+## MAIN ##
+
+[ "$*" = "show_reg_list" ] && show_reg_list && exit 0
+
+[ "$#" != "2" ] && show_help && exit 1
+
+reg_name=$1;shift
+dev_id=$1;shift
+
+rc=0
+data_info=`lookup_reg "$reg_name" "$dev_id"`;rc=$?
+[ "$rc" -ne 0 ] && echo "[E] $reg_name not supported!" && exit $rc
+get_reg_data $data_info;rc=$?
+[ "$rc" -ne 0 ] && echo "[E] $reg_name read failed!" && exit $rc
+
+exit 0
+"""
+        
+# [7:0] => 0xff, or 5 => 0x20
+# and also return the corrected bit range in format of,
+#   min-max
+def bitrange_to_bitmask(bit_range):
+    bits_arr = bit_range.split(':')
+    if len(bits_arr) == 2:
+        bit_min = int(bits_arr[1])
+        bit_max = int(bits_arr[0])
+        bitrange = str(bit_min) + '-' + str(bit_max)
+    elif len(bits_arr) == 1:
+        bit_min = bit_max = int(bits_arr[0])
+        bitrange = str(bit_min)
+    else:
+        return 1, 0
+    
+    bits = 0
+    for i in range(bit_min, bit_max+1):
+        bits += 1 << i;
+    
+    return 0, bits, bitrange
+        
+class FpgaRegtbl:
+    def __init__(self, filename):
+        # csv.DictReader is a lazy dict, need to reload its content from 
+        # file after each iteration. So only cache filename here for reloading.
+        self._filename = filename
+    
+    # return value of the specified reg, throw exceptions if reg not exist.
+    def get_reg_defvalue(self, reg_name):
+        with open(self._filename, "r") as f:
+            regtbl = csv.DictReader(f)
+            for row in regtbl:
+                if row["Reg Name"].split('[')[0] == reg_name:
+                    return 0, row["Default"]
+        return 1, ""
+
+    # simply name conversion in strings, no guarantee of existence.
+    def intr_to_gpi_reg_name(self, intr_name):
+        suffix = "_INT"
+        if intr_name.endswith(suffix):
+            return intr_name[:-len(suffix)] # Remove the tailing "_INT" for GPI reg name
+        else:
+            return ""
+
+    # simply name conversion in strings, no guarantee of existence.
+    def gpi_to_mask_reg_name(self, gpi_name):
+        return gpi_name + "_MASK"
+
+    # simply name conversion in strings, no guarantee of existence.
+    def intr_to_mask_reg_name(self, intr_name, long_name = 0):
+        if long_name == 0:
+            return intr_name + "_MASK"
+        else:
+            return self.gpi_to_mask_reg_name(self.intr_to_gpi_reg_name(intr_name))
+       
+    # simply name conversion in strings, no guarantee of existence.
+    def intr_to_gpio_name(self, intr):
+        if intr == "T":
+            return "THERM_OVERT"
+        else:
+            return "I2C" + intr + "_ALERT"
+            
+    def get_intr_mask_info(self, intr_name):
+        for long_name in [0, 1]:
+            # get interrupt mask reg
+            mask_name = self.intr_to_mask_reg_name(intr_name, long_name)
+            
+            # get interrupt mask default value
+            rc, mask_value = self.get_reg_defvalue(mask_name)
+            if rc == 0:
+                mask_value = int(mask_value, 16)
+                return 0, mask_name, mask_value
+        else:
+            return rc, "", ""
+            
+        
+    def get_intr_list(self, hmc_or_bmc):
+        col = "Int for HMC" if hmc_or_bmc == "hmc" else "Int for BMC"
+        with open(self._filename, "r") as f:
+            regtbl = csv.DictReader(f)
+            print('Interrupt,ByteRange,Bitmask,IntrMask,IntrMaskValue,AlertGPIO')
+            for row in regtbl:
+                intr_gpio = row[col]
+                if intr_gpio == "":
+                    continue
+                    
+                # get gpio name for the interrupt
+                gpio = self.intr_to_gpio_name(intr_gpio)
+                    
+                # get interrupt name
+                intr_name = row["Reg Name"].split('[')[0]  # e.g. MOD_VR_FAULT_INT[7:0] => MOD_VR_FAULT_INT
+                
+                # get intr mask name and def_value
+                rc, mask_name, intr_mask = self.get_intr_mask_info(intr_name)
+                if rc != 0:
+                    print("[E] Can't find mask for intr: ", intr_name)
+                    continue
+
+                # get byte range
+                byte = str(int(row["Address Start"], 16))  # convert regtbl hex to decimal string
+                if row["Address End"] != "":
+                    byte = byte + '-' + str(int(row["Address End"], 16))
+                
+                # get bit range
+                bits = row["Bits"]
+                
+                # get bitmask
+                rc, bitmask, bit_range = bitrange_to_bitmask(bits)
+                if rc != 0:
+                    print("[E] Unsupported bits format: ", bits)
+                    continue
+                    
+                # mask off the interrupts per regtbl
+                bitmask = bitmask ^ intr_mask # (intr_mask == 1) => no intr reported
+                
+                print('{0},{1},{2},{3},{4},{5}'.format(intr_name, byte, hex(bitmask), mask_name, hex(intr_mask), gpio))
+                
+    def to_event_info_json(self):
+        col = "Int for HMC"
+        with open(self._filename, "r") as f:
+            regtbl = csv.DictReader(f)
+            
+            output = ""
+            for row in regtbl:
+                intr_gpio = row[col]
+                if intr_gpio == "":
+                    continue
+
+                event_name = reg_name = row["Reg Name"].split('[')[0]  # e.g. MOD_VR_FAULT_INT[7:0] => MOD_VR_FAULT_INT
+                event_name = '_'.join(event_name.split('_')[1:])
+                dev_id = "[0-1]"
+                fault_id = reg_name + "-FAULT"
+                evt_category = "erot-control"
+                alert_gpio = self.intr_to_gpio_name(intr_gpio)
+                regtbl_tool = FPGA_REGTBL_TOOL_NAME
+                evt_severity = "Critical"
+                evt_resolution = "AC cycle the system. If problem persists, collect all dumps per troubleshooting guide, isolate the system and evaluate for RMA."
+                evt_ooc = "POWER"
+                dev_name_pattern = reg_name.split('_')[0]
+                descr = "FPGA interrupt " + reg_name + " happens."
+                               
+                output += fpga_redfish_event_templ.format(
+                    evt_name = event_name,
+                    fault_id = fault_id,
+                    evt_category = evt_category,
+                    alert_gpio = alert_gpio,
+                    regtbl_tool = regtbl_tool,
+                    reg_name = reg_name,
+                    dev_id = dev_id,
+                    evt_severity = evt_severity,
+                    evt_ooc = evt_ooc,
+                    evt_resolution = evt_resolution,
+                    dev_name_pattern = dev_name_pattern,
+                    descr = descr
+                    )
+
+            output = output[:-2] # to remove the tailing ',' for JSON syntax.
+            print(output)
+                
+                
+
+    def to_regtbl_tool(self, tool_name):
+        with open(self._filename, "r") as f:
+            regtbl = csv.DictReader(f)
+            reg_info_list = ""
+            for row in regtbl:
+                intr_gpio = row["Int for HMC"]
+                if intr_gpio == "":
+                    continue
+
+                # get gpio name for the interrupt
+                gpio = self.intr_to_gpio_name(intr_gpio)
+                    
+                # get interrupt name
+                intr_name = row["Reg Name"].split('[')[0]  # e.g. MOD_VR_FAULT[7:0] => MOD_VR_FAULT
+
+                # get intr mask name and def_value
+                rc, mask_name, intr_mask = self.get_intr_mask_info(intr_name)
+                if rc != 0:
+                    print("[E] Can't find mask for intr: ", intr_name)
+                    continue
+
+                # format byte range in "min(dec)-max(dec)"
+                byte_min=int(row["Address Start"], 16)
+                byte_max=byte_min
+                
+                byte_range = str(byte_min)
+
+                if row["Address End"] != "":
+                    byte_max = int(row["Address End"], 16)
+                    byte_range = byte_range + '-' + str(byte_max)
+                    
+                    
+                # convert byte range to shell string manipulate expression for parsing i2ctransfer outputs.
+                # output example (data between []):
+                # pos:   0  1  2  3  4  5  6  7  8  9  10 11 12 13 14
+                # data: [78 84 00 59 00 00 08 01 00 00 00 40 30 1e 04]
+                byte_off = byte_min * 3
+                byte_len = 2 + (byte_max - byte_min) * 3
+                
+                # convert bit range to bit mask
+                # get bit range
+                bits = row["Bits"]
+                    
+                # get bitmask
+                rc, bitmask, bit_range = bitrange_to_bitmask(bits)
+                if rc != 0:
+                    print("[E] Unsupported bits format: ", bits)
+                    continue
+                    
+                # mask off the interrupts per regtbl
+                bitmask = bitmask ^ intr_mask # (intr_mask == 1) => no intr reported
+                prefix = "#" if bitmask == 0 else ""
+                bitmask = hex(bitmask);
+
+                # This format needs to be aligned with the 'fpga_regtbl_tool_templ' logic
+                reg_info_list += '{0}{1},{2},{3},{4},{5},{6}\n'.format(prefix,
+                    intr_name, byte_off, byte_len, bitmask, byte_range, bit_range)
+                
+            # output
+            output_data = fpga_regtbl_tool_templ.format(
+                    app_name = tool_name,
+                    reg_list = reg_info_list)
+
+            if tool_name != "":
+                try:
+                    with open(tool_name, "w+") as output:
+                        output.write(output_data)
+                    print("[I] The FPGA regtbl tool is generated at [", tool_name, "].")
+                    return 0
+                except:
+                    print("[E] Failed to generate the FPGA regtbl tool!")
+                    return 1
+            else:
+                print(output_data)
+                return 0
+        
+    def to_fault_catalog(self, fault_catalog):
+        with open(self._filename, "r") as f:
+            regtbl = csv.DictReader(f)
+            reg_info_list = ""
+            for row in regtbl:
+                if row[col] == "":
+                    continue
+                    
+                intr_name = row["Reg Name"].split('[')[0]  # e.g. MOD_VR_FAULT_INT[7:0] => MOD_VR_FAULT_INT
+                
+                # get intr mask name and def_value
+                rc, mask_name, intr_mask = self.get_intr_mask_info(intr_name)
+                if rc != 0:
+                    print("[E] Can't find mask for intr: ", intr_name)
+                    continue
+
+                # get byte range
+                byte = str(int(row["Address Start"], 16))  # convert regtbl hex to decimal string
+                if row["Address End"] != "":
+                    byte = byte + '-' + str(int(row["Address End"], 16))
+                
+                # get bit range
+                bits = row["Bits"]
+                
+                # get bitmask
+                rc, bitmask, bit_range = bitrange_to_bitmask(bits)
+                if rc != 0:
+                    print("[E] Unsupported bits format: ", bits)
+                    continue
+                    
+                # mask off the interrupts per regtbl
+                bitmask = bitmask ^ intr_mask # (intr_mask == 1) => no intr reported
+                
+                print('{0},{1},{2},{3},{4}'.format(intr_name, byte, hex(bitmask), mask_name, hex(intr_mask)))
+
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+
+    parser.add_argument(
+        "input", 
+        metavar="INPUT_FILE",
+        help="FPGA register table definition file in csv format.")
+
+    parser.add_argument(
+        "conv_func",
+        metavar="CONV_METHOD",
+        help="Specify how to convert the spec to code. Options:\n  to_evt_def\n  to_regtbl_tool\n  get_intr_list\n")
+        
+#    parser.add_argument(
+#        "output", default="", 
+#        metavar="OUTPUT_FILE", type=argparse.FileType("w+"),
+#        help="FPGA register table parser script.")
+
+    args = parser.parse_args()
+
+    regtbl_csv = args.input
+    
+    fpga_regtbl = FpgaRegtbl(regtbl_csv)
+    
+    rc = 0
+    
+    if args.conv_func == "to_evt_def":
+        rc = fpga_regtbl.to_evt_def()
+    elif args.conv_func == "to_regtbl_tool":
+        rc = fpga_regtbl.to_regtbl_tool(FPGA_REGTBL_TOOL_NAME)
+    elif args.conv_func == "get_intr_list":
+        rc = fpga_regtbl.get_intr_list("hmc")
+    elif args.conv_func == "to_event_info_json":
+        rc = fpga_regtbl.to_event_info_json()
+    elif args.conv_func == "list_all_reg":
+        rc = fpga_regtbl.get_reg_defvalue("not exist")
+    else:
+        print("Wrong args: ", args.conv_func)
+        rc = 1
+    
+    return rc
+
+if __name__ == "__main__":
+    main()

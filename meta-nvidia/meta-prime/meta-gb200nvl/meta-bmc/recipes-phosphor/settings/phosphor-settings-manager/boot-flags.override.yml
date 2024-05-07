@@ -1,0 +1,72 @@
+/xyz/openbmc_project/control/host0/boot:
+    - Interface: xyz.openbmc_project.Control.Boot.Flags
+      Properties:
+          CMOSClear:
+              Default: 'false' 
+          ForceProgressEventTraps:
+              Default: 'false'
+          LockKeyboard:
+              Default: 'false'
+          LockOutPowerButton:
+              Default: 'false'
+          LockOutResetButton:
+              Default: 'false'
+          LockOutSleepButton:
+              Default: 'false'
+          PasswordBypass:
+              Default: 'false'
+          ScreenBlank:
+              Default: 'false'
+          SharedModeOverride:
+              Default: 'false'
+    - Interface: xyz.openbmc_project.Control.Boot.ConsoleRedirection
+      Properties:
+          ConsoleRedirection:
+              Default: ConsoleRedirection::Redirections::Default
+    - Interface: xyz.openbmc_project.Control.Boot.FirmwareVerbosity
+      Properties:
+          Verbosity:
+              Default: FirmwareVerbosity::Levels::Default
+    - Interface: xyz.openbmc_project.Control.Boot.Instance
+      Properties:
+          BootSourceInstance:
+              Default: 0
+    - Interface: xyz.openbmc_project.Control.Boot.InstanceType
+      Properties:
+          BootSourceInstanceType:
+              Default: InstanceType::InstanceTypes::Unspecified 
+    - Interface: xyz.openbmc_project.Control.Boot.Mode
+      Properties:
+          BootMode:
+              Default: Mode::Modes::Regular
+    - Interface: xyz.openbmc_project.Control.Boot.MuxOverride
+      Properties:
+          MuxOverride:
+              Default: MuxOverride::Modes::Default
+    - Interface: xyz.openbmc_project.Control.Boot.Source
+      Properties:
+          BootSource:
+              Default: Source::Sources::Default
+    - Interface: xyz.openbmc_project.Object.Enable
+      Properties:
+          Enabled:
+              Default: 'false'
+
+/xyz/openbmc_project/control/host0/boot/one_time:
+    - Interface: xyz.openbmc_project.Object.Enable
+      Properties:
+          Enabled:
+              Default: 'false'
+
+
+
+
+
+
+
+
+
+
+
+
+        

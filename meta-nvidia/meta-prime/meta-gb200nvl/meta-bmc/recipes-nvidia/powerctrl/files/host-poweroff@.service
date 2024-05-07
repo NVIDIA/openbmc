@@ -1,0 +1,15 @@
+[Unit]
+Description=Power Off Host
+Requires=bmc-boot-complete.service
+After=bmc-boot-complete.service
+Conflicts=obmc-chassis-poweron@%i.target
+
+[Service]
+RemainAfterExit=yes
+Type=oneshot
+ExecStart=/usr/bin/env powerctrl.sh power_off
+SyslogIdentifier=powerctrl
+StartLimitBurst=0
+
+[Install]
+RequiredBy=obmc-chassis-hard-poweroff@%i.target

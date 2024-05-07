@@ -1,0 +1,14 @@
+header:
+  version: 14
+
+distro: poky-tiny
+
+local_conf_header:
+  hacking: |
+    TEST_SUITES = "_qemutiny ping"
+  extrapackages: |
+    # Intentionally blank to prevent perf from being added to the image in base.yml
+
+target:
+  - core-image-minimal
+  - perf

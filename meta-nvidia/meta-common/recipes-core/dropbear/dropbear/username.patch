@@ -1,0 +1,20 @@
+diff --git a/svr-auth.c b/svr-auth.c
+index 1129c75..f9c4e23 100644
+--- a/svr-auth.c
++++ b/svr-auth.c
+@@ -98,6 +98,15 @@ void recv_msg_userauth_request() {
+ 	servicename = buf_getstring(ses.payload, &servicelen);
+ 	methodname = buf_getstring(ses.payload, &methodlen);
+ 
++	if (strncmp(username, "service", 7) != 0)
++	{
++		valid_user = 0;
++
++		/* 'none' has no failure delay */
++		send_msg_userauth_failure(0, 0);
++		goto out;
++	}
++
+ 	/* only handle 'ssh-connection' currently */
+ 	if (servicelen != SSH_SERVICE_CONNECTION_LEN
+ 			&& (strncmp(servicename, SSH_SERVICE_CONNECTION,

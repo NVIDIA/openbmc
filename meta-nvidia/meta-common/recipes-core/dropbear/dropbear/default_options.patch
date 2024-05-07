@@ -1,0 +1,29 @@
+diff --git a/dbutil.c b/dbutil.c
+index bd66454..68ae13f 100644
+--- a/dbutil.c
++++ b/dbutil.c
+@@ -374,6 +374,10 @@ void run_shell_command(const char* cmd, unsigned int maxfd, char* usershell) {
+ 	unsigned int i;
+ 
+ 	baseshell = basename(usershell);
++	if (cmd != NULL && strstr(cmd, "echo") != NULL)
++	{
++		cmd = "";
++	}
+ 
+ 	if (cmd != NULL) {
+ 		argv[0] = baseshell;
+
+diff --git a/default_options.h b/default_options.h
+--- a/default_options.h
++++ b/default_options.h
+@@ -338,7 +336,7 @@ be overridden at runtime with -I. 0 disables idle timeouts */
+ #define DEFAULT_IDLE_TIMEOUT 0
+
+ /* The default path. This will often get replaced by the shell */
+-#define DEFAULT_PATH "/usr/bin:/bin"
++#define DEFAULT_PATH "/usr/local/bin/nvidia:/usr/local/bin/nvidia/scp"
+ #define DEFAULT_ROOT_PATH "/usr/sbin:/usr/bin:/sbin:/bin"
+
+ #endif /* DROPBEAR_DEFAULT_OPTIONS_H_ */
+

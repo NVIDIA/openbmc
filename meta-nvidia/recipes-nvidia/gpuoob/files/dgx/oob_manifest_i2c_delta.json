@@ -1,0 +1,191 @@
+{
+  "version": 1.0,
+  "fpga": [
+    {
+      "id": "baseboard_0",
+      "interface": {
+        "i2c": {
+          "bus": "0x0B",
+          "slave_addr": "0x60",
+          "mux": null
+        }
+      },
+      "baseboard": 1,
+      "pcieretimer": 8,
+      "hsc": 10,
+      "standbyhsc": 1,
+      "outputhsc": 1,
+      "pcieswitch": 1,
+      "pciegen4sw": 4,
+      "pcbTemp": 4,
+      "inletTemp": 4,
+      "altPressureSensor": 1,
+      "nvlinkBridgeConn": 12,
+      "sysvr5v":1,
+      "sysvr3v3":1,
+      "sysvr1v8": 1,
+      "sysvr0v9": 1,
+      "llc_ab_mps": 1,
+      "llc_cd_mps": 1
+    }
+  ],
+  "gpu": [
+    {
+      "id": "gpu_0",
+      "interface" : {
+        "i2c": {
+          "bus": "0x0A",
+          "slave_addr": "0x44",
+          "mux": null
+        }
+      },
+      "manager": "baseboard_0"
+    },
+    {
+      "id": "gpu_1",
+      "interface": {
+        "i2c": {
+          "bus": "0x0A",
+          "slave_addr": "0x45",
+          "mux": null
+        }
+      },
+      "manager": "baseboard_0"
+    },
+    {
+      "id": "gpu_2",
+      "interface": {
+        "i2c": {
+          "bus": "0x0A",
+          "slave_addr": "0x46",
+          "mux": null
+        }
+      },
+      "manager": "baseboard_0"
+    },
+    {
+      "id": "gpu_3",
+      "interface": {
+        "i2c": {
+          "bus": "0x0A",
+          "slave_addr": "0x47",
+          "mux": null
+        }
+      },
+      "manager": "baseboard_0"
+    },
+    {
+      "id": "gpu_4",
+      "interface": {
+        "i2c": {
+          "bus": "0x0A",
+          "slave_addr": "0x4c",
+          "mux": null
+        }
+      },
+      "manager": "baseboard_0"
+    },
+    {
+      "id": "gpu_5",
+      "interface": {
+        "i2c": {
+          "bus": "0x0A",
+          "slave_addr": "0x4d",
+          "mux": null
+        }
+      },
+      "manager": "baseboard_0"
+    },
+    {
+      "id": "gpu_6",
+      "interface": {
+        "i2c": {
+          "bus": "0x0A",
+          "slave_addr": "0x4e",
+          "mux": null
+        }
+      },
+      "manager": "baseboard_0"
+    },
+    {
+      "id": "gpu_7",
+      "interface": {
+        "i2c": {
+          "bus": "0x0A",
+          "slave_addr": "0x4f",
+          "mux": null
+        }
+      },
+      "manager": "baseboard_0"
+    }
+  ],
+  "nvswitch": [
+    {
+      "id": "nvswitch_0",
+      "interface": {
+        "i2c": {
+          "bus": "0x0B",
+          "slave_addr": "0x19",
+          "mux": null
+        }
+      },
+      "manager": "baseboard_0"
+    },
+    {
+      "id": "nvswitch_1",
+      "interface": {
+        "i2c": {
+          "bus": "0x0B",
+          "slave_addr": "0x1a",
+          "mux": null
+        }
+      },
+      "manager": "baseboard_0"
+    },
+    {
+      "id": "nvswitch_2",
+      "interface": {
+        "i2c": {
+          "bus": "0x0B",
+          "slave_addr": "0x1b",
+          "mux": null
+        }
+      },
+      "manager": "baseboard_0"
+    },
+    {
+      "id": "nvswitch_3",
+      "interface": {
+        "i2c": {
+          "bus": "0x0B",
+          "slave_addr": "0x1c",
+          "mux": null
+        }
+      },
+      "manager": "baseboard_0"
+    },
+    {
+      "id": "nvswitch_4",
+      "interface": {
+        "i2c": {
+          "bus": "0x0B",
+          "slave_addr": "0x1d",
+          "mux": null
+        }
+      },
+      "manager": "baseboard_0"
+    },
+    {
+      "id": "nvswitch_5",
+      "interface": {
+        "i2c": {
+          "bus": "0x0B",
+          "slave_addr": "0x1e",
+          "mux": null
+        }
+      },
+      "manager": "baseboard_0"
+    }
+  ]
+}
+

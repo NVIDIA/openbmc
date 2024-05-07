@@ -1,0 +1,1 @@
+SUBSYSTEM=="net", KERNELS=="gadget.0", NAME="hostusb0"

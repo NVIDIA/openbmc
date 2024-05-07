@@ -1,0 +1,10 @@
+[Unit]
+Description=Check for BMC reset
+After=xyz.openbmc_project.Logging.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bmc_reset_check.sh
+
+[Install]
+WantedBy=multi-user.target

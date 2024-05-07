@@ -1,0 +1,191 @@
+[
+    {
+        "Exposes": [
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME",
+                "Type": "I2CDeviceAssociation",
+                "Bus": "$BUS",
+                "Address": "50"
+            },
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Temp",
+                "Type": "SensorAuxName",
+                "SensorId": 1,
+                "AuxNames": ["Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Temp"]
+            },
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_0_Temp",
+                "Type": "SensorAuxName",
+                "SensorId": 8,
+                "AuxNames": ["Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_0_Temp"]
+            },
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_1_Temp",
+                "Type": "SensorAuxName",
+                "SensorId": 9,
+                "AuxNames": ["Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_1_Temp"]
+            },
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_0_State",
+                "Type": "SensorAuxName",
+                "SensorId": 4,
+                "AuxNames": ["Port_0"]
+            },
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_1_State",
+                "Type": "SensorAuxName",
+                "SensorId": 5,
+                "AuxNames": ["Port_1"]
+            }
+        ],
+        "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME",
+        "Type": "Board",
+        "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Baseboard_0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 8, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': 'ConnectX-7.*'})",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "$BOARD_MANUFACTURER",
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        },
+        "xyz.openbmc_project.Inventory.Item.NetworkInterface": {},
+        "xyz.openbmc_project.Inventory.Decorator.Instance": {
+            "InstanceNumber": 1
+        }
+    },
+    {
+        "Exposes": [
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME",
+                "Type": "I2CDeviceAssociation",
+                "Bus": "$BUS",
+                "Address": "50"
+            },
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Temp",
+                "Type": "SensorAuxName",
+                "SensorId": 1,
+                "AuxNames": ["Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Temp"]
+            },
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_0_Temp",
+                "Type": "SensorAuxName",
+                "SensorId": 8,
+                "AuxNames": ["Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_0_Temp"]
+            },
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_1_Temp",
+                "Type": "SensorAuxName",
+                "SensorId": 9,
+                "AuxNames": ["Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_1_Temp"]
+            },
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_0_State",
+                "Type": "SensorAuxName",
+                "SensorId": 4,
+                "AuxNames": ["Port_0"]
+            },
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_1_State",
+                "Type": "SensorAuxName",
+                "SensorId": 5,
+                "AuxNames": ["Port_1"]
+            }
+        ],
+        "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME",
+        "Type": "Board",
+        "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Baseboard_0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 15, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': 'ConnectX-7.*'})",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "$BOARD_MANUFACTURER",
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        },
+        "xyz.openbmc_project.Inventory.Item.NetworkInterface": {},
+        "xyz.openbmc_project.Inventory.Decorator.Instance": {
+            "InstanceNumber": 1
+        }
+    },
+    {
+        "Exposes": [
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME",
+                "Type": "I2CDeviceAssociation",
+                "Bus": "$BUS",
+                "Address": "50"
+            },
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Temp",
+                "Type": "SensorAuxName",
+                "SensorId": 1,
+                "AuxNames": ["Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Temp"]
+            },
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_0_Temp",
+                "Type": "SensorAuxName",
+                "SensorId": 8,
+                "AuxNames": ["Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_0_Temp"]
+            },
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_1_Temp",
+                "Type": "SensorAuxName",
+                "SensorId": 9,
+                "AuxNames": ["Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_1_Temp"]
+            },
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_0_State",
+                "Type": "SensorAuxName",
+                "SensorId": 4,
+                "AuxNames": ["Port_0"]
+            },
+            {
+                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_1_State",
+                "Type": "SensorAuxName",
+                "SensorId": 5,
+                "AuxNames": ["Port_1"]
+            }
+        ],
+        "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME",
+        "Type": "Board",
+        "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Baseboard_0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 14, 'ADDRESS': 80,, 'BOARD_PRODUCT_NAME': 'BlueField-3.*'})",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "$BOARD_MANUFACTURER",
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        },
+        "xyz.openbmc_project.Inventory.Item.NetworkInterface": {},
+        "xyz.openbmc_project.Inventory.Decorator.Instance": {
+            "InstanceNumber": 1
+        }
+    }
+]

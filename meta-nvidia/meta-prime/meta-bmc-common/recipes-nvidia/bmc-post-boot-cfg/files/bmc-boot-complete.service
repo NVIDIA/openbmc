@@ -1,0 +1,74 @@
+[Unit]
+Description=BMC Ready Configuration
+After=network.target
+
+#
+# Make this run Before so that nvidia-standby-poweron.service
+# activation is delayed until bmc_ready has successfully brought the FPGA up
+#
+Before=nvidia-standby-poweron.service
+
+#
+# Wants/Before - services we need to start up again when bmc-boot-complete restarts
+#
+Wants=nvidia-power-monitor.service
+Before=nvidia-power-monitor.service
+
+Wants=nvidia-shutdown-ok-monitor.service
+Before=nvidia-shutdown-ok-monitor.service
+
+Wants=phosphor-discover-system-state@0.service
+Before=phosphor-discover-system-state@0.service
+
+#
+# Requires/After - service we require to be running befor we start
+# Most of these services Requires/After bmc-boot-complete, meaning they will stop when bmc-boot-complete stops
+#
+Requires=nvidia-standby-power-monitor.service
+After=nvidia-standby-power-monitor.service
+
+#
+# Make this run Before so that nvidia-standby-poweron.service
+# activation is delayed until bmc_ready has successfully brought the FPGA up
+#
+Before=nvidia-standby-poweron.service
+
+#
+# Wants/Before - services we need to start up again when bmc-boot-complete restarts
+#
+
+# ToDo:
+# Equivalent of fpga-ready-monitor ==
+# hmc-ready-monitor 
+
+Wants=nvidia-power-monitor.service
+Before=nvidia-power-monitor.service
+
+Wants=phosphor-multi-gpio-monitor.service
+Before=phosphor-multi-gpio-monitor.service
+
+Wants=phosphor-discover-system-state@0.service
+Before=phosphor-discover-system-state@0.service
+
+Wants=nvidia-shutdown-ok-monitor.service
+Before=nvidia-shutdown-ok-monitor.service
+
+
+#
+# Before - services we need to wait until bmc-boot-complete starts the 1st time
+#
+Before=xyz.openbmc_project.FruDevice.service
+Before=xyz.openbmc_project.EntityManager.service
+
+
+[Service]
+Restart=no
+RemainAfterExit=true
+Type=oneshot
+ExecStart=/usr/bin/env bmc_ready.sh
+SyslogIdentifier=bmc_ready
+
+[Install]
+WantedBy=multi-user.target
+RequiredBy=
+

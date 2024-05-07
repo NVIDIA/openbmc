@@ -1,0 +1,11 @@
+[Unit]
+Description=OTP provisioning status file monitoring
+ConditionPathExists=!/etc/systemd/system/multi-user.target.wants/otp-provisioning.service
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/sysconfig/otp-conf
+ExecStart=/bin/sh -c '/usr/bin/otp-monitor.sh'
+
+[Install]
+WantedBy=multi-user.target

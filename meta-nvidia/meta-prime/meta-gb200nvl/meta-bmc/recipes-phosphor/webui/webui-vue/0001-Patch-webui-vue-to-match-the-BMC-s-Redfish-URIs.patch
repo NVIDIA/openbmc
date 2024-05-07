@@ -1,0 +1,630 @@
+From 36c78325802a428b3f8b701ca017dde8bb41d9fe Mon Sep 17 00:00:00 2001
+From: Mike Garrett <mikeg@nvidia.com>
+Date: Thu, 8 Jun 2023 11:15:27 -0700
+Subject: [PATCH] Patch webui-vue to match the BMC's Redfish URIs
+
+---
+ src/store/modules/GlobalStore.js              |  4 ++--
+ .../modules/HardwareStatus/AssemblyStore.js   |  2 +-
+ src/store/modules/HardwareStatus/BmcStore.js  |  2 +-
+ .../modules/HardwareStatus/MemoryStore.js     |  2 +-
+ .../modules/HardwareStatus/ProcessorStore.js  |  2 +-
+ .../modules/HardwareStatus/ServerLedStore.js  |  4 ++--
+ .../modules/HardwareStatus/SystemStore.js     |  4 ++--
+ src/store/modules/Logs/DumpsStore.js          |  8 ++++----
+ src/store/modules/Logs/EventLogStore.js       |  4 ++--
+ src/store/modules/Logs/PostCodeLogsStore.js   |  4 ++--
+ .../modules/Operations/BootSettingsStore.js   |  4 ++--
+ src/store/modules/Operations/ControlStore.js  |  8 ++++----
+ .../modules/Operations/FactoryResetStore.js   |  4 ++--
+ src/store/modules/Operations/FirmwareStore.js |  6 +++---
+ src/store/modules/Operations/KeyClearStore.js |  2 +-
+ .../modules/Operations/VirtualMediaStore.js   |  6 +++---
+ .../SecurityAndAccess/CertificatesStore.js    |  4 ++--
+ .../SecurityAndAccess/PoliciesStore.js        | 12 +++++------
+ src/store/modules/Settings/DateTimeStore.js   |  6 +++---
+ src/store/modules/Settings/NetworkStore.js    | 20 +++++++++----------
+ .../modules/Settings/PowerPolicyStore.js      |  4 ++--
+ .../Inventory/InventoryTableChassis.vue       |  2 +-
+ 22 files changed, 57 insertions(+), 57 deletions(-)
+
+diff --git a/src/store/modules/GlobalStore.js b/src/store/modules/GlobalStore.js
+index 74eb1e8..e0ec116 100644
+--- a/src/store/modules/GlobalStore.js
++++ b/src/store/modules/GlobalStore.js
+@@ -79,7 +79,7 @@ const GlobalStore = {
+   actions: {
+     async getBmcTime({ commit }) {
+       return await api
+-        .get('/redfish/v1/Managers/bmc')
++        .get('/redfish/v1/Managers/BMC_0')
+         .then((response) => {
+           const bmcDateTime = response.data.DateTime;
+           const date = new Date(bmcDateTime);
+@@ -89,7 +89,7 @@ const GlobalStore = {
+     },
+     getSystemInfo({ commit }) {
+       api
+-        .get('/redfish/v1/Systems/system')
++        .get('/redfish/v1/Systems/System_0')
+         .then(
+           ({
+             data: {
+diff --git a/src/store/modules/HardwareStatus/AssemblyStore.js b/src/store/modules/HardwareStatus/AssemblyStore.js
+index fe97a9c..6327811 100644
+--- a/src/store/modules/HardwareStatus/AssemblyStore.js
++++ b/src/store/modules/HardwareStatus/AssemblyStore.js
+@@ -39,7 +39,7 @@ const AssemblyStore = {
+   actions: {
+     async getAssemblyInfo({ commit }) {
+       return await api
+-        .get('/redfish/v1/Chassis/chassis/Assembly')
++        .get('/redfish/v1/Chassis/Baseboard_0/Assembly')
+         .then(({ data }) => commit('setAssemblyInfo', data?.Assemblies))
+         .catch((error) => console.log(error));
+     },
+diff --git a/src/store/modules/HardwareStatus/BmcStore.js b/src/store/modules/HardwareStatus/BmcStore.js
+index c042a83..d2e6e5e 100644
+--- a/src/store/modules/HardwareStatus/BmcStore.js
++++ b/src/store/modules/HardwareStatus/BmcStore.js
+@@ -47,7 +47,7 @@ const BmcStore = {
+   actions: {
+     async getBmcInfo({ commit }) {
+       return await api
+-        .get('/redfish/v1/Managers/bmc')
++        .get('/redfish/v1/Managers/BMC_0')
+         .then(({ data }) => commit('setBmcInfo', data))
+         .catch((error) => console.log(error));
+     },
+diff --git a/src/store/modules/HardwareStatus/MemoryStore.js b/src/store/modules/HardwareStatus/MemoryStore.js
+index 81996a7..0d2d278 100644
+--- a/src/store/modules/HardwareStatus/MemoryStore.js
++++ b/src/store/modules/HardwareStatus/MemoryStore.js
+@@ -60,7 +60,7 @@ const MemoryStore = {
+   actions: {
+     async getDimms({ commit }) {
+       return await api
+-        .get('/redfish/v1/Systems/system/Memory')
++        .get('/redfish/v1/Systems/System_0/Memory')
+         .then(({ data: { Members } }) => {
+           const promises = Members.map((item) => api.get(item['@odata.id']));
+           return api.all(promises);
+diff --git a/src/store/modules/HardwareStatus/ProcessorStore.js b/src/store/modules/HardwareStatus/ProcessorStore.js
+index d4c99bc..4d55383 100644
+--- a/src/store/modules/HardwareStatus/ProcessorStore.js
++++ b/src/store/modules/HardwareStatus/ProcessorStore.js
+@@ -63,7 +63,7 @@ const ProcessorStore = {
+   actions: {
+     async getProcessorsInfo({ commit }) {
+       return await api
+-        .get('/redfish/v1/Systems/system/Processors')
++        .get('/redfish/v1/Systems/System_0/Processors')
+         .then(({ data: { Members = [] } }) =>
+           Members.map((member) => api.get(member['@odata.id']))
+         )
+diff --git a/src/store/modules/HardwareStatus/ServerLedStore.js b/src/store/modules/HardwareStatus/ServerLedStore.js
+index 028a6f7..c948b63 100644
+--- a/src/store/modules/HardwareStatus/ServerLedStore.js
++++ b/src/store/modules/HardwareStatus/ServerLedStore.js
+@@ -17,7 +17,7 @@ const ServerLedStore = {
+   actions: {
+     async getIndicatorLedActiveState({ commit }) {
+       return await api
+-        .get('/redfish/v1/Systems/system')
++        .get('/redfish/v1/Systems/System_0')
+         .then((response) => {
+           commit(
+             'setIndicatorLedActiveState',
+@@ -29,7 +29,7 @@ const ServerLedStore = {
+     async saveIndicatorLedActiveState({ commit }, payload) {
+       commit('setIndicatorLedActiveState', payload);
+       return await api
+-        .patch('/redfish/v1/Systems/system', {
++        .patch('/redfish/v1/Systems/System_0', {
+           LocationIndicatorActive: payload,
+         })
+         .catch((error) => {
+diff --git a/src/store/modules/HardwareStatus/SystemStore.js b/src/store/modules/HardwareStatus/SystemStore.js
+index a1394f1..6e10248 100644
+--- a/src/store/modules/HardwareStatus/SystemStore.js
++++ b/src/store/modules/HardwareStatus/SystemStore.js
+@@ -47,14 +47,14 @@ const SystemStore = {
+       return await api
+         .get('/redfish/v1')
+         .then((response) =>
+-          api.get(`${response.data.Systems['@odata.id']}/system`)
++          api.get(`${response.data.Systems['@odata.id']}/System_0`)
+         )
+         .then(({ data }) => commit('setSystemInfo', data))
+         .catch((error) => console.log(error));
+     },
+     async changeIdentifyLedState({ commit }, ledState) {
+       return await api
+-        .patch('/redfish/v1/Systems/system', {
++        .patch('/redfish/v1/Systems/System_0', {
+           LocationIndicatorActive: ledState,
+         })
+         .catch((error) => {
+diff --git a/src/store/modules/Logs/DumpsStore.js b/src/store/modules/Logs/DumpsStore.js
+index 746733a..fa183f7 100644
+--- a/src/store/modules/Logs/DumpsStore.js
++++ b/src/store/modules/Logs/DumpsStore.js
+@@ -36,7 +36,7 @@ const DumpsStore = {
+       return api
+         .get('/redfish/v1/')
+         .then((response) => api.get(response.data.Systems['@odata.id']))
+-        .then((response) => api.get(`${response.data['@odata.id']}/system`))
++        .then((response) => api.get(`${response.data['@odata.id']}/System_0`))
+         .then((response) => api.get(response.data.LogServices['@odata.id']))
+         .then((response) => api.get(`${response.data['@odata.id']}/Dump`))
+         .then((response) => api.get(response.data.Entries['@odata.id']))
+@@ -56,7 +56,7 @@ const DumpsStore = {
+     async createBmcDump() {
+       return await api
+         .post(
+-          '/redfish/v1/Managers/bmc/LogServices/Dump/Actions/LogService.CollectDiagnosticData',
++          '/redfish/v1/Managers/BMC_0/LogServices/Dump/Actions/LogService.CollectDiagnosticData',
+           {
+             DiagnosticDataType: 'Manager',
+             OEMDiagnosticDataType: '',
+@@ -70,7 +70,7 @@ const DumpsStore = {
+     async createSystemDump() {
+       return await api
+         .post(
+-          '/redfish/v1/Systems/system/LogServices/Dump/Actions/LogService.CollectDiagnosticData',
++          '/redfish/v1/Systems/System_0/LogServices/Dump/Actions/LogService.CollectDiagnosticData',
+           {
+             DiagnosticDataType: 'OEM',
+             OEMDiagnosticDataType: 'System',
+@@ -123,7 +123,7 @@ const DumpsStore = {
+       const totalDumpCount = state.allDumps.length;
+       return await api
+         .post(
+-          '/redfish/v1/Managers/bmc/LogServices/Dump/Actions/LogService.ClearLog'
++          '/redfish/v1/Managers/BMC_0/LogServices/Dump/Actions/LogService.ClearLog'
+         )
+         .then(() => {
+           commit('setAllDumps', []);
+diff --git a/src/store/modules/Logs/EventLogStore.js b/src/store/modules/Logs/EventLogStore.js
+index f398007..16b62db 100644
+--- a/src/store/modules/Logs/EventLogStore.js
++++ b/src/store/modules/Logs/EventLogStore.js
+@@ -42,7 +42,7 @@ const EventLogStore = {
+   actions: {
+     async getEventLogData({ commit }) {
+       return await api
+-        .get('/redfish/v1/Systems/system/LogServices/EventLog/Entries')
++        .get('/redfish/v1/Systems/System_0/LogServices/EventLog/Entries')
+         .then(({ data: { Members = [] } = {} }) => {
+           const eventLogs = Members.map((log) => {
+             const {
+@@ -79,7 +79,7 @@ const EventLogStore = {
+     async deleteAllEventLogs({ dispatch }, data) {
+       return await api
+         .post(
+-          '/redfish/v1/Systems/system/LogServices/EventLog/Actions/LogService.ClearLog'
++          '/redfish/v1/Systems/System_0/LogServices/EventLog/Actions/LogService.ClearLog'
+         )
+         .then(() => dispatch('getEventLogData'))
+         .then(() => i18n.tc('pageEventLogs.toast.successDelete', data.length))
+diff --git a/src/store/modules/Logs/PostCodeLogsStore.js b/src/store/modules/Logs/PostCodeLogsStore.js
+index 836f984..9fe5262 100644
+--- a/src/store/modules/Logs/PostCodeLogsStore.js
++++ b/src/store/modules/Logs/PostCodeLogsStore.js
+@@ -16,7 +16,7 @@ const PostCodeLogsStore = {
+   actions: {
+     async getPostCodesLogData({ commit }) {
+       return await api
+-        .get('/redfish/v1/Systems/system/LogServices/PostCodes/Entries')
++        .get('/redfish/v1/Systems/System_0/LogServices/PostCodes/Entries')
+         .then(({ data: { Members = [] } = {} }) => {
+           const postCodeLogs = Members.map((log) => {
+             const { Created, MessageArgs, AdditionalDataURI } = log;
+@@ -37,7 +37,7 @@ const PostCodeLogsStore = {
+     async deleteAllPostCodeLogs({ dispatch }, data) {
+       return await api
+         .post(
+-          '/redfish/v1/Systems/system/LogServices/PostCodes/Actions/LogService.ClearLog'
++          '/redfish/v1/Systems/System_0/LogServices/PostCodes/Actions/LogService.ClearLog'
+         )
+         .then(() => dispatch('getPostCodesLogData'))
+         .then(() =>
+diff --git a/src/store/modules/Operations/BootSettingsStore.js b/src/store/modules/Operations/BootSettingsStore.js
+index 7a36dd8..0f8d85d 100644
+--- a/src/store/modules/Operations/BootSettingsStore.js
++++ b/src/store/modules/Operations/BootSettingsStore.js
+@@ -32,7 +32,7 @@ const BootSettingsStore = {
+   actions: {
+     async getBootSettings({ commit }) {
+       return await api
+-        .get('/redfish/v1/Systems/system')
++        .get('/redfish/v1/Systems/System_0')
+         .then(({ data: { Boot } }) => {
+           commit(
+             'setBootSourceOptions',
+@@ -56,7 +56,7 @@ const BootSettingsStore = {
+       }
+ 
+       return api
+-        .patch('/redfish/v1/Systems/system', data)
++        .patch('/redfish/v1/Systems/System_0', data)
+         .then((response) => {
+           // If request success, commit the values
+           commit('setBootSource', data.Boot.BootSourceOverrideTarget);
+diff --git a/src/store/modules/Operations/ControlStore.js b/src/store/modules/Operations/ControlStore.js
+index 9b8bf73..e9bf006 100644
+--- a/src/store/modules/Operations/ControlStore.js
++++ b/src/store/modules/Operations/ControlStore.js
+@@ -51,7 +51,7 @@ const ControlStore = {
+   actions: {
+     async getLastPowerOperationTime({ commit }) {
+       return await api
+-        .get('/redfish/v1/Systems/system')
++        .get('/redfish/v1/Systems/System_0')
+         .then((response) => {
+           const lastReset = response.data.LastResetTime;
+           if (lastReset) {
+@@ -63,7 +63,7 @@ const ControlStore = {
+     },
+     getLastBmcRebootTime({ commit }) {
+       return api
+-        .get('/redfish/v1/Managers/bmc')
++        .get('/redfish/v1/Managers/BMC_0')
+         .then((response) => {
+           const lastBmcReset = response.data.LastResetTime;
+           const lastBmcRebootTime = new Date(lastBmcReset);
+@@ -74,7 +74,7 @@ const ControlStore = {
+     async rebootBmc({ dispatch }) {
+       const data = { ResetType: 'GracefulRestart' };
+       return await api
+-        .post('/redfish/v1/Managers/bmc/Actions/Manager.Reset', data)
++        .post('/redfish/v1/Managers/BMC_0/Actions/Manager.Reset', data)
+         .then(() => dispatch('getLastBmcRebootTime'))
+         .then(() => i18n.t('pageRebootBmc.toast.successRebootStart'))
+         .catch((error) => {
+@@ -120,7 +120,7 @@ const ControlStore = {
+     serverPowerChange({ commit }, data) {
+       commit('setOperationInProgress', true);
+       api
+-        .post('/redfish/v1/Systems/system/Actions/ComputerSystem.Reset', data)
++        .post('/redfish/v1/Systems/System_0/Actions/ComputerSystem.Reset', data)
+         .catch((error) => {
+           console.log(error);
+           commit('setOperationInProgress', false);
+diff --git a/src/store/modules/Operations/FactoryResetStore.js b/src/store/modules/Operations/FactoryResetStore.js
+index 8118cf7..df8d603 100644
+--- a/src/store/modules/Operations/FactoryResetStore.js
++++ b/src/store/modules/Operations/FactoryResetStore.js
+@@ -6,7 +6,7 @@ const FactoryResetStore = {
+   actions: {
+     async resetToDefaults() {
+       return await api
+-        .post('/redfish/v1/Managers/bmc/Actions/Manager.ResetToDefaults', {
++        .post('/redfish/v1/Managers/BMC_0/Actions/Manager.ResetToDefaults', {
+           ResetToDefaultsType: 'ResetAll',
+         })
+         .then(() => i18n.t('pageFactoryReset.toast.resetToDefaultsSuccess'))
+@@ -19,7 +19,7 @@ const FactoryResetStore = {
+     },
+     async resetBios() {
+       return await api
+-        .post('/redfish/v1/Systems/system/Bios/Actions/Bios.ResetBios')
++        .post('/redfish/v1/Systems/System_0/Bios/Actions/Bios.ResetBios')
+         .then(() => i18n.t('pageFactoryReset.toast.resetBiosSuccess'))
+         .catch((error) => {
+           console.log('Factory Reset: ', error);
+diff --git a/src/store/modules/Operations/FirmwareStore.js b/src/store/modules/Operations/FirmwareStore.js
+index afc12e9..86d4769 100644
+--- a/src/store/modules/Operations/FirmwareStore.js
++++ b/src/store/modules/Operations/FirmwareStore.js
+@@ -54,7 +54,7 @@ const FirmwareStore = {
+     },
+     getActiveBmcFirmware({ commit }) {
+       return api
+-        .get('/redfish/v1/Managers/bmc')
++        .get('/redfish/v1/Managers/BMC_0')
+         .then(({ data: { Links } }) => {
+           const id = Links?.ActiveSoftwareImage['@odata.id'].split('/').pop();
+           commit('setActiveBmcFirmwareId', id);
+@@ -63,7 +63,7 @@ const FirmwareStore = {
+     },
+     getActiveHostFirmware({ commit }) {
+       return api
+-        .get('/redfish/v1/Systems/system/Bios')
++        .get('/redfish/v1/Systems/System_0/Bios')
+         .then(({ data: { Links } }) => {
+           const id = Links?.ActiveSoftwareImage['@odata.id'].split('/').pop();
+           commit('setActiveHostFirmwareId', id);
+@@ -182,7 +182,7 @@ const FirmwareStore = {
+         },
+       };
+       return await api
+-        .patch('/redfish/v1/Managers/bmc', data)
++        .patch('/redfish/v1/Managers/BMC_0', data)
+         .catch((error) => {
+           console.log(error);
+           throw new Error(i18n.t('pageFirmware.toast.errorSwitchImages'));
+diff --git a/src/store/modules/Operations/KeyClearStore.js b/src/store/modules/Operations/KeyClearStore.js
+index 1dc96e0..f7218ed 100644
+--- a/src/store/modules/Operations/KeyClearStore.js
++++ b/src/store/modules/Operations/KeyClearStore.js
+@@ -10,7 +10,7 @@ const KeyClearStore = {
+       };
+       return await api
+         .patch(
+-          '/redfish/v1/Systems/system/Bios/Settings',
++          '/redfish/v1/Systems/System_0/Bios/Settings',
+           selectedKeyForClearing
+         )
+         .then(() => i18n.t('pageKeyClear.toast.selectedKeyClearedSuccess'))
+diff --git a/src/store/modules/Operations/VirtualMediaStore.js b/src/store/modules/Operations/VirtualMediaStore.js
+index 3ae08a1..5ae86e3 100644
+--- a/src/store/modules/Operations/VirtualMediaStore.js
++++ b/src/store/modules/Operations/VirtualMediaStore.js
+@@ -49,7 +49,7 @@ const VirtualMediaStore = {
+       }
+ 
+       return await api
+-        .get('/redfish/v1/Managers/bmc/VirtualMedia')
++        .get('/redfish/v1/Managers/BMC_0/VirtualMedia')
+         .then((response) =>
+           response.data.Members.map((virtualMedia) => virtualMedia['@odata.id'])
+         )
+@@ -93,7 +93,7 @@ const VirtualMediaStore = {
+     async mountImage(_, { id, data }) {
+       return await api
+         .post(
+-          `/redfish/v1/Managers/bmc/VirtualMedia/${id}/Actions/VirtualMedia.InsertMedia`,
++          `/redfish/v1/Managers/BMC_0/VirtualMedia/${id}/Actions/VirtualMedia.InsertMedia`,
+           data
+         )
+         .catch((error) => {
+@@ -104,7 +104,7 @@ const VirtualMediaStore = {
+     async unmountImage(_, id) {
+       return await api
+         .post(
+-          `/redfish/v1/Managers/bmc/VirtualMedia/${id}/Actions/VirtualMedia.EjectMedia`
++          `/redfish/v1/Managers/BMC_0/VirtualMedia/${id}/Actions/VirtualMedia.EjectMedia`
+         )
+         .catch((error) => {
+           console.log('Unmount image:', error);
+diff --git a/src/store/modules/SecurityAndAccess/CertificatesStore.js b/src/store/modules/SecurityAndAccess/CertificatesStore.js
+index 97241f3..75a93a1 100644
+--- a/src/store/modules/SecurityAndAccess/CertificatesStore.js
++++ b/src/store/modules/SecurityAndAccess/CertificatesStore.js
+@@ -4,7 +4,7 @@ import i18n from '@/i18n';
+ export const CERTIFICATE_TYPES = [
+   {
+     type: 'HTTPS Certificate',
+-    location: '/redfish/v1/Managers/bmc/NetworkProtocol/HTTPS/Certificates/',
++    location: '/redfish/v1/Managers/BMC_0/NetworkProtocol/HTTPS/Certificates/',
+     label: i18n.t('pageCertificates.httpsCertificate'),
+   },
+   {
+@@ -14,7 +14,7 @@ export const CERTIFICATE_TYPES = [
+   },
+   {
+     type: 'TrustStore Certificate',
+-    location: '/redfish/v1/Managers/bmc/Truststore/Certificates/',
++    location: '/redfish/v1/Managers/BMC_0/Truststore/Certificates/',
+     // Web UI will show 'CA Certificate' instead of
+     // 'TrustStore Certificate' after user testing revealed
+     // the term 'TrustStore Certificate' wasn't recognized/was unfamilar
+diff --git a/src/store/modules/SecurityAndAccess/PoliciesStore.js b/src/store/modules/SecurityAndAccess/PoliciesStore.js
+index 77199a4..be11f57 100644
+--- a/src/store/modules/SecurityAndAccess/PoliciesStore.js
++++ b/src/store/modules/SecurityAndAccess/PoliciesStore.js
+@@ -34,7 +34,7 @@ const PoliciesStore = {
+     },
+     async getNetworkProtocolStatus({ commit }) {
+       return await api
+-        .get('/redfish/v1/Managers/bmc/NetworkProtocol')
++        .get('/redfish/v1/Managers/BMC_0/NetworkProtocol')
+         .then((response) => {
+           const sshProtocol = response.data.SSH.ProtocolEnabled;
+           const ipmiProtocol = response.data.IPMI.ProtocolEnabled;
+@@ -45,7 +45,7 @@ const PoliciesStore = {
+     },
+     async getBiosStatus({ commit }) {
+       return await api
+-        .get('/redfish/v1/Systems/system/Bios')
++        .get('/redfish/v1/Systems/System_0/Bios')
+         .then((response) => {
+           commit('setRtadEnabled', response.data.Attributes.pvm_rtad);
+           commit('setVtpmEnabled', response.data.Attributes.pvm_vtpm);
+@@ -69,7 +69,7 @@ const PoliciesStore = {
+         },
+       };
+       return await api
+-        .patch('/redfish/v1/Managers/bmc/NetworkProtocol', ipmi)
++        .patch('/redfish/v1/Managers/BMC_0/NetworkProtocol', ipmi)
+         .then(() => {
+           if (protocolEnabled) {
+             return i18n.t('pagePolicies.toast.successIpmiEnabled');
+@@ -95,7 +95,7 @@ const PoliciesStore = {
+         },
+       };
+       return await api
+-        .patch('/redfish/v1/Managers/bmc/NetworkProtocol', ssh)
++        .patch('/redfish/v1/Managers/BMC_0/NetworkProtocol', ssh)
+         .then(() => {
+           if (protocolEnabled) {
+             return i18n.t('pagePolicies.toast.successSshEnabled');
+@@ -116,7 +116,7 @@ const PoliciesStore = {
+     async saveRtadState({ commit }, updatedRtad) {
+       commit('setRtadEnabled', updatedRtad);
+       return await api
+-        .patch('/redfish/v1/Systems/system/Bios/Settings', {
++        .patch('/redfish/v1/Systems/System_0/Bios/Settings', {
+           Attributes: {
+             pvm_rtad: updatedRtad,
+           },
+@@ -140,7 +140,7 @@ const PoliciesStore = {
+     async saveVtpmState({ commit }, updatedVtpm) {
+       commit('setVtpmEnabled', updatedVtpm);
+       return await api
+-        .patch('/redfish/v1/Systems/system/Bios/Settings', {
++        .patch('/redfish/v1/Systems/System_0/Bios/Settings', {
+           Attributes: {
+             pvm_vtpm: updatedVtpm,
+           },
+diff --git a/src/store/modules/Settings/DateTimeStore.js b/src/store/modules/Settings/DateTimeStore.js
+index 51b722a..7c24b27 100644
+--- a/src/store/modules/Settings/DateTimeStore.js
++++ b/src/store/modules/Settings/DateTimeStore.js
+@@ -19,7 +19,7 @@ const DateTimeStore = {
+   actions: {
+     async getNtpData({ commit }) {
+       return await api
+-        .get('/redfish/v1/Managers/bmc/NetworkProtocol')
++        .get('/redfish/v1/Managers/BMC_0/NetworkProtocol')
+         .then((response) => {
+           const ntpServers = response.data.NTP.NTPServers;
+           const isNtpProtocolEnabled = response.data.NTP.ProtocolEnabled;
+@@ -40,7 +40,7 @@ const DateTimeStore = {
+         ntpData.NTP.NTPServers = dateTimeForm.ntpServersArray;
+       }
+       return await api
+-        .patch(`/redfish/v1/Managers/bmc/NetworkProtocol`, ntpData)
++        .patch(`/redfish/v1/Managers/BMC_0/NetworkProtocol`, ntpData)
+         .then(async () => {
+           if (!dateTimeForm.ntpProtocolEnabled) {
+             const dateTimeData = {
+@@ -60,7 +60,7 @@ const DateTimeStore = {
+             return await new Promise((resolve, reject) => {
+               setTimeout(() => {
+                 return api
+-                  .patch(`/redfish/v1/Managers/bmc`, dateTimeData)
++                  .patch(`/redfish/v1/Managers/BMC_0`, dateTimeData)
+                   .then(() => resolve())
+                   .catch(() => reject());
+               }, timeoutVal);
+diff --git a/src/store/modules/Settings/NetworkStore.js b/src/store/modules/Settings/NetworkStore.js
+index 5c78d10..ecd78b7 100644
+--- a/src/store/modules/Settings/NetworkStore.js
++++ b/src/store/modules/Settings/NetworkStore.js
+@@ -60,7 +60,7 @@ const NetworkStore = {
+   actions: {
+     async getEthernetData({ commit }) {
+       return await api
+-        .get('/redfish/v1/Managers/bmc/EthernetInterfaces')
++        .get('/redfish/v1/Managers/BMC_0/EthernetInterfaces')
+         .then((response) =>
+           response.data.Members.map(
+             (ethernetInterface) => ethernetInterface['@odata.id']
+@@ -96,7 +96,7 @@ const NetworkStore = {
+       };
+       return api
+         .patch(
+-          `/redfish/v1/Managers/bmc/EthernetInterfaces/${state.selectedInterfaceId}`,
++          `/redfish/v1/Managers/BMC_0/EthernetInterfaces/${state.selectedInterfaceId}`,
+           data
+         )
+         .then(dispatch('getEthernetData'))
+@@ -125,7 +125,7 @@ const NetworkStore = {
+       // on all interfaces
+       return api
+         .patch(
+-          `/redfish/v1/Managers/bmc/EthernetInterfaces/${state.firstInterfaceId}`,
++          `/redfish/v1/Managers/BMC_0/EthernetInterfaces/${state.firstInterfaceId}`,
+           data
+         )
+         .then(() => {
+@@ -154,7 +154,7 @@ const NetworkStore = {
+       // on all interfaces
+       return api
+         .patch(
+-          `/redfish/v1/Managers/bmc/EthernetInterfaces/${state.firstInterfaceId}`,
++          `/redfish/v1/Managers/BMC_0/EthernetInterfaces/${state.firstInterfaceId}`,
+           data
+         )
+         .then(() => {
+@@ -183,7 +183,7 @@ const NetworkStore = {
+       // on all interfaces
+       return api
+         .patch(
+-          `/redfish/v1/Managers/bmc/EthernetInterfaces/${state.firstInterfaceId}`,
++          `/redfish/v1/Managers/BMC_0/EthernetInterfaces/${state.firstInterfaceId}`,
+           data
+         )
+         .then(() => {
+@@ -221,7 +221,7 @@ const NetworkStore = {
+       const newAddress = [ipv4Form];
+       return api
+         .patch(
+-          `/redfish/v1/Managers/bmc/EthernetInterfaces/${state.selectedInterfaceId}`,
++          `/redfish/v1/Managers/BMC_0/EthernetInterfaces/${state.selectedInterfaceId}`,
+           { IPv4StaticAddresses: originalAddresses.concat(newAddress) }
+         )
+         .then(dispatch('getEthernetData'))
+@@ -242,7 +242,7 @@ const NetworkStore = {
+     async editIpv4Address({ dispatch, state }, ipv4TableData) {
+       return api
+         .patch(
+-          `/redfish/v1/Managers/bmc/EthernetInterfaces/${state.selectedInterfaceId}`,
++          `/redfish/v1/Managers/BMC_0/EthernetInterfaces/${state.selectedInterfaceId}`,
+           { IPv4StaticAddresses: ipv4TableData }
+         )
+         .then(dispatch('getEthernetData'))
+@@ -263,7 +263,7 @@ const NetworkStore = {
+     async saveSettings({ state, dispatch }, interfaceSettingsForm) {
+       return api
+         .patch(
+-          `/redfish/v1/Managers/bmc/EthernetInterfaces/${state.selectedInterfaceId}`,
++          `/redfish/v1/Managers/BMC_0/EthernetInterfaces/${state.selectedInterfaceId}`,
+           interfaceSettingsForm
+         )
+         .then(dispatch('getEthernetData'))
+@@ -288,7 +288,7 @@ const NetworkStore = {
+       const newDnsArray = originalAddresses.concat(newAddress);
+       return api
+         .patch(
+-          `/redfish/v1/Managers/bmc/EthernetInterfaces/${state.selectedInterfaceId}`,
++          `/redfish/v1/Managers/BMC_0/EthernetInterfaces/${state.selectedInterfaceId}`,
+           { StaticNameServers: newDnsArray }
+         )
+         .then(dispatch('getEthernetData'))
+@@ -309,7 +309,7 @@ const NetworkStore = {
+     async editDnsAddress({ dispatch, state }, dnsTableData) {
+       return api
+         .patch(
+-          `/redfish/v1/Managers/bmc/EthernetInterfaces/${state.selectedInterfaceId}`,
++          `/redfish/v1/Managers/BMC_0/EthernetInterfaces/${state.selectedInterfaceId}`,
+           { StaticNameServers: dnsTableData }
+         )
+         .then(dispatch('getEthernetData'))
+diff --git a/src/store/modules/Settings/PowerPolicyStore.js b/src/store/modules/Settings/PowerPolicyStore.js
+index 54efa2c..8cc93ea 100644
+--- a/src/store/modules/Settings/PowerPolicyStore.js
++++ b/src/store/modules/Settings/PowerPolicyStore.js
+@@ -44,7 +44,7 @@ const PowerPolicyStore = {
+     },
+     async getPowerRestoreCurrentPolicy({ commit }) {
+       return await api
+-        .get('/redfish/v1/Systems/system')
++        .get('/redfish/v1/Systems/System_0')
+         .then(({ data: { PowerRestorePolicy } }) => {
+           commit('setPowerRestoreCurrentPolicy', PowerRestorePolicy);
+         })
+@@ -54,7 +54,7 @@ const PowerPolicyStore = {
+       const data = { PowerRestorePolicy: powerPolicy };
+ 
+       return await api
+-        .patch('/redfish/v1/Systems/system', data)
++        .patch('/redfish/v1/Systems/System_0', data)
+         .then(() => {
+           dispatch('getPowerRestoreCurrentPolicy');
+           return i18n.t('pagePowerRestorePolicy.toast.successSaveSettings');
+diff --git a/src/views/HardwareStatus/Inventory/InventoryTableChassis.vue b/src/views/HardwareStatus/Inventory/InventoryTableChassis.vue
+index 4c557fa..dca2a78 100644
+--- a/src/views/HardwareStatus/Inventory/InventoryTableChassis.vue
++++ b/src/views/HardwareStatus/Inventory/InventoryTableChassis.vue
+@@ -169,7 +169,7 @@ export default {
+   },
+   computed: {
+     chassis() {
+-      return this.$store.getters['chassis/chassis'];
++      return this.$store.getters['Chassis/Baseboard_0'];
+     },
+   },
+   created() {

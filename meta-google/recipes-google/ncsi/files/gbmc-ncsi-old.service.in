@@ -1,0 +1,11 @@
+[Unit]
+Before=systemd-networkd.service
+ConditionFileNotEmpty=/etc/systemd/network/00-bmc-@OLD_IF@.network
+
+[Service]
+Type=oneshot
+ExecStart=bash -c "sed 's,Name=@OLD_IF@,Name=@NCSI_IF@,' /etc/systemd/network/00-bmc-@OLD_IF@.network >/etc/systemd/network/00-bmc-@NCSI_IF@.network"
+ExecStart=rm -v /etc/systemd/network/00-bmc-@OLD_IF@.network
+
+[Install]
+WantedBy=multi-user.target

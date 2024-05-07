@@ -1,0 +1,9 @@
+#!/bin/sh
+
+for i in test/*_test; do
+    if $i ; then
+        echo "PASS: $i"
+    else
+        echo "FAIL: $i"
+    fi
+done

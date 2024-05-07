@@ -1,0 +1,11 @@
+[Unit]
+Description=NVIDIA emmc partition Service
+
+[Service]
+RemainAfterExit=yes
+Type=oneshot
+ExecStart=/usr/bin/env emmc-partition-format.sh mmcblk0 
+SyslogIdentifier=emmc-partition
+
+[Install]
+WantedBy=multi-user.target

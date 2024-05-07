@@ -1,0 +1,7 @@
+[Unit]
+Description=CPU boot undone service
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/sh -c 'control-bios-host-interface.sh boot-undone'
+ExecStart=/usr/bin/env /usr/bin/delete-hi-user.sh

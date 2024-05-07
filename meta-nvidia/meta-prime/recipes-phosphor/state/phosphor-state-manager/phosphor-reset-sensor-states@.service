@@ -1,0 +1,20 @@
+# File slightly different from upstream -> StartLimitBurst line added to uncap start rate
+
+[Unit]
+Description=Reset host sensors
+Wants=mapper-wait@-xyz-openbmc_project-state-host%i.service
+After=mapper-wait@-xyz-openbmc_project-state-host%i.service
+After=obmc-host-reset@%i.target
+ConditionPathExists=!/run/openbmc/host@%i-on
+
+[Service]
+Restart=no
+Type=oneshot
+ExecStart=/bin/sh -c "busctl set-property `mapper get-service /xyz/openbmc_project/state/host0` /xyz/openbmc_project/state/host0 xyz.openbmc_project.State.Boot.Progress  BootProgress s xyz.openbmc_project.State.Boot.Progress.ProgressStages.Unspecified"
+ExecStart=/bin/sh -c "busctl set-property `mapper get-service /xyz/openbmc_project/state/host0` /xyz/openbmc_project/state/host0 xyz.openbmc_project.State.OperatingSystem.Status OperatingSystemState s xyz.openbmc_project.State.OperatingSystem.Status.OSStatus.Inactive"
+ExecStart=/bin/sh -c "busctl set-property `mapper get-service /xyz/openbmc_project/state/host0`  /xyz/openbmc_project/state/host0 xyz.openbmc_project.State.Host RestartCause s xyz.openbmc_project.State.Host.RestartCause.Unknown"
+StartLimitBurst=0
+
+
+[Install]
+WantedBy=multi-user.target

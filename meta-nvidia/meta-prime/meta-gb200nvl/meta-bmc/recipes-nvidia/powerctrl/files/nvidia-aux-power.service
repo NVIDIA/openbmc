@@ -1,0 +1,10 @@
+[Unit]
+Description=Aux cycle Host
+Requires=bmc-boot-complete.service
+After=bmc-boot-complete.service
+
+[Service]
+RemainAfterExit=yes
+Type=oneshot
+ExecStart=/usr/bin/env stbypowerctrl.sh aux_cycle
+SyslogIdentifier=auxcycle

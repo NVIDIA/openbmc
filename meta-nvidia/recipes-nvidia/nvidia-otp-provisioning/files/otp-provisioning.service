@@ -1,0 +1,12 @@
+[Unit]
+Description=OTP provisioning upon first boot
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/sysconfig/otp-conf
+ExecStartPre=/bin/sh -c '/usr/bin/otp-monitor.sh'
+ExecStart=-/bin/sh -c '/usr/bin/otp-provisioning.sh'
+ExecStartPost=/bin/sh -c '/usr/bin/otp-monitor.sh'
+
+[Install]
+WantedBy=multi-user.target

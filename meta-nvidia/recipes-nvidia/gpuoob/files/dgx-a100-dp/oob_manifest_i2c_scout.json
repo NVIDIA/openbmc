@@ -1,0 +1,70 @@
+{
+  "version": 1.0,
+  "fpga": [
+    {
+      "id": "fpga_0",
+      "interface": {
+        "i2c": {
+          "bus": "0x0C",
+          "slave_addr": "0x60",
+          "mux": null
+        }
+      },
+      "baseboard": 1,
+      "hsc": 4,
+      "standbyhsc": 1,
+      "outputhsc": 1,
+      "pcbTemp": 1,
+      "inletTemp": 4,
+      "altPressureSensor": 1,
+      "sysvr1v8": 1
+    }
+  ],
+  "gpu": [
+    {
+      "id": "gpu_0",
+      "interface" : {
+        "i2c": {
+          "bus": "0x0B",
+          "slave_addr": "0x4c",
+          "mux": null
+        }
+      },
+      "manager": "fpga_0"
+    },
+    {
+      "id": "gpu_1",
+      "interface": {
+        "i2c": {
+          "bus": "0x0B",
+          "slave_addr": "0x4d",
+          "mux": null
+        }
+      },
+      "manager": "fpga_0"
+    },
+    {
+      "id": "gpu_2",
+      "interface": {
+        "i2c": {
+          "bus": "0x0B",
+          "slave_addr": "0x4e",
+          "mux": null
+        }
+      },
+      "manager": "fpga_0"
+    },
+    {
+      "id": "gpu_3",
+      "interface": {
+        "i2c": {
+          "bus": "0x0B",
+          "slave_addr": "0x4f",
+          "mux": null
+        }
+      },
+      "manager": "fpga_0"
+    }
+  ]
+}
+

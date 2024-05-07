@@ -1,0 +1,7 @@
+header:
+  version: 14
+  includes:
+    - ci/corstone1000-common.yml
+    - ci/fvp.yml
+
+machine: corstone1000-fvp

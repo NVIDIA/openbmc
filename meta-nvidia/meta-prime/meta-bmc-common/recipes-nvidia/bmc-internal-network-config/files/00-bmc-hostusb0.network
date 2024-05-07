@@ -1,0 +1,13 @@
+[Match]
+Name=hostusb0
+
+[Network]
+DHCP=false
+LinkLocalAddressing=false
+IPv6AcceptRA=false
+ConfigureWithoutCarrier=true
+
+[Address]
+# static IP
+# 10.0.1.1 netmask 255.255.255.0
+Address=10.0.1.1/24

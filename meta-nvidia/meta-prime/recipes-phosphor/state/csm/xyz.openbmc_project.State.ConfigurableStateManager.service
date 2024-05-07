@@ -1,0 +1,12 @@
+[Unit]
+Description=Configurable State Manager
+After=obmc-mapper.target
+
+[Service]
+ExecStart=/usr/bin/configurable-state-manager
+Restart=always
+Type=dbus
+BusName=xyz.openbmc_project.State.ConfigurableStateManager
+
+[Install]
+WantedBy=multi-user.target

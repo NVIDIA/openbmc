@@ -1,0 +1,7 @@
+{
+    "fvp-bindir": ".",
+    "exe": "test-parameters.py",
+    "parameters": {
+        "board.cow": "moo"
+    }
+}

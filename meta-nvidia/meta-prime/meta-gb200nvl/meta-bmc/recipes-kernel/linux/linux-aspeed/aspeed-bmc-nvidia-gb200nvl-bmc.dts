@@ -1,0 +1,396 @@
+// SPDX-License-Identifier: GPL-2.0+
+/dts-v1/;
+
+#include "nvidia-gb200nvl-bmc-core.dtsi"
+#include <dt-bindings/leds/common.h>
+
+/ {
+    model = "AST2600 GB200NVL BMC";
+    compatible = "aspeed,ast2600";
+
+	aliases {
+		serial2 = &uart3;
+		serial4 = &uart5;
+	};
+
+	chosen {
+		stdout-path = &uart5;
+		bootargs = "console=tty0 console=ttyS4,115200n8 earlyprintk";
+	};
+
+	memory@80000000 {
+		device_type = "memory";
+		reg = <0x80000000 0x80000000>;
+	};
+
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		vga_memory: framebuffer@9f000000 {
+			no-map;
+			reg = <0x9f000000 0x01000000>; /* 16M */
+		};
+
+
+		ramoops@a0000000 {
+			compatible = "ramoops";
+			reg = <0xa0000000 0x100000>; /* 1MB */
+			record-size = <0x10000>; /* 64KB */
+			max-reason = <2>; /* KMSG_DUMP_OOPS */
+		};
+
+		gfx_memory: framebuffer {
+			size = <0x01000000>;
+			alignment = <0x01000000>;
+			compatible = "shared-dma-pool";
+			reusable;
+		};
+
+		video_engine_memory: jpegbuffer {
+			size = <0x02000000>;	/* 32M */
+			alignment = <0x01000000>;
+			compatible = "shared-dma-pool";
+			reusable;
+		};
+	};
+
+    power-gpios{
+        n2-gpios = <&gpio0 ASPEED_GPIO(N, 2) (GPIO_ACTIVE_HIGH|GPIO_PULL_UP)>;
+        n3-gpios = <&gpio0 ASPEED_GPIO(N, 3) (GPIO_ACTIVE_HIGH|GPIO_PULL_UP)>;
+    };
+
+    leds {
+        compatible = "gpio-leds";
+        uid_led {
+                gpios = <&sgpiom0 27 GPIO_ACTIVE_LOW>;
+        };
+        fault_led {
+                gpios = <&sgpiom0 29 GPIO_ACTIVE_LOW>;
+        };
+        power_led {
+                gpios = <&sgpiom0 31 GPIO_ACTIVE_LOW>;
+        };
+
+        // Non-LEDs:
+        //   BMC_READY-O GPIO pin (not an LED) is being bound to the GPIO LED driver.
+        // Notes:
+        // * This is a workaround and leverages the GPIO LED driver to enable control of
+        //   reset tolerance and still allow the GPIO to be controlled from user space.
+        // * The standard Linux GPIO driver allows control of reset tolerance, however
+        //   does not expose user space APIs for user space control of the GPIO pin.
+        // * GPIO_TRANSITORY = reset tolerance is disabled
+        // * Any non-leds should be added below this line.
+        bmc_ready_noled {
+            gpios = <&gpio0 ASPEED_GPIO(Z, 0) (GPIO_ACTIVE_HIGH|GPIO_TRANSITORY)>;
+        };
+    };
+};
+
+// Enabled Primary flash on FMC for bring up activity
+&fmc {
+    status = "okay";
+    flash@0 {
+        status = "okay";
+        compatible = "jedec,spi-nor";
+        label = "bmc";
+        spi-max-frequency = <50000000>;
+#include "aspeed-bmc-nvidia-gh-flash-layout-64.dtsi"
+    };
+};
+
+&fmcraw {
+    status = "okay";
+    spidev@0 {
+        compatible = "hgx,glacier";
+        status = "okay";
+    };
+};
+
+&spi1raw {
+    status = "okay";
+    pinctrl-names = "default";
+    pinctrl-0 = <&pinctrl_spi1_default>;
+    spidev@0 {
+        spi-max-frequency = <25000000>;
+        compatible = "hgx,glacier";
+        status = "okay";
+    };
+};
+
+&spi2 {
+    status = "okay";
+    pinctrl-names = "default";
+    pinctrl-0 = <&pinctrl_spi2_default>;
+
+    // Data SPI is 64MB in size
+    flash@0 {
+        status = "okay";
+        label = "config";
+        spi-max-frequency = <50000000>;
+        partitions {
+            compatible = "fixed-partitions";
+            #address-cells = <1>;
+            #size-cells = <1>;
+
+            u-boot-env@0 {
+                reg = <0x0 0x40000>;            // 256KB at offset 0
+                label = "u-boot-env";
+            };
+
+            rwfs@40000 {
+                reg = <0x40000 0x1000000>;      // 16MB at offset 0x40000
+                label = "rwfs";
+            };
+
+            log@0x1040000 {
+                reg = <0x1040000 0x2800000>;    // 40MB at offset 0x1040000
+                label = "log";                  // Move log to EMMC, make this unused
+            };
+        };
+    };
+};
+
+&uart1 {
+        status = "okay";        
+};
+
+&uart3 {
+        //Enabling SOL
+        status = "okay";
+        
+};
+
+&uart5 {
+    // BMC Debug Console
+    status = "okay";
+};
+
+&uart_routing {
+       status = "okay";
+};
+
+// MAC1 (per schematics, 1-based MAC1-MAC4) of AST2600 connected to external PHY
+// This is "mac0" in zero-based DTS
+&mdio0 {
+    status = "okay";
+    ethphy0: ethernet-phy@0 {
+        compatible = "ethernet-phy-ieee802.3-c22";
+        reg = <0>;
+    };
+};
+
+&mac0 {
+    status = "okay";
+    pinctrl-names = "default";
+    phy-mode = "rgmii-rxid";
+    max-speed = <1000>;
+    phy-handle = <&ethphy0>;
+    pinctrl-0 = <&pinctrl_rgmii1_default>;
+};
+
+&mac2 {
+    status = "okay";
+    phy-mode = "rmii";
+    use-ncsi;
+    pinctrl-names = "default";
+    pinctrl-0 = <&pinctrl_rmii3_default>;
+};
+
+
+// Enable emmc
+&emmc_controller {
+    status = "okay";
+};
+
+&emmc {
+    non-removable;
+    bus-width = <4>;
+    max-frequency = <52000000>;
+    clk-phase-mmc-hs200 = <9>, <225>;
+};
+
+/*
+ * Enable USB port A as device (via the virtual hub) to host
+ */
+&vhub {
+    status = "okay";
+    pinctrl-names = "default"; 
+    /* 
+        Uncomment below line to enable internal EHCI controller
+        Current config uses xHCI Port1
+    */
+    // pinctrl-0 = <&pinctrl_usb2adp_default>;
+};
+
+&video {
+	status = "okay";
+	memory-region = <&video_engine_memory>;
+};
+
+// USB 2.0 to HMC, on USB Port B
+&ehci1 {
+   status = "okay";
+};
+
+// USB 1.0
+&uhci {
+   status = "okay";
+};
+
+// I2C1, SSIF IPMI interface
+&i2c0 {
+    status = "okay";
+    bus-frequency = <400000>;
+	disable-master = <1>;
+    ssif-bmc@10 {
+        compatible = "ssif-bmc";
+        alert-gpio = <&sgpiom0 39 GPIO_ACTIVE_LOW>;
+        pulse_width_us = <5>;
+        timeout_ms = <4995>;
+        reg = <0x10>;
+        };
+};
+
+// I2C2
+// BMC_I2C1_FPGA - Secondary FPGA
+// HMC EROT
+&i2c1 {
+    status = "okay";
+    bus-frequency = <400000>;
+};
+
+// I2C3
+// BMC_I2C0_FPGA - Primary FPGA
+// HMC FRU EEPROM
+&i2c2 {
+    status = "okay";
+    bus-frequency = <400000>;
+    multi-master;
+};
+
+// I2C4
+&i2c3 {
+    status = "disabled";
+};
+
+// I2C5
+// RTC Driver
+// IO Expander
+&i2c4 {
+    status = "okay";
+    bus-frequency = <400000>;
+    rtc@6f {
+        compatible = "nuvoton,nct3018y";
+        reg = <0x6f>;
+        };
+};
+
+// I2C6
+// Module 0/1 I2C MUX x3 
+&i2c5 {
+    status = "okay";
+    bus-frequency = <400000>;
+};
+
+// I2C7
+// Module 0/1 Leak Sensors
+// Module 0/1 Fan Controllers
+&i2c6 {
+    status = "okay";
+    bus-frequency = <400000>;
+};
+
+// I2C9
+// M.2
+&i2c8 {
+    status = "okay";
+    bus-frequency = <400000>;
+};
+
+// I2C10
+// HMC IO Expander
+// Module 0/1 IO Expanders
+&i2c9 {
+    status = "okay";
+    bus-frequency = <400000>;
+};
+
+// I2C11
+// BMC FRU EEPROM
+// BMC Temp Sensor
+&i2c10 {
+    status = "okay";
+    bus-frequency = <400000>;
+    // BMC FRU EEPROM - 256 bytes
+    eeprom@50 {
+        compatible = "atmel,24c02";
+        reg = <0x50>;
+        pagesize = <8>;
+    };
+};
+
+// I2C12
+&i2c11 {
+    status = "disabled";
+};
+
+// I2C13
+&i2c12 {
+    status = "disabled";
+};
+
+// I2C14
+// Module 0 UPHY3 SMBus
+&i2c13 {
+    status = "disabled";
+};
+
+// I2C15
+// Module 1 UPHY3 SMBus
+&i2c14 {
+    status = "okay";
+    bus-frequency = <400000>;
+};
+
+// I2C16
+&i2c15 {
+    status = "okay";
+    bus-frequency = <400000>;
+};
+
+// PCIe RC
+&pcie {
+    status = "okay";
+
+    interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+
+    pcie_intc0: legacy-interrupt-controller {
+                    interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+    };
+};
+
+// Bridge between AHB bus and PCIe RC.
+&h2x {
+    status = "okay";
+};
+
+&mctp {
+    status = "okay";
+};
+
+&jtag0 {
+    mux-gpios = <&gpio0 50 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+    status = "okay";
+};
+
+&jtag1 {
+    mux-gpios = <&sgpiom0 41 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+    status = "okay";
+};
+
+&rng {
+    status = "okay";
+};
+

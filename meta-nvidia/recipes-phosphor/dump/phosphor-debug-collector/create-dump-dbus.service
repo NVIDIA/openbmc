@@ -1,0 +1,11 @@
+[Unit]
+Description=start "create dump dbus" application server
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=10
+ExecStart=/bin/sh -c '/usr/bin/create-dump-dbus -s'
+
+[Install]
+WantedBy=multi-user.target

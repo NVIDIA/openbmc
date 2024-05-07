@@ -1,0 +1,44 @@
+From c5c781efce39c838c38a63526fe31903d3271e4c Mon Sep 17 00:00:00 2001
+From: Curtis Chuang <shengchihc@nvidia.com>
+Date: Wed, 10 Jan 2024 20:01:03 -0800
+Subject: [PATCH] catch std::exception and add soft shutdown(graceful shutdown)
+
+Signed-off-by: Curtis Chuang <shengchihc@nvidia.com>
+---
+ sensor-monitor/shutdown_alarm_monitor.cpp | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/sensor-monitor/shutdown_alarm_monitor.cpp b/sensor-monitor/shutdown_alarm_monitor.cpp
+index 214e3a3..4cd22b6 100644
+--- a/sensor-monitor/shutdown_alarm_monitor.cpp
++++ b/sensor-monitor/shutdown_alarm_monitor.cpp
+@@ -157,7 +157,7 @@ void ShutdownAlarmMonitor::checkAlarms()
+             value = SDBusPlus::getProperty<bool>(bus, sensorPath, interface,
+                                                  propertyName);
+         }
+-        catch (const DBusServiceError& e)
++        catch (const std::exception& e)
+         {
+             // The sensor isn't on D-Bus anymore
+             log<level::INFO>(std::format("No {} interface on {} anymore.",
+@@ -394,9 +394,14 @@ void ShutdownAlarmMonitor::timerExpired(const AlarmKey& alarmKey)
+     // wrapped by a compile option.
+     createEventLog(alarmKey, true, value, true);
+ 
+-    SDBusPlus::callMethod(systemdService, systemdPath, systemdMgrIface,
+-                          "StartUnit", "obmc-chassis-hard-poweroff@0.target",
+-                          "replace");
++    if (shutdownType == ShutdownType::hard)
++        SDBusPlus::callMethod(systemdService, systemdPath, systemdMgrIface,
++                              "StartUnit", "obmc-chassis-hard-poweroff@0.target",
++                              "replace");
++    else
++        SDBusPlus::callMethod(systemdService, systemdPath, systemdMgrIface,
++                              "StartUnit", "obmc-host-shutdown@0.target",
++                              "replace");
+ 
+     timestamps.erase(alarmKey);
+     createBmcDump();
+-- 
+2.43.0
+

@@ -1,0 +1,1 @@
+MBOXD_FLASH_SIZE:romulus = "64M"

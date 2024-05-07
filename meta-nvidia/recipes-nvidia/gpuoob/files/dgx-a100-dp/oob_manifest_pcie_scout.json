@@ -1,0 +1,25 @@
+{
+    "version": 1.0,
+    "fpga": [
+        {
+            "id": "fpga_0",
+            "interface": {
+                "pcie": {
+                    "seg": "0",
+                    "bus": "1",
+                    "dev": "0",
+                    "func": "0"
+                }
+            },
+            "baseboard": 1,
+            "hsc": 4,
+            "gpu": 4,
+            "standbyhsc": 1,
+            "outputhsc": 1,
+            "pcbTemp": 1,
+            "inletTemp": 4,
+            "altPressureSensor": 1,
+            "sysvr1v8": 1
+        }
+    ]
+}

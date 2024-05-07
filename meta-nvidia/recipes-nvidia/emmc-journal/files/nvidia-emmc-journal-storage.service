@@ -1,0 +1,12 @@
+[Unit]
+Description=EMMC Journal Storage
+Requires=nvidia-emmc-partition.service
+After=nvidia-emmc-partition.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/env emmc-journal-storage.sh /var/emmc/user-logs ext4
+#Usage of the emmc-journal-storage.sh <mount_point> <required_filesystem>
+RemainAfterExit=yes
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,11 @@
+[Unit]
+Description=start secure shell configuration script upon first boot
+After=nvidia_default_dropbear_config.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c '/usr/bin/secure-shell.sh'
+
+[Install]
+WantedBy=multi-user.target
+Before=dropbear.socket

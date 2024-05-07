@@ -1,0 +1,13 @@
+{
+    "version": 0.1,
+    "nvlinkTopology": {
+        "nvswitchNVLinks": [
+        ],
+        "nvswitchTopology": [
+        ],
+        "gpuNVLinks": [
+        ],
+        "gpuTopology": [
+        ]
+    }
+}

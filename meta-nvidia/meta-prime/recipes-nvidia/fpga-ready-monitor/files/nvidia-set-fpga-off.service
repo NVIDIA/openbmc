@@ -1,0 +1,14 @@
+[Unit]
+Description=NVIDIA BMC FPGA Not Ready target
+Wants=
+StartLimitIntervalSec=1
+
+[Service]
+Restart=no
+Type=simple
+ExecStart=systemctl start nvidia-fpga-notready.target
+SyslogIdentifier=nvidia-fpga-not-ready-service
+
+[Install]
+WantedBy=multi-user.target
+

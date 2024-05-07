@@ -1,0 +1,26 @@
+# File slightly different from upstream -> StartLimitBurst line added to uncap start rate
+
+[Unit]
+Description=Set host state to transition to running
+Wants=mapper-wait@-xyz-openbmc_project-state-host%i.service
+After=mapper-wait@-xyz-openbmc_project-state-host%i.service
+Wants=obmc-host-start-pre@%i.target
+Before=obmc-host-start-pre@%i.target
+Wants=ssifbridge.service
+After=ssifbridge.service
+Wants=network.service
+After=network.target
+Wants=bmcweb.service
+After=bmcweb.target
+Conflicts=obmc-host-stop@%i.target
+ConditionPathExists=!/run/openbmc/host@%i-on
+
+[Service]
+Restart=no
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh -c "busctl set-property `mapper get-service /xyz/openbmc_project/state/host%i` /xyz/openbmc_project/state/host%i xyz.openbmc_project.State.Host CurrentHostState s xyz.openbmc_project.State.Host.HostState.TransitioningToRunning"
+StartLimitBurst=0
+
+[Install]
+WantedBy=obmc-host-startmin@%i.target

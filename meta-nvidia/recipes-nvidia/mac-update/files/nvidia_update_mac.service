@@ -1,0 +1,11 @@
+[Unit]
+Description=Updating MAC Address Service From FRU inventory
+
+[Service]
+ExecStart=/usr/bin/env nvidia_update_mac.sh
+SyslogIdentifier=nvidia_update_mac.sh
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
