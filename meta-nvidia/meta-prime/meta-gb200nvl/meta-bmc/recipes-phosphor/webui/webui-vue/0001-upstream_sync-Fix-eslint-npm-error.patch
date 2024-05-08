@@ -1,0 +1,31 @@
+From 21e060bac191bec0e5aaa80e5eb915bc784282af Mon Sep 17 00:00:00 2001
+From: Santosh Puranik <spuranik@nvidia.com>
+Date: Sun, 21 May 2023 16:53:57 +0530
+Subject: [PATCH] upstream_sync: Fix eslint npm error
+
+For reasons unknown, npm does not seem to like the version of eslint
+specified in package.json due to comflict with other packages.
+
+Until we determine what the issue is, remove the eslint package from the
+JSON.
+
+Signed-off-by: Santosh Puranik <spuranik@nvidia.com>
+---
+ package.json | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/package.json b/package.json
+index 5df7aa4..cff22ad 100644
+--- a/package.json
++++ b/package.json
+@@ -49,7 +49,6 @@
+         "babel-plugin-transform-require-context": "0.1.1",
+         "check-node-version": "4.1.0",
+         "compression-webpack-plugin": "6.0.3",
+-        "eslint": "7.22.0",
+         "eslint-plugin-prettier": "3.3.1",
+         "eslint-plugin-vue": "7.8.0",
+         "lint-staged": "10.5.4",
+-- 
+2.34.1
+
