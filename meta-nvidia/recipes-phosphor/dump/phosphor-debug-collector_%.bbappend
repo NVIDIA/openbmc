@@ -1,7 +1,7 @@
 # Use NVIDIA gitlab Phosphor Debug Collector
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 SRC_URI = "git://github.com/NVIDIA/phosphor-debug-collector;protocol=https;branch=develop"
-SRCREV = "62e9802fe2b0cd55af346109befce26f9f329556"
+SRCREV = "5cc3bd15399d356a6fa019595e14510221dcd570"
 
 SRC_URI += "file://create-dump-dbus.service"
 
@@ -14,6 +14,8 @@ EXTRA_OEMESON += "-Dtests=disabled"
 EXTRA_OEMESON += "-Ddump_rotate_config=enabled"
 EXTRA_OEMESON += "-Dfaultlog-dump-rotation=enabled"
 EXTRA_OEMESON += "-DBMC_DUMP_MIN_SPACE_REQD=8192"
+
+SRC_URI:append = " file://cper_dump.sh "
 
 FILES:${PN}-manager +=  " \
     ${bindir}/phosphor-dump-manager \

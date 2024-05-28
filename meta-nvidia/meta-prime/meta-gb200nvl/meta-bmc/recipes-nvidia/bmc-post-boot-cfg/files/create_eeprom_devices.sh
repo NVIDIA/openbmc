@@ -19,13 +19,13 @@
 #   0 Always
 create_eeprom_devices(){
     # I2C-1
-    # Module 1 FRU EEPROM
+    # Module 1 FRU EEPROM (Device ID: 24AA64)
     echo 24c64 0x50 > /sys/class/i2c-dev/i2c-1/device/new_device
 
     # IC2-2
-    # HMC FRU EEPROM
+    # HMC FRU EEPROM (Device ID: AT24C02D)
     echo 24c02 0x57 > /sys/class/i2c-dev/i2c-2/device/new_device
-    # Module 0 FRU EEPROM
+    # Module 0 FRU EEPROM (Device ID: 24AA64)
     echo 24c64 0x50 > /sys/class/i2c-dev/i2c-2/device/new_device
 
     # IC2-4
@@ -33,25 +33,29 @@ create_eeprom_devices(){
     echo 24c64 0x50 > /sys/class/i2c-dev/i2c-4/device/new_device
 
     # I2C-6
-    # PDB FRU EEPROM
-    echo 24c64 0x50 > /sys/class/i2c-dev/i2c-6/device/new_device
+    # PDB FRU EEPROM (Device ID: M24C02)
+    echo 24c02 0x50 > /sys/class/i2c-dev/i2c-6/device/new_device
 
     # I2C-9
-    # Module 0 Aux EEPROM
+    # Module 0 Aux EEPROM (Device ID: 24AA64)
     echo 24c64 0x50 > /sys/class/i2c-dev/i2c-9/device/new_device
     # Module 1 Aux EEPROM
     echo 24c64 0x51 > /sys/class/i2c-dev/i2c-9/device/new_device
 
+     # I2C-14
+    # BF3 EEPROM (Device ID: BR24G128NUX)
+    echo 24c128 0x50 > /sys/class/i2c-dev/i2c-14/device/new_device
+
     # I2C-21
-    # Module 0, IO Board FRU EEPROM
+    # Module 0, IO Board FRU EEPROM (Device ID: P24C04C)
     # I2C MUX, Bus5 @0x72
     # MUX Channel-1, Virtual I2C21 @0x50
-    echo 24c64 0x50 > /sys/class/i2c-dev/i2c-21/device/new_device
+    echo 24c04 0x50 > /sys/class/i2c-dev/i2c-21/device/new_device
 
     # I2C-33
-    # Module 1, IO Board FRU EEPROM
+    # Module 1, IO Board FRU EEPROM (Device ID: P24C04C)
     # I2C MUX, Bus5 @0x76
     # MUX Channel-1, Virtual I2C33 @0x50
-    echo 24c64 0x50 > /sys/class/i2c-dev/i2c-33/device/new_device
+    echo 24c04 0x50 > /sys/class/i2c-dev/i2c-33/device/new_device
     return 0
 }

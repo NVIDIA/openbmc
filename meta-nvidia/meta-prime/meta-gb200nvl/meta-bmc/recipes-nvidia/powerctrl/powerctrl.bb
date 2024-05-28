@@ -20,6 +20,7 @@ SRC_URI = " \
       file://nvidia-standby-poweroff.service \
       file://nvidia-standby-poweron.service \
       file://nvidia-aux-power.service \
+      file://nvidia-aux-power-force.service \
       file://powerctrl-e4830-gh-bmc.sh \
      "
 
@@ -64,6 +65,7 @@ SYSTEMD_SERVICE:${PN} += " \
 
 SYSTEMD_SERVICE:${PN}:append = " \
        nvidia-aux-power.service \
+       nvidia-aux-power-force.service  \
         "
 
 SYSTEMD_LINK:${PN} += "${@compose_list_zip(d, 'PWRON_HOST_FMT', 'OBMC_HOST_INSTANCES')}"

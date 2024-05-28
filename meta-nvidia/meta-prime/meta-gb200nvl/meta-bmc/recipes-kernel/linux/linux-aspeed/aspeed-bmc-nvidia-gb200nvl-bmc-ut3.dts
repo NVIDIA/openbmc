@@ -1,0 +1,50 @@
+// SPDX-License-Identifier: GPL-2.0+
+/dts-v1/;
+
+#include "aspeed-bmc-nvidia-gb200nvl-bmc.dts"
+
+/ {
+    model = "AST2600 GB200NVL BMC for UT 3.0";
+    compatible = "aspeed,ast2600";
+};
+
+// I2C9 GPIO Expanders
+&i2c6 {
+    /* Module 0 for UT 3.0, Expander @0x4e */
+    ut3exp0: pca9555@21 {
+ 		compatible = "nxp,pca9555";
+ 		reg = <0x21>;
+		gpio-controller;
+		#gpio-cells = <2>;
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        gpio-line-names =
+            "D1_BMC_SELF_PWR_CYCLE-O", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "";
+    };
+};
+
+&i2c9 {
+    /* Module 1 for UT 3.0, Expander @0x4e */
+    ut3exp1: pca9555@26 {
+ 		compatible = "nxp,pca9555";
+ 		reg = <0x26>;
+		gpio-controller;
+		#gpio-cells = <2>;
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        gpio-line-names =
+            "D1_BMC_PCIe_MUX_SEL-O",
+            "D1_U0_CLK_ASW_SEL-O",
+            "D1_B2B_STBY_POWER_EN-I",
+            "D1_B2B_FPGA_RST_L_B2B-I",
+            "D1_B2B_FPGA_READY_B2B-I",
+            "D1_PDB_12V_2_PG-O",
+            "D1_FIO_IOB_IOEXP_INT_L-I",
+            "D1_FIO_MODULE_PWR_PG-I",
+            "", "", "", "", "", "", "", "";
+ 	};
+};
+

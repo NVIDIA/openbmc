@@ -8,6 +8,7 @@ SRC_URI:append = " file://GB200NVL_DCSCM.json \
                    file://i2cPcieMapping.json \
                    file://fru-service.conf \
                    file://blacklist.json \
+                   file://PDB.json \
                    "
 
 #Runtime dependency on fru-device defined in meta-prime
@@ -24,6 +25,7 @@ do_install:append() {
      install -m 0444 ${WORKDIR}/Cable_Backplane_Cartridge.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/PCIe_Cards.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/i2cPcieMapping.json ${D}/usr/share/entity-manager/
+     install -m 0444 ${WORKDIR}/PDB.json ${D}/usr/share/entity-manager/configurations
 
      mkdir -p ${D}${base_libdir}/systemd/system/xyz.openbmc_project.FruDevice.service.d
      install -m 0444 ${WORKDIR}/fru-service.conf  ${D}${base_libdir}/systemd/system/xyz.openbmc_project.FruDevice.service.d/

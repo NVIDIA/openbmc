@@ -348,7 +348,7 @@ local hmc_erot_spi_eid="$1"
 # default EID to 14, HMC MCTP ERoT SPI
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${hmc_erot_spi_eid:-14} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${hmc_erot_spi_eid:-14} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
 }
 
 # HMC-HMC_EROT-MCTP_VDM-02
@@ -363,7 +363,7 @@ local hmc_erot_i2c_eid="$1"
 # default EID to 18, Umbriel HMC MCTP ERoT I2C
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${hmc_erot_i2c_eid:-18} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${hmc_erot_i2c_eid:-18} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
 }
 
 # HMC-HMC_EROT-MCTP_VDM-03
@@ -378,7 +378,7 @@ local hmc_erot_spi_eid="$1"
 # default EID to 14, HMC MCTP ERoT SPI
 # get MCTP UUID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${hmc_erot_spi_eid:-14} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5,20p') && echo $uuid_rt
+eid=${hmc_erot_spi_eid:-14} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
 }
 
 # HMC-HMC_EROT-MCTP_VDM-04
@@ -393,7 +393,7 @@ local hmc_erot_i2c_eid="$1"
 # default EID to 18, HMC MCTP ERoT I2C
 # get MCTP UUID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${hmc_erot_spi_eid:-18} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5,20p') && echo $uuid_rt
+eid=${hmc_erot_i2c_eid:-18} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
 }
 
 # HMC-HMC_EROT-MCTP_SPI-01
@@ -823,15 +823,27 @@ erot_id=${hmc_pldm_erot_id:-HGX_ERoT_BMC_0} && output=$(_log_ busctl introspect 
 ## HMC: Telemetry Protocol
 
 # HMC-HMC-Service-03
+# Function to verify if the HMC service is inactive
+# Arguments:
+#   $1: Service name
+# Returns:
+#   valid "no", "yes" otherwise
+is_hmc_gpu_manager_service_inactive() {
+local service_name="$1"
+local output
+name=${service_name:-'nvidia-gpu-manager.service'} && output=$(_log_ systemctl is-active "$name"); [[ "$output" = 'inactive' ]] && echo "yes" || echo "no"
+}
+
+# HMC-HMC-Service-11
 # Function to verify if the HMC service is active
 # Arguments:
 #   $1: Service name
 # Returns:
 #   valid "yes", "no" otherwise
-is_hmc_gpu_manager_service_active() {
+is_hmc_nsmd_service_active() {
 local service_name="$1"
 local output
-name=${service_name:-'nvidia-gpu-manager.service'} && output=$(_log_ systemctl is-active "$name"); [[ "$output" = 'active' ]] && echo "yes" || echo "no"
+name=${service_name:-'nsmd.service'} && output=$(_log_ systemctl is-active "$name"); [[ "$output" = 'active' ]] && echo "yes" || echo "no"
 }
 
 # HMC-HMC-PLDM_T2-01
@@ -1033,12 +1045,13 @@ local mask=1
 local i2c_bus="${1:-2}"
 local i2c_addr="${2:-0x0b}"
 local bytes_to_write="${3:-1}"
+local hmcsts_reg="${4:-0x36}"
 if [ "$bytes_to_write" = 2 ] ;
 then
     # default 2 to i2c bus number, 0x0b to i2c address for the FPGA register table (read-only)
     out=$(_log_ i2ctransfer -y "$i2c_bus" w2@"$i2c_addr" 0x77 0x00 r1) && (( 16#${out#0x} & $mask )) && echo "yes" || echo "no"
 else
-    out=$(_log_ i2ctransfer -y "$i2c_bus" w1@"$i2c_addr" 0x36 r1) && (( 16#${out#0x} & $mask )) && echo "yes" || echo "no"
+    out=$(_log_ i2ctransfer -y "$i2c_bus" w1@"$i2c_addr" $hmcsts_reg r1) && (( 16#${out#0x} & $mask )) && echo "yes" || echo "no"
 fi
 }
 
@@ -1054,12 +1067,13 @@ local mask=2
 local i2c_bus="${1:-2}"
 local i2c_addr="${2:-0x0b}"
 local bytes_to_write="${3:-1}"
+local hmcsts_reg="${4:-0x36}"
 if [ "$bytes_to_write" = 2 ] ;
 then
     # default 2 to i2c bus number, 0x0b to i2c address for the FPGA register table (read-only)
     out=$(_log_ i2ctransfer -y "$i2c_bus" w2@"$i2c_addr" 0x77 0x00 r1) && (( 16#${out#0x} & $mask )) && echo "yes" || echo "no"
 else
-    out=$(_log_ i2ctransfer -y "$i2c_bus" w1@"$i2c_addr" 0x36 r1) && (( 16#${out#0x} & $mask )) && echo "yes" || echo "no"
+    out=$(_log_ i2ctransfer -y "$i2c_bus" w1@"$i2c_addr" $hmcsts_reg r1) && (( 16#${out#0x} & $mask )) && echo "yes" || echo "no"
 fi
 }
 
@@ -1075,12 +1089,13 @@ local mask=4
 local i2c_bus="${1:-2}"
 local i2c_addr="${2:-0x0b}"
 local bytes_to_write="${3:-1}"
+local hmcsts_reg="${4:-0x36}"
 if [ "$bytes_to_write" = 2 ] ;
 then
     # default 2 to i2c bus number, 0x0b to i2c address for the FPGA register table (read-only)
     out=$(_log_ i2ctransfer -y "$i2c_bus" w2@"$i2c_addr" 0x77 0x00 r1) && (( 16#${out#0x} & $mask )) && echo "yes" || echo "no"
 else
-    out=$(_log_ i2ctransfer -y "$i2c_bus" w1@"$i2c_addr" 0x36 r1) && (( 16#${out#0x} & $mask )) && echo "yes" || echo "no"
+    out=$(_log_ i2ctransfer -y "$i2c_bus" w1@"$i2c_addr" $hmcsts_reg r1) && (( 16#${out#0x} & $mask )) && echo "yes" || echo "no"
 fi
 }
 
@@ -1096,12 +1111,13 @@ local mask=32
 local i2c_bus="${1:-2}"
 local i2c_addr="${2:-0x0b}"
 local bytes_to_write="${3:-1}"
+local hmcsts_reg="${4:-0x36}"
 if [ "$bytes_to_write" = 2 ]
 then
     # default 2 to i2c bus number, 0x0b to i2c address for the FPGA register table (read-only)
     out=$(_log_ i2ctransfer -y "$i2c_bus" w2@"$i2c_addr" 0x72 0x00 r1) && (( 16#${out#0x} & $mask )) && echo "yes" || echo "no"
 else
-    out=$(_log_ i2ctransfer -y "$i2c_bus" w1@"$i2c_addr" 0x36 r1) && (( 16#${out#0x} & $mask )) && echo "yes" || echo "no"
+    out=$(_log_ i2ctransfer -y "$i2c_bus" w1@"$i2c_addr" $hmcsts_reg r1) && (( 16#${out#0x} & $mask )) && echo "yes" || echo "no"
 fi
 }
 
@@ -1118,11 +1134,12 @@ local mask=64
 local i2c_bus="${1:-2}"
 local i2c_addr="${2:-0x0b}"
 local bytes_to_write="${3:-1}"
+local hmcsts_reg="${4:-0x36}"
 if [ "$bytes_to_write" = 2 ]
 then
     out=$(_log_ i2ctransfer -y "$i2c_bus" w2@"$i2c_addr" 0x72 0x00 r1) && (( 16#${out#0x} & $mask )) && echo "yes" || echo "no"
 else
-    out=$(_log_ i2ctransfer -y "$i2c_bus" w1@"$i2c_addr" 0x36 r1) && (( 16#${out#0x} & $mask )) && echo "yes" || echo "no"
+    out=$(_log_ i2ctransfer -y "$i2c_bus" w1@"$i2c_addr" $hmcsts_reg r1) && (( 16#${out#0x} & $mask )) && echo "yes" || echo "no"
 fi
 }
 
@@ -1321,7 +1338,7 @@ local fpga_bridge_eid="$1"
 # default EID to 12, FPGA MCTP Bridge
 # get first entry of the routing table entries
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${fpga_bridge_eid:-12} && [[ "0x0" = $(_log_ mctp-pcie-ctrl -s "00 80 0a 00" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+'| sed -n '4p') ]] && echo "yes" || echo "no"
+eid=${fpga_bridge_eid:-12} && [[ "00" = $(_log_ mctp-pcie-ctrl -s "00 80 0a 00" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f4) ]] && echo "yes" || echo "no"
 }
 
 # HMC-FPGA-MCTP_VDM-04
@@ -1336,7 +1353,7 @@ local fpga_erot_eid="$1"
 # default EID to 13, FPGA ERoT EID
 # get MCTP UUID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${fpga_erot_eid:-13} && [[ "0x0" = $(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+'| sed -n '4p') ]] && echo "yes" || echo "no"
+eid=${fpga_erot_eid:-13} && [[ "00" = $(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f4) ]] && echo "yes" || echo "no"
 }
 
 # HMC-FPGA-MCTP_VDM-05
@@ -1351,7 +1368,7 @@ local fpga_bridge_eid="$1"
 # default EID to 12, FPGA MCTP Bridge
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${fpga_erot_eid:-12} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${fpga_bridge_eid:-12} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
 }
 
 # HMC-FPGA-MCTP_VDM-06
@@ -1366,7 +1383,7 @@ local fpga_bridge_eid="$1"
 # default EID to 12, FPGA MCTP Bridge
 # get MCTP UUID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${fpga_erot_spi_eid:-12} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5,20p') && echo $uuid_rt
+eid=${fpga_bridge_eid:-12} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
 }
 
 # HMC-FPGA_EROT-MCTP_VDM-01
@@ -1381,7 +1398,7 @@ local fpga_erot_spi_eid="$1"
 # default EID to 13, FPGA MCTP ERoT SPI
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${fpga_erot_spi_eid:-13} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${fpga_erot_spi_eid:-13} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
 }
 
 # HMC-FPGA_EROT-MCTP_VDM-03
@@ -1396,7 +1413,7 @@ local fpga_erot_spi_eid="$1"
 # default EID to 13, FPGA MCTP ERoT SPI
 # get MCTP UUID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${fpga_erot_spi_eid:-13} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5,20p') && echo $uuid_rt
+eid=${fpga_erot_spi_eid:-13} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
 }
 
 ## FPGA: Base Protocol
@@ -1457,7 +1474,7 @@ local cmd=00
 
 # default EID to 12, FPGA MCTP Bridge EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${fpga_bridge_eid:-12} && [[ "0x0" = $(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+'| sed -n '8p') ]] && echo "yes" || echo "no"
+eid=${fpga_bridge_eid:-12} && [[ "00" = $(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f8) ]] && echo "yes" || echo "no"
 }
 
 # HMC-FPGA-NSM_T0-02
@@ -1487,7 +1504,7 @@ local cmd=01
 
 # default EID to 12, FPGA MCTP Bridge EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${fpga_bridge_eid:-12} && output=$(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+'| sed -n '13p') && echo "$output"
+eid=${fpga_bridge_eid:-12} && output=$(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f13) && echo "$output"
 }
 
 # HMC-FPGA-NSM_T0-04
@@ -1502,7 +1519,7 @@ local cmd=0x01
 
 # default EID to 12, FPGA MCTP Bridge EID
 # the 'nsmtool' outputs to journal log
-eid=${fpga_bridge_eid:-12} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "0x$output" || echo ""
+eid=${fpga_bridge_eid:-12} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
 }
 
 ## FPGA: Firmware Update Protocol
@@ -1518,13 +1535,14 @@ get_fpga_fw_version_regtable() {
 local i2c_bus="${1:-2}"
 local i2c_addr="${2:-0x0b}"
 local bytes_to_write="${3:-1}"
+local fw_major_version_reg="${4:-0x4c}"
 local output
 if [ "$bytes_to_write" = 2 ] ;
 then
     # default 2 to i2c bus number, 0x0b to i2c address for the FPGA register table (read-only)
     output=$(_log_ i2ctransfer -y "$i2c_bus" w2@"$i2c_addr" 0x04 0x00 r3) && echo "$output"
 else
-    output=$(_log_ i2ctransfer -y "$i2c_bus" w1@"$i2c_addr" 0x4c r3) && echo "$output"
+    output=$(_log_ i2ctransfer -y "$i2c_bus" w1@"$i2c_addr" $fw_major_version_reg r3) && echo "$output"
 fi
 }
 
@@ -2010,7 +2028,7 @@ local gpu_irot_i3c_eid="$1"
 # default EID to 32, GPU #5 IRoT
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${gpu_irot_i3c_eid:-32} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${gpu_irot_i3c_eid:-32} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
 }
 
 # HMC-GPU_IROT-MCTP_VDM-02
@@ -2025,7 +2043,7 @@ local gpu_irot_i3c_eid="$1"
 # default EID to 32, GPU #5 IRoT
 # get MCTP UUID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${gpu_irot_i3c_eid:-32} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5,20p') && echo $uuid_rt
+eid=${gpu_irot_i3c_eid:-32} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
 }
 
 ## GPU: Base Protocol
@@ -2090,7 +2108,7 @@ local cmd=00
 
 # default EID to 32, GPU #5
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${gpu_eid:-32} && [[ "0x0" = $(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+'| sed -n '8p') ]] && echo "yes" || echo "no"
+eid=${gpu_eid:-32} && [[ "00" = $(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f8) ]] && echo "yes" || echo "no"
 }
 
 # HMC-GPU-NSM_T0-02
@@ -2120,7 +2138,7 @@ local cmd=01
 
 # default EID to 32, GPU #5
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${gpu_eid:-32} && output=$(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+'| sed -n '13p') && echo "$output"
+eid=${gpu_eid:-32} && output=$(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f13) && echo "$output"
 }
 
 # HMC-GPU-NSM_T0-04
@@ -2135,7 +2153,7 @@ local cmd=0x01
 
 # default EID to 32, GPU #5
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-32} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "0x$output" || echo ""
+eid=${gpu_eid:-32} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
 }
 
 ## GPU: Firmware Update Protocol
@@ -2634,7 +2652,7 @@ local cx7_erot_spi_eid="$1"
 # default EID to 17, CX7 MCTP ERoT SPI
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${cx7_erot_spi_eid:-17} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${cx7_erot_spi_eid:-17} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
 }
 
 # HMC-CX7_EROT-MCTP_VDM-02
@@ -2649,7 +2667,7 @@ local cx7_erot_i2c_eid="$1"
 # default EID to 21, Umbriel CX7 MCTP ERoT I2C
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${cx7_erot_i2c_eid:-21} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${cx7_erot_i2c_eid:-21} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
 }
 
 # HMC-CX7_EROT-MCTP_VDM-03
@@ -2664,7 +2682,7 @@ local cx7_erot_spi_eid="$1"
 # default EID to 17, CX7 MCTP ERoT SPI
 # get MCTP UUID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${cx7_erot_spi_eid:-17} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5,20p') && echo $uuid_rt
+eid=${cx7_erot_spi_eid:-17} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
 }
 
 # HMC-CX7_EROT-MCTP_VDM-04
@@ -2679,7 +2697,7 @@ local cx7_erot_i2c_eid="$1"
 # default EID to 21, CX7 MCTP ERoT I2C
 # get MCTP UUID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${cx7_erot_spi_eid:-21} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5,20p') && echo $uuid_rt
+eid=${cx7_erot_i2c_eid:-21} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
 }
 
 ## CX7: Base Protocol
@@ -2795,7 +2813,7 @@ local cmd=00
 
 # default EID to 24, CX7 MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${cx7_eid:-24} && if [ "0x0" = $(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+'| sed -n '8p') ]; then echo "yes"; else echo "no"; fi
+eid=${cx7_eid:-24} && [[ "00" = $(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f8) ]] && echo "yes" || echo "no"
 }
 
 # HMC-CX7-NSM_T0-02
@@ -2825,7 +2843,7 @@ local cmd=01
 
 # default EID to 24, CX7 MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${cx7_eid:-24} && output=$(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+'| sed -n '13p') && echo "$output"
+eid=${cx7_eid:-24} && output=$(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f13) && echo "$output"
 }
 
 # HMC-CX7-NSM_T0-04
@@ -2840,7 +2858,7 @@ local cmd=0x01
 
 # default EID to 24, CX7 MCTP EID
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-24} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "0x$output" || echo ""
+eid=${gpu_eid:-24} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
 }
 
 ## CX7: Firmware Update Protocol
@@ -3230,7 +3248,7 @@ local qm3_erot_spi_eid="$1"
 # default EID to 15, QM3 #1 MCTP ERoT SPI
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${qm3_erot_spi_eid:-15} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${qm3_erot_spi_eid:-15} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
 }
 
 # HMC-QM3_EROT-MCTP_VDM-02
@@ -3245,7 +3263,7 @@ local qm3_erot_i2c_eid="$1"
 # default EID to 19, Umbriel QM3 #1 MCTP ERoT I2C
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${qm3_erot_i2c_eid:-19} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${qm3_erot_i2c_eid:-19} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
 }
 
 # HMC-QM3_EROT-MCTP_VDM-03
@@ -3260,7 +3278,7 @@ local qm3_erot_spi_eid="$1"
 # default EID to 15, QM3 #1 MCTP ERoT SPI
 # get MCTP UUID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${qm3_erot_spi_eid:-15} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5,20p') && echo $uuid_rt
+eid=${qm3_erot_spi_eid:-15} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
 }
 
 # HMC-QM3_EROT-MCTP_VDM-04
@@ -3275,7 +3293,7 @@ local qm3_erot_i2c_eid="$1"
 # default EID to 19, QM3 #1 MCTP ERoT I2C
 # get MCTP UUID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${qm3_erot_i2c_eid:-19} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5,20p') && echo $uuid_rt
+eid=${qm3_erot_i2c_eid:-19} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
 }
 
 ## QM3: Base Protocol
@@ -3391,7 +3409,7 @@ local cmd=00
 
 # default EID to 22, QM3 MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${qm3_eid:-22} && [[ "0x0" = $(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+'| sed -n '8p') ]] && echo "yes" || echo "no"
+eid=${qm3_eid:-22} && [[ "00" = $(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f8) ]] && echo "yes" || echo "no"
 }
 
 # HMC-QM3-NSM_T0-02
@@ -3421,7 +3439,7 @@ local cmd=01
 
 # default EID to 22, QM3 MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${qm3_eid:-22} && output=$(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+'| sed -n '13p') && echo "$output"
+eid=${cx7_eid:-22} && output=$(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f13) && echo "$output"
 }
 
 # HMC-QM3-NSM_T0-04
@@ -3436,7 +3454,7 @@ local cmd=0x01
 
 # default EID to 22, QM3 MCTP EID
 # the 'nsmtool' outputs to journal log
-eid=${qm3_eid:-22} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "0x$output" || echo ""
+eid=${qm3_eid:-22} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
 }
 
 ## QM3: Firmware Update Protocol
@@ -3903,15 +3921,22 @@ Various command line options mentioned below
     -p  pci bridge eid
     -x  pci bridge pool start eid
 To send MCTP message for PCIe binding type
+
 Example:
-mctp-pcie-ctrl -s "00 80 0a 00" -t 2 -b "02 00 00 00 00 01" -e 13 -i 9 -p 12 -x 13 -m 0 -v 1
-    - Request: -s "00 80 0a 00": MCTP packet TX data
+Sample MCTP Command (Get Routing Table Entries)
+mctp-pcie-ctrl -s "00 80 0a 00" -t 2 -b "02 00 00 00 00 01" -e 12 -i 9 -p 12 -x 13 -m 0 -v 1
+    - mctp_req_msg  >>  00 80 0A 00
     Byte-16=00h => [16][7]=IC=0b, [16][6:0]=Message Type=0000000b
     Byte-17=80h => [17][7]=Rq=1b, [17][6]=D=0b, [17][5]=Rsvd=0b, [17][4:0]=Instance ID=00000b
-    Byte-18=0ah => [18]=Command Code=0Ah, Get Routing Table Entries
+    Byte-18=0Ah => [18]=Command Code=0Ah, Get Routing Table Entries
     Byte-19=00h => [19]=Entry Handle (0x00 to access first entries in table)
-    - Requst: -b "02 00 00 00 00 01": private (pvt) binding data
-    Private bind data: Routing: 0x02, Remote ID: 0x100
+
+Sample MCTP Response Message (Get Routing Table Entries)
+    - mctp_resp_msg > 00 00 0A 00 01 01 01 0C 80 02 09 02 01 00
+    Byte-16=0x0 => [16][7]=IC=0b, [16][6:0]=Message Type=0000000b
+    Byte-17=0x0 => [17][7]=Rq=0b=resopnse, [17][6]=D=0b, [17][5]=Rsvd=0b, [17][4:0]=Instance ID=0000b
+    Byte-18=0xA => Get Routing Table Entries
+    Byte-19=0x0 => SUCCESS
 
 In the case of Broadcast Command, such as Prepare for Endpoint Discovery
 mctp-pcie-ctrl -s "00 80 0b" -t 2 -b "03 00 00 00 00 00" -e 255 -i 9 -p 12 -x 13 -m 0 -v 1
@@ -3919,13 +3944,6 @@ mctp-pcie-ctrl -s "00 80 0b" -t 2 -b "03 00 00 00 00 00" -e 255 -i 9 -p 12 -x 13
 -s "00 80 0b"
 -b "03 00 00 00 00 00"
 Private bind data: Routing: 0x03, Remote ID: 0x00
-
-Sample MCTP Response Message (Get Routing Table Entries)
-    - Response: mctp_resp_msg: 0x0 0x0 0xa 0x0 0x1 0x1 0x1 0xc 0x80 0x2 0x9 0x2 0x1 0x0
-    Byte-16=0x0 => [16][7]=IC=0b, [16][6:0]=Message Type=0000000b
-    Byte-17=0x0 => [17][7]=Rq=0b=resopnse, [17][6]=D=0b, [17][5]=Rsvd=0b, [17][4:0]=Instance ID=0000b
-    Byte-18=0xa => Get Routing Table Entries
-    Byte-19=0x0 => SUCCESS
 
 MCTP control messsage completion codes
 0x00: SUCCESS
@@ -3936,40 +3954,43 @@ COMMENT
 
 <<COMMENT
 # MCTP NSM, MCTP System Management API
-# mctp-ctrl -hpcie
+# mctp-pcie-ctrl -hpcie
 Various command line options mentioned below
-	-v	Verbose level
-	-e	Target Endpoint Id
-	-m	Mode: (0 - Commandline mode, 1 - daemon mode, 2 - SPI test mode)
-	-t	Binding Type (0 - Resvd, 1 - I2C, 2 - PCIe, 6 - SPI)
-	-b	Binding data (pvt)
-	-d	Delay in seconds (for MCTP enumeration)
-	-s	Tx data (MCTP packet payload: [Req-dgram]-[cmd-code]--)
-	-f	Absolute path to configuration json file
-	-n	Bus number for the selected interface, eg. PCIe 1, PCIe 2, I2C 3, ...	-i	 pci own eid
-	-p	 pci bridge eid
-	-x	 pci bridge pool start eid
-	-c	 option to remove duplicate EID entries from the routing table
-#
+    -v  Verbose level
+    -e  Target Endpoint Id
+    -i  Own PCI Endpoint Id
+    -m  Mode: (0 - Commandline mode, 1 - daemon mode, 2 - SPI test mode)
+    -t  Binding Type (0 - Resvd, 1 - I2C, 2 - PCIe, 6 - SPI)
+    -b  Binding data (pvt, private)
+    -d  Delay in seconds (for MCTP enumeration)
+    -s  Tx data (MCTP packet payload: [Req-dgram]-[cmd-code]--)
+    -f  Absolute path to configuration json file
+    -n  Bus number for the selected interface, eg. PCIe 1, PCIe 2, I2C 3
+    -i  pci own eid
+    -p  pci bridge eid
+    -x  pci bridge pool start eid
+To send MCTP message for PCIe binding type
+
 Example: Send NSM PING (0x00) command to FPGA
-mctp-ctrl -s "7e 10 de 80 89 00 00 00" -e 12 -i 9 -t 2 -v 1
-    - Request: 0x10 0xde 0x80 0x89 0x0 0x0 0x0
-      IC/Msg Type: 0x7e, PCI: 0x10de, RQ/D/RSV/INSTANCE: 0x80, OCP Type/Ver: 0x89
-      NV Msg Type: 0x00, CMD Code: 0x00, Data Size: 0x00
-    - Response: 0x7e 0x10 0xde 0x0 0x89 0x0 0x0 0x0 0x0 0x0 0x0 0x0
-      IC/Msg Type: 0x7e, PCI: 0x10de, RQ/D/RSV/INSANCE: 0x00, OCP Type/Ver: 0x89
-      NV Msg Type: 0x00, CMD Code: 0x00, Reason[7:5]/Completion[4:0] Code: 0x00
-      Reserved: 0x0000 Data Size: 0x0000
+mctp-pcie-ctrl -s "7e 10 de 80 89 00 00 00" -e 12 -i 9 -t 2 -v 1
+    - mctp_req_msg > 10 DE 80 89 00 00 00
+      IC/Msg Type: 0x7e, PCI: 10DE, RQ/D/RSV/INSTANCE: 80, OCP Type/Ver: 89
+      NV Msg Type: 00, CMD Code: 00, Data Size: 00
+    - mctp_resp_msg > 7E 10 DE 00 89 00 00 00 00 00 00 00
+      IC/Msg Type: 7E, PCI: 10DE, RQ/D/RSV/INSANCE: 00, OCP Type/Ver: 89
+      NV Msg Type: 00, CMD Code: 00, Reason[7:5]/Completion[4:0] Code: 00
+      Reserved: 0000 Data Size: 0000
 
 Example: Send NSM Get Supported Message Type (0x01) command to FPGA
-mctp-ctrl -s "7e 10 de 80 89 00 01 00"  -e 12 -i 9 -t 2 -v 2
-    - Request: 0x10 0xde 0x80 0x89 0x0 0x1 0x0
-      IC/Msg Type: 0x7e, PCI: 0x10de, RQ/D/RSV/INSTANCE: 0x80, OCP Type/Ver: 0x89
-      NV Msg Type: 0x00, CMD Code: 0x01, Data Size: 0x00
-    - Response: 0x7e 0x10 0xde 0x0 0x89 0x0 0x1 0x0 0x0 0x0 0x20 0x0 0x3d 0x0 0x0(x30)
-      IC/Msg Type: 0x7e, PCI: 0x10de, RQ/D/RSV/INSANCE: 0x00, OCP Type/Ver: 0x89
-      NV Msg Type: 0x00, CMD Code: 0x01, Reason[7:5]/Completion[4:0] Code: 0x00
-      Reserved: 0x0000 Data Size: 0x0020, Data: 0x00000000 0x00000000 0x00000000 0x0000003d
+mctp-pcie-ctrl -s "7e 10 de 80 89 00 01 00" -e 12 -i 9 -t 2 -v 2
+    - mctp_req_msg > 10 DE 80 89 00 01 00
+      IC/Msg Type: 0x7e, PCI: 10DE, RQ/D/RSV/INSTANCE: 80, OCP Type/Ver: 89
+      NV Msg Type: 00, CMD Code: 01, Data Size: 00
+    - mctp_resp_msg > 7E 10 DE 18 89 01 01 01 00 00 00 00
+    - mctp_resp_msg > 7E 10 DE 00 89 00 01 00 00 00 20 00 3D 00 00 (x30)
+      IC/Msg Type: 7E, PCI: 10DE, RQ/D/RSV/INSANCE: 00, OCP Type/Ver: 89
+      NV Msg Type: 0x00, CMD Code: 01, Reason[7:5]/Completion[4:0] Code: 00
+      Reserved: 0000 Data Size: 0020, Data: 0x00000000 0x00000000 0x00000000 0x0000003d
 
 Completion Codes
 0x00: SUCCESS
@@ -4030,71 +4051,6 @@ nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x00 -m 12 -v
       CMD Code: 0x03, Query simple data source
         Arg1, Simple data source tag
         Arg2, Bit 0: 0 - query the value; Bit 0: 1 - query and clear the value
-COMMENT
-
-<<COMMENT
-# MCTP SPI
-# mctp-spi-ctrl -hspi
-Various command line options mentioned below
-	-v	Verbose level
-	-e	Target Endpoint Id
-	-m	Mode: (0 - Commandline mode, 1 - daemon mode, 2 - SPI test mode)
-	-t	Binding Type (0 - Resvd, 1 - I2C, 2 - PCIe, 6 - SPI)
-	-b	Binding data (pvt)
-	-d	Delay in seconds (for MCTP enumeration)
-	-s	Tx data (MCTP packet payload: [Req-dgram]-[cmd-code]--)
-	-f	Absolute path to configuration json file
-	-n	Bus number for the selected interface, eg. PCIe 1, PCIe 2, I2C 3, ...
-    -i	NVIDIA IANA VDM commands:
-		1 - Set EP UUID,
-		2 - Boot complete,
-		3 - Heartbeat,
-		4 - Enable Heartbeat,
-		5 - Query boot status
-	-x mctp base command:
-		1 - Set Endpoint ID,
-		2 - Get Endpoint ID,
-		3 - Get Endpoint UUID,
-		4 - Get MCTP Version Support
-		5 - Get MCTP Message Type Support
-To send MCTP message for SPI binding type
-	-> To send Boot complete command:
-		 mctp-ctrl -i 2 -t 6 -m 2 -v
-	-> To send Enable Heartbeat command:
-		 mctp-ctrl -i 4 -t 6 -m 2 -v
-	-> To send Heartbeat (ping) command:
-		 mctp-ctrl -i 3 -t 6 -m 2 -v
-		(mctp-spi-ctrl [params ----^])
-
-Example:
-mctp-pcie-ctrl -s "00 80 0a 00" -t 2 -b "02 00 00 00 00 01" -e 13 -i 9 -p 12 -x 13 -m 12 -v 1
--s "00 80 0a 00": MCTP packet TX data
-Byte-16=00h => [16][7]=IC=0b, [16][6:0]=Message Type=0000000b
-Byte-17=80h => [17][7]=Rq=1b, [17][6]=D=0b, [17][5]=Rsvd=0b, [17][4:0]=Instance ID=00000b
-Byte-18=0ah => [18]=Command Code=0Ah, Get Routing Table Entries
-Byte-19=00h => [19]=Entry Handle (0x00 to access first entries in table)
--b "02 00 00 00 00 01": private (pvt) binding data
-Private bind data: Routing: 0x02, Remote ID: 0x100
-
-In the case of Broadcast Command, such as Prepare for Endpoint Discovery
-mctp-pcie-ctrl -s "00 80 0b" -b "03 00 00 00 00 00" -e 255 -i 9 -p 12 -x 13 -m 0 -t 2 -v 1
--e 255
--s "00 80 0b"
--b "03 00 00 00 00 00"
-Private bind data: Routing: 0x03, Remote ID: 0x00
-
-Sample MCTP Response Message (Get Routing Table Entries)
-mctp_resp_msg: 0x0 0x0 0xa 0x0 0x1 0x1 0x1 0xc 0x80 0x2 0x9 0x2 0x1 0x0
-Byte-16=0x0 => [16][7]=IC=0b, [16][6:0]=Message Type=0000000b
-Byte-17=0x0 => [17][7]=Rq=0b=resopnse, [17][6]=D=0b, [17][5]=Rsvd=0b, [17][4:0]=Instance ID=0000b
-Byte-18=0xa => Get Routing Table Entries
-Byte-19=0x0 => SUCCESS
-
-MCTP control messsage completion codes
-0x00: SUCCESS
-0x01: ERROR, 0x02: ERROR_INVALID_DATA, 0x03: ERROR_INVALID_LENGTH
-0x04: ERROR_NOT_READY, 0x05: ERROR_UNSUPPORTED_CMD
-0x80-0xFF: COMMAND_SPECIFIC
 COMMENT
 
 <<COMMENT

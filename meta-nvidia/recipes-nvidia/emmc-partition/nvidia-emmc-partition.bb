@@ -17,8 +17,8 @@ SRC_URI = " \
 SRC_URI:append:hgx = " file://hgx/create-partition.sh \
                        file://hgx/emmc-mount.conf"
 
-SRC_URI:append:umbriel = " file://umbriel/create-partition.sh \
-                       file://umbriel/emmc-mount.conf"
+SRC_URI:append:hgxb = " file://hgxb/create-partition.sh \
+                       file://hgxb/emmc-mount.conf"
 
 SRC_URI:append:skinnyjoe = " file://gh/create-partition.sh \
                             file://gh/emmc-mount.conf"
@@ -43,9 +43,9 @@ do_install:append:hgx() {
     install -m 0644 ${WORKDIR}/hgx/emmc-mount.conf ${D}/usr/share/emmc/
 }
 
-do_install:append:umbriel() {
-    install -m 0755 ${WORKDIR}/umbriel/create-partition.sh ${D}/${bindir}/
-    install -m 0644 ${WORKDIR}/umbriel/emmc-mount.conf ${D}/usr/share/emmc/
+do_install:append:hgxb() {
+    install -m 0755 ${WORKDIR}/hgxb/create-partition.sh ${D}/${bindir}/
+    install -m 0644 ${WORKDIR}/hgxb/emmc-mount.conf ${D}/usr/share/emmc/
 }
 
 do_install:append:skinnyjoe() {

@@ -1,0 +1,8 @@
+[Unit]
+Description=Aux cycle Host
+
+[Service]
+RemainAfterExit=yes
+Type=oneshot
+ExecStart=/usr/bin/env stbypowerctrl.sh aux_cycle force
+SyslogIdentifier=auxcycle_force

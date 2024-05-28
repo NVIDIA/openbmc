@@ -360,29 +360,43 @@ bind_gpio_expanders()
 
     # Module 0, IO Board IO Expander
     # I2C MUX, Bus5 @0x72
-    # MUX Channel-1, Virtual I2C21 @0x40
-    if [[ -z `ls /sys/bus/i2c/drivers/pca953x | grep "21-0040"` ]]; then
-        echo "Could not find 21-0040, manually binding PCA driver"
-        echo "21-0040" > /sys/bus/i2c/drivers/pca953x/bind
-        rc=$?
-        if [[ $rc -ne 0 ]]; then
-            echo "[ERROR] Failed to bind IO Expander 21-0040 to pca953x driver"
+    # MUX Channel-1, Virtual I2C21 @0x20
+    if [[ -z `ls /sys/bus/i2c/drivers/pca953x | grep "21-0020"` ]]; then
+        echo "Could not find 21-0020, manually binding PCA driver"
+        # Confirm virtual I2C bus 21 exists
+        if [[ ! -z `ls /sys/bus/i2c/devices/ | grep "i2c-21"` ]]; then
+            # I2C-21 exists, attempt to bind driver to IO expander
+            # Use new_device interface because this does not require a DTS entry
+            echo pca9555 0x20 > /sys/class/i2c-dev/i2c-21/device/new_device
+            rc=$?
+            if [[ $rc -ne 0 ]]; then
+                echo "[ERROR] Failed to bind IO Expander 21-0020 to pca953x driver"
+            else
+                echo "IO Expander 21-0020 has been bound to /sys/bus/i2c/drivers/pca953x"
+            fi
         else
-            echo "IO Expander 21-0040 has been bound to /sys/bus/i2c/drivers/pca953x"
+            echo "[ERROR] Bus I2C-21 does not exist. Can not bind IO expander driver."
         fi
     fi
 
     # Module 1, IO Board IO Expander
     # I2C MUX, Bus5 @0x76
-    # MUX Channel-1, Virtual I2C33 @0x42
-    if [[ -z `ls /sys/bus/i2c/drivers/pca953x | grep "33-0042"` ]]; then
-        echo "Could not find 33-0042, manually binding PCA driver"
-        echo "33-0042" > /sys/bus/i2c/drivers/pca953x/bind
-        rc=$?
-        if [[ $rc -ne 0 ]]; then
-            echo "[ERROR] Failed to bind IO Expander 33-0042 to pca953x driver"
+    # MUX Channel-1, Virtual I2C33 @0x21
+    if [[ -z `ls /sys/bus/i2c/drivers/pca953x | grep "33-0021"` ]]; then
+        echo "Could not find 33-0021, manually binding PCA driver"
+        # Confirm virtual I2C bus 33 exists
+        if [[ ! -z `ls /sys/bus/i2c/devices/ | grep "i2c-33"` ]]; then
+            # I2C-33 exists, attempt to bind driver to IO expander
+            # Use new_device interface because this does not require a DTS entry
+            echo pca9555 0x21 > /sys/class/i2c-dev/i2c-33/device/new_device
+            rc=$?
+            if [[ $rc -ne 0 ]]; then
+                echo "[ERROR] Failed to bind IO Expander 33-0021 to pca953x driver"
+            else
+                echo "IO Expander 33-0021 has been bound to /sys/bus/i2c/drivers/pca953x"
+            fi
         else
-            echo "IO Expander 33-0042 has been bound to /sys/bus/i2c/drivers/pca953x"
+            echo "[ERROR] Bus I2C-33 does not exist. Can not bind IO expander driver."
         fi
     fi
 

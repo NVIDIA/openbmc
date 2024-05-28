@@ -359,6 +359,7 @@ power_off()
 power_cycle()
 {
     power_off
+    sleep 5
     power_on
     # Let Redfish Host Interface User Delete and Logging happen in nvidia-power-monitor
     return 0

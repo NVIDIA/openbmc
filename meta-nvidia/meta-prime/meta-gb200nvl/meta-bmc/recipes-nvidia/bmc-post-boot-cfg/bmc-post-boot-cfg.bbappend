@@ -5,6 +5,8 @@ SRC_URI:append = " file://create_eeprom_devices.sh \
                    file://multi_module_detection.sh \
                    file://common_platform_var.conf \
                  "  
+SRC_URI:append:gb200nvl-bmc-ut3 = " file://gb200nvl-bmc-ut3/create_eeprom_devices.sh \
+                                    file://gb200nvl-bmc-ut3/bmc_ready.sh"
 
 do_install:append() {
     install -d ${D}/${bindir}

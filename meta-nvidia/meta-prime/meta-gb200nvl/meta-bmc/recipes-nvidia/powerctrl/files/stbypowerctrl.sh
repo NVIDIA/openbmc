@@ -193,8 +193,18 @@ aux_cycle()
         sleep 30
         val=`get_run_power_pg`
         if [ "$val" == "1" ]; then
-            echo "Run Power is ON - must turn off before standby power off"
-            exit 1
+        {
+            if [ "$1" == "force" ]; then
+            {
+                echo "Run Power is ON but force is provided. Shutting down regardless"
+            }
+            else
+            {
+                echo "Run Power is ON - must turn off before standby power off"
+                exit 1
+            }
+            fi
+        }
         fi
     fi
 

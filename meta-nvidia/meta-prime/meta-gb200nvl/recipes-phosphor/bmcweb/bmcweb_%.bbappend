@@ -22,14 +22,3 @@ EXTRA_OEMESON:append = " -Dredfish-dump-log=enabled"
 # Disable deprecated RF Thermal/Power subsystem
 EXTRA_OEMESON:append = " -Dredfish-allow-deprecated-power-thermal=disabled "
 
-#
-# Platform specifics
-#
-EXTRA_OEMESON:append = " -Dplatform-system-id=System_0 "
-EXTRA_OEMESON:append = " -Dplatform-bmc-id=BMC_0 "
-EXTRA_OEMESON:append = " -Dplatform-total-power-sensor-name=Baseboard_0_TotalHSC_Power_0 "
-EXTRA_OEMESON:append = " -Dplatform-power-control-sensor-name=Baseboard_0_TotalGPU_Power_0 "
-EXTRA_OEMESON:append = " -Dplatform-metrics-id=PlatformEnvironmentMetrics_0 "
-EXTRA_OEMESON:append = " -Dplatform-chassis-name=Baseboard_0 "
-EXTRA_OEMESON:append = " -Dplatform-gpu-name-prefix=GPU_ "
-EXTRA_OEMESON:append = " -Dgpu-index-start=0 "
