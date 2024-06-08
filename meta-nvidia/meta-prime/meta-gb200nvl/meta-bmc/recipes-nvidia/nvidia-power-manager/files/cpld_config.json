@@ -1,12 +1,4 @@
 {
     "CPLD": [
-        {
-            "Index" : "0",
-            "Bus" : "-1",
-            "Address" : "-1",
-            "Model" : "MAX10",
-            "Manufacturer" : "Intel",
-            "CPLDDeviceNo" : 1
-        }
     ]
 }

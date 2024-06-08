@@ -11,5 +11,7 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " \
                                     nvidia-code-mgmt \
                                     nvidia-power-manager \
                                     nvidia-emmc-partition \
-                                    nvidia-emmc-journal-storage \
+                                    nvidia-emmc-logging \
+                                    zstd \
+                                    log-once \
                                   "

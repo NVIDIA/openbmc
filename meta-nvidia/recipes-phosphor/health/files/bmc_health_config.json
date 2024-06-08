@@ -1,0 +1,118 @@
+{
+    "CPU": {
+        "Threshold": {
+            "Critical_Upper": {
+                "Value": 95.0,
+                "Log": true,
+                "Target": "HMSystemRecovery@.service"
+            },
+            "Warning_Upper": {
+                "Value": 80.0,
+                "Log": true,
+                "Target": "HMSystemWarning@.service"
+            }
+        }
+    },
+    "CPU_User": {
+        "Threshold": {
+            "Critical_Upper": {
+                "Value": 95.0,
+                "Log": true,
+                "Target": "HMSystemRecovery@.service"
+            },
+            "Warning_Upper": {
+                "Value": 80.0,
+                "Log": true,
+                "Target": "HMSystemWarning@.service"
+            }
+        }
+    },
+    "CPU_Kernel": {
+        "Threshold": {
+            "Critical_Upper": {
+                "Value": 95.0,
+                "Log": true,
+                "Target": "HMSystemRecovery@.service"
+            },
+            "Warning_Upper": {
+                "Value": 80.0,
+                "Log": true,
+                "Target": "HMSystemWarning@.service"
+            }
+        }
+    },
+    "Memory": {
+    },
+    "Memory_Available": {
+        "Threshold": {
+            "Critical_Lower": {
+                "Value": 15.0,
+                "Log": true,
+                "Target": "HMSystemRecovery@.service"
+            },
+	    "Warning_Lower": {
+                "Value": 20.0,
+                "Log": true,
+                "Target": "HMSystemWarning@.service"
+            }
+        }
+    },
+    "Memory_Free": {
+    },
+    "Memory_Shared": {
+        "Threshold": {
+            "Critical_Upper": {
+                "Value": 35.0,
+                "Log": true,
+                "Target": "HMSystemRecovery@.service"
+            }
+        }
+    },
+    "Memory_Buffered_And_Cached": {
+    },
+    "Storage_RW": {
+        "Path": "/run/initramfs/rw",
+        "Threshold": {
+            "Critical_Lower": {
+                "Value": 5.0,
+                "Log": true,
+                "Target": "HMSystemRecovery@.service"
+            },
+	    "Warning_Lower": {
+                "Value": 20.0,
+                "Log": true,
+                "Target": "HMSystemWarning@.service"
+            }
+        }
+    },
+    "Storage_TMP": {
+        "Path": "/tmp",
+        "Threshold": {
+            "Critical_Lower": {
+                "Value": 5.0,
+                "Log": true,
+                "Target": "HMSystemRecovery@.service"
+            },
+	    "Warning_Lower": {
+                "Value": 20.0,
+                "Log": true,
+                "Target": "HMSystemWarning@.service"
+            }
+        }
+    },
+    "Storage_LOGGING": {
+        "Path": "/var/lib/logging",
+        "Threshold": {
+            "Critical_Lower": {
+                "Value": 20.0,
+                "Log": true,
+                "Target": "HMSystemRecovery@.service"
+            },
+	    "Warning_Lower": {
+                "Value": 30.0,
+                "Log": true,
+                "Target": "HMSystemWarning@.service"
+            }
+        }
+    }
+}

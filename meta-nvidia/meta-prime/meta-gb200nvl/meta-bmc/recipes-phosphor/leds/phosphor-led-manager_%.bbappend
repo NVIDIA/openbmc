@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI = "git://github.com/NVIDIA/phosphor-led-manager;protocol=https;branch=develop"
-SRCREV = "2d3c3aaec1e23394d4c24d0cb275305f4f3a7e96"
+SRCREV = "c590939b4950c3faf13d2b674335a371aeba18ce"
 
 SRC_URI:append = " file://power-led-controller.service \
                    file://power-led-config.json \

@@ -251,6 +251,8 @@ do_shutdown_force()
     set_gpio SHDN_FORCE_L-O 1
     echo "Deasserting SHDN_REQ_L-O = 1"
     set_gpio SHDN_REQ_L-O 1
+    echo "Deasserting PCI_MUX_SEL-O = 0"
+    set_gpio PCI_MUX_SEL-O 0
 
     return 0
 }

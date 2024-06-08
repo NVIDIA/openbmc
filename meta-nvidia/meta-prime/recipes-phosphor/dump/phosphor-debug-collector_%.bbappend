@@ -23,6 +23,12 @@ EXTRA_OEMESON += "-DSYSTEM_DUMP_OBJPATH=/xyz/openbmc_project/dump/system"
 # The system dump entry D-Bus object path
 EXTRA_OEMESON += "-DSYSTEM_DUMP_OBJ_ENTRY=/xyz/openbmc_project/dump/system/entry"
 
+# The Manager bmc dump macro
+EXTRA_OEMESON += "-DBMC_DUMP_MAX_SIZE=20480"
+EXTRA_OEMESON += "-DBMC_DUMP_TOTAL_SIZE=20992"
+EXTRA_OEMESON += "-DBMC_DUMP_MIN_SPACE_REQD=20480"
+EXTRA_OEMESON += "-DCOMPRESSION_TYPE=zstd"
+
 FILESEXTRAPATHS:prepend := "${THISDIR}:"
 
 SRC_URI:append = " file://fpga_dump.sh \

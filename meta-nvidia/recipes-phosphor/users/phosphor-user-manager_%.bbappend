@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/phosphor-user-manager;protocol=https;branch=develop"
 SRC_URI += "file://upgrade_hostconsole_group.sh"
-SRCREV = "26b5ad2639cfa017bb906f0074c297a03d7781aa"
+SRCREV = "2bdf5a73e5ea77c9401bc3d418fcfe85b9ec267c"
 
 def get_oeconf(d, policy_var, meson_var):
     val = d.getVar(policy_var , True)

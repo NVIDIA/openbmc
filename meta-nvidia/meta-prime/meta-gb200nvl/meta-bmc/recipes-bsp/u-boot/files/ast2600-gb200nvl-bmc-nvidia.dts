@@ -221,3 +221,6 @@
 			  0x08 0x04>;
 };
 
+&display_port {
+	status = "okay";
+};

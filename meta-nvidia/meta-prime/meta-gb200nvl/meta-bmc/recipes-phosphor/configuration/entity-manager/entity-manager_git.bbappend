@@ -9,6 +9,9 @@ SRC_URI:append = " file://GB200NVL_DCSCM.json \
                    file://fru-service.conf \
                    file://blacklist.json \
                    file://PDB.json \
+                   file://NVMe_Drive.json \
+                   file://IO_Board.json \
+                   file://Fan_Controllers.json \
                    "
 
 #Runtime dependency on fru-device defined in meta-prime
@@ -23,9 +26,12 @@ do_install:append() {
      install -m 0444 ${WORKDIR}/Processor_Module.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/HMC.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/Cable_Backplane_Cartridge.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/IO_Board.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/PCIe_Cards.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/i2cPcieMapping.json ${D}/usr/share/entity-manager/
      install -m 0444 ${WORKDIR}/PDB.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/NVMe_Drive.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/Fan_Controllers.json ${D}/usr/share/entity-manager/configurations
 
      mkdir -p ${D}${base_libdir}/systemd/system/xyz.openbmc_project.FruDevice.service.d
      install -m 0444 ${WORKDIR}/fru-service.conf  ${D}${base_libdir}/systemd/system/xyz.openbmc_project.FruDevice.service.d/

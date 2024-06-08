@@ -14,7 +14,7 @@ DEPENDS += "boost"
 DEPENDS += "phosphor-logging"
 
 SRC_URI = "git://github.com/NVIDIA/nv-shmem;protocol=https;branch=develop"
-SRCREV = "e382941cc8fbe076e962f5d52b6cc473e92c1904"
+SRCREV = "3d2c00a7ad5a547a280b253496aed8ff71c56399"
 
 EXTRA_OEMESON = "-Dtests=disabled"
 FILES:${PN}:append = " ${datadir}/nvshmem/shm_mapping.json"

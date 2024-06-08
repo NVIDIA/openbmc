@@ -47,7 +47,7 @@ RESET_SERVICE = "host-reset@.service"
 RESET_TGTFMT = "host-reset@{0}.service"
 RESET_HOST_FMT = "../${RESET_SERVICE}:obmc-host-force-warm-reboot@{0}.target.requires/${RESET_TGTFMT}"
 
-GRCRESET_HOST_FMT = "../${RESET_SERVICE}:obmc-host-warm-reboot@{0}.target.requires/${RESET_TGTFMT}"
+GRCRESET_HOST_FMT = "../${RESET_SERVICE}:obmc-host-warm-reboot@{0}.target.requires/obmc-host-reboot@{0}.target"
 
 SYSTEMD_PACKAGES = "${PN}"
 SYSTEMD_SERVICE:${PN} += " \

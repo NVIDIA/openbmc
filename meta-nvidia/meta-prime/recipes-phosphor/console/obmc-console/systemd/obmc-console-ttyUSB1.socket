@@ -1,0 +1,9 @@
+[Unit]
+Description=Phosphor USB1 Console SSH Per-Connection socket
+
+[Socket]
+ListenStream=2201
+Accept=yes
+
+[Install]
+WantedBy=sockets.target

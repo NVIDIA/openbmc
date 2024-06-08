@@ -3,7 +3,6 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 do_install:append() {
     cat >> ${D}${sysconfdir}/fstab <<EOF
 
-/dev/mtdblock7      /var/lib/logging/   jffs2      defaults,sync,nofail,x-systemd.device-timeout=600         0  0
 none                /tmp                         tmpfs      rw,nosuid,nodev,nr_inodes=409600,size=280M    0  0
 tmpfs               /tmp/images                  tmpfs      defaults,size=200M    0  0
 
