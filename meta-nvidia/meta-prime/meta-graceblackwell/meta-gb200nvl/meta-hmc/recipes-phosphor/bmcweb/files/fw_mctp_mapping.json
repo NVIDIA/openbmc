@@ -1,0 +1,14 @@
+{
+  "FwMctpMap":{
+	"/xyz/openbmc_project/software/HGX_FW_FPGA_0": 13,
+	"/xyz/openbmc_project/software/HGX_FW_BMC_0": 15,
+	"/xyz/openbmc_project/software/HGX_FW_FPGA_1": 20,
+	"/xyz/openbmc_project/software/HGX_FW_CPU_0": 16,
+	"/xyz/openbmc_project/software/HGX_FW_CPU_1": 23,
+	"/xyz/openbmc_project/software/HGX_FW_GPU_0": 18,
+	"/xyz/openbmc_project/software/HGX_FW_GPU_1": 19,
+	"/xyz/openbmc_project/software/HGX_FW_GPU_2": 25,
+	"/xyz/openbmc_project/software/HGX_FW_GPU_3": 26
+  }
+}
+

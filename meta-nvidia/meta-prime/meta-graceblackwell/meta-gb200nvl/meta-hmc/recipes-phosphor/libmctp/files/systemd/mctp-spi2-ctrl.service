@@ -1,0 +1,13 @@
+[Unit]
+Description=MCTP SPI 2 control daemon
+After=mctp-spi2-demux.service
+Requires=mctp-spi2-demux.service
+PartOf=fpga0-ap-recovery.target
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/mctp-spi-ctrl -t 6 -m 1 -d 20 -v 0 -f /usr/share/mctp/mctp_cfg_spi2.json
+SyslogIdentifier=mctp-spi2-ctrl
+
+[Install]
+WantedBy=fpga0-ap-recovery.target

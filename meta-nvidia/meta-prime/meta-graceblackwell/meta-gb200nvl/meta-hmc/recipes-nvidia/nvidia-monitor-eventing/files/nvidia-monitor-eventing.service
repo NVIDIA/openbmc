@@ -1,0 +1,15 @@
+[Unit]
+Description=NVIDIA Monitor Eventing Service
+After=xyz.openbmc_project.Logging.service gpio-status-handler.service xyz.openbmc_project.ObjectMapper.service pldmd.service nvidia-pcm.service
+
+[Service]
+Type=dbus
+SyslogIdentifier=monitor-eventing
+EnvironmentFile=/etc/default/nvidia-pcm
+ExecStart=/usr/bin/env monitor-eventingd -d ${MONEVT_DAT} -e ${MONEVT_EVENTINFO}
+Restart=always
+TimeoutStartSec=480
+BusName=xyz.openbmc_project.MonitorEventing
+
+[Install]
+WantedBy=multi-user.target

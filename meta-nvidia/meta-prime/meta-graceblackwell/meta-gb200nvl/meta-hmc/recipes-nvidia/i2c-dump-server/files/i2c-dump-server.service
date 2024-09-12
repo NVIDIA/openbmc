@@ -1,0 +1,13 @@
+[Unit]
+Description=I2C dump server
+After=hmc-boot-complete.service
+After=create-dump-dbus.service
+
+[Service]
+Restart=no
+RemainAfterExit=true
+Type=simple
+ExecStart=/bin/bash -c '/usr/bin/i2c-dump-server.sh'
+SyslogIdentifier=i2c-dump-server
+
+[Install]

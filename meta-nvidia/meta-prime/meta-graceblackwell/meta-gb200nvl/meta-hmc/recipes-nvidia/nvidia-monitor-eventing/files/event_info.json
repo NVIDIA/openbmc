@@ -1,0 +1,2795 @@
+{
+  "Device": [
+    {
+      "event": "CPU Boot completed failure",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU-BOOT-COMP-ERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {},
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "FATAL_ERROR_CODE_ErrorBootCompleteTimeoutMaxAttempt CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow. If the problem persists, isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "Boot Complete Failure"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "Boot complete failure for CPU.",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU Secure boot failure",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU-SEC-BOOT-ERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {},
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "FATAL_ERROR_CODE_ErrorAuthApFw CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "Secure Boot Failure"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "Secure boot failure for CPU.",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU SPI flash error",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU-SPI-FLASH-ERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "interface_status"
+      ],
+      "event_trigger": {},
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_SPI_READ_FAILURE CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Collect ERoT logs and isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "SPI Flash Error"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "SPI Flash error for CPU.",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "GPU GPU THERM_OVERT_INT Abnormal State Change",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_THERM_OVERT_INT-ERROR",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "thermal_control"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/GpioStatusHandler",
+        "interface": "xyz.openbmc_project.GpioStatus",
+        "property": "THERM_OVERT",
+        "check": {
+          "equal": "false"
+        }
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "fpga_regtbl",
+        "arguments": "GPU_THERM_OVERT_INT [0-3]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "A thermal interrupt was triggered. Power off the Baseboard within 1 second, and GPU will shutdown autonomously. Check thermal environment to ensure the GPU operates within thermal specifications and power cycle the Baseboard to recover.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] THERM_OVERT_INT",
+            "Abnormal State Change"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "FPGA interrupt GPU_THERM_OVERT_INT happens.",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU GPU THERM_WARN_INT Abnormal State Change",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_THERM_WARN_INT-ERROR",
+      "managed": "no",
+      "rollup_device": "",
+      "category": [
+        "thermal_control"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/GpioStatusHandler",
+        "interface": "xyz.openbmc_project.GpioStatus",
+        "property": "I2C2_ALERT",
+        "check": {
+          "equal": "false"
+        }
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "fpga_regtbl",
+        "arguments": "GPU_THERM_WARN_INT [0-3]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Warning",
+      "resolution": "Increase the Baseboard cooling and check thermal environment to ensure the PCB Temperature reading is under UpperCritical threshold.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] THERM_WARN_INT",
+            "Abnormal State Change"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "FPGA interrupt GPU_THERM_WARN_INT happens.",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "CPU CPU THERM_OVERT_INT Abnormal State Change",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_THERM_OVERT_INT-ERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "thermal_control"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/GpioStatusHandler",
+        "interface": "xyz.openbmc_project.GpioStatus",
+        "property": "THERM_OVERT",
+        "check": {
+          "equal": "false"
+        }
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "fpga_regtbl",
+        "arguments": "CPU_THERM_OVERT_INT [0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "A thermal interrupt was triggered. Power off the Baseboard within 1 second, and CPU will shutdown autonomously. Check thermal environment to ensure the CPU operates within thermal specifications and power cycle the Baseboard to recover.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] THERM_OVERT_INT",
+            "Abnormal State Change"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "FPGA interrupt CPU_THERM_OVERT_INT happens.",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU CPU THERM_WARN_INT Abnormal State Change",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_THERM_WARN_INT-ERROR",
+      "managed": "no",
+      "rollup_device": "",
+      "category": [
+        "thermal_control"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/GpioStatusHandler",
+        "interface": "xyz.openbmc_project.GpioStatus",
+        "property": "I2C2_ALERT",
+        "check": {
+          "equal": "false"
+        }
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "fpga_regtbl",
+        "arguments": "CPU_THERM_WARN_INT [0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Warning",
+      "resolution": "Increase the Baseboard cooling and check thermal environment to ensure the PCB Temperature reading is under UpperCritical threshold.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] THERM_WARN_INT",
+            "Abnormal State Change"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "FPGA interrupt CPU_THERM_WARN_INT happens.",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "ERoT_CPU CPU EROT_FATAL_ERR_INT Abnormal State Change",
+      "device_type": "ERoT_CPU_[0-1]",
+      "error_id": "CPU_EROT_FATAL_ERR_INT-ERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "erot_control"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/GpioStatusHandler",
+        "interface": "xyz.openbmc_project.GpioStatus",
+        "property": "I2C2_ALERT",
+        "check": {
+          "equal": "false"
+        }
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "fpga_regtbl",
+        "arguments": "CPU_EROT_FATAL_ERR_INT [0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Talk to ERoT directly via MCTP vendor command to triage. For details, please refer to the section ERoT Fatal Troubleshooting\" of the latest NVIDIA Oberon Error Reporting (NVOnline: xxxxxxx). - TBD\"",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "ERoT_CPU_[0-1] EROT_FATAL_ERR_INT",
+            "Abnormal State Change"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "FPGA interrupt CPU_EROT_FATAL_ERR_INT happens.",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "PCBTempSensor PCB TEMP_ALERT_INT Abnormal State Change",
+      "device_type": "PCB_[0-1]_Temp_0",
+      "error_id": "PCB_TEMP_ALERT_INT-ERROR",
+      "managed": "no",
+      "rollup_device": "",
+      "category": [
+        "thermal_control"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/GpioStatusHandler",
+        "interface": "xyz.openbmc_project.GpioStatus",
+        "property": "I2C2_ALERT",
+        "check": {
+          "equal": "false"
+        }
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "fpga_regtbl",
+        "arguments": "PCB_TEMP_ALERT_INT [0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Warning",
+      "resolution": "Increase the Baseboard cooling and check thermal environment to ensure the PCB Temperature reading is under UpperCritical threshold.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Systems/HGX_Baseboard_0",
+        "message_args": {
+          "patterns": [
+            "PCB_[0-1]_Temp_0 TEMP_ALERT_INT",
+            "Abnormal State Change"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "FPGA interrupt PCB_TEMP_ALERT_INT happens.",
+      "log_namespace": "Baseboard_0"
+    },
+    {
+      "event": "ERoT_FPGA FPGA_EROT SPI_ERR_INT Abnormal State Change",
+      "device_type": "ERoT_FPGA_0",
+      "error_id": "FPGA_EROT_SPI_ERR_INT-ERROR",
+      "managed": "no",
+      "rollup_device": "",
+      "category": [
+        "erot_control"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/GpioStatusHandler",
+        "interface": "xyz.openbmc_project.GpioStatus",
+        "property": "I2C2_ALERT",
+        "check": {
+          "equal": "false"
+        }
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "fpga_regtbl",
+        "arguments": "FPGA_EROT_SPI_ERR_INT 0",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Warning",
+      "resolution": "AC cycle the system. If problem persists, collect all dumps per troubleshooting guide, isolate the system and evaluate for RMA.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Systems/HGX_Baseboard_0",
+        "message_args": {
+          "patterns": [
+            "FPGA_EROT SPI_ERR_INT",
+            "Abnormal State Change"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "FPGA interrupt FPGA_EROT_SPI_ERR_INT happens.",
+      "log_namespace": "Baseboard_0"
+    },
+    {
+      "event": "ERoT_CPU EROT SPI_ERR_CPU_INT Abnormal State Change",
+      "device_type": "ERoT_CPU_[0-1]",
+      "error_id": "EROT_SPI_ERR_CPU_INT-ERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "erot_control"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/GpioStatusHandler",
+        "interface": "xyz.openbmc_project.GpioStatus",
+        "property": "I2C2_ALERT",
+        "check": {
+          "equal": "false"
+        }
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "fpga_regtbl",
+        "arguments": "EROT_SPI_ERR_CPU_INT [0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Warning",
+      "resolution": "AC cycle the system. If problem persists, collect all dumps per troubleshooting guide, isolate the system and evaluate for RMA.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "ERoT_CPU_[0-1] SPI_ERR_INT",
+            "Abnormal State Change"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "FPGA interrupt EROT_SPI_ERR_CPU_INT happens.",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "MOD PS_RUN_PWR_FAULT Abnormal State Change",
+      "device_type": "Power_0",
+      "error_id": "PS_RUN_PWR_FAULT-ERROR",
+      "managed": "yes",
+      "rollup_device": "Baseboard_0",
+      "category": [
+        "power_rail"
+      ],
+      "event_trigger": {},
+      "accessor": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/GpioStatusHandler",
+        "interface": "xyz.openbmc_project.GpioStatus",
+        "property": "PS_RUN_PWR_FAULT",
+        "check": {
+          "equal": "false"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "AC cycle the system. If problem persists, collect all dumps per troubleshooting guide, isolate the system and evaluate for RMA.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Systems/HGX_Baseboard_0",
+        "message_args": {
+          "patterns": [
+            "PS_RUN_PWR_FAULT",
+            "{PwrFailRegs}"
+          ],
+          "parameters": [
+            {
+              "type": "CMDLINE",
+              "executable": "gb200_pwrfail_parser"
+            }
+          ]
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "FPGA interrupt PS_RUN_PWR_FAULT happens.",
+      "log_namespace": "Baseboard_0"
+    },
+    {
+      "event": "GPU Row Remapping Pending",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU-ROW-REMAPPING-PENDING-EVENT",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "memory_status"
+      ],
+      "event_trigger": {},
+      "accessor": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/dimm/GPU_[0-3]_DRAM_0",
+        "interface": "com.nvidia.MemoryRowRemapping",
+        "property": "RowRemappingPendingState",
+        "check": {
+          "not_equal": "false"
+        }
+      },
+      "recovery": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/dimm/GPU_[0-3]_DRAM_0",
+        "interface": "com.nvidia.MemoryRowRemapping",
+        "property": "RowRemappingPendingState",
+        "check": {
+          "equal": "false"
+        }
+      },
+      "severity": "Warning",
+      "resolution": "No immediate recovery required. Reset the GPU at the next service window, since the process of row-remapping requires a GPU reset to take effect and will remain persistent throughout the life of the GPU.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Memory",
+            "Row-Remapping Pending"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "Row Remapping Pending Count",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/dimm/GPU_[0-3]_DRAM_0",
+          "interface": "com.nvidia.MemoryRowRemapping",
+          "property": "RowRemappingPendingState"
+        },
+        {
+          "name": "Row Remapping Count - Correctable",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/dimm/GPU_[0-3]_DRAM_0",
+          "interface": "com.nvidia.MemoryRowRemapping",
+          "property": "ceRowRemappingCount"
+        },
+        {
+          "name": "Row Remapping Count - Uncorrectable",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/dimm/GPU_[0-3]_DRAM_0",
+          "interface": "com.nvidia.MemoryRowRemapping",
+          "property": "ueRowRemappingCount"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "A row-remapping is pending and will happen at the next GPU reset.",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU Row Remapping Failure",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU-ROW-REMAPPING-ERROR",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "memory_status"
+      ],
+      "event_trigger": {},
+      "accessor": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/dimm/GPU_[0-3]_DRAM_0",
+        "interface": "com.nvidia.MemoryRowRemapping",
+        "property": "RowRemappingFailureState",
+        "check": {
+          "not_equal": "false"
+        }
+      },
+      "recovery": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/dimm/GPU_[0-3]_DRAM_0",
+        "interface": "com.nvidia.MemoryRowRemapping",
+        "property": "RowRemappingFailureState",
+        "check": {
+          "equal": "false"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Memory",
+            "Row-Remapping Failure"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "Row Remapping Count - Correctable",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/dimm/GPU_[0-3]_DRAM_0",
+          "interface": "com.nvidia.MemoryRowRemapping",
+          "property": "ceRowRemappingCount"
+        },
+        {
+          "name": "Row Remapping Count - Uncorrectable",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/dimm/GPU_[0-3]_DRAM_0",
+          "interface": "com.nvidia.MemoryRowRemapping",
+          "property": "ueRowRemappingCount"
+        },
+        {
+          "name": "Row Remapping Failure Count",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/dimm/GPU_[0-3]_DRAM_0",
+          "interface": "com.nvidia.MemoryRowRemapping",
+          "property": "RowRemappingFailureState"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "Row-remapping has failed.",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU Throttled State",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU-THROTTLE-EVENT",
+      "managed": "no",
+      "rollup_device": "",
+      "category": [
+        "inband_status"
+      ],
+      "event_trigger": {},
+      "accessor": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]",
+        "interface": "xyz.openbmc_project.State.ProcessorPerformance",
+        "property": "ThrottleReason",
+        "check": {
+          "not_equal": "xyz.openbmc_project.State.ProcessorPerformance.ThrottleReasons.None"
+        }
+      },
+      "recovery": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]",
+        "interface": "xyz.openbmc_project.State.ProcessorPerformance",
+        "property": "ThrottleReason",
+        "check": {
+          "equal": "xyz.openbmc_project.State.ProcessorPerformance.ThrottleReasons.None"
+        }
+      },
+      "severity": "OK",
+      "resolution": "Informational Log. no recovery required.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] ThrottleReason",
+            "{Throttle Reason}"
+          ],
+          "parameters": [
+            {
+              "type": "DBUS",
+              "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]",
+              "interface": "xyz.openbmc_project.State.ProcessorPerformance",
+              "property": "ThrottleReason"
+            }
+          ]
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU clocks have been lowered to throttle the GPU due to one or more factors.",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU GPU NVLink Training Error",
+      "device_type": "GPU_[0-3]/NVLink_[0-17]",
+      "error_id": "GPU-NVLINK-TRAINING-ERROR",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "interface_status"
+      ],
+      "event_trigger": {},
+      "accessor": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]/Ports/NVLink_[0-17]",
+        "interface": "xyz.openbmc_project.Metrics.PortMetricsOem3",
+        "property": "TrainingError",
+        "check": {
+          "not_equal": "0"
+        }
+      },
+      "recovery": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]/Ports/NVLink_[0-17]",
+        "interface": "xyz.openbmc_project.Metrics.PortMetricsOem3",
+        "property": "TrainingError",
+        "check": {
+          "equal": "0"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Reset the GPU or power cycle the Baseboard. If problem persists, isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] NVLink_[0-17]",
+            "NVLink Training Error"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "NVLink Runtime Error Count",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]/Ports/NVLink_[0-17]",
+          "interface": "xyz.openbmc_project.Metrics.PortMetricsOem3",
+          "property": "RuntimeError"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU has experienced a failure on one NVLink connection to an NVSwitch.",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU SRAM ECC uncorrectable error count",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU-SRAM-ECC-UEC-EVENT",
+      "managed": "no",
+      "rollup_device": "",
+      "category": [
+        "memory_status"
+      ],
+      "event_trigger": {},
+      "accessor": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]",
+        "interface": "xyz.openbmc_project.Memory.MemoryECC",
+        "property": "ueCount",
+        "check": {
+          "not_equal": "0"
+        }
+      },
+      "recovery": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]",
+        "interface": "xyz.openbmc_project.Memory.MemoryECC",
+        "property": "ueCount",
+        "check": {
+          "equal": "0"
+        }
+      },
+      "severity": "Warning",
+      "resolution": "Reset the GPU. If the GPU continues to exhibit the problem, isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] SRAM",
+            "Uncorrectable ECC Error"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": true,
+      "description": "GPU has encountered SRAM ECC Uncorrectable error.",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU OCP Device Status",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_OCP_DEVICE_STATUS",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "ocp_recovery_status_parser",
+        "arguments": "GPU_[0-3]",
+        "check": {
+          "not_equal": "\"\""
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Check OCP Secure Firmware Recovery specification for troubleshooting. https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Firmware",
+            "{OCPStatus}"
+          ],
+          "parameters": [
+            {
+              "type": "CMDLINE",
+              "executable": "ocp_recovery_status_parser",
+              "arguments": "GPU_[0-3]"
+            }
+          ]
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU OCP_DEVICE_STATUS",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "CPU EC_TAG0_AUTH_ERROR",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_EC_TAG0_AUTH_ERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "EC_TAG0_AUTH_ERROR CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "EC_TAG0_AUTH_ERROR"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU EC_TAG0_AUTH_ERROR",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU EC_TAG1_COPY_ERROR",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_EC_TAG1_COPY_ERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "EC_TAG1_COPY_ERROR CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Power cycle the board. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "EC_TAG1_COPY_ERROR"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU EC_TAG1_COPY_ERROR",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU EC_OTP_MISMATCH_ERROR",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_EC_OTP_MISMATCH_ERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "EC_OTP_MISMATCH_ERROR CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Collect ERoT logs and isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "EC_OTP_MISMATCH_ERROR"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU EC_OTP_MISMATCH_ERROR",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU EC_STRAP_MISMATCH",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_EC_STRAP_MISMATCH",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "EC_STRAP_MISMATCH CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "EC_STRAP_MISMATCH"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU EC_STRAP_MISMATCH",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_PRIMARY_ValidatePublicKeyError",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_PRIMARY_VALIDATEPUBLICKEYERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_PRIMARY_ValidatePublicKeyError CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_PRIMARY_ValidatePublicKeyError"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_PRIMARY_ValidatePublicKeyError",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_PRIMARY_KeyRevokeCheckError",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_PRIMARY_KEYREVOKECHECKERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_PRIMARY_KeyRevokeCheckError CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_PRIMARY_KeyRevokeCheckError"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_PRIMARY_KeyRevokeCheckError",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_PRIMARY_RollbackProtectionCheckError",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_PRIMARY_ROLLBACKPROTECTIONCHECKERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_PRIMARY_RollbackProtectionCheckError CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_PRIMARY_RollbackProtectionCheckError"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_PRIMARY_RollbackProtectionCheckError",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_PRIMARY_AuthenticateError",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_PRIMARY_AUTHENTICATEERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_PRIMARY_AuthenticateError CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_PRIMARY_AuthenticateError"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_PRIMARY_AuthenticateError",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_PRIMARY_SpiReadError",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_PRIMARY_SPIREADERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_PRIMARY_SpiReadError CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_PRIMARY_SpiReadError"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_PRIMARY_SpiReadError",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_SECONDARY_ValidatePublicKeyError",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_SECONDARY_VALIDATEPUBLICKEYERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_SECONDARY_ValidatePublicKeyError CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_SECONDARY_ValidatePublicKeyError"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_SECONDARY_ValidatePublicKeyError",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_SECONDARY_KeyRevokeCheckError",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_SECONDARY_KEYREVOKECHECKERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_SECONDARY_KeyRevokeCheckError CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_SECONDARY_KeyRevokeCheckError"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_SECONDARY_KeyRevokeCheckError",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_SECONDARY_RollbackProtectionCheckError",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_SECONDARY_ROLLBACKPROTECTIONCHECKERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_SECONDARY_RollbackProtectionCheckError CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_SECONDARY_RollbackProtectionCheckError"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_SECONDARY_RollbackProtectionCheckError",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_SECONDARY_AuthenticateError",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_SECONDARY_AUTHENTICATEERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_SECONDARY_AuthenticateError CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_SECONDARY_AuthenticateError"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_SECONDARY_AuthenticateError",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_SECONDARY_SpiReadError",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_SECONDARY_SPIREADERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_SECONDARY_SpiReadError CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_SECONDARY_SpiReadError"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_SECONDARY_SpiReadError",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_RECOVERY_ValidatePublicKeyError",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_RECOVERY_VALIDATEPUBLICKEYERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_RECOVERY_ValidatePublicKeyError CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_RECOVERY_ValidatePublicKeyError"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_RECOVERY_ValidatePublicKeyError",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_RECOVERY_KeyRevokeCheckError",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_RECOVERY_KEYREVOKECHECKERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_RECOVERY_KeyRevokeCheckError CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_RECOVERY_KeyRevokeCheckError"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_RECOVERY_KeyRevokeCheckError",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_RECOVERY_RollbackProtectionCheckError",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_RECOVERY_ROLLBACKPROTECTIONCHECKERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_RECOVERY_RollbackProtectionCheckError CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_RECOVERY_RollbackProtectionCheckError"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_RECOVERY_RollbackProtectionCheckError",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_RECOVERY_AuthenticateError",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_RECOVERY_AUTHENTICATEERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_RECOVERY_AuthenticateError CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_RECOVERY_AuthenticateError"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_RECOVERY_AuthenticateError",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_RECOVERY_SpiReadError",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_RECOVERY_SPIREADERROR",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_RECOVERY_SpiReadError CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_RECOVERY_SpiReadError"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_RECOVERY_SpiReadError",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_SPI_READ_FAILURE",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_SPI_READ_FAILURE",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_SPI_READ_FAILURE CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_SPI_READ_FAILURE"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_SPI_READ_FAILURE",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_SPI_ACCESS_VIOLATION_OPCODE",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_SPI_ACCESS_VIOLATION_OPCODE",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_SPI_ACCESS_VIOLATION_OPCODE CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Collect ERoT logs and isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_SPI_ACCESS_VIOLATION_OPCODE"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_SPI_ACCESS_VIOLATION_OPCODE",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_SPI_ACCESS_VIOLATION_RANGE",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_SPI_ACCESS_VIOLATION_RANGE",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_SPI_ACCESS_VIOLATION_RANGE CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Collect ERoT logs and isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_SPI_ACCESS_VIOLATION_RANGE"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_SPI_ACCESS_VIOLATION_RANGE",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_HEARTBEAT_TIMEOUT",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_HEARTBEAT_TIMEOUT",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_HEARTBEAT_TIMEOUT CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Collect ERoT logs and isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_HEARTBEAT_TIMEOUT"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_HEARTBEAT_TIMEOUT",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU AP0_BOOTCOMPLETE_TIMEOUT",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_AP0_BOOTCOMPLETE_TIMEOUT",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "AP0_BOOTCOMPLETE_TIMEOUT CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Collect ERoT logs and isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "AP0_BOOTCOMPLETE_TIMEOUT"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU AP0_BOOTCOMPLETE_TIMEOUT",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU FATAL_ERROR_CODE_ErrorAuthApFw",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_FATAL_ERROR_CODE_ERRORAUTHAPFW",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "FATAL_ERROR_CODE_ErrorAuthApFw CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Collect ERoT logs and isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "FATAL_ERROR_CODE_ErrorAuthApFw"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU FATAL_ERROR_CODE_ErrorAuthApFw",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU FATAL_ERROR_CODE_ErrorInitResetEvent",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_FATAL_ERROR_CODE_ERRORINITRESETEVENT",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "FATAL_ERROR_CODE_ErrorInitResetEvent CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Collect ERoT logs and isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "FATAL_ERROR_CODE_ErrorInitResetEvent"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU FATAL_ERROR_CODE_ErrorInitResetEvent",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU FATAL_ERROR_CODE_ErrorSetupSpimon",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_FATAL_ERROR_CODE_ERRORSETUPSPIMON",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "FATAL_ERROR_CODE_ErrorSetupSpimon CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Collect ERoT logs and isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "FATAL_ERROR_CODE_ErrorSetupSpimon"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU FATAL_ERROR_CODE_ErrorSetupSpimon",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU FATAL_ERROR_CODE_ErrorGrantApSpiAccess",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_FATAL_ERROR_CODE_ERRORGRANTAPSPIACCESS",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "FATAL_ERROR_CODE_ErrorGrantApSpiAccess CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Collect ERoT logs and isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "FATAL_ERROR_CODE_ErrorGrantApSpiAccess"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU FATAL_ERROR_CODE_ErrorGrantApSpiAccess",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU FATAL_ERROR_CODE_ErrorTryReleaseOnInvalidSlot",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_FATAL_ERROR_CODE_ERRORTRYRELEASEONINVALIDSLOT",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "FATAL_ERROR_CODE_ErrorTryReleaseOnInvalidSlot CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Collect ERoT logs and isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "FATAL_ERROR_CODE_ErrorTryReleaseOnInvalidSlot"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU FATAL_ERROR_CODE_ErrorTryReleaseOnInvalidSlot",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU FATAL_ERROR_CODE_ErrorBootCompleteMsgFromInvalidSlot",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_FATAL_ERROR_CODE_ERRORBOOTCOMPLETEMSGFROMINVALIDSLOT",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "FATAL_ERROR_CODE_ErrorBootCompleteMsgFromInvalidSlot CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Collect ERoT logs and isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "FATAL_ERROR_CODE_ErrorBootCompleteMsgFromInvalidSlot"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU FATAL_ERROR_CODE_ErrorBootCompleteMsgFromInvalidSlot",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU FATAL_ERROR_CODE_ErrorBootCompleteTimeoutMaxAttempt",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_FATAL_ERROR_CODE_ERRORBOOTCOMPLETETIMEOUTMAXATTEMPT",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "FATAL_ERROR_CODE_ErrorBootCompleteTimeoutMaxAttempt CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Collect ERoT logs and isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "FATAL_ERROR_CODE_ErrorBootCompleteTimeoutMaxAttempt"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU FATAL_ERROR_CODE_ErrorBootCompleteTimeoutMaxAttempt",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU FATAL_ERROR_CODE_ErrorSetTimer",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_FATAL_ERROR_CODE_ERRORSETTIMER",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "FATAL_ERROR_CODE_ErrorSetTimer CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Power cycle the board. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "FATAL_ERROR_CODE_ErrorSetTimer"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU FATAL_ERROR_CODE_ErrorSetTimer",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU FATAL_ERROR_CODE_ErrorGetStrapSettingFromMetadata",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_FATAL_ERROR_CODE_ERRORGETSTRAPSETTINGFROMMETADATA",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "FATAL_ERROR_CODE_ErrorGetStrapSettingFromMetadata CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Collect ERoT logs and isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "FATAL_ERROR_CODE_ErrorGetStrapSettingFromMetadata"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU FATAL_ERROR_CODE_ErrorGetStrapSettingFromMetadata",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU FATAL_ERROR_CODE_ErrorFirmwareRestriction",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_FATAL_ERROR_CODE_ERRORFIRMWARERESTRICTION",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "FATAL_ERROR_CODE_ErrorFirmwareRestriction CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Collect ERoT logs and isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "FATAL_ERROR_CODE_ErrorFirmwareRestriction"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU FATAL_ERROR_CODE_ErrorFirmwareRestriction",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU REGION_CP_FAIL_Timeout",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_REGION_CP_FAIL_TIMEOUT",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "REGION_CP_FAIL_Timeout CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "REGION_CP_FAIL_Timeout"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU REGION_CP_FAIL_Timeout",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU REGION_CP_FAIL_OtherReason",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_REGION_CP_FAIL_OTHERREASON",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "REGION_CP_FAIL_OtherReason CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "REGION_CP_FAIL_OtherReason"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU REGION_CP_FAIL_OtherReason",
+      "log_namespace": "CPU_[0-1]"
+    },
+    {
+      "event": "CPU STAGE_DL_FAILED_BackgroundCopyToInactiveFailed",
+      "device_type": "CPU_[0-1]",
+      "error_id": "CPU_STAGE_DL_FAILED_BACKGROUNDCOPYTOINACTIVEFAILED",
+      "managed": "yes",
+      "rollup_device": "CPU_[0-1]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_ERoT_CPU_[0-1]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "glacier_boot_status_parser",
+        "arguments": "STAGE_DL_FAILED_BackgroundCopyToInactiveFailed CPU_[0-1]",
+        "check": {
+          "equal": "1"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Collect ERoT logs and isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
+        "message_args": {
+          "patterns": [
+            "CPU_[0-1] Firmware",
+            "STAGE_DL_FAILED_BackgroundCopyToInactiveFailed"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [],
+      "action": "",
+      "value_as_count": false,
+      "description": "CPU STAGE_DL_FAILED_BackgroundCopyToInactiveFailed",
+      "log_namespace": "CPU_[0-1]"
+    }
+  ]
+}

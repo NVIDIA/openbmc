@@ -1,0 +1,4 @@
+DEMUX_USB_BINDING_OPTS=usb vendor_id=0x0955  product_id=0xFFFF class_id=0x0
+MCTP_USB_CTRL_OPTS= -m 1 -t 3 -i 8 -p 12 -x 13 -d 1 -v 1
+DEMUX_SPI_BINDING_OPTS=astspi gpio=649
+MCTP_SPI_CTRL_OPTS= -e 0 -i 3 -t 6 -m 1 -d 20 -v 0 -u f72d6fa0-5675-11ed-9b6a-0242ac120002

@@ -1,0 +1,45 @@
+{
+    "Exposes": [
+        {
+            "I2CAddress": 114,
+            "I2CBus": 0,
+            "Name": "HGX_FW_ERoT_FPGA_1",
+            "ChassisName": "HGX_FW_ERoT_FPGA_1",
+            "MctpUUID" : "f72d6f51-5675-11ed-9b6a-0242ac120002",
+            "APName": "HGX_FW_FPGA_1",
+            "APEID" : 20,
+            "APBootStatusType" : "QueryBootStatus",
+            "isRecoverable" : true,
+            "Type": "GlacierCrisisRecovery"
+        },
+        {
+            "I2CAddress": 40,
+            "I2CBus": 1,
+            "Name": "HGX_FW_ERoT_CPU_0",
+            "ChassisName": "HGX_ERoT_CPU_0",
+            "MctpUUID" : "f72d6f60-5675-11ed-9b6a-0242ac120002",
+            "APName": "HGX_FW_CPU_0",
+            "APEID" : 16,
+            "APBootStatusType" : "QueryBootStatus",
+            "isRecoverable" : true,
+            "HiddenByFPGA" : true,
+            "Type": "GlacierCrisisRecovery"
+        },
+        {
+            "I2CAddress": 40,
+            "I2CBus": 2,
+            "Name": "HGX_FW_ERoT_CPU_1",
+            "ChassisName": "HGX_ERoT_CPU_1",
+            "MctpUUID" : "f72d6f61-5675-11ed-9b6a-0242ac120002",
+            "APName": "HGX_FW_CPU_1",
+            "APEID" : 23,
+            "APBootStatusType" : "QueryBootStatus",
+            "isRecoverable" : true,
+            "HiddenByFPGA" : true,
+            "Type": "GlacierCrisisRecovery"
+        }
+    ],
+    "Name": "Glacier_Crisis_Recovery_Devices",
+    "Probe": "TRUE",
+    "Type": "Recovery_Config"
+}

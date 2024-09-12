@@ -1,0 +1,48 @@
+{
+    "Namespaces": {
+        "PlatformEnvironmentMetrics": {
+            "Producers": [
+                "nsmd",
+                "pldmd",
+                "hwmontemp"
+            ],
+            "SizeInBytes": 131072
+        },
+        "MemoryMetrics": {
+            "Producers": [
+                "nsmd"
+            ],
+            "SizeInBytes": 131072
+        },
+        "ProcessorMetrics": {
+            "Producers": [
+                "nsmd"
+            ],
+            "SizeInBytes": 262144
+        },
+        "ProcessorGPMMetrics": {
+            "Producers": [
+                "nsmd"
+            ],
+            "SizeInBytes": 262144
+        },
+        "ProcessorPortMetrics": {
+            "Producers": [
+                "nsmd"
+            ],
+            "SizeInBytes": 1024000
+        },
+        "ProcessorPortGPMMetrics": {
+            "Producers": [
+                "nsmd"
+            ],
+            "SizeInBytes": 524288
+        },
+        "CpuProcessorMetrics": {
+            "Producers": [
+                "pldmd"
+            ],
+            "SizeInBytes": 65536
+        }
+    }
+}

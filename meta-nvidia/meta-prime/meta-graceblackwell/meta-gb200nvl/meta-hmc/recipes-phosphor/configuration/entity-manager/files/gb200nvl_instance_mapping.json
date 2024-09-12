@@ -1,0 +1,19 @@
+[
+  {
+    "Exposes": [
+      {
+        "Name": "GPUMapping",
+        "Type": "NSM_GetInstanceIDByMctpUUID",
+        "MappingArray": [
+          "f72d6fb0-5675-11ed-9b6a-0242ac120002",
+          "f72d6fb1-5675-11ed-9b6a-0242ac120002",
+          "f72d6fb2-5675-11ed-9b6a-0242ac120002",
+          "f72d6fb3-5675-11ed-9b6a-0242ac120002"
+        ]
+      }
+    ],
+    "Name": "Mapping",
+    "Probe": "TRUE",
+    "Type": "NSM_Configs"
+  }
+]

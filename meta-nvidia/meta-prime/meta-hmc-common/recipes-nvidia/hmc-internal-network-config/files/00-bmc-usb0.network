@@ -1,0 +1,12 @@
+[Match]
+Name=usb0
+
+[Network]
+DHCP=false
+LinkLocalAddressing=false
+IPv6AcceptRA=false
+
+[Address]
+# static IP
+# 192.168.100.1 netmask 255.255.255.0
+Address=172.31.13.251/24

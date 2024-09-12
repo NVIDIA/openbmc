@@ -1,0 +1,7 @@
+{
+    "Inventory": "HGX_PCIECHIP_CONFIG",
+    "Path": "/var/pciechip/file.bin",
+    "Offset": "0xb8",
+    "VersionSize": 4
+}
+

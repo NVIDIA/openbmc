@@ -1,0 +1,11 @@
+[Unit]
+Description=Phosphor Multi GPIO monitor
+Requires=hmc-boot-complete.service
+After=hmc-boot-complete.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/phosphor-multi-gpio-monitor --config /usr/share/phosphor-gpio-monitor/phosphor-multi-gpio-monitor.json
+
+[Install]
+RequiredBy=multi-user.target

@@ -1,0 +1,17 @@
+[Unit]
+Description=HMC Ready Configuration
+# FIXME: if it's not the right place
+After=network.target
+
+[Service]
+Restart=no
+RemainAfterExit=true
+Type=simple
+ExecStartPre=/usr/bin/env hmc_ready.sh
+ExecStart=/usr/bin/env i2c-boot-progress.sh
+SyslogIdentifier=hmc_ready
+
+[Install]
+WantedBy=multi-user.target
+RequiredBy=
+

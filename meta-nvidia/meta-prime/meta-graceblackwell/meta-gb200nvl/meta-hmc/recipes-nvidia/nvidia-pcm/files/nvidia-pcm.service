@@ -1,0 +1,13 @@
+[Unit]
+Description=NVIDIA Platform Configuration Manager
+After=xyz.openbmc_project.EntityManager.service xyz.openbmc_project.ObjectMapper.service
+
+[Service]
+Type=oneshot
+SyslogIdentifier=nvidia-pcm
+ExecStartPre=/usr/bin/env mapper wait /xyz/openbmc_project/inventory/system/bmc/HGX_BMC_0
+ExecStart=/usr/bin/env pcmd -d /run/initramfs/ro/usr/share/nvidia-pcm/
+
+[Install]
+WantedBy=multi-user.target
+

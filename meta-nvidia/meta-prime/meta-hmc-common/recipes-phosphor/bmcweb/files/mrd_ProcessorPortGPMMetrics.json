@@ -1,0 +1,9 @@
+{
+    "Namespace": "ProcessorPortGPMMetrics",
+    "MetricProperties": [
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_SXM_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/NVLinkDataTxBandwidthGbps",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_SXM_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/NVLinkDataRxBandwidthGbps",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_SXM_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/NVLinkRawTxBandwidthGbps",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_SXM_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/NVLinkRawRxBandwidthGbps"
+    ]
+}

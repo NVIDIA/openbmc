@@ -1,0 +1,13 @@
+diff --git a/src/types.hpp b/src/types.hpp
+index 69a314d..71cfa4d 100644
+--- a/src/types.hpp
++++ b/src/types.hpp
+@@ -39,7 +39,7 @@ namespace systemd
+ namespace config
+ {
+ 
+-constexpr auto networkFilePrefix = "00-bmc-";
++constexpr auto networkFilePrefix = "00-hmc-";
+ constexpr auto networkFileSuffix = ".network";
+ constexpr auto deviceFileSuffix = ".netdev";
+ 

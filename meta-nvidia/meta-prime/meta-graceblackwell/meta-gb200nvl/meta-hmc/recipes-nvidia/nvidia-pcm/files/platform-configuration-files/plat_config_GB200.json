@@ -1,0 +1,22 @@
+{
+    "Name": "\"HGX GB200\"",
+    "Checks": [
+        {
+            "rule": "MatchOne",
+            "objects":[
+            ],
+            "interface": "xyz.openbmc_project.Inventory.Decorator.Asset",
+            "property": "Model",
+            "value": "TBD"
+        }
+    ],  
+    "Actions": [
+        {
+            "variables": [
+                "MONEVT_DAT=\"/run/initramfs/ro/usr/share/mon_evt/dat_GB200.json\"",
+                "MONEVT_EVENTINFO=\"/run/initramfs/ro/usr/share/mon_evt/event_info_GB200.json\""
+            ]
+        }
+    ]   
+}
+

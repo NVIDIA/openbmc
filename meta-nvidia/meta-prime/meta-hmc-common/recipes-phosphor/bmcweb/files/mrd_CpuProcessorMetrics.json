@@ -1,0 +1,16 @@
+{
+    "Namespace": "CpuProcessorMetrics",
+    "MetricProperties": [
+        "/redfish/v1/Chassis/HGX_CPU_{CpuId}/Sensors/ProcessorModule_{ProcessorId}_CPU_{CpuId}_CoreUtil_0",
+        "/redfish/v1/Chassis/HGX_CPU_{CpuId}/Sensors/ProcessorModule_{ProcessorId}_MemCntl_{CpuId}_Freq_0",
+        "/redfish/v1/Chassis/HGX_CPU_{CpuId}/Sensors/ProcessorModule_{ProcessorId}_CPU_{CpuId}_CpuFreq_0",
+        "/redfish/v1/Chassis/HGX_CPU_{CpuId}/Sensors/ProcessorModule_{ProcessorId}_Vreg_{CpuId}_CpuVoltage_0",
+        "/redfish/v1/Chassis/HGX_CPU_{CpuId}/Sensors/ProcessorModule_{ProcessorId}_Vreg_{CpuId}_SocVoltage_0",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/CPU_{CpuId}/ProcessorMetrics#/Oem/Nvidia/MemoryPageRetirementCount",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/CPU_{CpuId}/ProcessorMetrics#/Oem/Nvidia/EDPViolationState",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/CPU_{CpuId}/ProcessorMetrics#/Oem/Nvidia/PowerBreakPerformanceState",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/CPU_{CpuId}/ProcessorMetrics#/Oem/Nvidia/MemorySpareChannelPresence",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/CPU_{CpuId}/Ports/ProcessorModule_{ProcessorId}_PCIeBus_{CpuId}_PCIeLink_{PCIeLinkId}#/Status/State",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/CPU_{CpuId}/Ports/ProcessorModule_{ProcessorId}_SysBus_{CpuId}_NVLink_{NvlinkId}#/Status/State"
+    ]
+}

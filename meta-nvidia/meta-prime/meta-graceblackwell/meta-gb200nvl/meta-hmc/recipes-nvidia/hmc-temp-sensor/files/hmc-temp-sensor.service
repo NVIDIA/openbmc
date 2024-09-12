@@ -1,0 +1,13 @@
+[Unit]
+Description=HMC Temperature Sensor
+After=xyz.openbmc_project.hwmontempsensor.service hmc-boot-complete.service
+
+[Service]
+Restart=always
+Type=simple
+ExecStart=/usr/bin/env /usr/bin/hmc-temp-sensor.sh
+SyslogIdentifier=hmc-temp-sensor
+
+[Install]
+WantedBy=multi-user.target
+

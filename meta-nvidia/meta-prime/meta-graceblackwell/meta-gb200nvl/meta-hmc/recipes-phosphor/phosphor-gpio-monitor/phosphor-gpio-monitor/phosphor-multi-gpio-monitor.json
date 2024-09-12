@@ -1,0 +1,30 @@
+[
+	{
+		"Name": "FPGA1_READY-I",
+		"LineName": "FPGA1_READY-I",
+		"EventMon": "FALLING",
+		"Target": "sec-fpga-status@1.service",
+		"Continue": true
+	},
+	{
+		"Name": "Power On/Off",
+		"LineName": "PS_RUN_PWR_PG-I",
+		"EventMon": "BOTH",
+		"Targets": {
+			"FALLING": ["cpu_is_off.service"],
+			"RISING": ["cpu_is_on.service"]
+		},
+		"Continue": true,
+		"ExecuteAtStart": true
+	},
+	{
+                "Name": "HMC-Global-WP",
+                "LineName": "HMC_GLOBAL_WP-I",
+                "EventMon": "BOTH",
+                "Targets": {
+                        "FALLING": ["hmc-fru-write-protect@off.service"],
+                        "RISING": ["hmc-fru-write-protect@on.service"]
+                },
+                "Continue": true
+	}
+]

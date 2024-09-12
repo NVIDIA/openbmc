@@ -1,0 +1,14 @@
+{
+    "CPLD": [
+        {
+            "Index" : "0",
+            "Bus" : "-1",
+            "Address" : "-1",
+            "Model" : "MAX10 10M08",
+            "Manufacturer" : "Intel",
+            "ChassisAssociationEndpoint" : "/xyz/openbmc_project/inventory/system/chassis/HGX_Chassis_0",
+            "CPLDDeviceNo" : 1,
+            "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+[Unit]
+Description=NVIDIA Power Status Monitor Service
+Wants=mapper-wait@-xyz-openbmc_project-state-chassis0.service
+After=mapper-wait@-xyz-openbmc_project-state-chassis0.service
+Wants=mapper-wait@-xyz-openbmc_project-state-host0.service
+After=mapper-wait@-xyz-openbmc_project-state-host0.service
+StartLimitIntervalSec=1
+
+[Service]
+Type=oneshot
+ExecStartPre=busctl set-property xyz.openbmc_project.State.Chassis /xyz/openbmc_project/state/chassis0 xyz.openbmc_project.State.Chassis CurrentPowerState s "xyz.openbmc_project.State.Chassis.PowerState.On"
+ExecStart=busctl set-property xyz.openbmc_project.State.Host /xyz/openbmc_project/state/host0 xyz.openbmc_project.State.Host CurrentHostState s "xyz.openbmc_project.State.Host.HostState.Running"
+SyslogIdentifier=power-status
+
+[Install]
+WantedBy=multi-user.target
+
+

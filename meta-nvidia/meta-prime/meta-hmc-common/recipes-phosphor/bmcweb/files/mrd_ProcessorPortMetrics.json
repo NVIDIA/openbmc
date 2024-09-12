@@ -1,0 +1,33 @@
+{
+    "Namespace": "ProcessorPortMetrics",
+    "MetricProperties": [
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}#/CurrentSpeedGbps",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/TXBytes",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/RXBytes",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/RXErrors",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Networking/RXFrames",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Networking/TXFrames",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Networking/RXMulticastFrames",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Networking/TXMulticastFrames",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Networking/RXUnicastFrames",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Networking/TXUnicastFrames",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Networking/TXDiscards",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/MalformedPackets",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/VL15Dropped",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/VL15TXPackets",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/VL15TXBytes",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/NeighborMTUDiscards",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/SymbolErrors",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/LinkErrorRecoveryCount",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/LinkDownedCount",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/RXRemotePhysicalErrors",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/RXSwitchRelayErrors",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/QP1Dropped",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/TXWait",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/BitErrorRate",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/TXNoProtocolBytes",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/RXNoProtocolBytes",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/NVLinkErrors/RuntimeError",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/NVLinkErrors/TrainingError"
+    ]
+}

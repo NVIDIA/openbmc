@@ -1,0 +1,30 @@
+{
+    "Namespace": "ProcessorMetrics",
+    "MetricProperties": [
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}#/Status/State",
+        "/redfish/v1/Chassis/HGX_GPU_{GpuId}/PCIeDevices/GPU_{GpuId}#/PCIeInterface/PCIeType",
+        "/redfish/v1/Chassis/HGX_GPU_{GpuId}/PCIeDevices/GPU_{GpuId}#/PCIeInterface/MaxLanes",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/OperatingSpeedMHz",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/BandwidthPercent",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/Oem/Nvidia/SMUtilizationPercent",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/CacheMetricsTotal/LifeTime/CorrectableECCErrorCount",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/CacheMetricsTotal/LifeTime/UncorrectableECCErrorCount",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/PCIeErrors/CorrectableErrorCount",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/PCIeErrors/NonFatalErrorCount",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/PCIeErrors/FatalErrorCount",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/PCIeErrors/L0ToRecoveryCount",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/PCIeErrors/ReplayCount",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/PCIeErrors/ReplayRolloverCount",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/PCIeErrors/NAKSentCount",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/PCIeErrors/NAKReceivedCount",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/Oem/Nvidia/ThrottleReasons",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/Oem/Nvidia/PCIeTXBytes",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/Oem/Nvidia/PCIeRXBytes",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/PowerLimitThrottleDuration",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/ThermalLimitThrottleDuration",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/Oem/Nvidia/HardwareViolationThrottleDuration",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/Oem/Nvidia/GlobalSoftwareViolationThrottleDuration",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/Oem/Nvidia/AccumulatedGPUContextUtilizationDuration",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/Oem/Nvidia/AccumulatedSMUtilizationDuration"
+    ]
+}

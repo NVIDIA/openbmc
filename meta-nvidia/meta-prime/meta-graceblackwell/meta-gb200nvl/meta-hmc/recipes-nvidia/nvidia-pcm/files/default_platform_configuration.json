@@ -1,0 +1,12 @@
+{
+    "Name": "\"Default Configuration\"",
+    "Checks": [], 
+    "Actions": [
+        {
+            "variables": [
+                "MONEVT_DAT=\"/run/initramfs/ro/usr/share/mon_evt/dat.json\"",
+                "MONEVT_EVENTINFO=\"/run/initramfs/ro/usr/share/mon_evt/event_info.json\""
+            ]
+        }
+    ]   
+}

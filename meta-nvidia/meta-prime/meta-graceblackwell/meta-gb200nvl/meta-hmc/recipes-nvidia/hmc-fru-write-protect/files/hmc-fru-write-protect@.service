@@ -1,0 +1,9 @@
+[Unit]
+Description=NVIDIA HMC Write Protect Service
+Requires=hmc-boot-complete.service
+After=hmc-boot-complete.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'hmc-fru-wp.sh %i'
+SyslogIdentifier=hmc-fru-write-protect-%i

@@ -1,0 +1,12 @@
+[Unit]
+Description=MCTP USB control daemon
+
+[Service]
+Restart=always
+Environment=MCTP_USB_CTRL_OPTS=null
+EnvironmentFile=-/usr/share/mctp/mctp
+ExecStart=/usr/bin/mctp-usb-ctrl $MCTP_USB_CTRL_OPTS
+SyslogIdentifier=mctp-usb-ctrl
+
+[Install]
+WantedBy=nvidia-fpga-ready.target
