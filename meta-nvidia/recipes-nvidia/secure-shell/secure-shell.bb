@@ -18,26 +18,29 @@ SRC_URI = " \
         file://secure-shell.service \
 "
 
-LOCAL_BIN_DIR = "${D}/usr/local/bin/nvidia"
+SYSTEMD_SERVICE:${PN} = "secure-shell.service"
 
-FILES:${PN} += "\
-    /usr/local/bin/nvidia \
-    /usr/local/bin/nvidia/scp \
+LOCAL_BIN_DIR = "/usr/local/bin/nvidia"
+
+FILES:${PN} += " \
+    ${bindir}/rbash \
     ${bindir}/secure-shell.sh \
-    /lib/systemd/system/secure-shell.service \
-    /etc/systemd/system/multi-user.target.wants/secure-shell.service \
+    ${systemd_system_unitdir}/secure-shell.service \
+    ${systemd_system_unitdir}/multi-user.target.wants/secure-shell.service \
+    ${LOCAL_BIN_DIR}/scp/scp \
     "
 
 do_install() {
-    install -d ${D}/${bindir}
-    install -m 755 ${S}/secure-shell.sh ${D}/${bindir}/
-    install -m 755 -d ${LOCAL_BIN_DIR}
-    install -d ${D}/lib/systemd/system/
-    install -m 644 ${S}/secure-shell.service ${D}/lib/systemd/system/
-    install -m 755 -d ${D}/etc/systemd/system/multi-user.target.wants
-    ln -s -r ${D}/lib/systemd/system/secure-shell.service ${D}/etc/systemd/system/multi-user.target.wants/secure-shell.service
-    install -d ${D}/usr/local/bin/nvidia/scp
-    ln -s -r ${D}/usr/bin/scp ${D}/usr/local/bin/nvidia/scp/scp
-    mkdir -p ${D}/bin
-    ln -s -r ${D}/bin/bash ${D}/bin/rbash
+    install -d ${D}${bindir}
+    install -m 755 ${S}/secure-shell.sh ${D}${bindir}/
+    ln -s -r ${D}/bin/bash ${D}${bindir}/rbash
+
+    install -d ${D}${systemd_system_unitdir}
+    install -m 644 ${S}/secure-shell.service ${D}${systemd_system_unitdir}/
+
+    install -d ${D}${systemd_system_unitdir}/multi-user.target.wants
+    ln -s -r ${D}${systemd_system_unitdir}/secure-shell.service ${D}${systemd_system_unitdir}/multi-user.target.wants/secure-shell.service
+
+    install -d ${D}${LOCAL_BIN_DIR}/scp
+    ln -s -r ${D}${bindir}/scp ${D}${LOCAL_BIN_DIR}/scp/scp
 }

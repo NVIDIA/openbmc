@@ -1,0 +1,32 @@
+[
+    {
+        "Exposes": [
+            {
+                "Bus": "$bus",
+                "Address": "$address",
+                "Name": "System_0",
+                "Type": "EEPROM_24C02"
+            }
+        ],
+        "Name": "System_0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80})",
+        "Type": "System",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "NVIDIA",
+            "Model": "GB200 NVL",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+            "ChassisType": "$CHASSIS_TYPE",
+            "ChassisPartNumber": "$CHASSIS_PART_NUMBER",
+            "ChassisSerial": "$CHASSIS_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.AssetTag": {
+            "AssetTag": "$PRODUCT_ASSET_TAG"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+            "Bus": "$bus",
+            "Address": "$address",
+            "Name": "System_0"
+        }
+    }
+]

@@ -34,6 +34,10 @@ _log_() {
         # The 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
         # The pipe to 'tee' allows both stdout and stderr to be piped through
         "$@" 2>&1 | tee -a "$LOG_FILE"
+    elif [ "$1" = "mctp-usb-ctrl" ]; then
+        # The 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+        # The pipe to 'tee' allows both stdout and stderr to be piped through
+        "$@" 2>&1 | tee -a "$LOG_FILE"
     elif [[ "$1" = "nsmtool" &&  ("$2" = "raw") ]]; then
         # The 'nsmtool raw' use phoshpor-logging/lg2.
         # The command stdout of TTY cannot be redirected to a file nor grep.
@@ -52,6 +56,88 @@ _log_() {
 
 __log_() { "$@" 2>/dev/null; }
 
+# Glacier EC CRC
+_crc8 ()
+{
+    local crc=0
+    local table=( \
+        0x00 0x07 0x0e 0x09 0x1c 0x1b 0x12 0x15 0x38 0x3f 0x36 0x31 0x24 0x23 0x2a 0x2d \
+        0x70 0x77 0x7e 0x79 0x6c 0x6b 0x62 0x65 0x48 0x4f 0x46 0x41 0x54 0x53 0x5a 0x5d \
+        0xe0 0xe7 0xee 0xe9 0xfc 0xfb 0xf2 0xf5 0xd8 0xdf 0xd6 0xd1 0xc4 0xc3 0xca 0xcd \
+        0x90 0x97 0x9e 0x99 0x8c 0x8b 0x82 0x85 0xa8 0xaf 0xa6 0xa1 0xb4 0xb3 0xba 0xbd \
+        0xc7 0xc0 0xc9 0xce 0xdb 0xdc 0xd5 0xd2 0xff 0xf8 0xf1 0xf6 0xe3 0xe4 0xed 0xea \
+        0xb7 0xb0 0xb9 0xbe 0xab 0xac 0xa5 0xa2 0x8f 0x88 0x81 0x86 0x93 0x94 0x9d 0x9a \
+        0x27 0x20 0x29 0x2e 0x3b 0x3c 0x35 0x32 0x1f 0x18 0x11 0x16 0x03 0x04 0x0d 0x0a \
+        0x57 0x50 0x59 0x5e 0x4b 0x4c 0x45 0x42 0x6f 0x68 0x61 0x66 0x73 0x74 0x7d 0x7a \
+        0x89 0x8e 0x87 0x80 0x95 0x92 0x9b 0x9c 0xb1 0xb6 0xbf 0xb8 0xad 0xaa 0xa3 0xa4 \
+        0xf9 0xfe 0xf7 0xf0 0xe5 0xe2 0xeb 0xec 0xc1 0xc6 0xcf 0xc8 0xdd 0xda 0xd3 0xd4 \
+        0x69 0x6e 0x67 0x60 0x75 0x72 0x7b 0x7c 0x51 0x56 0x5f 0x58 0x4d 0x4a 0x43 0x44 \
+        0x19 0x1e 0x17 0x10 0x05 0x02 0x0b 0x0c 0x21 0x26 0x2f 0x28 0x3d 0x3a 0x33 0x34 \
+        0x4e 0x49 0x40 0x47 0x52 0x55 0x5c 0x5b 0x76 0x71 0x78 0x7f 0x6a 0x6d 0x64 0x63 \
+        0x3e 0x39 0x30 0x37 0x22 0x25 0x2c 0x2b 0x06 0x01 0x08 0x0f 0x1a 0x1d 0x14 0x13 \
+        0xae 0xa9 0xa0 0xa7 0xb2 0xb5 0xbc 0xbb 0x96 0x91 0x98 0x9f 0x8a 0x8d 0x84 0x83 \
+        0xde 0xd9 0xd0 0xd7 0xc2 0xc5 0xcc 0xcb 0xe6 0xe1 0xe8 0xef 0xfa 0xfd 0xf4 0xf3 )
+    for byte in "$@"; do
+        idx=$(($crc^$byte))
+        crc=${table[$idx]}
+    done
+    echo $crc
+}
+
+_ec_send_message() {
+local i2c_bus="${1:-0}"
+local i2c_addr="${2:-0x73}"
+local i2c_addr_dest="${3:-0x52}"
+local i2c_addr_fpga_smbpbi="${4:-0x60}"
+local msg_cmd="${5:-0x1d}"
+local msg_arg="${6:-0x00}"
+local msg_read="${7:-20}"
+local output
+
+# FPGA aggregate command to show hidden EC on I2C
+_log_ i2cset -y $i2c_bus $i2c_addr_fpga_smbpbi 0xc0 0x01 i
+
+# Prepare and send message
+message="0x0f 0x0f 0x01 0x01 0x00 0x00 0xc8 0x7f 0x47 0x16 0x00 0x00 0x81 0x01 $msg_cmd 0x01 $msg_arg"
+local i2c_addr_dest_decimal=$(printf "%d" $i2c_addr_dest)
+local i2c_8bit=$(( i2c_addr_dest_decimal * 2 ))
+arr=($message)
+len=$((${#arr[@]}+1))
+crc=$(_crc8 $i2c_8bit $message)
+ret=$(_log_ i2ctransfer -y $i2c_bus w${len}@${i2c_addr} $message $crc)
+sleep 0.5
+
+# Read response
+ret=$(_log_ i2ctransfer -y $i2c_bus w1@${i2c_addr} 0x0d "r$msg_read")
+[ -z "$ret" ] && echo "" && return
+response=($ret)
+
+# Process response
+command=${response[15]}
+version=${response[16]}
+completion=${response[17]}
+if (( $command != $msg_cmd || $version != 0x01 || $completion != 0 )); then
+output=""
+else
+output=$ret
+fi
+
+# FPGA aggregate command to hide EC
+_log_ i2cset -y $i2c_bus $i2c_addr_fpga_smbpbi 0xc0 0x02 i
+
+echo $output
+}
+
+# Returns the new MCTP dbus path, or default PCIe path
+# Arguments:
+#   $1: Dbus name for MCTP control service
+# Returns:
+#   valid Dbus name, defaulted to PCIe
+_get_mctp_dbus_conn() {
+    local bus_name="$1"
+    dbus_name=${bus_name:-'xyz.openbmc_project.MCTP.Control.PCIe'}
+    echo "$dbus_name"
+}
 
 # Component-Level Category: HMC #
 ## HMC: Hardware Interface
@@ -91,7 +177,7 @@ is_hmc_usb_operational() {
 local bmc_ip="$1"
 local count="$2"
 
-ip=${remote_ip:-'192.168.31.2'} && count=${count:-1} && if _log_ ping -c "$count" "$ip" >/dev/null 2>&1; then echo "yes"; else echo "no"; fi
+ip=${bmc_ip:-'192.168.31.2'} && count=${count:-1} && if _log_ ping -c "$count" "$ip" >/dev/null 2>&1; then echo "yes"; else echo "no"; fi
 }
 
 # Baseboard-HW-Version-01
@@ -153,6 +239,69 @@ get_baseboard_hw_part_number() {
         output=$(_log_ dd if=/sys/bus/i2c/devices/"$bus"-00"${addr#0x}"/eeprom bs=1 skip=110 count=18 | hexdump -v -e '/1 "0x%02X "' | tr -d ' ' | sed 's/0x/\\x/g')
     else
         output=$(_log_ i2ctransfer -f -y "$bus" w1@"$addr" 0x6e r18 | tr -d ' ' | sed 's/0x/\\x/g')
+    fi
+    if [[ -n "$output" && "$output" != *"\xff"* && "$output" != *"\xFF"* ]]; then printf $output; else echo ""; fi
+}
+
+# Baseboard-HW-Version-04
+# Function to get Platform Product Name from Baseboard FRU through FPGA
+# Arguments:
+#   $1: HMC I2C bus where the Basebaord FRU resides
+#   $2: Basebaord FRU I2C address
+# Return:
+#   valid Product Name
+get_platform_hw_product_name() {
+    local i2c_bus="$1"
+    local fru_addr="$2"
+    local output
+    # default i2c_bus to 3 (I2C-4), FRU address to 0x53 (FPGA exposed)
+    bus=${i2c_bus:-3} && addr=${fru_addr:-0x53}
+    if [[ -f "/sys/bus/i2c/devices/"$bus"-00"${addr#0x}"/eeprom" ]]; then
+        output=$(_log_ dd if=/sys/bus/i2c/devices/"$bus"-00"${addr#0x}"/eeprom bs=1 skip=147 count=21 | hexdump -v -e '/1 "0x%02X "' | tr -d ' ' | sed 's/0x/\\x/g')
+    else
+        output=$(_log_ i2ctransfer -f -y "$bus" w1@"$addr" 0x93 r21 | tr -d ' ' | sed 's/0x/\\x/g')
+    fi
+    if [[ -n "$output" && "$output" != *"\xff"* && "$output" != *"\xFF"* ]]; then printf $output; else echo ""; fi
+}
+
+# Baseboard-HW-Version-05
+# Function to get Platform Serial Number from Baseboard FRU through FPGA
+# Arguments:
+#   $1: HMC I2C bus where the Basebaord FRU resides
+#   $2: Basebaord FRU I2C address
+# Return:
+#   valid Part Number
+get_platform_hw_serial_number() {
+    local i2c_bus="$1"
+    local fru_addr="$2"
+    local output
+    # default i2c_bus to 3 (I2C-4), FRU address to 0x53 (FPGA exposed)
+    bus=${i2c_bus:-3} && addr=${fru_addr:-0x53}
+    if [[ -f "/sys/bus/i2c/devices/"$bus"-00"${addr#0x}"/eeprom" ]]; then
+        output=$(_log_ dd if=/sys/bus/i2c/devices/"$bus"-00"${addr#0x}"/eeprom bs=1 skip=191 count=13 | hexdump -v -e '/1 "0x%02X "' | tr -d ' ' | sed 's/0x/\\x/g')
+    else
+        output=$(_log_ i2ctransfer -f -y "$bus" w1@"$addr" 0xbf r13 | tr -d ' ' | sed 's/0x/\\x/g')
+    fi
+    if [[ -n "$output" && "$output" != *"\xff"* && "$output" != *"\xFF"* ]]; then printf $output; else echo ""; fi
+}
+
+# Baseboard-HW-Version-06
+# Function to get Platform Part Number from Baseboard FRU through FPGA
+# Arguments:
+#   $1: HMC I2C bus where the Basebaord FRU resides
+#   $2: Basebaord FRU I2C address
+# Return:
+#   valid Part Number
+get_platform_hw_part_number() {
+    local i2c_bus="$1"
+    local fru_addr="$2"
+    local output
+    # default i2c_bus to 3 (I2C-4), FRU address to 0x53 (FPGA exposed)
+    bus=${i2c_bus:-3} && addr=${fru_addr:-0x53}
+    if [[ -f "/sys/bus/i2c/devices/"$bus"-00"${addr#0x}"/eeprom" ]]; then
+        output=$(_log_ dd if=/sys/bus/i2c/devices/"$bus"-00"${addr#0x}"/eeprom bs=1 skip=169 count=18 | hexdump -v -e '/1 "0x%02X "' | tr -d ' ' | sed 's/0x/\\x/g')
+    else
+        output=$(_log_ i2ctransfer -f -y "$bus" w1@"$addr" 0xa9 r18 | tr -d ' ' | sed 's/0x/\\x/g')
     fi
     if [[ -n "$output" && "$output" != *"\xff"* && "$output" != *"\xFF"* ]]; then printf $output; else echo ""; fi
 }
@@ -316,14 +465,39 @@ local output
 name=${service_name:-'mctp-spi-demux.service'} && output=$(_log_ systemctl is-active "$name"); [[ "$output" = 'active' ]] && echo "yes" || echo "no"
 }
 
+# HMC-HMC-Service-08
+# Function to verify if the HMC MCTP USB service is active
+# Arguments:
+#   $1: Service name
+# Returns:
+#   valid "yes", "no" otherwise
+is_hmc_mctp_usb_ctrl_service_active() {
+local service_name="$1"
+local output
+name=${service_name:-'mctp-usb-ctrl.service'} && output=$(_log_ systemctl is-active "$name"); [[ "$output" = 'active' ]] && echo "yes" || echo "no"
+}
+
+# HMC-HMC-Service-09
+# Function to verify if the MCTP USB service is active
+# Arguments:
+#   $1: Service name
+# Returns:
+#   valid "yes", "no" otherwise
+is_hmc_mctp_usb_demux_service_active() {
+local service_name="$1"
+local output
+name=${service_name:-'mctp-usb-demux.service'} && output=$(_log_ systemctl is-active "$name"); [[ "$output" = 'active' ]] && echo "yes" || echo "no"
+}
+
 # HMC-HMC-DBUS-01
 # Function to get MCTP DBus VDM tree EIDs
 # Arguments:
-#   n/a
+#   $1: MCTP dbus service name
 # Returns:
 #   flattened list of the MCTP VDM tree EIDs
 get_hmc_dbus_mctp_vdm_tree_eids() {
-output=$(_log_ busctl tree xyz.openbmc_project.MCTP.Control.PCIe | grep -o '/0/[0-9]\+$' | sed 's/\/0\///') && echo $output
+local dbus_name=$(_get_mctp_dbus_conn "$1")
+output=$(_log_ busctl tree "$dbus_name" | grep -o '/0/[0-9]\+$' | sed 's/\/0\///') && echo $output
 }
 
 # HMC-HMC-DBUS-11
@@ -348,7 +522,7 @@ local hmc_erot_spi_eid="$1"
 # default EID to 14, HMC MCTP ERoT SPI
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${hmc_erot_spi_eid:-14} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${hmc_erot_spi_eid:-14} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
 }
 
 # HMC-HMC_EROT-MCTP_VDM-02
@@ -363,7 +537,7 @@ local hmc_erot_i2c_eid="$1"
 # default EID to 18, Umbriel HMC MCTP ERoT I2C
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${hmc_erot_i2c_eid:-18} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${hmc_erot_i2c_eid:-18} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
 }
 
 # HMC-HMC_EROT-MCTP_VDM-03
@@ -432,28 +606,32 @@ erot_id=${eid:-0} && output=$(_log_ busctl introspect xyz.openbmc_project.MCTP.C
 # Function to get HMC ERoT-SPI MCTP UUID via MCTP over VDM through DBus
 # Arguments:
 #   $1: MCTP EID
+#   $2: MCTP dbus service name
 # Returns:
 #   valid MCTP UUID
 get_hmc_dbus_mctp_vdm_spi_uuid() {
 local eid="$1"
+local dbus_name=$(_get_mctp_dbus_conn "$2")
 local output
 
 # default EID to 14, HMC ERoT via MCTP over VDM
-erot_id=${eid:-14} && output=$(_log_ busctl introspect xyz.openbmc_project.MCTP.Control.PCIe /xyz/openbmc_project/mctp/0/"$erot_id" | grep '.UUID' | grep -o '"[^"]*"' | tr -d '"') && echo $output
+erot_id=${eid:-14} && output=$(_log_ busctl introspect "$dbus_name" /xyz/openbmc_project/mctp/0/"$erot_id" | grep '.UUID' | grep -o '"[^"]*"' | tr -d '"') && echo $output
 }
 
 # HMC-HMC_EROT-DBUS-14
 # Function to get HMC ERoT-I2C MCTP UUID via MCTP over VDM through DBus
 # Arguments:
 #   $1: MCTP EID
+#   $2: MCTP dbus service name
 # Returns:
 #   valid MCTP UUID
 get_hmc_dbus_mctp_vdm_i2c_uuid() {
 local eid="$1"
+local dbus_name=$(_get_mctp_dbus_conn "$2")
 local output
 
 # default EID to 18, HMC ERoT via MCTP over VDM
-erot_id=${eid:-18} && output=$(_log_ busctl introspect xyz.openbmc_project.MCTP.Control.PCIe /xyz/openbmc_project/mctp/0/"$erot_id" | grep '.UUID' | grep -o '"[^"]*"' | tr -d '"') && echo $output
+erot_id=${eid:-18} && output=$(_log_ busctl introspect "$dbus_name" /xyz/openbmc_project/mctp/0/"$erot_id" | grep '.UUID' | grep -o '"[^"]*"' | tr -d '"') && echo $output
 }
 
 ## HMC: Base Protocol
@@ -528,6 +706,18 @@ local sw_id="$1"
 id=${sw_id:-HGX_FW_BMC_0} && _log_ busctl get-property xyz.openbmc_project.Software.BMC.Inventory /xyz/openbmc_project/software/"$id" xyz.openbmc_project.Software.Version Version | cut -d ' ' -f 2 | tr -d '"'
 }
 
+# HMC-HMC-Version-03
+# Function to get HMC FW platform build type
+# Arguments:
+#   $1: Full version string or not
+# Returns:
+#   valid HMC FW version
+get_hmc_fw_build_type() {
+local full_str="$1"
+# default false to full_str
+type=$(_log_ cat /etc/os-release | grep ^BUILD_DESC | cut -d '=' -f 2 | tr -d '"') && echo $type
+}
+
 # HMC-HMC-Service-08
 # Function to verify if the HMC service is active
 # Arguments:
@@ -581,7 +771,7 @@ eid=${hmc_erot_eid:-14} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -609,14 +799,14 @@ fi
 get_hmc_erot_fw_keyset() {
 local hmc_erot_eid="$1"
 # default 14 to HMC ERoT EID
-# 0: s1, 1: s2, 2: s3, 3: s4, 4: s5
+# 0: s1, 1: s2, 2: s3, 3: s4, 4: s5, 5: s6
 eid=${hmc_erot_eid:-14} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
 
 # older EC FW does not support the selftest
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -655,7 +845,7 @@ eid=${hmc_erot_eid:-14} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -690,7 +880,7 @@ eid=${hmc_erot_eid:-14} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -719,7 +909,7 @@ eid=${hmc_erot_eid:-14} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -974,6 +1164,204 @@ local mask_bit="$1"
 mask=${mask_bit:-"6"} && out=$(_log_ otp read conf 0x00 1 | head -n 1 | cut -d ':' -f 2 | tr -d ' ') && (( 16#${out#0x} & $mask )) && echo "yes" || echo "no"
 }
 
+# HMC-HMC_EROT-Key-01
+# Function to get EC key revoke policy via I2C
+# Arguments:
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
+# Returns:
+#   valid revoke policy
+get_hmc_erot_key_revoke_policy_i2c() {
+local i2c_addr="${1:-0x73}"
+local i2c_addr_dest="${2:-0x52}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
+local output
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke policy", cmd=0x1d, arg=0x00, read length=20
+response=$(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x1d 0x00 20)
+
+output=${response:90:4}
+
+case $output in
+0x00) echo "not set";;
+0x01) echo "auto";;
+0x02) echo "decoupled";;
+*) echo "unknown";;
+esac
+}
+
+# HMC-HMC_EROT-Key-02
+# Function to get EC key revoke policy via VDM
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid revoke policy
+get_hmc_erot_key_revoke_policy_vdm() {
+local hmc_erot_spi_eid="$1"
+
+# default EID to 14, HMC MCTP ERoT SPI
+# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid=${hmc_erot_spi_eid:-14} && output=$(_log_ mctp-pcie-ctrl -s "7f 00 00 16 47 80 01 1d 01 00" -t 2 -e "${eid}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 11)
+
+case $output in
+00) echo "not set";;
+01) echo "auto";;
+02) echo "decoupled";;
+*) echo "unknown";;
+esac
+}
+
+# HMC-HMC_EROT-Key-03
+# Function to get EC key revoke state via I2C
+# Arguments:
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
+# Returns:
+#   valid EC key revoke state
+get_hmc_erot_ec_key_revoke_state_i2c() {
+local i2c_addr="${1:-0x73}"
+local i2c_addr_dest="${2:-0x52}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
+local output
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke", selftest cmd=0x08, arg=0x08, read length=61
+response=($(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x08 0x08 61))
+
+# EC Key Revoke state
+echo ${response[35]}
+}
+
+# HMC-HMC_EROT-Key-04
+# Function to get EC key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC key revoke state
+get_hmc_erot_ec_key_revoke_state_vdm() {
+local hmc_erot_eid="$1"
+local eid
+local response
+local output
+# default 14 to HMC ERoT EID
+eid=${hmc_erot_eid:-14} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[18]}
+else
+    # Invalid
+    output=""
+fi
+
+# EC Key Revoke state
+echo $output
+}
+
+# HMC-HMC_EROT-Key-05
+# Function to get AP key revoke state via I2C
+# Arguments:
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
+# Returns:
+#   valid EC key revoke state
+get_hmc_erot_ap_key_revoke_state_i2c() {
+local i2c_addr="${1:-0x73}"
+local i2c_addr_dest="${2:-0x52}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
+local output
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke", selftest cmd=0x08, arg=0x08, read length=61
+response=($(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x08 0x08 61))
+
+# AP Key Revoke state
+output=${response[@]:52:8}
+echo $output
+}
+
+# HMC-HMC_EROT-Key-06
+# Function to get AP key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC key revoke state
+get_hmc_erot_ap_key_revoke_state_vdm() {
+local hmc_erot_eid="$1"
+local eid
+local response
+local output
+# default 14 to HMC ERoT EID
+eid=${hmc_erot_eid:-14} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[@]:35:8}
+else
+    # Invalid
+    output=""
+fi
+
+# EC Key Revoke state
+echo $output
+}
+
+# HMC-HMC_EROT-Security-01
+# Function to get EC background copy progress state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC background copy progress state
+get_hmc_erot_background_copy_progress_state_vdm() {
+local hmc_erot_eid="$1"
+local eid
+local response
+local output
+# default 14 to HMC ERoT EID
+eid=${hmc_erot_eid:-14} && response=($(_log_ mctp-vdm-util -t ${eid} -c background_copy_query_progress | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-11))
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[1]}
+else
+    # Invalid
+    output=""
+fi
+
+case $output in
+01) echo "copy not in progress";;
+02) echo "copy in progress";;
+*) echo "unknown";;
+esac
+}
+
 # HMC-HMC_EROT-SPDM-01
 # Function to get SPDM Version through DBus
 # Arguments:
@@ -1040,6 +1428,34 @@ id=${spdm_id:-'HGX_ERoT_BMC_0'} && output=$(_log_ busctl get-property xyz.openbm
 get_hmc_erot_spdm_certificate_count() {
 local spdm_id="$1"
 id=${spdm_id:-'HGX_ERoT_BMC_0'} && output=$(_log_ busctl get-property xyz.openbmc_project.SPDM /xyz/openbmc_project/SPDM/"$id" xyz.openbmc_project.SPDM.Responder Certificate | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $output
+}
+
+# HMC-HMC_EROT-SPDM-12
+# Function to get SPDM NVDA Certificate count using spdmtool
+# Arguments:
+#   $1: EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate count
+get_hmc_erot_spdm_certificate_count_spdmtool_nvda() {
+local input_eid="$1"
+local slot_id="$2"
+# default EID to 14, HMC ERoT; slot to 0, NVDA cert chain
+eid=${input_eid:-14} && slot=${slot_id:-0} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
+}
+
+# HMC-HMC_EROT-SPDM-13
+# Function to get SPDM MCHP Certificate count using spdmtool
+# Arguments:
+#   $1: EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate count
+get_hmc_erot_spdm_certificate_count_spdmtool_mchp() {
+local input_eid="$1"
+local slot_id="$2"
+# default EID to 14, HMC ERoT; slot to 1, MCHP cert chain
+eid=${input_eid:-14} && slot=${slot_id:-1} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
 }
 
 # Component-Level Category: FPGA #
@@ -1193,15 +1609,17 @@ fi
 # HMC-FPGA-GPIO-06
 # Function to check if the FPGA GPI (fpga_ready) is set, Active High
 # Arguments:
-#   n/a
+#   $1: FPGA_READY GPIO
 # Returns:
 #   set "yes", "no" otherwise
 is_fpga_gpio_fpga_ready_set() {
     # The nvidia-fpga-ready-monitor.service utilizes the fpga_ready GPI.
     # Stop the service before making attempt to access the fpga_ready GPI.
+    local fpga_gpi="$1"
+    fpga_ready=${fpga_gpi:-"fpga_ready"}
     systemctl stop nvidia-fpga-ready-monitor.service >/dev/null 2>&1
     sleep 1
-    output=$(_log_ gpioget `gpiofind "fpga_ready"`); [ "$output" = "1" ] && echo "yes" || echo "no"
+    output=$(_log_ gpioget `gpiofind "$fpga_ready"`); [ "$output" = "1" ] && echo "yes" || echo "no"
     sleep 1
     systemctl start nvidia-fpga-ready-monitor.service >/dev/null 2>&1
 }
@@ -1368,11 +1786,12 @@ eid=${eid:-13} && if _log_ mctp-vdm-util -t "$eid" -c selftest 0 0 0 0 >/dev/nul
 # HMC-FPGA-MCTP_VDM-02
 # Function to get MCTP tree EIDs
 # Arguments:
-#   n/a
+#   $1: MCTP dbus service name 
 # Returns:
 #   flattened list of the MCTP tree EIDs
 get_hmc_mctp_eids_tree() {
-output=$(_log_ busctl tree xyz.openbmc_project.MCTP.Control.PCIe | grep -o '/0/[0-9]\+$' | sed 's/\/0\///') && echo $output
+local dbus_name=$(_get_mctp_dbus_conn "$1")
+output=$(_log_ busctl tree "$dbus_name"  | grep -o '/0/[0-9]\+$' | sed 's/\/0\///') && echo $output
 }
 
 # HMC-FPGA-MCTP_VDM-03
@@ -1417,7 +1836,7 @@ local fpga_bridge_eid="$1"
 # default EID to 12, FPGA MCTP Bridge
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${fpga_bridge_eid:-12} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${fpga_bridge_eid:-12} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
 }
 
 # HMC-FPGA-MCTP_VDM-06
@@ -1447,7 +1866,7 @@ local fpga_erot_spi_eid="$1"
 # default EID to 13, FPGA MCTP ERoT SPI
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${fpga_erot_spi_eid:-13} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${fpga_erot_spi_eid:-13} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
 }
 
 # HMC-FPGA_EROT-MCTP_VDM-03
@@ -1668,7 +2087,7 @@ eid=${fpga_erot_eid:-13} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -1703,7 +2122,7 @@ eid=${fpga_erot_eid:-13} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -1742,7 +2161,7 @@ eid=${fpga_erot_eid:-13} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -1777,7 +2196,7 @@ eid=${fpga_erot_eid:-13} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -1806,7 +2225,7 @@ eid=${fpga_erot_eid:-13} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -1987,6 +2406,204 @@ bus=${i2c_bus:-2} && addr=${i2c_addr:-0x0b} && output=$(_log_ i2ctransfer -y "$b
 
 ## FPGA: Security Protocol
 
+# HMC-FPGA_EROT-Key-01
+# Function to get EC key revoke policy via I2C
+# Arguments:
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
+# Returns:
+#   valid revoke policy
+get_fpga_erot_key_revoke_policy_i2c() {
+local i2c_addr="${1:-0x52}"
+local i2c_addr_dest="${2:-0x52}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
+local output
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke policy", cmd=0x1d, arg=0x00, read length=20
+response=$(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x1d 0x00 20)
+
+output=${response:90:4}
+
+case $output in
+0x00) echo "not set";;
+0x01) echo "auto";;
+0x02) echo "decoupled";;
+*) echo "unknown";;
+esac
+}
+
+# HMC-FPGA_EROT-Key-02
+# Function to get EC key revoke policy via VDM
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid revoke policy
+get_fpga_erot_key_revoke_policy_vdm() {
+local fpga_erot_spi_eid="$1"
+
+# default EID to 13, FPGA MCTP ERoT SPI
+# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid=${fpga_erot_spi_eid:-13} && output=$(_log_ mctp-pcie-ctrl -s "7f 00 00 16 47 80 01 1d 01 00" -t 2 -e "${eid}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 11)
+
+case $output in
+00) echo "not set";;
+01) echo "auto";;
+02) echo "decoupled";;
+*) echo "unknown";;
+esac
+}
+
+# HMC-FPGA_EROT-Key-03
+# Function to get EC key revoke state via I2C
+# Arguments:
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
+# Returns:
+#   valid EC key revoke state
+get_fpga_erot_ec_key_revoke_state_i2c() {
+local i2c_addr="${1:-0x52}"
+local i2c_addr_dest="${2:-0x52}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
+local output
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke", selftest cmd=0x08, arg=0x08, read length=61
+response=($(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x08 0x08 61))
+
+# EC Key Revoke state
+echo ${response[35]}
+}
+
+# HMC-FPGA_EROT-Key-04
+# Function to get EC key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC key revoke state
+get_fpga_erot_ec_key_revoke_state_vdm() {
+local fpga_erot_eid="$1"
+local eid
+local response
+local output
+# default 13 to FPGA ERoT EID
+eid=${fpga_erot_eid:-13} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[18]}
+else
+    # Invalid
+    output=""
+fi
+
+# EC Key Revoke state
+echo $output
+}
+
+# HMC-FPGA_EROT-Key-05
+# Function to get AP key revoke state via I2C
+# Arguments:
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
+# Returns:
+#   valid EC key revoke state
+get_fpga_erot_ap_key_revoke_state_i2c() {
+local i2c_addr="${1:-0x52}"
+local i2c_addr_dest="${2:-0x52}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
+local output
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke", selftest cmd=0x08, arg=0x08, read length=61
+response=($(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x08 0x08 61))
+
+# AP Key Revoke state
+output=${response[@]:52:8}
+echo $output
+}
+
+# HMC-FPGA_EROT-Key-06
+# Function to get AP key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC key revoke state
+get_fpga_erot_ap_key_revoke_state_vdm() {
+local fpga_erot_eid="$1"
+local eid
+local response
+local output
+# default 13 to FPGA ERoT EID
+eid=${fpga_erot_eid:-13} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[@]:35:8}
+else
+    # Invalid
+    output=""
+fi
+
+# EC Key Revoke state
+echo $output
+}
+
+# HMC-FPGA_EROT-Security-01
+# Function to get EC background copy progress state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC background copy progress state
+get_fpga_erot_background_copy_progress_state_vdm() {
+local fpga_erot_eid="$1"
+local eid
+local response
+local output
+# default 13 to FPGA ERoT EID
+eid=${fpga_erot_eid:-13} && response=($(_log_ mctp-vdm-util -t ${eid} -c background_copy_query_progress | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-11))
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[1]}
+else
+    # Invalid
+    output=""
+fi
+
+case $output in
+01) echo "copy not in progress";;
+02) echo "copy in progress";;
+*) echo "unknown";;
+esac
+}
+
 # HMC-FPGA_EROT-SPDM-01
 # Function to get SPDM Version through DBus
 # Arguments:
@@ -2053,6 +2670,34 @@ id=${spdm_id:-'HGX_ERoT_FPGA_0'} && output=$(_log_ busctl get-property xyz.openb
 get_fpga_erot_spdm_certificate_count() {
 local spdm_id="$1"
 id=${spdm_id:-'HGX_ERoT_FPGA_0'} && output=$(_log_ busctl get-property xyz.openbmc_project.SPDM /xyz/openbmc_project/SPDM/"$id" xyz.openbmc_project.SPDM.Responder Certificate | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $output
+}
+
+# HMC-FPGA_EROT-SPDM-07
+# Function to get SPDM NVDA Certificate count using spdmtool
+# Arguments:
+#   $1: EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate count
+get_fpga_erot_spdm_certificate_count_spdmtool_nvda() {
+local input_eid="$1"
+local slot_id="$2"
+# default EID to 13, FPGA ERoT; slot to 0, NVDA cert chain
+eid=${input_eid:-13} && slot=${slot_id:-0} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
+}
+
+# HMC-FPGA_EROT-SPDM-08
+# Function to get SPDM MCHP Certificate count using spdmtool
+# Arguments:
+#   $1: EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate count
+get_fpga_erot_spdm_certificate_count_spdmtool_mchp() {
+local input_eid="$1"
+local slot_id="$2"
+# default EID to 13, FPGA ERoT; slot to 1, MCHP cert chain
+eid=${input_eid:-13} && slot=${slot_id:-1} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
 }
 
 ## GPU: Transport Protocol
@@ -2155,7 +2800,7 @@ local gpu_erot_i2c_eid="$1"
 # default EID to 18, Nero GPU MCTP ERoT I2C
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${gpu_erot_i2c_eid:-26} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${gpu_erot_i2c_eid:-26} && mctp_call='_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1' && eid_rt=$(eval " $mctp_call" 2>&1 | grep mctp_resp_msg | cut -d ' ' -f 8) && printf '%d\n' 0x$eid_rt
 }
 
 # HMC-GPU_EROT-MCTP_VDM-04
@@ -2177,14 +2822,16 @@ eid=${gpu_erot_i2c_eid:-26} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2
 # Function to get GPU ERoT-I2C MCTP UUID via MCTP over VDM through DBus
 # Arguments:
 #   $1: MCTP EID
+#   $2: MCTP dbus service name
 # Returns:
 #   valid MCTP UUID
 get_gpu_dbus_mctp_vdm_i2c_uuid() {
 local eid="$1"
+local dbus_name=$(_get_mctp_dbus_conn "$2")
 local output
 
 # default EID to 26, GPU ERoT via MCTP over VDM
-erot_id=${eid:-26} && output=$(_log_ busctl introspect xyz.openbmc_project.MCTP.Control.PCIe /xyz/openbmc_project/mctp/0/"$erot_id" | grep '.UUID' | grep -o '"[^"]*"' | tr -d '"') && echo $output
+erot_id=${eid:-26} && output=$(_log_ busctl introspect "$dbus_name" /xyz/openbmc_project/mctp/0/"$erot_id" | grep '.UUID' | grep -o '"[^"]*"' | tr -d '"') && echo $output
 }
 
 ## GPU: Base Protocol
@@ -2622,7 +3269,7 @@ eid=${eid:-32} && output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep
 get_gpu_irot_fw_version_pldm_dbus() {
 local sw_id="$1"
 # default HGX_FW_ERoT_GPU_0
-id=${sw_id:-HGX_FW_ERoT_GPU_0} && _log_ busctl get-property xyz.openbmc_project.PLDM /xyz/openbmc_project/software/"$id" xyz.openbmc_project.Software.Version Version | cut -d ' ' -f 2 | tr -d '"'
+id=${sw_id:-"HGX_FW_GPU_SXM_1"} && _log_ busctl get-property xyz.openbmc_project.PLDM /xyz/openbmc_project/software/"$id" xyz.openbmc_project.Software.Version Version | cut -d ' ' -f 2 | tr -d '"'
 }
 
 # HMC-GPU_IROT-Version-03
@@ -2641,7 +3288,7 @@ eid=${irot_eid:-32} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -2676,7 +3323,7 @@ eid=${irot_eid:-32} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -2715,7 +3362,7 @@ eid=${irot_eid:-32} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -2750,7 +3397,7 @@ eid=${irot_eid:-32} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -2779,7 +3426,7 @@ eid=${irot_eid:-32} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -2879,7 +3526,7 @@ eid=${sku_eid:-32} && key=${sku_key:-"PCI Subsystem ID"} && output=$(_log_ pldmt
 #   valid iRoT FW version
 get_dbus_pldm_gpu_irot_version() {
 local gpu_pldm_irot_id="$1"
-irot_id=${gpu_pldm_irot_id:-HGX_FW_IRoT_GPU_0} && output=$(_log_ busctl introspect xyz.openbmc_project.PLDM /xyz/openbmc_project/software/"$irot_id" | grep '.Version' | grep -o '"[^"]*"') && echo $output
+irot_id=${gpu_pldm_irot_id:-"HGX_FW_GPU_SXM_1"} && output=$(_log_ busctl introspect xyz.openbmc_project.PLDM /xyz/openbmc_project/software/"$irot_id" | grep '^\.Version' | grep -o '"[^"]*"'| tr -d '"') && echo $output
 }
 
 # HMC-GPU_EROT-PLDM_T5-01
@@ -3176,6 +3823,20 @@ local spdm_id="$1"
 id=${spdm_id:-'HGX_ERoT_GPU_SXM_1'} && output=$(_log_ busctl get-property xyz.openbmc_project.SPDM /xyz/openbmc_project/SPDM/"$id" xyz.openbmc_project.SPDM.Responder Certificate | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $output
 }
 
+# HMC-GPU_IROT-SPDM-07
+# Function to get SPDM NVDA Certificate count using spdmtool
+# Arguments:
+#   $1: EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate count
+get_gpu_irot_certificate_count_spdmtool_nvda() {
+local input_eid="$1"
+local slot_id="$2"
+# default EID to 28, GPU SXM_1; slot to 0, NVDA cert chain
+eid=${input_eid:-28} && slot=${slot_id:-0} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
+}
+
 
 ## Retimer: Firmware Update Protocol
 
@@ -3213,7 +3874,7 @@ bus=${i2c_bus:-3} && addr=${i2c_addr:-0x60} && reg=${register:-0x90} && output=$
 }
 
 # HMC-Retimer-Version-03
-# Function to get Retimer FW version from dbus via NSM
+# Function to get Retimer FW version from NSM dbus
 # Arguments:
 #   $1: Software ID
 # Returns:
@@ -3222,6 +3883,23 @@ get_retimer_fw_version_dbus_nsm() {
 local sw_id="$1"
 # default to HGX_FW_PCIeRetimer_0
 id=${sw_id:-HGX_FW_PCIeRetimer_0} && _log_ busctl get-property xyz.openbmc_project.NSM /xyz/openbmc_project/software/"$id" xyz.openbmc_project.Software.Version Version | cut -d ' ' -f 2 | tr -d '"'
+}
+
+# HMC-Retimer-Version-04
+# Function to get Retimer FW version from FPGA via NSM
+# Arguments:
+#   $1: MCTP EID for FPGA
+#   $1: Request Data 1
+# Returns:
+#   valid Retimer FW version
+get_retimer_fw_version_nsm() {
+local fpga_bridge_eid="$1"
+local req_1="$2"
+local cmd=0x0c
+
+# default EID to 12, FPGA MCTP Bridge EID
+# the 'nsmtool' outputs to journal log
+eid=${fpga_bridge_eid:-12} && cmd=${cmd:-"0x0c"} && req=${req_1:-"0x90"} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x03 $cmd 0x01 "${req}" -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,19p' | awk '{print "0x"$0}' | tr '\n' ' ') && [[ $output ]] && echo "$output" || echo ""
 }
 
 ## CX7: Transport Protocol
@@ -3490,7 +4168,7 @@ eid=${cx7_erot_eid:-17} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -3525,7 +4203,7 @@ eid=${cx7_erot_eid:-17} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -3564,7 +4242,7 @@ eid=${cx7_erot_eid:-17} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -3599,7 +4277,7 @@ eid=${cx7_erot_eid:-17} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -3628,7 +4306,7 @@ eid=${cx7_erot_eid:-17} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -3868,7 +4546,235 @@ is_cx7_state_sensor_accessible() {
     [[ "00" = $(_log_ pldmtool raw -m "$eid" -v -d 0x80 0x02 0x21 0x$(printf "%x" ${sensor_array[-1]}) 0x00 0x0 0x0 | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '4p') ]] && echo "yes" || echo "no"
 }
 
-## NVSwitch: Transport Protocol
+## CX7: Security Protocol
+
+# HMC-CX7_EROT-Key-01
+# Function to get EC key revoke policy via I2C
+# Arguments:
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
+# Returns:
+#   valid revoke policy
+get_cx7_erot_key_revoke_policy_i2c() {
+local i2c_addr="${1:-0x74}"
+local i2c_addr_dest="${2:-0x52}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
+local output
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke policy", cmd=0x1d, arg=0x00, read length=20
+response=$(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x1d 0x00 20)
+
+output=${response:90:4}
+
+case $output in
+0x00) echo "not set";;
+0x01) echo "auto";;
+0x02) echo "decoupled";;
+*) echo "unknown";;
+esac
+}
+
+# HMC-CX7_EROT-Key-02
+# Function to get EC key revoke policy via VDM
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid revoke policy
+get_cx7_erot_key_revoke_policy_vdm() {
+local cx7_erot_spi_eid="$1"
+
+# default EID to 17, CX7 MCTP ERoT SPI
+# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid=${cx7_erot_spi_eid:-17} && output=$(_log_ mctp-pcie-ctrl -s "7f 00 00 16 47 80 01 1d 01 00" -t 2 -e "${eid}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 11)
+
+case $output in
+00) echo "not set";;
+01) echo "auto";;
+02) echo "decoupled";;
+*) echo "unknown";;
+esac
+}
+
+# HMC-CX7_EROT-Key-03
+# Function to get EC key revoke state via I2C
+# Arguments:
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
+# Returns:
+#   valid EC key revoke state
+get_cx7_erot_ec_key_revoke_state_i2c() {
+local i2c_addr="${1:-0x74}"
+local i2c_addr_dest="${2:-0x52}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
+local output
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke", selftest cmd=0x08, arg=0x08, read length=61
+response=($(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x08 0x08 61))
+
+# EC Key Revoke state
+echo ${response[35]}
+}
+
+# HMC-CX7_EROT-Key-04
+# Function to get EC key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC key revoke state
+get_cx7_erot_ec_key_revoke_state_vdm() {
+local cx7_erot_eid="$1"
+local eid
+local response
+local output
+# default 17 to CX7 ERoT EID
+eid=${cx7_erot_eid:-17} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[18]}
+else
+    # Invalid
+    output=""
+fi
+
+# EC Key Revoke state
+echo $output
+}
+
+# HMC-CX7_EROT-Key-05
+# Function to get AP key revoke state via I2C
+# Arguments:
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
+# Returns:
+#   valid EC key revoke state
+get_cx7_erot_ap_key_revoke_state_i2c() {
+local i2c_addr="${1:-0x74}"
+local i2c_addr_dest="${2:-0x52}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
+local output
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke", selftest cmd=0x08, arg=0x08, read length=61
+response=($(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x08 0x08 61))
+
+# AP Key Revoke state
+output=${response[@]:52:8}
+echo $output
+}
+
+# HMC-CX7_EROT-Key-06
+# Function to get AP key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC key revoke state
+get_cx7_erot_ap_key_revoke_state_vdm() {
+local fpga_erot_eid="$1"
+local eid
+local response
+local output
+# default 17 to CX7 ERoT EID
+eid=${cx7_erot_eid:-17} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[@]:35:8}
+else
+    # Invalid
+    output=""
+fi
+
+# EC Key Revoke state
+echo $output
+}
+
+# HMC-CX7_EROT-Security-01
+# Function to get EC background copy progress state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC background copy progress state
+get_cx7_erot_background_copy_progress_state_vdm() {
+local cx7_erot_eid="$1"
+local eid
+local response
+local output
+# default 17 to FPGA ERoT EID
+eid=${cx7_erot_eid:-17} && response=($(_log_ mctp-vdm-util -t ${eid} -c background_copy_query_progress | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-11))
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[1]}
+else
+    # Invalid
+    output=""
+fi
+
+case $output in
+01) echo "copy not in progress";;
+02) echo "copy in progress";;
+*) echo "unknown";;
+esac
+}
+
+# HMC-CX7_EROT-SPDM-06
+# Function to get SPDM NVDA Certificate count using spdmtool
+# Arguments:
+#   $1: EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate count
+get_cx7_erot_spdm_certificate_count_spdmtool_nvda() {
+local input_eid="$1"
+local slot_id="$2"
+# default EID to 17, CX7 ERoT; slot to 0, NVDA cert chain
+eid=${input_eid:-17} && slot=${slot_id:-0} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
+}
+
+# HMC-CX7_EROT-SPDM-07
+# Function to get SPDM MCHP Certificate count using spdmtool
+# Arguments:
+#   $1: EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate count
+get_cx7_erot_spdm_certificate_count_spdmtool_mchp() {
+local input_eid="$1"
+local slot_id="$2"
+# default EID to 17, CX7 ERoT; slot to 1, MCHP cert chain
+eid=${input_eid:-17} && slot=${slot_id:-1} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
+}
+
+## NVSWITCH: Transport Protocol
 
 # HMC-NVSWITCH-VFIO_SMBPBI-01
 # Function to get NVSW FW version through VFIO SMBPBI Proxy
@@ -3894,7 +4800,7 @@ local i2c_bus="$1"
 local i2c_addr="$2"
 local register="$3"
 local output
-bus=${i2c_bus:-3} && addr=${i2c_addr:-0x19} && reg=${register:-0x8} && output=$(_log_ i2ctransfer -f -y "$bus" w6@"$addr" 0x5c 0x04 0x05 "$reg" 0x00 0x80; i2ctransfer -f -y "$bus" w1@"$addr" 0x5d r14 | cut -d ' ' -f 2-6) && echo "$output"
+bus=${i2c_bus:-1} && addr=${i2c_addr:-0x19} && reg=${register:-0x8} && output=$(_log_ i2ctransfer -f -y "$bus" w6@"$addr" 0x5c 0x04 0x05 "$reg" 0x00 0x80; i2ctransfer -f -y "$bus" w1@"$addr" 0x5d r14 | cut -d ' ' -f 2-6) && echo "$output"
 }
 
 # HMC-NVSWITCH_EROT-MCTP_VDM-01
@@ -3902,14 +4808,14 @@ bus=${i2c_bus:-3} && addr=${i2c_addr:-0x19} && reg=${register:-0x8} && output=$(
 # Arguments:
 #   $1: MCTP EID to verify the EID to get from
 # Returns:
-#   valid "15"
+#   valid EID
 get_nvswitch_erot_mctp_eid_spi() {
 local nvswitch_erot_spi_eid="$1"
 
-# default EID to 15, NVSWITCH MCTP ERoT SPI
+# default EID to 15, NVSWITCH #1 MCTP ERoT SPI
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${nvswitch_erot_spi_eid:-15} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${nvswitch_erot_spi_eid:-15} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
 }
 
 # HMC-NVSWITCH_EROT-MCTP_VDM-02
@@ -3917,14 +4823,14 @@ eid=${nvswitch_erot_spi_eid:-15} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" 
 # Arguments:
 #   $1: MCTP EID to verify the EID to get from
 # Returns:
-#   valid "21"
+#   valid EID
 get_nvswitch_erot_mctp_eid_i2c() {
 local nvswitch_erot_i2c_eid="$1"
 
-# default EID to 21, Nero NVSwitch MCTP ERoT I2C
+# default EID to 19, Umbriel NVSWITCH #1 MCTP ERoT I2C
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${nvswitch_erot_i2c_eid:-21} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${nvswitch_erot_i2c_eid:-19} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
 }
 
 # HMC-NVSWITCH_EROT-MCTP_VDM-03
@@ -3936,7 +4842,7 @@ eid=${nvswitch_erot_i2c_eid:-21} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" 
 get_nvswitch_erot_mctp_uuid_spi() {
 local nvswitch_erot_spi_eid="$1"
 
-# default EID to 15, NVSWITCH MCTP ERoT SPI
+# default EID to 15, NVSWITCH #1 MCTP ERoT SPI
 # get MCTP UUID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
 eid=${nvswitch_erot_spi_eid:-15} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
@@ -3951,10 +4857,10 @@ eid=${nvswitch_erot_spi_eid:-15} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03"
 get_nvswitch_erot_mctp_uuid_i2c() {
 local nvswitch_erot_i2c_eid="$1"
 
-# default EID to 21, NVSWITCH MCTP ERoT I2C
+# default EID to 19, NVSWITCH #1 MCTP ERoT I2C
 # get MCTP UUID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${nvswitch_erot_i2c_eid:-21} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
+eid=${nvswitch_erot_i2c_eid:-19} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
 }
 
 # HMC-NVSWITCH_EROT-DBUS-13
@@ -3985,7 +4891,7 @@ local output
 erot_id=${eid:-21} && output=$(_log_ busctl introspect xyz.openbmc_project.MCTP.Control.PCIe /xyz/openbmc_project/mctp/0/"$erot_id" | grep '.UUID' | grep -o '"[^"]*"' | tr -d '"') && echo $output
 }
 
-## NVSwitch: Base Protocol
+## NVSWITCH: Base Protocol
 
 # HMC-NVSWITCH_EROT-PLDM_T0-01
 # Function to get PLDM base GetTID of NVSWITCH ERoT
@@ -3995,7 +4901,7 @@ erot_id=${eid:-21} && output=$(_log_ busctl introspect xyz.openbmc_project.MCTP.
 #   valid TID
 get_nvswitch_erot_pldm_tid() {
 local nvswitch_eid="$1"
-eid=${nvswitch_eid:-21} && output=$(_log_ pldmtool base GetTID -m "$eid" | grep -o -e 'TID.*' | cut -d ':' -f 2 | tr -d ' ') && echo $output
+eid=${nvswitch_eid:-15} && output=$(_log_ pldmtool base GetTID -m "$eid" | grep -o -e 'TID.*' | cut -d ':' -f 2 | tr -d ' ') && echo $output
 }
 
 # HMC-NVSWITCH_EROT-PLDM_T0-02
@@ -4006,7 +4912,7 @@ eid=${nvswitch_eid:-21} && output=$(_log_ pldmtool base GetTID -m "$eid" | grep 
 #   valid PLDM Types
 get_nvswitch_erot_pldm_pldmtypes() {
 local nvswitch_eid="$1"
-eid=${nvswitch_eid:-21} && output=$(_log_ pldmtool base GetPLDMTypes -m "$eid" | grep -o 'PLDM Type Code.*' | cut -d ':' -f 2 | tr -d ' '); echo $output
+eid=${nvswitch_eid:-15} && output=$(_log_ pldmtool base GetPLDMTypes -m "$eid" | grep -o 'PLDM Type Code.*' | cut -d ':' -f 2 | tr -d ' '); echo $output
 }
 
 # HMC-NVSWITCH_EROT-PLDM_T0-03
@@ -4017,7 +4923,7 @@ eid=${nvswitch_eid:-21} && output=$(_log_ pldmtool base GetPLDMTypes -m "$eid" |
 #   valid PLDM Version
 get_nvswitch_erot_pldm_t0_pldmversion() {
 local nvswitch_eid="$1"
-eid=${nvwitch_eid:-21} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" -t 0 | grep -o -e 'Response.*' | cut -d ':' -f 2 | tr -d ' "') && echo $output
+eid=${nvswitch_eid:-15} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" -t 0 | grep -o -e 'Response.*' | cut -d ':' -f 2 | tr -d ' "') && echo $output
 }
 
 # HMC-NVSWITCH_EROT-PLDM_T0-04
@@ -4028,10 +4934,125 @@ eid=${nvwitch_eid:-21} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" 
 #   valid PLDM Version
 get_nvswitch_erot_pldm_t5_pldmversion() {
 local nvswitch_eid="$1"
-eid=${nvswitch_eid:-21} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" -t 5 | grep -o -e 'Response.*' | cut -d ':' -f 2 | tr -d ' "') && echo $output
+eid=${nvswitch_eid:-15} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" -t 5 | grep -o -e 'Response.*' | cut -d ':' -f 2 | tr -d ' "') && echo $output
 }
 
-## NVSwitch: Firmware Update Protocol
+# HMC-NVSWITCH-PLDM_T0-01
+# Function to get PLDM base GetTID of NVSWITCH
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid TID
+get_nvswitch_pldm_tid() {
+local nvswitch_eid="$1"
+eid=${nvswitch_eid:-22} && output=$(_log_ pldmtool base GetTID -m "$eid" | grep -o -e 'TID.*' | cut -d ':' -f 2 | tr -d ' ') && echo $output
+}
+
+# HMC-NVSWITCH-PLDM_T0-02
+# Function to get PLDM base GetPLDMTypes of NVSWITCH
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid PLDM Types
+get_nvswitch_pldm_pldmtypes() {
+local nvswitch_eid="$1"
+eid=${nvswitch_eid:-22} && output=$(_log_ pldmtool base GetPLDMTypes -m "$eid" | grep -o 'PLDM Type Code.*' | cut -d ':' -f 2 | tr -d ' '); echo $output
+}
+
+# HMC-NVSWITCH-PLDM_T0-03
+# Function to get PLDM base GetPLDMVersion T0 of NVSWITCH
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid PLDM Version
+get_nvswitch_pldm_t0_pldmversion() {
+local nvswitch_eid="$1"
+eid=${nvswitch_eid:-22} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" -t 0 | grep -o -e 'Response.*' | cut -d ':' -f 2 | tr -d ' "') && echo $output
+}
+
+# HMC-NVSWITCH-PLDM_T0-04
+# Function to get PLDM base GetPLDMVersion T2 of NVSWITCH
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid PLDM Version
+get_nvswitch_pldm_t2_pldmversion() {
+local nvswitch_eid="$1"
+eid=${nvswitch_eid:-22} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" -t 2 | grep -o -e 'Response.*' | cut -d ':' -f 2 | tr -d ' "') && echo $output
+}
+
+# HMC-NVSWITCH-PLDM_T0-05
+# Function to get PLDM base GetPLDMVersion T5 of NVSWITCH
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid PLDM Version
+get_nvswitch_pldm_t5_pldmversion() {
+local nvswitch_eid="$1"
+eid=${nvswitch_eid:-22} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" -t 5 | grep -o -e 'Response.*' | cut -d ':' -f 2 | tr -d ' "') && echo $output
+}
+
+# HMC-NVSWITCH-NSM_T0-01
+# Function to verify if NSM PING functional via MCTP VDM
+# Arguments:
+#   $1: MCTP EID to verify the NSM
+# Returns:
+#   valid "yes", "no" otherwise
+is_nvswitch_mctp_vdm_nsm_ping_operational() {
+local nvswitch_eid="$1"
+local cmd=00
+
+# default EID to 22, NVSWITCH MCTP EID
+# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid=${nvswitch_eid:-22} && [[ "00" = $(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f8) ]] && echo "yes" || echo "no"
+}
+
+# HMC-NVSWITCH-NSM_T0-02
+# Function to verify if NSM PING functional using nsmtool
+# Arguments:
+#   $1: MCTP EID to verify the NSM
+# Returns:
+#   valid "yes", "no" otherwise
+is_nvswitch_mctp_nsmtool_ping_operational() {
+local nvswitch_eid="$1"
+local cmd=0x00
+
+# default EID to 22, NVSWITCH MCTP EID
+# the 'nsmtool' outputs to journal log
+eid=${nvswitch_eid:-22} && [[ "00" = $(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '7p') ]] && echo "yes" || echo "no"
+}
+
+# HMC-NVSWITCH-NSM_T0-03
+# Function to verify NSM Get Supported Message Types via MCTP VDM
+# Arguments:
+#   $1: MCTP EID to verify the NSM
+# Returns:
+#   valid "0x3b", fault otherwise
+get_nvswitch_mctp_vdm_nsm_supported_message_types() {
+local nvswitch_eid="$1"
+local cmd=01
+
+# default EID to 22, NVSWITCH MCTP EID
+# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid=${cx7_eid:-22} && output=$(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f13) && echo "$output"
+}
+
+# HMC-NVSWITCH-NSM_T0-04
+# Function to verify NSM Get Supported Message Types using nsmtool
+# Arguments:
+#   $1: MCTP EID to verify the NSM
+# Returns:
+#   valid "0x3b", fault otherwise
+get_nvswitch_mctp_nsmtool_supported_message_types() {
+local nvswitch_eid="$1"
+local cmd=0x01
+
+# default EID to 22, NVSWITCH MCTP EID
+# the 'nsmtool' outputs to journal log
+eid=${nvswitch_eid:-22} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
+}
+
+## NVSWITCH: Firmware Update Protocol
 
 # HMC-NVSWITCH_EROT-Version-01
 # Function to get NVSWITCH ERoT FW version from PLDM
@@ -4042,8 +5063,8 @@ eid=${nvswitch_eid:-21} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid"
 get_nvswitch_erot_fw_version_pldm() {
 local eid="$1"
 local output
-# default EID to 21, NVSWITCH ERoT
-eid=${eid:-21} && output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep 'ActiveComponentVersionString' | sed 's/.*"\(.*\)".*/\1/' | awk 'NR==1') && echo $output
+# default EID to 15, NVSWITCH #1 ERoT SPI
+eid=${eid:-15} && output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep 'ActiveComponentVersionString' | sed 's/.*"\(.*\)".*/\1/' | awk 'NR==1') && echo $output
 }
 
 # HMC-NVSWITCH_EROT-Version-02
@@ -4054,6 +5075,7 @@ eid=${eid:-21} && output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep
 #   valid ERoT FW version
 get_nvswitch_erot_fw_version_pldm_dbus() {
 local sw_id="$1"
+# default HGX_FW_ERoT_NVSWITCH_0
 id=${sw_id:-HGX_FW_ERoT_NVSwitch_0} && _log_ busctl get-property xyz.openbmc_project.PLDM /xyz/openbmc_project/software/"$id" xyz.openbmc_project.Software.Version Version | cut -d ' ' -f 2 | tr -d '"'
 }
 
@@ -4065,15 +5087,15 @@ id=${sw_id:-HGX_FW_ERoT_NVSwitch_0} && _log_ busctl get-property xyz.openbmc_pro
 #   valid ERoT FW Build Type
 get_nvswitch_erot_fw_build_type() {
 local nvswitch_erot_eid="$1"
-# default 21 to NVSWITCH ERoT EID
+# default EID to 15, NVSWITCH #1 ERoT SPI
 # 0: rel, 1: dev
-eid=${nvswitch_erot_eid:-21} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
+eid=${nvswitch_erot_eid:-15} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
 
 # older EC FW does not support the selftest
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -4100,15 +5122,15 @@ fi
 #   valid ERoT FW Keyset
 get_nvswitch_erot_fw_keyset() {
 local nvswitch_erot_eid="$1"
-# default 21 to NVSWITCH ERoT EID
+# default EID to 15, NVSWITCH #1 ERoT SPI
 # 0: s1, 1: s2, 2: s3, 3: s4, 4: s5
-eid=${nvswitch_erot_eid:-21} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
+eid=${nvswitch_erot_eid:-15} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
 
 # older EC FW does not support the selftest
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -4139,15 +5161,15 @@ fi
 #   valid ERoT FW Chip Rev
 get_nvswitch_erot_fw_chiprev() {
 local nvswitch_erot_eid="$1"
-# default 21 to NVSWITCH ERoT EID
+# default EID to 15, NVSWITCH #1 ERoT SPI
 # 0: revA, 1:revB
-eid=${nvswitch_erot_eid:-21} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
+eid=${nvswitch_erot_eid:-15} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
 
 # older EC FW does not support the selftest
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -4175,14 +5197,14 @@ fi
 #   valid ERoT FW Boot Slot
 get_nvswitch_erot_fw_boot_slot() {
 local nvswitch_erot_eid="$1"
-# default 21 to NVSWITCH ERoT EID
-eid=${nvswitch_erot_eid:-21} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
+# default EID to 15, NVSWITCH #1 ERoT SPI
+eid=${nvswitch_erot_eid:-17} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
 
 # older EC FW does not support the selftest
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -4203,15 +5225,15 @@ fi
 #   valid ERoT FW EC Identical
 get_nvswitch_erot_fw_ec_identical() {
 local nvswitch_erot_eid="$1"
-# default 21 to NVSWITCH ERoT EID
+# default EID to 15, NVSWITCH #1 ERoT SPI
 # 0: identical, 1: not identical
-eid=${nvswitch_erot_eid:-21} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
+eid=${nvswitch_erot_eid:-17} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
 
 # older EC FW does not support the selftest
 if [ ${#output[@]} -lt 9 ]; then
     # Invalid
     echo ""
-    exit 1
+    return 1
 fi
 
 # completion code="00", successful
@@ -4232,15 +5254,15 @@ fi
 }
 
 # HMC-NVSWITCH_EROT-PLDM_T5-01
-# Function to get PLDM fw_update version of NVSWITCH ERoT
+# Function to get PLDM fw_update version of NVSWITCH_EROT SPI
 # Arguments:
 #   $1: MCTP EID
 # Returns:
 #   valid ERoT FW version
 get_nvswitch_erot_pldm_version() {
 local eid="$1"
-# default EID to 21, NVSWITCH ERoT
-eid=${eid:-21} && output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep 'ActiveComponentVersionString' | sed 's/.*"\(.*\)".*/\1/' | awk 'NR==1') && echo $output
+# default EID to 15, NVSWITCH #1 SPI ERoT
+eid=${eid:-15} && output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep 'ActiveComponentVersionString' | sed 's/.*"\(.*\)".*/\1/' | awk 'NR==1') && echo $output
 }
 
 # HMC-NVSWITCH_EROT-PLDM_T5-02
@@ -4251,8 +5273,8 @@ eid=${eid:-21} && output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep
 #   valid FW version
 get_nvswitch_erot_pldm_version_string() {
 local eid="$1"
-# default EID to 21, NVSWITCH ERoT
-eid=${eid:-21} && output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep 'ActiveComponentVersionString' | sed 's/.*"\(.*\)".*/\1/' | awk 'NR==2') && echo $output
+# default EID to 15, NVSWITCH #1 SPI ERoT
+eid=${eid:-15} && output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep 'ActiveComponentVersionString' | sed 's/.*"\(.*\)".*/\1/' | awk 'NR==2') && echo $output
 }
 
 # HMC-NVSWITCH_EROT-PLDM_T5-05
@@ -4263,8 +5285,8 @@ eid=${eid:-21} && output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep
 #   valid AP_SKU ID
 get_nvswitch_erot_pldm_apsku_id() {
 local sku_eid="$1"
-# default EID to 21, NVSWITCH ERoT
-eid=${sku_eid:-21} && key=${sku_key:-APSKU} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
+# default EID to 15, NVSWITCH #1 SPI ERoT
+eid=${sku_eid:-15} && key=${sku_key:-APSKU} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
 }
 
 # HMC-NVSWITCH_EROT-PLDM_T5-06
@@ -4272,11 +5294,11 @@ eid=${sku_eid:-21} && key=${sku_key:-APSKU} && output=$(_log_ pldmtool fw_update
 # Arguments:
 #   $1: MCTP EID
 # Returns:
-#   valid EC_SKU ID
+#   valid AP_SKU ID
 get_nvswitch_erot_pldm_ecsku_id() {
 local sku_eid="$1"
-# default EID to 21, NVSWITCH ERoT
-eid=${sku_eid:-21} && key=${sku_key:-ECSKU} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
+# default EID to 15, NVSWITCH #1 SPI ERoT
+eid=${sku_eid:-15} && key=${sku_key:-ECSKU} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
 }
 
 # HMC-NVSWITCH_EROT-PLDM_T5-07
@@ -4284,11 +5306,11 @@ eid=${sku_eid:-21} && key=${sku_key:-ECSKU} && output=$(_log_ pldmtool fw_update
 # Arguments:
 #   $1: MCTP EID
 # Returns:
-#   valid GLACIERDSD ID
+#   valid AP_SKU ID
 get_nvswitch_erot_pldm_glacier_id() {
 local sku_eid="$1"
-# default EID to 21, NVSWITCH ERoT
-eid=${sku_eid:-21} && key=${sku_key:-GLACIERDSD} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
+# default EID to 15, NVSWITCH #1 SPI ERoT
+eid=${sku_eid:-15} && key=${sku_key:-GLACIERDSD} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
 }
 
 # HMC-NVSWITCH_EROT-DBUS-03
@@ -4302,9 +5324,169 @@ local nvswitch_pldm_erotid="$1"
 erot_id=${nvswitch_pldm_erot_id:-HGX_ERoT_NVSwitch_0} && output=$(_log_ busctl introspect xyz.openbmc_project.PLDM /xyz/openbmc_project/inventory/system/chassis/"$erot_id" | grep '.UUID' | grep -o '"[^"]*"' | tr -d '"') && echo $output
 }
 
-## NVSwitch: Telemetry Protocol
 
-## NVSwitch: Security Protocol
+# HMC-NVSWITCH_EROT-PLDM_T5-08
+# Function to get PLDM fw_update PCI Vednor ID of NVSWITCH ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Vendor" ID
+get_nvswitch_erot_pldm_pci_vendor_id() {
+local sku_eid="$1"
+# default EID to 15, NVSWITCH #1 SPI ERoT
+eid=${sku_eid:-15} && key=${sku_key:-"PCI Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-NVSWITCH_EROT-PLDM_T5-09
+# Function to get PLDM fw_update PCI Device ID of NVSWITCH ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Device" ID
+get_nvswitch_erot_pldm_pci_device_id() {
+local sku_eid="$1"
+# default EID to 15, NVSWITCH #1 SPI ERoT
+eid=${sku_eid:-15} && key=${sku_key:-"PCI Device ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-NVSWITCH_EROT-PLDM_T5-10
+# Function to get PLDM fw_update Subsystem Vendor ID of NVSWITCH ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem Vendor" ID
+get_nvswitch_erot_pldm_pci_subsys_vendor_id() {
+local sku_eid="$1"
+# default EID to 15, NVSWITCH #1 SPI ERoT
+eid=${sku_eid:-15} && key=${sku_key:-"PCI Subsystem Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-NVSWITCH_EROT-PLDM_T5-11
+# Function to get PLDM fw_update Subsystem ID of NVSWITCH ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem" ID
+get_nvswitch_erot_pldm_pci_subsys_id() {
+local sku_eid="$1"
+# default EID to 15, NVSWITCH #1 SPI ERoT
+eid=${sku_eid:-15} && key=${sku_key:-"PCI Subsystem ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-NVSWITCH_EROT-DBUS-09
+# Function to get PLDM DBus software inventory version of NVSWITCH ERoT
+# Arguments:
+#   $1: PLDM Inventory ID
+# Returns:
+#   valid ERoT FW version
+get_dbus_pldm_nvswitch_erot_version() {
+local nvswitch_pldm_erot_id="$1"
+erot_id=${nvswitch_pldm_erot_id:-HGX_FW_ERoT_NVSwitch_0} && output=$(_log_ busctl introspect xyz.openbmc_project.PLDM /xyz/openbmc_project/software/"$erot_id" | grep '^\.Version' | grep -o '"[^"]*"') && echo $output
+}
+
+## NVSWITCH: Telemetry Protocol
+
+# HMC-NVSWITCH-PLDM_T2-02
+# Function to disable PLDM T2 sensor polling
+# Arguments:
+#   n/a
+# Returns:
+#   valid "done", "failed" otherwise
+_disable_nvswitch_sensor_polling() {
+local output
+_log_ busctl set-property xyz.openbmc_project.PLDM /xyz/openbmc_project/pldm/sensor_polling xyz.openbmc_project.Object.Enable Enabled b false
+output=$(_log_ busctl get-property xyz.openbmc_project.PLDM /xyz/openbmc_project/pldm/sensor_polling xyz.openbmc_project.Object.Enable Enabled | grep -o "false"); [[ $output = "false" ]] && echo "done" || echo "failed"
+}
+
+# HMC-NVSWITCH-PLDM_T2-03
+# Function to enable PLDM T2 sensor polling
+# Arguments:
+#   n/a
+# Returns:
+#   valid "done", "failed" otherwise
+enable_nvswitch_sensor_polling() {
+local output
+_log_ busctl set-property xyz.openbmc_project.PLDM /xyz/openbmc_project/pldm/sensor_polling xyz.openbmc_project.Object.Enable Enabled b true
+output=$(_log_ busctl get-property xyz.openbmc_project.PLDM /xyz/openbmc_project/pldm/sensor_polling xyz.openbmc_project.Object.Enable Enabled | grep -o "true"); [[ $output = "true" ]] && echo "done" || echo "failed"
+}
+
+# HMC-NVSWITCH-PLDM_T2-04
+# Function to dump NVSWITCH PDR in JSON format
+# Arguments:
+#   NVSWITCH EID
+# Returns:
+#   valid "done", "failed" otherwise
+dump_nvswitch_pdr_json() {
+local nvswitch_eid="$1"
+local jsonfile=/tmp/"$FUNCNAME"_output.json
+# default EID to 22, NVSWITCH #1 I2C
+eid=${nvswitch_eid:-22} && logfile=${jsonfile:-"/tmp/func_output.json"} && _log_ pldmtool platform getpdr -m "$eid" -a > "$logfile" && [ $(wc -c < $logfile) -gt 10 ] && : || rm $logfile && [ -f "$logfile" ] && echo "done" || echo "failed"
+}
+
+# HMC-NVSWITCH-PLDM_T2-05
+# Function to get NVSWITCH Numeric Sensor ID
+# Arguments:
+#   NVSWITCH EID
+# Returns:
+#   Numeric Sesnor ID
+get_nvswitch_numeric_sensor_id() {
+local nvswitch_eid="$1"
+# default EID to 22, NVSWITCH #1 I2C
+eid=${nvswitch_eid:-22} && output=$(_log_ pldmtool platform getpdr -m "$eid" -a 2>/dev/null | grep -A5 'Numeric Sensor PDR' | awk -F': ' '/"sensorID":/ {print $2}' | tr -d ',' | sort -n | uniq | awk '{printf "%s ", $0} END {print ""}'); echo "$output"
+}
+
+# HMC-NVSWITCH-PLDM_T2-06
+# Function to verify if NVSWITCH Numeric Sensor ID is accessible
+# Arguments:
+#   NVSWITCH EID
+# Returns:
+#   valid "yes", "no" otherwise
+is_nvswitch_numeric_sensor_accessible() {
+    local nvswitch_eid="$1"
+    # default EID to 22, NVSWITCH #1 I2C
+    eid=${nvswitch_eid:-22} && sensor_ids=$(_log_ pldmtool platform getpdr -m "$eid" -a | grep -A5 'Numeric Sensor PDR' | awk -F': ' '/"sensorID":/ {print $2}' | tr -d ',' | sort -n | uniq | awk '{printf "%s ", $0} END {print ""}')
+    [ -z "$sensor_ids" ] && echo 'no' && return
+
+    # Convert the string into an array
+    IFS=' ' read -ra sensor_array <<< "$sensor_ids"
+
+    # Get the last sensord readout
+    [[ "00" = $(_log_ pldmtool raw -m "$eid" -v -d 0x80 0x02 0x11 0x$(printf "%x" ${sensor_array[-1]}) 0x00 0x0 0x0 | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '4p') ]] && echo "yes" || echo "no"
+}
+
+# HMC-NVSWITCH-PLDM_T2-07
+# Function to get NVSWITCH State Sensor IDs
+# Arguments:
+#   NVSWITCH EID
+# Returns:
+#   Numeric Sesnor ID
+get_nvswitch_state_sensor_id() {
+# Todo: filter out only State Sensor ID
+local nvswitch_eid="$1"
+# default EID to 22, NVSWITCH #1 I2C
+eid=${nvswitch_eid:-22} && output=$(_log_ pldmtool platform getpdr -m "$eid" -a 2>/dev/null | grep -A5 'State Sensor PDR' | awk -F': ' '/"sensorID":/ {print $2}' | tr -d ',' | sort -n | uniq | awk '{printf "%s ", $0} END {print ""}'); echo "$output"
+}
+
+# HMC-NVSWITCH-PLDM_T2-08
+# Function to verify if all NVSWITCH State Sensor ID is accessible
+# Arguments:
+#   NVSWITCH EID
+# Returns:
+#   valid "yes", "no" otherwise
+is_nvswitch_state_sensor_accessible() {
+    local nvswitch_eid="$1"
+    # default EID to 22, NVSWITCH #1 I2C
+    eid=${nvswitch_eid:-22} && state_ids=$(_log_ pldmtool platform getpdr -m "$eid" -a | grep -A5 'State Sensor PDR' | awk -F': ' '/"sensorID":/ {print $2}' | tr -d ',' | sort -n | uniq | awk '{printf "%s ", $0} END {print ""}')
+    [ -z "$sensor_ids" ] && echo 'no' && return
+
+    # Convert the string into an array
+    IFS=' ' read -ra sensor_array <<< "$state_ids"
+
+    # Get the last sensord readout
+    [[ "00" = $(_log_ pldmtool raw -m "$eid" -v -d 0x80 0x02 0x21 0x$(printf "%x" ${sensor_array[-1]}) 0x00 0x0 0x0 | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '4p') ]] && echo "yes" || echo "no"
+}
+
+## NVSWITCH: Security Protocol
 
 # HMC-NVSWITCH_EROT-SPDM-01
 # Function to get SPDM Version through DBus
@@ -4374,600 +5556,249 @@ local spdm_id="$1"
 id=${spdm_id:-'HGX_ERoT_NVSwitch_0'} && output=$(_log_ busctl get-property xyz.openbmc_project.SPDM /xyz/openbmc_project/SPDM/"$id" xyz.openbmc_project.SPDM.Responder Certificate | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $output
 }
 
-## QM3: Transport Protocol
+# HMC-NVSwitch_EROT-SPDM-07
+# Function to get SPDM NVDA Certificate count using spdmtool
+# Arguments:
+#   $1: EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate count
+get_nvswitch_erot_spdm_certificate_count_spdmtool_nvda() {
+local input_eid="$1"
+local slot_id="$2"
+# default EID to 15, NVSwitch_0 ERoT; slot to 0, NVDA cert chain
+eid=${input_eid:-15} && slot=${slot_id:-0} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
+}
 
-# HMC-QM3_EROT-MCTP_VDM-01
-# Function to get the enumrated MCTP EID, QM3 ERoT SPI
+# HMC-NVSwitch_EROT-SPDM-08
+# Function to get SPDM MCHP Certificate count using spdmtool
+# Arguments:
+#   $1: EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate count
+get_nvswitch_erot_spdm_certificate_count_spdmtool_mchp() {
+local input_eid="$1"
+local slot_id="$2"
+# default EID to 15, NVSwitch_0 ERoT; slot to 1, MCHP cert chain
+eid=${input_eid:-15} && slot=${slot_id:-1} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
+}
+
+# HMC-NVSWITCH_IROT-01
+# Function to verify IROT fused
+# Arguments:
+#   $1: I2C Address
+#   $2: I2C Bus
+# Returns:
+#   valid "yes", "no" otherwise
+is_nvswitch_irot_fused() {
+local i2c_addr="${1:-0x29}"
+local i2c_bus="${2:-3}"
+local mask="${3:-0x07}"
+out=$(_log_ i2ctransfer -y "$i2c_bus" w4@"$i2c_addr" 0x00 0x0f 0x00 0x00 r4 | awk '{print $2}'); [[ -n $out ]] && [[ $((16#${out#0x} & $mask)) = 6 ]] && echo "yes" || echo "no"
+}
+
+# HMC-NVSWITCH_EROT-Key-01
+# Function to get EC key revoke policy via I2C
+# Arguments:
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
+# Returns:
+#   valid revoke policy
+get_nvswitch_erot_key_revoke_policy_i2c() {
+local i2c_addr="${1:-0x71}"
+# WAR to Glacier hardware strapping, changing from 0x52 to 0x42
+local i2c_addr_dest="${2:-0x42}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
+local output
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke policy", cmd=0x1d, arg=0x00, read length=20
+response=$(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x1d 0x00 20)
+
+output=${response:90:4}
+
+case $output in
+0x00) echo "not set";;
+0x01) echo "auto";;
+0x02) echo "decoupled";;
+*) echo "unknown";;
+esac
+}
+
+# HMC-NVSWITCH_EROT-Key-02
+# Function to get EC key revoke policy via VDM
 # Arguments:
 #   $1: MCTP EID to verify the EID to get from
 # Returns:
-#   valid EID
-get_qm3_erot_mctp_eid_spi() {
-local qm3_erot_spi_eid="$1"
+#   valid revoke policy
+get_nvswitch_erot_key_revoke_policy_vdm() {
+local nvswitch_erot_spi_eid="$1"
 
-# default EID to 15, QM3 #1 MCTP ERoT SPI
-# get MCTP EID
+# default EID to 15, NVSWITCH MCTP ERoT SPI
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${qm3_erot_spi_eid:-15} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
+eid=${nvswitch_erot_spi_eid:-15} && output=$(_log_ mctp-pcie-ctrl -s "7f 00 00 16 47 80 01 1d 01 00" -t 2 -e "${eid}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 11)
+
+case $output in
+00) echo "not set";;
+01) echo "auto";;
+02) echo "decoupled";;
+*) echo "unknown";;
+esac
 }
 
-# HMC-QM3_EROT-MCTP_VDM-02
-# Function to get the enumrated MCTP EID, QM3 ERoT I2C
+# HMC-NVSWITCH_EROT-Key-03
+# Function to get EC key revoke state via I2C
 # Arguments:
-#   $1: MCTP EID to verify the EID to get from
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
 # Returns:
-#   valid EID
-get_qm3_erot_mctp_eid_i2c() {
-local qm3_erot_i2c_eid="$1"
-
-# default EID to 19, Umbriel QM3 #1 MCTP ERoT I2C
-# get MCTP EID
-# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${qm3_erot_i2c_eid:-19} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
-}
-
-# HMC-QM3_EROT-MCTP_VDM-03
-# Function to get the MCTP UUID for QM3 ERoT SPI
-# Arguments:
-#   $1: MCTP EID to verify the UUID to get from
-# Returns:
-#   valid UUID according to FPGA IAS
-get_qm3_erot_mctp_uuid_spi() {
-local qm3_erot_spi_eid="$1"
-
-# default EID to 15, QM3 #1 MCTP ERoT SPI
-# get MCTP UUID
-# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${qm3_erot_spi_eid:-15} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
-}
-
-# HMC-QM3_EROT-MCTP_VDM-04
-# Function to get the MCTP UUID for QM3 ERoT I2C
-# Arguments:
-#   $1: MCTP EID to verify the UUID to get from
-# Returns:
-#   valid UUID according to FPGA IAS
-get_qm3_erot_mctp_uuid_i2c() {
-local qm3_erot_i2c_eid="$1"
-
-# default EID to 19, QM3 #1 MCTP ERoT I2C
-# get MCTP UUID
-# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${qm3_erot_i2c_eid:-19} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
-}
-
-## QM3: Base Protocol
-
-# HMC-QM3_EROT-PLDM_T0-01
-# Function to get PLDM base GetTID of QM3 ERoT
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid TID
-get_qm3_erot_pldm_tid() {
-local qm3_eid="$1"
-eid=${qm3_eid:-15} && output=$(_log_ pldmtool base GetTID -m "$eid" | grep -o -e 'TID.*' | cut -d ':' -f 2 | tr -d ' ') && echo $output
-}
-
-# HMC-QM3_EROT-PLDM_T0-02
-# Function to get PLDM base GetPLDMTypes of QM3 ERoT
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid PLDM Types
-get_qm3_erot_pldm_pldmtypes() {
-local qm3_eid="$1"
-eid=${qm3_eid:-15} && output=$(_log_ pldmtool base GetPLDMTypes -m "$eid" | grep -o 'PLDM Type Code.*' | cut -d ':' -f 2 | tr -d ' '); echo $output
-}
-
-# HMC-QM3_EROT-PLDM_T0-03
-# Function to get PLDM base GetPLDMVersion T0 of QM3 ERoT
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid PLDM Version
-get_qm3_erot_pldm_t0_pldmversion() {
-local qm3_eid="$1"
-eid=${qm3_eid:-15} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" -t 0 | grep -o -e 'Response.*' | cut -d ':' -f 2 | tr -d ' "') && echo $output
-}
-
-# HMC-QM3_EROT-PLDM_T0-04
-# Function to get PLDM base GetPLDMVersion T5 of QM3 ERoT
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid PLDM Version
-get_qm3_erot_pldm_t5_pldmversion() {
-local qm3_eid="$1"
-eid=${qm3_eid:-15} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" -t 5 | grep -o -e 'Response.*' | cut -d ':' -f 2 | tr -d ' "') && echo $output
-}
-
-# HMC-QM3-PLDM_T0-01
-# Function to get PLDM base GetTID of QM3
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid TID
-get_qm3_pldm_tid() {
-local qm3_eid="$1"
-eid=${qm3_eid:-22} && output=$(_log_ pldmtool base GetTID -m "$eid" | grep -o -e 'TID.*' | cut -d ':' -f 2 | tr -d ' ') && echo $output
-}
-
-# HMC-QM3-PLDM_T0-02
-# Function to get PLDM base GetPLDMTypes of QM3
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid PLDM Types
-get_qm3_pldm_pldmtypes() {
-local qm3_eid="$1"
-eid=${qm3_eid:-22} && output=$(_log_ pldmtool base GetPLDMTypes -m "$eid" | grep -o 'PLDM Type Code.*' | cut -d ':' -f 2 | tr -d ' '); echo $output
-}
-
-# HMC-QM3-PLDM_T0-03
-# Function to get PLDM base GetPLDMVersion T0 of QM3
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid PLDM Version
-get_qm3_pldm_t0_pldmversion() {
-local qm3_eid="$1"
-eid=${qm3_eid:-22} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" -t 0 | grep -o -e 'Response.*' | cut -d ':' -f 2 | tr -d ' "') && echo $output
-}
-
-# HMC-QM3-PLDM_T0-04
-# Function to get PLDM base GetPLDMVersion T2 of QM3
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid PLDM Version
-get_qm3_pldm_t2_pldmversion() {
-local qm3_eid="$1"
-eid=${qm3_eid:-22} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" -t 2 | grep -o -e 'Response.*' | cut -d ':' -f 2 | tr -d ' "') && echo $output
-}
-
-# HMC-QM3-PLDM_T0-05
-# Function to get PLDM base GetPLDMVersion T5 of QM3
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid PLDM Version
-get_qm3_pldm_t5_pldmversion() {
-local qm3_eid="$1"
-eid=${qm3_eid:-22} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" -t 5 | grep -o -e 'Response.*' | cut -d ':' -f 2 | tr -d ' "') && echo $output
-}
-
-# HMC-QM3-NSM_T0-01
-# Function to verify if NSM PING functional via MCTP VDM
-# Arguments:
-#   $1: MCTP EID to verify the NSM
-# Returns:
-#   valid "yes", "no" otherwise
-is_qm3_mctp_vdm_nsm_ping_operational() {
-local qm3_eid="$1"
-local cmd=00
-
-# default EID to 22, QM3 MCTP EID
-# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${qm3_eid:-22} && [[ "00" = $(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f8) ]] && echo "yes" || echo "no"
-}
-
-# HMC-QM3-NSM_T0-02
-# Function to verify if NSM PING functional using nsmtool
-# Arguments:
-#   $1: MCTP EID to verify the NSM
-# Returns:
-#   valid "yes", "no" otherwise
-is_qm3_mctp_nsmtool_ping_operational() {
-local qm3_eid="$1"
-local cmd=0x00
-
-# default EID to 22, QM3 MCTP EID
-# the 'nsmtool' outputs to journal log
-eid=${qm3_eid:-22} && [[ "00" = $(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '7p') ]] && echo "yes" || echo "no"
-}
-
-# HMC-QM3-NSM_T0-03
-# Function to verify NSM Get Supported Message Types via MCTP VDM
-# Arguments:
-#   $1: MCTP EID to verify the NSM
-# Returns:
-#   valid "0x3b", fault otherwise
-get_qm3_mctp_vdm_nsm_supported_message_types() {
-local qm3_eid="$1"
-local cmd=01
-
-# default EID to 22, QM3 MCTP EID
-# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${cx7_eid:-22} && output=$(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f13) && echo "$output"
-}
-
-# HMC-QM3-NSM_T0-04
-# Function to verify NSM Get Supported Message Types using nsmtool
-# Arguments:
-#   $1: MCTP EID to verify the NSM
-# Returns:
-#   valid "0x3b", fault otherwise
-get_qm3_mctp_nsmtool_supported_message_types() {
-local qm3_eid="$1"
-local cmd=0x01
-
-# default EID to 22, QM3 MCTP EID
-# the 'nsmtool' outputs to journal log
-eid=${qm3_eid:-22} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
-}
-
-## QM3: Firmware Update Protocol
-
-# HMC-QM3_EROT-Version-01
-# Function to get QM3 ERoT FW version from PLDM
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid ERoT FW version
-get_qm3_erot_fw_version_pldm() {
-local eid="$1"
+#   valid EC key revoke state
+get_nvswitch_erot_ec_key_revoke_state_i2c() {
+local i2c_addr="${1:-0x71}"
+# WAR to Glacier hardware strapping, changing from 0x52 to 0x42
+local i2c_addr_dest="${2:-0x42}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
 local output
-# default EID to 15, QM3 #1 ERoT SPI
-eid=${eid:-15} && output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep 'ActiveComponentVersionString' | sed 's/.*"\(.*\)".*/\1/' | awk 'NR==1') && echo $output
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke", selftest cmd=0x08, arg=0x08, read length=61
+response=($(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x08 0x08 61))
+
+# EC Key Revoke state
+echo ${response[35]}
 }
 
-# HMC-QM3_EROT-Version-02
-# Function to get QM3 ERoT FW version from PLDM dbus
-# Arguments:
-#   $1: Software ID
-# Returns:
-#   valid ERoT FW version
-get_qm3_erot_fw_version_pldm_dbus() {
-local sw_id="$1"
-# default HGX_FW_ERoT_QM3_0
-id=${sw_id:-HGX_FW_ERoT_NVSwitch_0} && _log_ busctl get-property xyz.openbmc_project.PLDM /xyz/openbmc_project/software/"$id" xyz.openbmc_project.Software.Version Version | cut -d ' ' -f 2 | tr -d '"'
-}
-
-# HMC-QM3_EROT-Version-03
-# Function to get QM3 ERoT FW Build Type
+# HMC-NVSWITCH_EROT-Key-04
+# Function to get EC key revoke state via VDM
 # Arguments:
 #   $1: MCTP EID
 # Returns:
-#   valid ERoT FW Build Type
-get_qm3_erot_fw_build_type() {
-local qm3_erot_eid="$1"
-# default EID to 15, QM3 #1 ERoT SPI
-# 0: rel, 1: dev
-eid=${qm3_erot_eid:-15} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
-
-# older EC FW does not support the selftest
-if [ ${#output[@]} -lt 9 ]; then
-    # Invalid
-    echo ""
-    exit 1
-fi
-
-# completion code="00", successful
-if [[ "${output[0]}" == "00" ]]; then
-    rev_build=${output[8]}
-    result=$(( (16#$rev_build & 0x01) ))
-
-    case "$result" in
-        0) echo "rel" ;;
-        1) echo "dev" ;;
-        *) echo "" ;;
-    esac
-else
-    # Invalid
-    echo ""
-fi
-}
-
-# HMC-QM3_EROT-Version-04
-# Function to get QM3 ERoT FW Keyset
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid ERoT FW Keyset
-get_qm3_erot_fw_keyset() {
-local qm3_erot_eid="$1"
-# default EID to 15, QM3 #1 ERoT SPI
-# 0: s1, 1: s2, 2: s3, 3: s4, 4: s5
-eid=${qm3_erot_eid:-15} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
-
-# older EC FW does not support the selftest
-if [ ${#output[@]} -lt 9 ]; then
-    # Invalid
-    echo ""
-    exit 1
-fi
-
-# completion code="00", successful
-if [[ "${output[0]}" == "00" ]]; then
-    rev_build=${output[8]}
-    result=$(( (16#$rev_build >> 1) & 0x07 ))
-
-    case "$result" in
-        0) echo "s1" ;;
-        1) echo "s2" ;;
-        2) echo "s3" ;;
-        3) echo "s4" ;;
-        4) echo "s5" ;;
-        5) echo "s6" ;;
-        *) echo "" ;;
-    esac
-else
-    # Invalid
-    echo ""
-fi
-}
-
-# HMC-QM3_EROT-Version-05
-# Function to get QM3 ERoT FW Chip Rev
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid ERoT FW Chip Rev
-get_qm3_erot_fw_chiprev() {
-local qm3_erot_eid="$1"
-# default EID to 15, QM3 #1 ERoT SPI
-# 0: revA, 1:revB
-eid=${qm3_erot_eid:-15} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
-
-# older EC FW does not support the selftest
-if [ ${#output[@]} -lt 9 ]; then
-    # Invalid
-    echo ""
-    exit 1
-fi
-
-# completion code="00", successful
-if [[ "${output[0]}" == "00" ]]; then
-    rev_build=${output[8]}
-    result=$(( (16#$rev_build >> 4) & 0x03 ))
-
-    case "$result" in
-        0) echo "revA" ;;
-        1) echo "revB" ;;
-        2) echo "revC" ;;
-        *) echo "" ;;
-    esac
-else
-    # Invalid
-    echo ""
-fi
-}
-
-# HMC-QM3_EROT-Version-06
-# Function to get QM3 ERoT FW Boot Slot
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid ERoT FW Boot Slot
-get_qm3_erot_fw_boot_slot() {
-local qm3_erot_eid="$1"
-# default EID to 15, QM3 #1 ERoT SPI
-eid=${qm3_erot_eid:-17} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
-
-# older EC FW does not support the selftest
-if [ ${#output[@]} -lt 9 ]; then
-    # Invalid
-    echo ""
-    exit 1
-fi
-
-# completion code="00", successful
-if [[ "${output[0]}" == "00" ]]; then
-    result=$(( (16#${output[8]} >> 6) & 0x01 ))
-    echo "$result"
-else
-    # Invalid
-    echo ""
-fi
-}
-
-# HMC-QM3_EROT-Version-07
-# Function to get QM3 ERoT FW EC Identical
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid ERoT FW EC Identical
-get_qm3_erot_fw_ec_identical() {
-local qm3_erot_eid="$1"
-# default EID to 15, QM3 #1 ERoT SPI
-# 0: identical, 1: not identical
-eid=${qm3_erot_eid:-17} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
-
-# older EC FW does not support the selftest
-if [ ${#output[@]} -lt 9 ]; then
-    # Invalid
-    echo ""
-    exit 1
-fi
-
-# completion code="00", successful
-if [[ "${output[0]}" == "00" ]]; then
-    rev_build=${output[8]}
-    result=$(( (16#$rev_build >> 7) & 0x01 ))
-    if [[ "$result" == "0" ]]; then
-        echo "identical"
-    elif [[ "$result" == "1" ]]; then
-        echo "not identical"
-    else
-        echo ""
-    fi
-else
-    # Invalid
-    echo ""
-fi
-}
-
-# HMC-QM3_EROT-PLDM_T5-01
-# Function to get PLDM fw_update version of QM3_EROT SPI
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid ERoT FW version
-get_qm3_erot_pldm_version() {
-local eid="$1"
-# default EID to 15, QM3 #1 SPI ERoT
-eid=${eid:-15} && output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep 'ActiveComponentVersionString' | sed 's/.*"\(.*\)".*/\1/' | awk 'NR==1') && echo $output
-}
-
-# HMC-QM3_EROT-PLDM_T5-02
-# Function to get PLDM fw_update version of QM3
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid FW version
-get_qm3_erot_pldm_version_string() {
-local eid="$1"
-# default EID to 15, QM3 #1 SPI ERoT
-eid=${eid:-15} && output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep 'ActiveComponentVersionString' | sed 's/.*"\(.*\)".*/\1/' | awk 'NR==2') && echo $output
-}
-
-# HMC-QM3_EROT-PLDM_T5-05
-# Function to get PLDM fw_update AP_SKU ID of QM3
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid AP_SKU ID
-get_qm3_erot_pldm_apsku_id() {
-local sku_eid="$1"
-# default EID to 15, QM3 #1 SPI ERoT
-eid=${sku_eid:-15} && key=${sku_key:-APSKU} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
-}
-
-# HMC-QM3_EROT-PLDM_T5-06
-# Function to get PLDM fw_update EC_SKU ID of QM3 ERoT
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid AP_SKU ID
-get_qm3_erot_pldm_ecsku_id() {
-local sku_eid="$1"
-# default EID to 15, QM3 #1 SPI ERoT
-eid=${sku_eid:-15} && key=${sku_key:-ECSKU} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
-}
-
-# HMC-QM3_EROT-PLDM_T5-07
-# Function to get PLDM fw_update GLACIERDSD of QM3 ERoT
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid AP_SKU ID
-get_qm3_erot_pldm_glacier_id() {
-local sku_eid="$1"
-# default EID to 15, QM3 #1 SPI ERoT
-eid=${sku_eid:-15} && key=${sku_key:-GLACIERDSD} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
-}
-
-# HMC-QM3_EROT-DBUS-09
-# Function to get PLDM DBus software inventory version of QM3 ERoT
-# Arguments:
-#   $1: PLDM Inventory ID
-# Returns:
-#   valid ERoT FW version
-get_dbus_pldm_qm3_erot_version() {
-local qm3_pldm_erot_id="$1"
-erot_id=${qm3_pldm_erot_id:-HGX_FW_ERoT_NVSwitch_0} && output=$(_log_ busctl introspect xyz.openbmc_project.PLDM /xyz/openbmc_project/software/"$erot_id" | grep '^\.Version' | grep -o '"[^"]*"') && echo $output
-}
-
-## QM3: Telemetry Protocol
-
-# HMC-QM3-PLDM_T2-02
-# Function to disable PLDM T2 sensor polling
-# Arguments:
-#   n/a
-# Returns:
-#   valid "done", "failed" otherwise
-_disable_qm3_sensor_polling() {
+#   valid EC key revoke state
+get_nvswitch_erot_ec_key_revoke_state_vdm() {
+local nvswitch_erot_eid="$1"
+local eid
+local response
 local output
-_log_ busctl set-property xyz.openbmc_project.PLDM /xyz/openbmc_project/pldm/sensor_polling xyz.openbmc_project.Object.Enable Enabled b false
-output=$(_log_ busctl get-property xyz.openbmc_project.PLDM /xyz/openbmc_project/pldm/sensor_polling xyz.openbmc_project.Object.Enable Enabled | grep -o "false"); [[ $output = "false" ]] && echo "done" || echo "failed"
+# default 15 to NVSWITCH ERoT EID
+eid=${nvswitch_erot_eid:-15} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[18]}
+else
+    # Invalid
+    output=""
+fi
+
+# EC Key Revoke state
+echo $output
 }
 
-# HMC-QM3-PLDM_T2-03
-# Function to enable PLDM T2 sensor polling
+# HMC-NVSWITCH_EROT-Key-05
+# Function to get AP key revoke state via I2C
 # Arguments:
-#   n/a
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
 # Returns:
-#   valid "done", "failed" otherwise
-enable_qm3_sensor_polling() {
+#   valid EC key revoke state
+get_nvswitch_erot_ap_key_revoke_state_i2c() {
+local i2c_addr="${1:-0x71}"
+# WAR to Glacier hardware strapping, changing from 0x52 to 0x42
+local i2c_addr_dest="${2:-0x42}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
 local output
-_log_ busctl set-property xyz.openbmc_project.PLDM /xyz/openbmc_project/pldm/sensor_polling xyz.openbmc_project.Object.Enable Enabled b true
-output=$(_log_ busctl get-property xyz.openbmc_project.PLDM /xyz/openbmc_project/pldm/sensor_polling xyz.openbmc_project.Object.Enable Enabled | grep -o "true"); [[ $output = "true" ]] && echo "done" || echo "failed"
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke", selftest cmd=0x08, arg=0x08, read length=61
+response=($(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x08 0x08 61))
+
+# AP Key Revoke state
+output=${response[@]:52:8}
+echo $output
 }
 
-# HMC-QM3-PLDM_T2-04
-# Function to dump QM3 PDR in JSON format
+# HMC-NVSWITCH_EROT-Key-06
+# Function to get AP key revoke state via VDM
 # Arguments:
-#   QM3 EID
+#   $1: MCTP EID
 # Returns:
-#   valid "done", "failed" otherwise
-dump_qm3_pdr_json() {
-local qm3_eid="$1"
-local jsonfile=/tmp/"$FUNCNAME"_output.json
-# default EID to 22, QM3 #1 I2C
-eid=${qm3_eid:-22} && logfile=${jsonfile:-"/tmp/func_output.json"} && _log_ pldmtool platform getpdr -m "$eid" -a > "$logfile" && [ $(wc -c < $logfile) -gt 10 ] && : || rm $logfile && [ -f "$logfile" ] && echo "done" || echo "failed"
+#   valid EC key revoke state
+get_nvswitch_erot_ap_key_revoke_state_vdm() {
+local nvswitch_erot_eid="$1"
+local eid
+local response
+local output
+# default 15 to NVSWITCH ERoT EID
+eid=${nvswitch_erot_eid:-15} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[@]:35:8}
+else
+    # Invalid
+    output=""
+fi
+
+# EC Key Revoke state
+echo $output
 }
 
-# HMC-QM3-PLDM_T2-05
-# Function to get QM3 Numeric Sensor ID
+# HMC-NVSWITCH_EROT-Security-01
+# Function to get EC background copy progress state via VDM
 # Arguments:
-#   QM3 EID
+#   $1: MCTP EID
 # Returns:
-#   Numeric Sesnor ID
-get_qm3_numeric_sensor_id() {
-local qm3_eid="$1"
-# default EID to 22, QM3 #1 I2C
-eid=${qm3_eid:-22} && output=$(_log_ pldmtool platform getpdr -m "$eid" -a 2>/dev/null | grep -A5 'Numeric Sensor PDR' | awk -F': ' '/"sensorID":/ {print $2}' | tr -d ',' | sort -n | uniq | awk '{printf "%s ", $0} END {print ""}'); echo "$output"
+#   valid EC background copy progress state
+get_nvswitch_erot_background_copy_progress_state_vdm() {
+local nvswitch_erot_eid="$1"
+local eid
+local response
+local output
+# default 17 to FPGA ERoT EID
+eid=${nvswitch_erot_eid:-15} && response=($(_log_ mctp-vdm-util -t ${eid} -c background_copy_query_progress | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-11))
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[1]}
+else
+    # Invalid
+    output=""
+fi
+
+case $output in
+01) echo "copy not in progress";;
+02) echo "copy in progress";;
+*) echo "unknown";;
+esac
 }
 
-# HMC-QM3-PLDM_T2-06
-# Function to verify if QM3 Numeric Sensor ID is accessible
-# Arguments:
-#   QM3 EID
-# Returns:
-#   valid "yes", "no" otherwise
-is_qm3_numeric_sensor_accessible() {
-    local qm3_eid="$1"
-    # default EID to 22, QM3 #1 I2C
-    eid=${qm3_eid:-22} && sensor_ids=$(_log_ pldmtool platform getpdr -m "$eid" -a | grep -A5 'Numeric Sensor PDR' | awk -F': ' '/"sensorID":/ {print $2}' | tr -d ',' | sort -n | uniq | awk '{printf "%s ", $0} END {print ""}')
-
-    # Convert the string into an array
-    IFS=' ' read -ra sensor_array <<< "$sensor_ids"
-
-    # Get the last sensord readout
-    [[ "00" = $(_log_ pldmtool raw -m "$eid" -v -d 0x80 0x02 0x11 0x$(printf "%x" ${sensor_array[-1]}) 0x00 0x0 0x0 | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '4p') ]] && echo "yes" || echo "no"
-}
-
-# HMC-QM3-PLDM_T2-07
-# Function to get QM3 State Sensor IDs
-# Arguments:
-#   QM3 EID
-# Returns:
-#   Numeric Sesnor ID
-get_qm3_state_sensor_id() {
-# Todo: filter out only State Sensor ID
-local qm3_eid="$1"
-# default EID to 22, QM3 #1 I2C
-eid=${qm3_eid:-22} && output=$(_log_ pldmtool platform getpdr -m "$eid" -a 2>/dev/null | grep -A5 'State Sensor PDR' | awk -F': ' '/"sensorID":/ {print $2}' | tr -d ',' | sort -n | uniq | awk '{printf "%s ", $0} END {print ""}'); echo "$output"
-}
-
-# HMC-QM3-PLDM_T2-08
-# Function to verify if all QM3 State Sensor ID is accessible
-# Arguments:
-#   QM3 EID
-# Returns:
-#   valid "yes", "no" otherwise
-is_qm3_state_sensor_accessible() {
-    local qm3_eid="$1"
-    # default EID to 22, QM3 #1 I2C
-    eid=${qm3_eid:-22} && state_ids=$(_log_ pldmtool platform getpdr -m "$eid" -a | grep -A5 'State Sensor PDR' | awk -F': ' '/"sensorID":/ {print $2}' | tr -d ',' | sort -n | uniq | awk '{printf "%s ", $0} END {print ""}')
-
-    # Convert the string into an array
-    IFS=' ' read -ra sensor_array <<< "$state_ids"
-
-    # Get the last sensord readout
-    [[ "00" = $(_log_ pldmtool raw -m "$eid" -v -d 0x80 0x02 0x21 0x$(printf "%x" ${sensor_array[-1]}) 0x00 0x0 0x0 | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '4p') ]] && echo "yes" || echo "no"
-}
 
 ## PEXSW: Transport Protocol
 
@@ -5010,7 +5841,7 @@ local pexsw_erot_spi_eid="$1"
 # default EID to 19, PEXSW MCTP ERoT SPI
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${pexsw_erot_spi_eid:-19} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${pexsw_erot_spi_eid:-19} && mctp_call='_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1' && eid_rt=$(eval " $mctp_call" 2>&1 | grep mctp_resp_msg | cut -d ' ' -f 8) && printf '%d\n' 0x$eid_rt
 }
 
 # HMC-PEXSW_EROT-MCTP_VDM-02
@@ -5025,7 +5856,7 @@ local pexsw_erot_i2c_eid="$1"
 # default EID to 25, Nero PEXSW MCTP ERoT I2C
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${pexsw_erot_i2c_eid:-25} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep 'mctp_resp_msg' | grep -o '0x[0-9a-fA-F]\+' | sed -n '5p') && echo $((eid_rt))
+eid=${pexsw_erot_i2c_eid:-25} && mctp_call='_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1' && eid_rt=$(eval " $mctp_call" 2>&1 | grep mctp_resp_msg | cut -d ' ' -f 8) && printf '%d\n' 0x$eid_rt
 }
 
 # HMC-PEXSW_EROT-MCTP_VDM-03
@@ -5403,7 +6234,84 @@ local pexsw_pldm_erot_id="$1"
 erot_id=${pexsw_pldm_erot_id:-HGX_ERoT_PCIeSwitch_0} && output=$(_log_ busctl introspect xyz.openbmc_project.PLDM /xyz/openbmc_project/inventory/system/chassis/"$erot_id" | grep '.UUID' | grep -o '"[^"]*"' | tr -d '"') && echo $output
 }
 
+# HMC-PEXSW_EROT-PLDM_T5-08
+# Function to get PLDM fw_update PCI Vendor ID of PEXSW ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Vendor" ID
+get_pcieswitch_erot_pldm_pci_vendor_id() {
+local sku_eid="$1"
+# default EID to 19, PCIESWITCH #1 SPI ERoT
+eid=${sku_eid:-19} && key=${sku_key:-"PCI Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-PCIESWITCH_EROT-PLDM_T5-09
+# Function to get PLDM fw_update PCI Device ID of PEXSW ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Device" ID
+get_pcieswitch_erot_pldm_pci_device_id() {
+local sku_eid="$1"
+# default EID to 19, PCIESWITCH #1 SPI ERoT
+eid=${sku_eid:-19} && key=${sku_key:-"PCI Device ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-PCIESWITCH_EROT-PLDM_T5-10
+# Function to get PLDM fw_update Subsystem Vendor ID of PEXSW ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem Vendor" ID
+get_pcieswitch_erot_pldm_pci_subsys_vendor_id() {
+local sku_eid="$1"
+# default EID to 19, PCIESWITCH #1 SPI ERoT
+eid=${sku_eid:-19} && key=${sku_key:-"PCI Subsystem Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-PCIESWITCH_EROT-PLDM_T5-11
+# Function to get PLDM fw_update Subsystem ID of PEXSW ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem" ID
+get_pcieswitch_erot_pldm_pci_subsys_id() {
+local sku_eid="$1"
+# default EID to 19, PCIESWITCH #1 SPI ERoT
+eid=${sku_eid:-19} && key=${sku_key:-"PCI Subsystem ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
 ## PEXSW: Security Protocol
+
+# HMC-PEXSW_EROT-Security-01
+# Function to get EC background copy progress state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC background copy progress state
+get_pcieswitch_erot_background_copy_progress_state_vdm() {
+local pcieswitch_erot_eid="$1"
+local eid
+local response
+local output
+# default 19 to PEXSW ERoT EID
+eid=${pcieswitch_erot_eid:-19} && response=($(_log_ mctp-vdm-util -t ${eid} -c background_copy_query_progress | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-11))
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[1]}
+else
+    # Invalid
+    output=""
+fi
+
+case $output in
+01) echo "copy not in progress";;
+02) echo "copy in progress";;
+*) echo "unknown";;
+esac
+}
 
 # HMC-PEXSW_EROT-SPDM-01
 # Function to get SPDM Version through DBus
@@ -5472,6 +6380,469 @@ get_pcieswitch_erot_spdm_certificate_count() {
 local spdm_id="$1"
 id=${spdm_id:-'HGX_ERoT_PCIeSwitch_0'} && output=$(_log_ busctl get-property xyz.openbmc_project.SPDM /xyz/openbmc_project/SPDM/"$id" xyz.openbmc_project.SPDM.Responder Certificate | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $output
 }
+
+# HMC-PEXSW_EROT-Key-01
+# Function to get EC key revoke policy via I2C
+# Arguments:
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
+# Returns:
+#   valid revoke policy
+get_pcieswitch_erot_key_revoke_policy_i2c() {
+local i2c_addr="${1:-0x3e}"
+local i2c_addr_dest="${2:-0x52}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
+local output
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke policy", cmd=0x1d, arg=0x00, read length=20
+response=$(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x1d 0x00 20)
+
+output=${response:90:4}
+
+case $output in
+0x00) echo "not set";;
+0x01) echo "auto";;
+0x02) echo "decoupled";;
+*) echo "unknown";;
+esac
+}
+
+# HMC-PEXSW_EROT-Key-03
+# Function to get EC key revoke state via I2C
+# Arguments:
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
+# Returns:
+#   valid EC key revoke state
+get_pcieswitch_erot_ec_key_revoke_state_i2c() {
+local i2c_addr="${1:-0x3e}"
+local i2c_addr_dest="${2:-0x52}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
+local output
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke", selftest cmd=0x08, arg=0x08, read length=61
+response=($(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x08 0x08 61))
+
+# EC Key Revoke state
+echo ${response[35]}
+}
+
+# HMC-PEXSW_EROT-Key-04
+# Function to get EC key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC key revoke state
+get_pcieswitch_erot_ec_key_revoke_state_vdm() {
+local pcieswitch_erot_eid="$1"
+local eid
+local response
+local output
+# default 19 to PEXSW ERoT EID
+eid=${pcieswitch_erot_eid:-19} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[18]}
+else
+    # Invalid
+    output=""
+fi
+
+# EC Key Revoke state
+echo $output
+}
+
+# HMC-PEXSW_EROT-Key-06
+# Function to get AP key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC key revoke state
+get_pcieswitch_erot_ap_key_revoke_state_vdm() {
+local pcieswitch_erot_eid="$1"
+local eid
+local response
+local output
+# default 19 to PCIESWITCH ERoT EID
+eid=${pcieswitch_erot_eid:-19} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[@]:35:8}
+else
+    # Invalid
+    output=""
+fi
+
+# EC Key Revoke state
+echo $output
+}
+
+# HMC-PEXSW_EROT-Key-05
+# Function to get AP key revoke state via I2C
+# Arguments:
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
+# Returns:
+#   valid EC key revoke state
+get_pcieswitch_erot_ap_key_revoke_state_i2c() {
+local i2c_addr="${1:-0x3e}"
+local i2c_addr_dest="${2:-0x52}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
+local output
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke", selftest cmd=0x08, arg=0x08, read length=61
+response=($(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x08 0x08 61))
+
+# AP Key Revoke state
+output=${response[@]:52:8}
+echo $output
+}
+
+# HMC-CPU_EROT-Version-01
+# Function to get CPU ERoT FW version from PLDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid ERoT FW version
+get_cpu_erot_fw_version_pldm() {
+local eid="$1"
+local output
+# default EID to 16, CPU ERoT
+eid=${eid:-16} && output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep 'ActiveComponentVersionString' | sed 's/.*"\(.*\)".*/\1/' | awk 'NR==1') && echo $output
+}
+
+# HMC-CPU_EROT-PLDM_T5-05
+# Function to get PLDM fw_update AP_SKU ID of CPU
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid AP_SKU ID
+get_cpu_erot_pldm_apsku_id() {
+local sku_eid="$1"
+# default EID to 16, CPU ERoT
+eid=${sku_eid:-16} && key=${sku_key:-APSKU} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
+}
+
+# HMC-CPU_EROT-PLDM_T5-06
+# Function to get PLDM fw_update EC_SKU ID of CPU ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC_SKU ID
+get_cpu_erot_pldm_ecsku_id() {
+local sku_eid="$1"
+# default EID to 16, CPU ERoT
+eid=${sku_eid:-16} && key=${sku_key:-ECSKU} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
+}
+
+# HMC-CPU_EROT-PLDM_T5-07
+# Function to get PLDM fw_update GLACIERDSD of CPU ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid GLACIERDSD ID
+get_cpu_erot_pldm_glacier_id() {
+local sku_eid="$1"
+local output
+# default EID to 16, CPU ERoT
+eid=${sku_eid:-16} && key=${sku_key:-GLACIERDSD} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
+}
+
+# HMC-CPU_EROT-PLDM_T5-08
+# Function to get PLDM fw_update PCI Vendor ID of CPU ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Vendor" ID
+get_cpu_erot_pldm_pci_vendor_id() {
+local sku_eid="$1"
+# default EID to 16, CPU ERoT
+eid=${sku_eid:-16} && key=${sku_key:-"PCI Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-CPU_EROT-PLDM_T5-09
+# Function to get PLDM fw_update PCI Deivce ID of CPU ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Device" ID
+get_cpu_erot_pldm_pci_device_id() {
+local sku_eid="$1"
+# default EID to 16, CPU ERoT
+eid=${sku_eid:-16} && key=${sku_key:-"PCI Device ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-CPU_EROT-PLDM_T5-10
+# Function to get PLDM fw_update PCI Subsystem Vendor ID of CPU ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem Vendor" ID
+get_cpu_erot_pldm_pci_subsys_vendor_id() {
+local sku_eid="$1"
+# default EID to 16, CPU ERoT
+eid=${sku_eid:-16} && key=${sku_key:-"PCI Subsystem Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-CPU_EROT-PLDM_T5-11
+# Function to get PLDM fw_update PCI Subsystem ID of CPU ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem" ID
+get_cpu_erot_pldm_pci_subsys_id() {
+local sku_eid="$1"
+# default EID to 16, CPU ERoT
+eid=${sku_eid:-16} && key=${sku_key:-"PCI Subsystem ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-CPU_EROT-SPDM-06
+# Function to get SPDM Certificate count through DBus
+# Arguments:
+#   $1: SPDM ID
+# Returns:
+#   valid SPDM Certificate count
+get_cpu_erot_spdm_certificate_count() {
+local spdm_id="$1"
+id=${spdm_id:-'HGX_ERoT_CPU_0'} && output=$(_log_ busctl get-property xyz.openbmc_project.SPDM /xyz/openbmc_project/SPDM/"$id" xyz.openbmc_project.SPDM.Responder Certificate | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $output
+}
+
+# HMC-CPU_EROT-Key-04
+# Function to get EC key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC key revoke state
+get_cpu_erot_ec_key_revoke_state_vdm() {
+local cpu_erot_eid="$1"
+local eid
+local response
+local output
+# default 16 to CPU ERoT EID
+eid=${cpu_erot_eid:-16} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[18]}
+else
+    # Invalid
+    output=""
+fi
+
+# EC Key Revoke state
+echo $output
+}
+
+# HMC-CPU_EROT-Key-06
+# Function to get AP key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC key revoke state
+get_cpu_erot_ap_key_revoke_state_vdm() {
+local cpu_erot_eid="$1"
+local eid
+local response
+local output
+# default 13 to CPU ERoT EID
+eid=${cpu_erot_eid:-15} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[@]:35:8}
+else
+    # Invalid
+    output=""
+fi
+
+# EC Key Revoke state
+echo $output
+}
+
+# HMC-CPU_EROT-Version-04
+# Function to get CPU ERoT FW Keyset
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid ERoT FW Keyset
+get_cpu_erot_fw_keyset() {
+local cpu_erot_eid="$1"
+# default 16 to CPU ERoT EID
+# 0: s1, 1: s2, 2: s3, 3: s4, 4: s5, 5: s6
+eid=${cpu_erot_eid:-16} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
+
+# older EC FW does not support the selftest
+if [ ${#output[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${output[0]}" == "00" ]]; then
+    rev_build=${output[8]}
+    result=$(( (16#$rev_build >> 1) & 0x07 ))
+
+    case "$result" in
+        0) echo "s1" ;;
+        1) echo "s2" ;;
+        2) echo "s3" ;;
+        3) echo "s4" ;;
+        4) echo "s5" ;;
+        5) echo "s6" ;;
+        *) echo "" ;;
+    esac
+else
+    # Invalid
+    echo ""
+fi
+}
+
+# HMC-CPU_EROT-Version-05
+# Function to get CPU ERoT FW Chip Rev
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid ERoT FW Chip Rev
+get_cpu_erot_fw_chiprev() {
+local cpu_erot_eid="$1"
+# default 16 to CPU ERoT EID
+# 0: revA, 1:revB
+eid=${cpu_erot_eid:-16} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
+
+# older EC FW does not support the selftest
+if [ ${#output[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${output[0]}" == "00" ]]; then
+    rev_build=${output[8]}
+    result=$(( (16#$rev_build >> 4) & 0x03 ))
+
+    case "$result" in
+        0) echo "revA" ;;
+        1) echo "revB" ;;
+        2) echo "revC" ;;
+        *) echo "" ;;
+    esac
+else
+    # Invalid
+    echo ""
+fi
+}
+
+# HMC-CPU_EROT-Version-03
+# Function to get CPU ERoT FW Build Type
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid ERoT FW Build Type
+get_cpu_erot_fw_build_type() {
+local cpu_erot_eid="$1"
+# default 14 to CPU ERoT EID
+# 0: rel, 1: dev
+eid=${cpu_erot_eid:-16} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
+
+# older EC FW does not support the selftest
+if [ ${#output[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${output[0]}" == "00" ]]; then
+    rev_build=${output[8]}
+    result=$(( (16#$rev_build & 0x01) ))
+
+    case "$result" in
+        0) echo "rel" ;;
+        1) echo "dev" ;;
+        *) echo "" ;;
+    esac
+else
+    # Invalid
+    echo ""
+fi
+}
+
+# HMC-CPU_EROT-Security-01
+# Function to get EC background copy progress state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC background copy progress state
+get_cpu_erot_background_copy_progress_state_vdm() {
+local cpu_erot_eid="$1"
+local eid
+local response
+local output
+# default 15 to CPU ERoT EID
+eid=${cpu_erot_eid:-15} && response=($(_log_ mctp-vdm-util -t ${eid} -c background_copy_query_progress | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-11))
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[1]}
+else
+    # Invalid
+    output=""
+fi
+
+case $output in
+01) echo "copy not in progress";;
+02) echo "copy in progress";;
+*) echo "unknown";;
+esac
+}
+
 
 <<COMMENT
 # mctp-vdm-util -h
@@ -5731,7 +7102,7 @@ All other: Reserved
 COMMENT
 
 
-export hmc_checker_version="0.10-06052024"
+export hmc_checker_version="0.04.00-08262024"
 export -f _log_
 
 display_hmc_checker_version() {
@@ -5752,7 +7123,7 @@ _run_all_checks() {
     done < <(declare -F | sort -r)
 }
 
-skip_keywords=("cx7" "spdm" "gpu" "qm3")
+skip_keywords=("cx7" "spdm" "gpu" "nvswitch")
 _run_selected_checks() {
     local output
     local skip=false

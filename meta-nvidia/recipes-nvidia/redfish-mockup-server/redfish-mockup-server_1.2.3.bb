@@ -4,7 +4,7 @@ HOMEPAGE = "https://github.com/DMTF/Redfish-Mockup-Server"
 
 SRC_URI = "git://github.com/DMTF/Redfish-Mockup-Server.git;branch=main;protocol=https"
 SRC_URI[sha256sum] = "434f2a6c988f8f26fa98e1214101ff731f1fc8360afc3e178b716165ea9cd298"
-SRCREV = "db4af3df7c2da91aa142aea9bfae3b62388ac129"
+SRCREV = "2d39eb14122337ceab0712a9610b1cd37c65f487"
 
 LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://LICENSE.md;md5=cee7a7694b5bf14bc9d3e0fbe78a64af"

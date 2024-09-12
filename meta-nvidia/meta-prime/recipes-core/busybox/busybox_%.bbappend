@@ -8,4 +8,5 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 #
 SRC_URI += " \
     file://busybox.cfg \
+    ${@bb.utils.contains('BUILD_TYPE', 'prod', 'file://disable-dev-mem.cfg', 'file://enable-dev-mem.cfg', d)} \
 "

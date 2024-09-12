@@ -1,0 +1,13 @@
+[Unit]
+Description=MCTP I2C 1 demultiplexer daemon
+Wants=mctp-i2c1-demux.socket
+PartOf=fpga1-erot-recovery.target
+
+[Service]
+Type=notify
+Restart=always
+ExecStart=/usr/bin/mctp-demux-daemon smbus i2c_bus=1 i2c_config_file=/usr/share/mctp/mctp_cfg_smbus1.json
+SyslogIdentifier=mctp-i2c1-demux
+
+[Install]
+WantedBy=fpga1-erot-recovery.target

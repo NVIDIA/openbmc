@@ -60,6 +60,11 @@ Before=nvidia-shutdown-ok-monitor.service
 Before=xyz.openbmc_project.FruDevice.service
 Before=xyz.openbmc_project.EntityManager.service
 
+#
+# Before - service needs to wait until bmc-boot-complete and Entity Manager service start
+#
+Before=com.Nvidia.FWStatus.service
+
 
 [Service]
 Restart=no

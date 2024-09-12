@@ -2,7 +2,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI = "git://github.com/NVIDIA/phosphor-bmc-code-mgmt;protocol=https;branch=develop"
 
-SRCREV = "faba52543d5892c9a772928d190263c620cc4b8d"
+SRCREV = "7da210521f143cbe639a216b3114024225e6282d"
 
 EXTRA_OEMESON += " \
     -Dusb-code-update=disabled\
@@ -13,6 +13,7 @@ EXTRA_OEMESON += " \
     -Dplatform-bmc-id=HGX_BMC_0\
     -Dside-switch-on-boot=disabled\
     -Dbmc-software-manufacturer=NVIDIA\
+    -Doem-nvidia-hmc-emmc=enabled\
 "
 
 DBUS_SERVICE:${PN}-version = "xyz.openbmc_project.Software.BMC.Inventory.service"

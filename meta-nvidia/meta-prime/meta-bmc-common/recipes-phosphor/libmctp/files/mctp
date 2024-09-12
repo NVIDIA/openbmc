@@ -1,2 +1,2 @@
-DEMUX_SPI_BINDING_OPTS=astspi gpio=953
+DEMUX_SPI_BINDING_OPTS=astspi gpio=649
 MCTP_SPI_CTRL_OPTS= -e 0 -i 3 -t 6 -m 1 -d 20 -v 0 -u "ad4c836b-c54c-11eb-8529-0242ac130003"

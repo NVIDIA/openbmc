@@ -1,3 +1,5 @@
+Upstream-Status: Pending
+---
 diff --git a/dbutil.c b/dbutil.c
 index bd66454..68ae13f 100644
 --- a/dbutil.c

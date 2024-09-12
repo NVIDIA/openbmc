@@ -1,0 +1,10 @@
+[Unit]
+Description=MCTP I2C 14 demux Unix domain socket
+PartOf=mctp-i2c14-demux.service
+
+[Socket]
+ListenSequentialPacket=@mctp-i2c14-mux
+Accept=no
+
+[Install]
+WantedBy=sockets.target

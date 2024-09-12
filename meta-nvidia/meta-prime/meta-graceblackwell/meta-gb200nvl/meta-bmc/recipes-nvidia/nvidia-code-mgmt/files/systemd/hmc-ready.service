@@ -1,0 +1,10 @@
+[Unit]
+Description=GB200NVL HMC Ready Service
+Conflicts=hmc-recovery.target
+StartLimitIntervalSec=1
+
+[Service]
+Restart=no
+Type=simple
+ExecStart=/bin/echo "Stopping HMC AP Recovery Target"
+SyslogIdentifier=gb200nvl-hmc-ready

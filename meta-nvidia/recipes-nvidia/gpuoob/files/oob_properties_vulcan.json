@@ -719,6 +719,31 @@
       "description": "Device ECC Mode"
     },
     {
+      "name": "gpu.device.setPPCIeMode",
+      "unit": "hexString",
+      "refresh_interval": "NO_REFRESH",
+      "category": "dynamic",
+      "accessor": "gpu.opcode.setPPCIeMode",
+      "description": "Device Set PPCIeMode"
+    },
+    {
+      "name": "nvswitch.device.PPCIeMode",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.PPCIeMode",
+      "description": "Get NVswitch Device PPCIeMode"
+    },
+    {
+      "name": "nvswitch.device.setPPCIeMode",
+      "unit": "hexString",
+      "refresh_interval": "NO_REFRESH",
+      "category": "dynamic",
+      "accessor": "nvswitch.opcode.setPPCIeMode",
+      "description": "Device Set PPCIeMode"
+    },
+    {
       "name": "gpu.device.CCMode",
       "unit": "hexString",
       "category": "dynamic",

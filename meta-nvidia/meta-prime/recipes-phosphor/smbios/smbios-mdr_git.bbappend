@@ -1,5 +1,5 @@
 SRC_URI = "git://github.com/NVIDIA/smbios-mdr;protocol=https;branch=develop"
-SRCREV = "3870f3674729dacf4fbbe81fecef8d39f2c69e81"
+SRCREV = "a3838a3584e98ae3873df9471b9025c9b20c87d2"
 
 # cpuinfo collects CPU information through the Intel PECI interface
 PACKAGECONFIG:remove = " cpuinfo"

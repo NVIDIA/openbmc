@@ -1,0 +1,10 @@
+[Unit]
+Description=MCTP SPI 0 demultiplexer daemon
+
+[Service]
+Type=notify
+Restart=always
+ExecStart=/usr/bin/mctp-demux-daemon astspi spi_config_file=/usr/share/mctp/mctp_cfg_spi0.json
+SyslogIdentifier=mctp-spi0-demux
+WatchdogSec=10
+

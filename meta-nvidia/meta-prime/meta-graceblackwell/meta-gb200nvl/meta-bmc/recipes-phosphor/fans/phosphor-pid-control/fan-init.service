@@ -1,0 +1,11 @@
+[Unit]
+Description=Set Fan to Default Duty as Booting Up
+Before=xyz.openbmc_project.fansensor.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/usr/bin/fan-init.sh
+
+[Install]
+WantedBy=sysinit.target

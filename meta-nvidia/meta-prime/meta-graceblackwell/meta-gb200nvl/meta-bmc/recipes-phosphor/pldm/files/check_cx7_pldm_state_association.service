@@ -1,0 +1,14 @@
+[Unit]
+Description=Check cx7_pldm_state_association
+BindsTo=mctp-i2c5-ctrl.service
+After=mctp-i2c5-ctrl.service obmc-power-on@0.target
+
+[Service]
+RemainAfterExit=yes
+Type=oneshot
+ExecStartPre=/bin/bash -c 'for i in {1..10}; do busctl tree xyz.openbmc_project.PLDM | grep -q "/xyz/openbmc_project/state" && exit 0 || sleep 1; done; exit 1'
+ExecStart=/bin/bash -c 'sleep 5 && /usr/bin/env /usr/bin/check_cx7_pldm_state_association.sh'
+SyslogIdentifier=check_cx7_pldm_state_association
+
+[Install]
+WantedBy=obmc-power-on@0.target

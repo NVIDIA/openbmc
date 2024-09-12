@@ -1,8 +1,10 @@
 # Use NVIDIA gitlab Phosphor Sel Logger
 SRC_URI = "git://github.com/NVIDIA/phosphor-sel-logger;protocol=https;branch=develop"
-SRCREV = "1884c34f408e74b484689ba29ffa7abec9be7e4a"
+SRCREV = "b54b7e66434570296545df1d18966cf7f43ad2dc"
 
-DEPENDS += "phosphor-logging"
+DEPENDS += "phosphor-ipmi-host phosphor-logging"
+
+inherit meson pkgconfig obmc-phosphor-ipmiprovider-symlink
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 # Enable threshold monitoring

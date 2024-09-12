@@ -54,7 +54,6 @@ set_gpio() # (pin, value)
 rm_exists $SYS_DISCOVERY_FILE
 pwrsts_pin="RUN_POWER_PG-I"
 sysrst_pin="SYS_RST_IN_L-O"
-pci_mux_sel_pin="PCI_MUX_SEL-O"
 chassis_object=`busctl tree $CHASSIS_SERVICE --list | grep chassis`
 host_object=`busctl tree $HOST_SERVICE --list | grep host`
 on_edge=0
@@ -129,9 +128,6 @@ while true; do
         # Signal transition to phosphor-host-state-manager
         busctl set-property $HOST_SERVICE $host_object $HOST_INTERFACE \
             $HOST_TRANSITION_PROPERTY s ${HOST_VALNAME}.Transition.On
-
-        # Set PCI Mux on IOX expander
-        set_gpio "$pci_mux_sel_pin" 1
 
         # Don't do this on the first fall through this logic on service start
         # It causes an unexpected and unnecessary MCTP/GPU restart

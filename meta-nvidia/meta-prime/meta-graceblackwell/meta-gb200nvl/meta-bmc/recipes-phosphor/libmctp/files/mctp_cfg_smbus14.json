@@ -1,0 +1,76 @@
+{
+  "i2c": {
+    "i2c_src_address": 24,
+    "src_eid": 11,
+    "buses": [
+      {
+        "bus_number": "i2c14",
+        "bus_number_smq": "i2c14",
+        "socket_name": "mctp-i2c14-mux",
+        "endpoints": [
+          {
+            "eid_type": "static",
+            "eid": 105,
+            "i2c_slave_address": 50
+          }
+        ]
+      },
+      { 
+        "bus_number": "i2c40",
+        "bus_number_smq": "i2c14",
+        "socket_name": "mctp-i2c14-mux",
+        "endpoints": [
+          {
+            "eid_type": "static",
+            "eid": 200,
+            "i2c_slave_address": 29,
+            "mux_addr": 119,
+            "mux_channel": 0
+          }
+        ]
+      },
+      {
+        "bus_number": "i2c41",
+        "bus_number_smq": "i2c14",
+        "socket_name": "mctp-i2c14-mux",
+        "endpoints": [
+          {
+            "eid_type": "static",
+            "eid": 201,
+            "i2c_slave_address": 29,
+            "mux_addr": 119,
+            "mux_channel": 1
+          }
+        ]
+      },
+      {
+        "bus_number": "i2c42",
+        "bus_number_smq": "i2c14",
+        "socket_name": "mctp-i2c14-mux",
+        "endpoints": [
+          {
+            "eid_type": "static",
+            "eid": 202,
+            "i2c_slave_address": 29,
+            "mux_addr": 119,
+            "mux_channel": 2
+          }
+        ]
+      },
+      {
+        "bus_number": "i2c43",
+        "bus_number_smq": "i2c14",
+        "socket_name": "mctp-i2c14-mux",
+        "endpoints": [
+          {
+            "eid_type": "static",
+            "eid": 203,
+            "i2c_slave_address": 29,
+            "mux_addr": 119,
+            "mux_channel": 3
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,179 @@
+#!/usr/bin/env bash
+
+# Copyright (c) 2024, NVIDIA CORPORATION.  All rights reserved.
+#
+#  NVIDIA CORPORATION and its licensors retain all intellectual property
+#  and proprietary rights in and to this software, related documentation
+#  and any modifications thereto.  Any use, reproduction, disclosure or
+#  distribution of this software and related documentation without an express
+#  license agreement from NVIDIA CORPORATION is strictly prohibited.
+
+set -o pipefail
+
+APP_NAME=fpga_regtbl
+APP_VER=0.1
+
+show_help()
+{
+    echo "A tool to access FPGA regtbl with Prettier Human-readable Register Names, version=$APP_VER"
+    echo "<usage>"
+    echo "  ./$APP_NAME <reg_name> <device_id>"
+    echo "output:"
+    echo "(raw data of the register bit(s))"
+    echo
+    echo "For supported reg_name list,"
+    echo "  ./$APP_NAME show_reg_list"
+    echo
+}
+
+err() #(msg)
+{
+    echo "${APP_NAME}[E]$@" >&2
+    return 0
+}
+
+# Sourcing platform specific information pertaining to the FPGA
+source /usr/share/fpga_regtbl_platform.conf;rc=$?
+[ "$rc" -ne 0 ] && err "Failed to load FPGA platform config!" && exit $rc
+
+show_reg_list()
+{
+    local format="%-25s%-10s%-10s%-15s%-10s%-10s"
+    printf "$format\n" "RegName" "ByteOff" "ByteLen" "Bitmask(Hex)" "ByteRange" "BitRange"
+    printf "===============================================================================
+"
+    local reg
+    for reg in $REG_LIST; do
+        [ -z "$reg" ] && continue  # skip empty line.
+        [ "${reg::1}" = "#" ] && continue  # skip line commented by leading '#'.
+        printf "$format\n" ${reg//,/ }
+    done
+}
+
+# FPGA regtbl dump cmds (4 pages for example),
+#   i2ctransfer -y 1 w2@0x11 0x00 0x00 r256 | sed 's/0x//g' | grep -Eo '.{1,48}'
+#   i2ctransfer -y 1 w2@0x11 0x00 0x01 r256 | sed 's/0x//g' | grep -Eo '.{1,48}'
+#   i2ctransfer -y 1 w2@0x11 0x00 0x02 r256 | sed 's/0x//g' | grep -Eo '.{1,48}'
+#   i2ctransfer -y 1 w2@0x11 0x00 0x03 r256 | sed 's/0x//g' | grep -Eo '.{1,48}'
+#
+
+lookup_reg() #(reg_name)
+{
+    local reg_name=$1;shift
+
+    local reg
+    for reg in $REG_LIST; do
+        [ -z "$reg" ] && continue  # skip empty line.
+        [ "${reg::1}" = "#" ] && continue  # skip line commented by leading '#'.
+
+        local rname=${reg%%,*}
+        [ "$rname" = "$reg_name" ] || continue
+        echo "${reg//,/ }" | cut -d' ' -f2,3,4
+        return 0
+    done
+    return 1
+}
+
+clear_interrupt() #(reg_name, dev_id)
+{
+    local reg_name=$1;shift
+    local dev_id=$1;shift
+
+    local rc=0
+
+    local reg
+    while read -r reg; do
+        [ -z "$reg" ] && continue  # skip empty line.
+        [ "${reg::1}" = "#" ] && continue  # skip line commented by leading '#'.
+
+        # Register name is stored in the first field
+        local cmd_reg_name=${reg%%,*}
+
+        # Get device ID in the second field
+        local cmd_dev_id=${reg#*,}
+        cmd_dev_id=${cmd_dev_id%%,*}
+
+        if [ "$reg_name" = "$cmd_reg_name" ] && [ "$dev_id" = "$cmd_dev_id" ]; then
+            # Clear command is in the last field
+            local clear_cmd=${reg##*,}
+            $clear_cmd >/dev/null;rc=$?
+            return $rc
+        fi
+    done <<< "$CLEAR_CMD_LIST"
+
+    # Not all interrupts will have corresponding clear command
+    err "No interrupt clearing command found for ${reg_name} ${dev_id}!"
+    return 0
+}
+
+REGT_CACHE="/tmp/regtbl.cache"
+get_reg_data() #(dev_id, byte_off, byte_len, bit_mask)
+{
+    local dev_id=$1;shift
+    local byte_off=$1;shift
+    local byte_len=$1;shift
+    local bit_mask=$1;shift
+
+    local rc=0
+
+    local cur_data
+    local page
+    for page in `seq 0 $(($REGTBL_PAGES-1))`; do
+        local cmd="i2ctransfer -y $REGTBL_BUS w2@$REGTBL_SADDR 0x00 $page r256"
+        local s_data;s_data=`$cmd | sed 's/0x//g'`;rc=$?
+        [ "$rc" -ne 0 ] && return $rc
+        cur_data="$cur_data $s_data"
+    done
+    cur_data=${cur_data:1} # remove the leading ' '
+    echo $cur_data > $REGT_CACHE
+
+    local reg_bytes=${cur_data:$byte_off:$byte_len}
+
+    local b
+    local reg_value
+    for b in ${reg_bytes}; do
+        reg_value=${b}${reg_value}
+    done
+
+    local reg_value=$((0x$reg_value & $bit_mask))
+
+    # Account for any bit offsets in the masked reg data
+    while [ $(($bit_mask & 1)) -eq  0 ]
+    do
+        bit_mask=$(($bit_mask>>1))
+        reg_value=$(($reg_value>>1))
+    done
+
+    # Isolate the bit corresponding to the device
+    local dev_mask=$((1<<$dev_id))
+    reg_value=$(($reg_value & $dev_mask))
+
+    local intr_state
+    [ "$reg_value" -ne 0 ] && intr_state=1 || intr_state=0
+    echo $intr_state
+
+    return 0
+}
+
+## MAIN ##
+[ "$*" = "show_reg_list" ] && show_reg_list && exit 0
+
+[ "$#" != "2" ] && show_help && exit 1
+
+reg_name=$1;shift
+dev_id=$1;shift
+
+rc=0
+data_info=`lookup_reg "$reg_name"`;rc=$?
+[ "$rc" -ne 0 ] && err "$reg_name not supported!" && exit $rc
+intr_state=`get_reg_data "$dev_id" $data_info`;rc=$?
+[ "$rc" -ne 0 ] && err "$reg_name read failed!" && exit $rc
+
+if [ "$intr_state" -eq 1 ]; then
+    clear_interrupt "$reg_name" "$dev_id";rc=$?
+    [ "$rc" -ne 0 ] && err "$reg_name $dev_id interrupt clear failed!"
+fi
+
+echo $intr_state
+
+exit 0

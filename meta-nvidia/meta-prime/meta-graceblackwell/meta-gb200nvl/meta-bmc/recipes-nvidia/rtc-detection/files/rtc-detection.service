@@ -1,0 +1,13 @@
+[Unit]
+Description=RTC detection Service
+After=bmc-boot-complete.service
+
+[Service]
+
+RemainAfterExit=yes
+Type=oneshot
+ExecStart=/usr/bin/env rtc-detection.sh 
+SyslogIdentifier=rtc-detection
+
+[Install]
+WantedBy=multi-user.target

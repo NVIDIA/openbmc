@@ -1,3 +1,3 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/phosphor-net-ipmid;protocol=https;branch=develop"
-SRCREV = "1962557adce70c4fcbbe1b612b66f25dbde703c9"
+SRCREV = "4c83d5ebb0a56bf3af1f79d5613bfcad2df83658"

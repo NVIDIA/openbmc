@@ -1,3 +1,5 @@
+Upstream-Status: Pending
+---
 diff --git a/svr-auth.c b/svr-auth.c
 index 1129c75..f9c4e23 100644
 --- a/svr-auth.c

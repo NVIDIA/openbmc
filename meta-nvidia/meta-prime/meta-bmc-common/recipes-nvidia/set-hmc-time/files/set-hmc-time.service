@@ -7,6 +7,7 @@ After=bmc-boot-complete.service
 Type=oneshot
 ExecStart=/usr/bin/env set-hmc-time.sh 
 SyslogIdentifier=set-hmc-time
+Restart=no
 
 #
 # This is also started periodically by set-hmc-time.timer

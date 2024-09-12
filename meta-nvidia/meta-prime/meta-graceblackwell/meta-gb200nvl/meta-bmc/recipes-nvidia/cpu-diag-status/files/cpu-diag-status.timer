@@ -1,0 +1,12 @@
+[Unit]
+Description=Run cpu diag status service every 30s 
+
+[Timer]
+OnUnitActiveSec=30s
+
+#
+# Upon periodic timer activation, systemd automatically activates cpu-diag-status.service
+#
+
+[Install]
+#WantedBy=timers.target

@@ -1,5 +1,4 @@
 [Unit]
 Description=FPGA Not Ready
-Conflicts=nvidia-fpga-ready.target
+Conflicts=nvidia-fpga-ready.target mctp-usb-ctrl.service
 RefuseManualStop=yes
-

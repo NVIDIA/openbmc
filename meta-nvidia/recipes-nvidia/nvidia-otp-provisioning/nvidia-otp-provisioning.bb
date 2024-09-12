@@ -24,6 +24,7 @@ RDEPENDS:${PN} += "aspeed-app"
 RDEPENDS:${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'otp-provisioning', 'socsec', '', d)}"
 
 RPROVIDES:${PN} += "nvidia-otp-monitor"
+FILES:${PN}:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'otp-provisioning', '${base_libdir}/systemd/system/otp-provisioning.service', '', d)}  \"
 
 S = "${WORKDIR}"
 
@@ -128,11 +129,9 @@ FILES:${PN} += " \
 	${bindir}/otp-monitor.sh \
 	${bindir}/otp-provisioning.sh \
 	/etc/sysconfig/otp-conf \
-	/lib/systemd/system/otp-monitor.service \
-	/lib/systemd/system/otp-provisioning.service \
+	${base_libdir}/systemd/system/otp-monitor.service \
 	/etc/systemd/system/multi-user.target.wants/otp-monitor.service \
 	/etc/systemd/system/multi-user.target.wants/otp-provisioning.service \
 	${OTP_BASE_DIR}/* \
 	${OTP_STATUS_FILE_DIR} \
-	/usr/lib/systemd/system/otp-monitor.service \
 	"

@@ -6,7 +6,7 @@
 SRC_URI = "git://github.com/NVIDIA/ssifbridge;protocol=https;branch=develop;name=override; \
            file://0001-Start-SSIF-bridge-in-verbose-mode.patch \
            "
-SRCREV= "d418250030d52a416bf15da529848365cbe2d299"
+SRCREV= "792843c54008c0d3196407dc14ec251bb40bc9c3"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 

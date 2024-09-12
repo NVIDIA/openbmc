@@ -1,5 +1,5 @@
 SRC_URI = "git://github.com/NVIDIA/phosphor-certificate-manager;protocol=https;branch=develop"
-SRCREV = "b2c33e7fb49bcf398fb455e298abec84271cc265"
+SRCREV = "16aa2180319fc2f30e11cbea8bdbcfc76438e7d6"
 
 PACKAGECONFIG[secure-boot-database] = "-Dconfig-secureBootDatabase=enabled,-Dconfig-secureBootDatabase=disabled"
 SYSTEMD_SERVICE:${PN}:append = " \

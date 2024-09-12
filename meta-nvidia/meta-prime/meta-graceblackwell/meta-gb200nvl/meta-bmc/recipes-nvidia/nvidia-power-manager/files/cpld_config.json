@@ -1,0 +1,36 @@
+{
+    "CPLD": [
+        {
+            "Index" : "0",
+            "Bus" : "14",
+            "Address" : "0x40",
+            "Model" : "MachXO2-4000/MachXO2-2000U",
+            "Manufacturer" : "Lattice",
+            "CPLDDeviceNo" : 1
+        },
+        {
+            "Index" : "1",
+            "Bus" : "15",
+            "Address" : "0x40",
+            "Model" : "MachXO2-4000/MachXO2-2000U",
+            "Manufacturer" : "Lattice",
+            "CPLDDeviceNo" : 2
+        },
+        {
+            "Index" : "2",
+            "Bus" : "14",
+            "Address" : "0x44",
+            "Model" : "MachXO2-4000/MachXO2-2000U",
+            "Manufacturer" : "Lattice",
+            "CPLDDeviceNo" : 3
+        },
+        {
+            "Index" : "3",
+            "Bus" : "15",
+            "Address" : "0x44",
+            "Model" : "MachXO2-4000/MachXO2-2000U",
+            "Manufacturer" : "Lattice",
+            "CPLDDeviceNo" : 4
+        }
+    ]
+}

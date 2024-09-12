@@ -11,7 +11,7 @@ inherit meson pkgconfig obmc-phosphor-systemd
 S = "${WORKDIR}/git"
 
 SRC_URI = "git://github.com/NVIDIA/nvidia-code-mgmt;protocol=https;branch=develop"
-SRCREV = "b5afe2404a569ccdab2f247963ea7e0e3fe66019"
+SRCREV = "8622821bb5356e7a81ad4f9445b80b43f5e45fdd"
 
 PV = "0.1+git${SRCPV}"
 
@@ -23,7 +23,9 @@ DEPENDS = " \
          openssl \
          nlohmann-json \
          cli11 \
+         libmctp \
          fmt \
+         libgpiod \
          "
 DEPENDS += "${PYTHON_PN}-sdbus++-native"
 EXTRA_OEMESON += "-DMOCK_UTILS=false"

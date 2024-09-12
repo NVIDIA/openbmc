@@ -1,0 +1,50 @@
+{
+    "Exposes": [
+        {
+            "Name": "FW_RECOVERY_HGX_FW_ERoT_BMC_0",
+            "MctpUUID" : "f72d6fa0-5675-11ed-9b6a-0242ac120002",
+            "GPIO": "HMC_EROT_FATAL_ERROR_L-I",
+            "IsERoT": true,
+            "I2CBus": 1,
+            "I2CAddress": 82,
+            "HiddenByFPGA": false,
+            "Target": "hmc-recovery.target",
+            "Type": "GPIORecovery"
+        },
+        {
+            "Name": "FW_RECOVERY_HGX_FW_ERoT_FPGA_0",
+            "MctpUUID" : "f72d6f50-5675-11ed-9b6a-0242ac120002",
+            "GPIO": "FPGA_EROT_FATAL_ERROR_L-I",
+            "IsERoT": true,
+            "I2CBus": 2,
+            "I2CAddress": 114,
+            "HiddenByFPGA": false,
+            "Target": "fpga0-erot-recovery.target",
+            "Type": "GPIORecovery"
+        },
+        {
+            "Name": "FW_RECOVERY_HGX_FW_ERoT_FPGA_1",
+            "MctpUUID" : "f72d6f51-5675-11ed-9b6a-0242ac120002",
+            "GPIO": "SEC_FPGA_EROT_FATAL_ERROR_L-I",
+            "IsERoT": true,
+            "I2CBus": 1,
+            "I2CAddress": 114,
+            "HiddenByFPGA": false,
+            "Target": "fpga1-erot-recovery.target",
+            "Type": "GPIORecovery"
+        },
+        {
+            "Name": "FW_RECOVERY_HGX_FW_BMC_0",
+            "MctpUUID" : "f72d6fa0-5675-11ed-9b6a-0242ac120002",
+            "GPIO": "HMC_READY-I",
+            "IsERoT": false,
+            "Polarity": "ActiveHigh",
+            "RisingTarget": "hmc-ready.service",
+            "FallingTarget": "hmc-notready.service",
+            "Type": "GPIORecovery"
+        }
+    ],
+    "Name": "GPIO_Recovery_Devices",
+    "Probe": "TRUE",
+    "Type": "Recovery_Config"
+}

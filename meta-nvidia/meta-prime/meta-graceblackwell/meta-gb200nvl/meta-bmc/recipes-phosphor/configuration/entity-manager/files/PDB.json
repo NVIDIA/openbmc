@@ -1,0 +1,135 @@
+[
+    {
+        "Exposes": [
+            {
+                "Bus": "0x06",
+                "Address": "0x50",
+                "Name": "PDB_0",
+                "Type": "EEPROM_24C02"
+            },
+            {
+                "Address": "0x60",
+                "Bus": 6,
+                "Labels": [
+                    "temp1",
+                    "temp2"
+                ],
+                "Name": "PDB_Vreg_0",
+                "Type": "RAA228004",
+                "temp1_Name": "PDB_Vreg_0_Temp_0",
+                "temp2_Name": "PDB_Vreg_0_Temp_1"
+            },
+            {
+                "Address": "0x61",
+                "Bus": 6,
+                "Labels": [
+                    "temp1",
+                    "temp2"
+                ],
+                "Name": "PDB_Vreg_1",
+                "Type": "RAA228004",
+                "temp1_Name": "PDB_Vreg_1_Temp_0",
+                "temp2_Name": "PDB_Vreg_1_Temp_1"
+            }
+        ],
+        "Name": "PDB_0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'PRODUCT_PRODUCT_NAME': '.?PDB.?'})",
+        "Type": "Board",
+        "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/PDB_0",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "$BOARD_MANUFACTURER",
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+            "ChassisType": "$CHASSIS_TYPE",
+            "ChassisPartNumber": "$CHASSIS_PART_NUMBER",
+            "ChassisSerial": "$CHASSIS_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+            "Bus": "0x06",
+            "Address": "0x50",
+            "Name": "PDB_0"
+        },
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        },
+        "xyz.openbmc_project.Association.Definitions": {
+            "Associations": [
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/pdb_0/PDB_Chassis_FRU_Assembly0"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/pdb_0/PDB_Board_FRU_Assembly1"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/pdb_0/PDB_Product_FRU_Assembly2"
+                ]
+            ]
+        }
+    },
+    {
+        "Name": "PDB Chassis FRU Assembly0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'PRODUCT_PRODUCT_NAME': '.?PDB.?'})",
+        "Type": "PDB_0",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "PartNumber": "$CHASSIS_PART_NUMBER",
+            "SerialNumber": "$CHASSIS_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Item.Assembly": {},
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "PDB Board FRU Assembly1",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'PRODUCT_PRODUCT_NAME': '.?PDB.?'})",
+        "Type": "PDB_0",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+            "BuildDate": "$BOARD_MANUFACTURE_DATE",
+            "Manufacturer": "$BOARD_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Item.Assembly": {},
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "PDB Product FRU Assembly2",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'PRODUCT_PRODUCT_NAME': '.?PDB.?'})",
+        "Type": "PDB_0",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$PRODUCT_PRODUCT_NAME",
+            "PartNumber": "$PRODUCT_PART_NUMBER",
+            "SerialNumber": "$PRODUCT_SERIAL_NUMBER",
+            "Manufacturer": "$PRODUCT_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Revision": {
+            "Version": "$PRODUCT_VERSION"
+        },
+        "xyz.openbmc_project.Inventory.Item.Assembly": {},
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Area": {
+            "PhysicalContext": ""
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    }
+]

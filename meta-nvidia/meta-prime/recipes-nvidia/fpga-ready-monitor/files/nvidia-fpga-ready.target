@@ -2,4 +2,3 @@
 Description=FPGA Ready
 Conflicts=nvidia-fpga-notready.target
 RefuseManualStop=yes
-

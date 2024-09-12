@@ -1,0 +1,14 @@
+[Unit]
+Description=MCTP I2C 2 control daemon
+After=mctp-i2c2-demux.service
+Requires=mctp-i2c2-demux.service
+PartOf=fpga0-erot-recovery.target
+
+[Service]
+Restart=always
+RestartSec=10
+ExecStart=/usr/bin/mctp-ctrl -m 1 -t 1 -f /usr/share/mctp/mctp_cfg_smbus2.json -n 2 -d 1 -v 1
+SyslogIdentifier=mctp-i2c2-ctrl
+
+[Install]
+WantedBy=fpga0-erot-recovery.target

@@ -1,0 +1,14 @@
+[Unit]
+Description=NVIDIA USB Status Monitor Service
+Requires=bmc-boot-complete.service
+After=bmc-boot-complete.service
+StartLimitIntervalSec=1
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/env usb_status_monitor.sh
+
+SyslogIdentifier=nvidia-usb-monitor
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,183 @@
+From 113212d66498abc81890a8bb18890acffc7ee724 Mon Sep 17 00:00:00 2001
+From: "Radivoje (Ogi) Jovanovic" <rjovanovic@nvidia.com>
+Date: Thu, 22 Aug 2024 13:33:48 -0700
+Subject: [PATCH] enable service execution on startup
+
+sometimes it is necesary to execute the service corresponding to the
+current state of the gpio at the startup. Allow user to specify
+
+"ExecuteAtStart": true
+
+Signed-off-by: Radivoje (Ogi) Jovanovic <rjovanovic@nvidia.com>
+Change-Id: I9f8a7b5c6d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5g
+---
+ gpioMon.cpp     | 55 +++++++++++++++++++++++++++++++------------------
+ gpioMon.hpp     | 11 ++++++++--
+ gpioMonMain.cpp | 11 +++++++++-
+ 3 files changed, 54 insertions(+), 23 deletions(-)
+
+diff --git a/gpioMon.cpp b/gpioMon.cpp
+index 3648556..515063b 100644
+--- a/gpioMon.cpp
++++ b/gpioMon.cpp
+@@ -47,26 +47,8 @@ void GpioMonitor::scheduleEventHandler()
+         });
+ }
+ 
+-void GpioMonitor::gpioEventHandler()
++void GpioMonitor::execServiceBasedOfGpioEdge(int eventType)
+ {
+-    gpiod_line_event gpioLineEvent;
+-
+-    if (gpiod_line_event_read_fd(gpioEventDescriptor.native_handle(),
+-                                 &gpioLineEvent) < 0)
+-    {
+-        lg2::error("Failed to read {GPIO} from fd", "GPIO", gpioLineMsg);
+-        return;
+-    }
+-
+-    if (gpioLineEvent.event_type == GPIOD_LINE_EVENT_RISING_EDGE)
+-    {
+-        lg2::info("{GPIO} Asserted", "GPIO", gpioLineMsg);
+-    }
+-    else
+-    {
+-        lg2::info("{GPIO} Deasserted", "GPIO", gpioLineMsg);
+-    }
+-
+     /* Execute the target if it is defined. */
+     if (!target.empty())
+     {
+@@ -80,7 +62,7 @@ void GpioMonitor::gpioEventHandler()
+     }
+ 
+     std::vector<std::string> targetsToStart;
+-    if (gpioLineEvent.event_type == GPIOD_LINE_EVENT_RISING_EDGE)
++    if (eventType == GPIOD_LINE_EVENT_RISING_EDGE)
+     {
+         auto risingFind = targets.find(rising);
+         if (risingFind != targets.end())
+@@ -109,6 +91,29 @@ void GpioMonitor::gpioEventHandler()
+             bus.call_noreply(method);
+         }
+     }
++}
++
++void GpioMonitor::gpioEventHandler()
++{
++    gpiod_line_event gpioLineEvent;
++
++    if (gpiod_line_event_read_fd(gpioEventDescriptor.native_handle(),
++                                 &gpioLineEvent) < 0)
++    {
++        lg2::error("Failed to read {GPIO} from fd", "GPIO", gpioLineMsg);
++        return;
++    }
++
++    if (gpioLineEvent.event_type == GPIOD_LINE_EVENT_RISING_EDGE)
++    {
++        lg2::info("{GPIO} Asserted", "GPIO", gpioLineMsg);
++    }
++    else
++    {
++        lg2::info("{GPIO} Deasserted", "GPIO", gpioLineMsg);
++    }
++
++    execServiceBasedOfGpioEdge(gpioLineEvent.event_type);
+ 
+     /* if not required to continue monitoring then return */
+     if (!continueAfterEvent)
+@@ -141,6 +146,16 @@ int GpioMonitor::requestGPIOEvents()
+     /* Assign line fd to descriptor for monitoring */
+     gpioEventDescriptor.assign(gpioLineFd);
+ 
++    if (execAtStart)
++    {
++        int value = gpiod_line_get_value(gpioLine);
++        int event = GPIOD_LINE_EVENT_RISING_EDGE;
++
++        if (value == 0)
++            event = GPIOD_LINE_EVENT_FALLING_EDGE;
++
++        execServiceBasedOfGpioEdge(event);
++    }
+     /* Schedule a wait event */
+     scheduleEventHandler();
+ 
+diff --git a/gpioMon.hpp b/gpioMon.hpp
+index 9f059f0..1a0aa5a 100644
+--- a/gpioMon.hpp
++++ b/gpioMon.hpp
+@@ -42,10 +42,10 @@ class GpioMonitor
+     GpioMonitor(gpiod_line* line, gpiod_line_request_config& config,
+                 boost::asio::io_context& io, const std::string& target,
+                 const std::map<std::string, std::vector<std::string>>& targets,
+-                const std::string& lineMsg, bool continueRun) :
++                const std::string& lineMsg, bool continueRun, bool execStart) :
+         gpioLine(line), gpioConfig(config), gpioEventDescriptor(io),
+         target(target), targets(targets), gpioLineMsg(lineMsg),
+-        continueAfterEvent(continueRun)
++        continueAfterEvent(continueRun), execAtStart(execStart)
+     {
+         requestGPIOEvents();
+     };
+@@ -72,6 +72,10 @@ class GpioMonitor
+     /** @brief If the monitor should continue after event */
+     bool continueAfterEvent;
+ 
++    /** @brief If the monitor should start the service when starting monitoring */
++    bool execAtStart;
++
++
+     /** @brief register handler for gpio event
+      *
+      *  @return  - 0 on success and -1 otherwise
+@@ -83,6 +87,9 @@ class GpioMonitor
+ 
+     /** @brief Handle the GPIO event and starts configured target */
+     void gpioEventHandler();
++
++    /** @brief start configured target based of edge type*/
++    void execServiceBasedOfGpioEdge(int eventType);
+ };
+ 
+ } // namespace gpio
+diff --git a/gpioMonMain.cpp b/gpioMonMain.cpp
+index 09f92cb..5611f97 100644
+--- a/gpioMonMain.cpp
++++ b/gpioMonMain.cpp
+@@ -97,6 +97,9 @@ int main(int argc, char** argv)
+         /* flag to monitor */
+         bool flag = false;
+ 
++        /* should a service be started before the monitoring starts */
++        bool execAtStart = false;
++
+         /* target to start */
+         std::string target;
+ 
+@@ -162,6 +165,12 @@ int main(int argc, char** argv)
+             flag = obj["Continue"];
+         }
+ 
++        /* Get flag if gpio should be read before the monitoring starts */
++        if (obj.find("ExecuteAtStart") != obj.end())
++        {
++            execAtStart = obj["ExecuteAtStart"];
++        }
++
+         /* Parse out target argument. It is fine if the user does not
+          * pass this if they are not interested in calling into any target
+          * on meeting a condition.
+@@ -179,7 +188,7 @@ int main(int argc, char** argv)
+ 
+         /* Create a monitor object and let it do all the rest */
+         gpios.push_back(std::make_unique<phosphor::gpio::GpioMonitor>(
+-            line, config, io, target, targets, lineMsg, flag));
++            line, config, io, target, targets, lineMsg, flag, execAtStart));
+     }
+     io.run();
+ 
+-- 
+2.43.0
+

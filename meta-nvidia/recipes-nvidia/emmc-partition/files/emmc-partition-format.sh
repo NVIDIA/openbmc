@@ -335,6 +335,9 @@ emmc_uboot_env=$(fw_printenv emmc_secure_erase |grep "yes\|no")
 secure_erase_need=${emmc_uboot_env#*=}
 dbus_log Debug "eMMC uboot env: ${emmc_uboot_env}"
 
+#Get u-boot env to check if need to do secure erase of a particular partition
+emmcPartition_uboot_env=$(fw_printenv emmc_secure_erase_partition | awk -F '=' '{print $NF}')
+dbus_log Debug "eMMC uboot env for specific partition: ${emmcPartition_uboot_env}"
 
 if [ "$secure_erase_need" == "yes" ]; then
     echo "Need to perform eMMC Secure Erase."
@@ -346,6 +349,17 @@ if [ "$secure_erase_need" == "yes" ]; then
     fi
 fi
 
+if [ -n "$emmcPartition_uboot_env" ]; then
+    partition_line=$(cat /usr/share/emmc/emmc-mount.conf | grep "$emmcPartition_uboot_env")
+    partition_number=$(echo "$partition_line" | awk '{print $1}')
+    partition=/dev/mmcblk0p"$partition_number"
+    if mountpoint "$emmcPartition_uboot_env"; then
+        umount $emmcPartition_uboot_env
+    fi
+    mke2fs -t ext4 $partition
+    tune2fs -o journal_data $$partition
+    fw_setenv emmc_secure_erase_partition
+fi
 
 euda_config $EMMC_DEVICE $disk_size
 echo "Finished NVIDIA emmc partition Service."

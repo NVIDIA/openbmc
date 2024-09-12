@@ -1,0 +1,590 @@
+[
+    {
+        "Exposes": [
+            {
+                "Address": "0x6a",
+                "Bus": 40,
+                "Name": "STATUS_SSD_0",
+                "PowerState": "On",
+                "PollRate": 1,
+                "EntityId": 4,
+                "EntityInstance": 3,
+                "Type": "Nvmem2"
+            },
+            {
+                "Address": "0x6a",
+                "Bus": 41,
+                "Name": "STATUS_SSD_1",
+                "PowerState": "On",
+                "PollRate": 1,
+                "EntityId": 4,
+                "EntityInstance": 4,
+                "Type": "Nvmem2"
+            },
+            {
+                "Address": "0x6a",
+                "Bus": 42,
+                "Name": "STATUS_SSD_2",
+                "PowerState": "On",
+                "PollRate": 1,
+                "EntityId": 4,
+                "EntityInstance": 5,
+                "Type": "Nvmem2"
+            },
+            {
+                "Address": "0x6a",
+                "Bus": 43,
+                "Name": "STATUS_SSD_3",
+                "PowerState": "On",
+                "PollRate": 1,
+                "EntityId": 4,
+                "EntityInstance": 6,
+                "Type": "Nvmem2"
+            },
+            {
+                "Address": "0x6a",
+                "Bus": "40",
+                "Name": "TEMP_SSD_00",
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 85
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 83
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 80
+                    },
+                    {
+                        "Direction": "less than",
+                        "Name": "lower non critical",
+                        "Severity": 0,
+                        "Value": 5
+                    }
+                ],
+                "Type": "NVME1000"
+            },
+            {
+                "Address": "0x6a",
+                "Bus": "41",
+                "Name": "TEMP_SSD_01",
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 85
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 83
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 80
+                    },
+                    {
+                        "Direction": "less than",
+                        "Name": "lower non critical",
+                        "Severity": 0,
+                        "Value": 5
+                    }
+                ],
+                "Type": "NVME1000"
+            },
+            {
+                "Address": "0x6a",
+                "Bus": "42",
+                "Name": "TEMP_SSD_02",
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 85
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 83
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 80
+                    },
+                    {
+                        "Direction": "less than",
+                        "Name": "lower non critical",
+                        "Severity": 0,
+                        "Value": 5
+                    }
+                ],
+                "Type": "NVME1000"
+            },
+            {
+                "Address": "0x6a",
+                "Bus": "43",
+                "Name": "TEMP_SSD_03",
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 85
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 83
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 80
+                    },
+                    {
+                        "Direction": "less than",
+                        "Name": "lower non critical",
+                        "Severity": 0,
+                        "Value": 5
+                    }
+                ],
+                "Type": "NVME1000"
+            },
+            {
+                "Name": "BPNPort0",
+                "Type": "Backplane0Port"
+            }
+        ],
+        "Name": "StorageBackplane_0",
+        "Type": "Board",
+        "Probe": "xyz.openbmc_project.Inventory.Item.I2CDevice({'Bus': 14, 'Address': 64})",
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "NVIDIA",
+            "Model": "NVIDIA NVMe E1.S Backplane"
+        }
+    },
+    {
+        "Exposes": [
+            {
+                "Address": "0x6a",
+                "Bus": 44,
+                "Name": "STATUS_SSD_4",
+                "PowerState": "On",
+                "PollRate": 1,
+                "EntityId": 4,
+                "EntityInstance": 3,
+                "Type": "Nvmem2"
+            },
+            {
+                "Address": "0x6a",
+                "Bus": 45,
+                "Name": "STATUS_SSD_5",
+                "PowerState": "On",
+                "PollRate": 1,
+                "EntityId": 4,
+                "EntityInstance": 4,
+                "Type": "Nvmem2"
+            },
+            {
+                "Address": "0x6a",
+                "Bus": 46,
+                "Name": "STATUS_SSD_6",
+                "PowerState": "On",
+                "PollRate": 1,
+                "EntityId": 4,
+                "EntityInstance": 5,
+                "Type": "Nvmem2"
+            },
+            {
+                "Address": "0x6a",
+                "Bus": 47,
+                "Name": "STATUS_SSD_7",
+                "PowerState": "On",
+                "PollRate": 1,
+                "EntityId": 4,
+                "EntityInstance": 6,
+                "Type": "Nvmem2"
+            },
+            {
+                "Address": "0x6a",
+                "Bus": "44",
+                "Name": "TEMP_SSD_04",
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 85
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 83
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 80
+                    },
+                    {
+                        "Direction": "less than",
+                        "Name": "lower non critical",
+                        "Severity": 0,
+                        "Value": 5
+                    }
+                ],
+                "Type": "NVME1000"
+            },
+            {
+                "Address": "0x6a",
+                "Bus": "45",
+                "Name": "TEMP_SSD_05",
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 85
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 83
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 80
+                    },
+                    {
+                        "Direction": "less than",
+                        "Name": "lower non critical",
+                        "Severity": 0,
+                        "Value": 5
+                    }
+                ],
+                "Type": "NVME1000"
+            },
+            {
+                "Address": "0x6a",
+                "Bus": "46",
+                "Name": "TEMP_SSD_06",
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 85
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 83
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 80
+                    },
+                    {
+                        "Direction": "less than",
+                        "Name": "lower non critical",
+                        "Severity": 0,
+                        "Value": 5
+                    }
+                ],
+                "Type": "NVME1000"
+            },
+            {
+                "Address": "0x6a",
+                "Bus": "47",
+                "Name": "TEMP_SSD_07",
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 85
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 83
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 80
+                    },
+                    {
+                        "Direction": "less than",
+                        "Name": "lower non critical",
+                        "Severity": 0,
+                        "Value": 5
+                    }
+                ],
+                "Type": "NVME1000"
+            },
+            {
+                "Name": "BPNPort1",
+                "Type": "Backplane1Port"
+            }
+        ],
+        "Name": "StorageBackplane_1",
+        "Type": "Board",
+        "Probe": "xyz.openbmc_project.Inventory.Item.I2CDevice({'Bus': 15, 'Address': 64})",
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "NVIDIA",
+            "Model": "NVIDIA NVMe E1.S Backplane"
+        }
+    },
+    {
+        "Exposes": [
+            {
+                "ConnectsToType": "Backplane0Port",
+                "Name": "BPNPort0",
+                "Type": "DownstreamPort"
+            }
+        ],
+        "Name": "NVMe_E1S_SSD_00",
+        "Type": "NVMe",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 40, 'ADDRESS': 83})",
+        "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+            "Bus": "40",
+            "Address": "0x6a",
+            "Name": "NVMeFru"
+        },
+        "xyz.openbmc_project.Inventory.Item.Drive":{
+            "FormFactor" : "xyz.openbmc_project.Inventory.Item.Drive.DriveFormFactor.EDSFF_1U_Short"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+            "LocationCode" : "NVMe Slot 0"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Slot"
+        }
+    },
+    {
+        "Exposes": [
+            {
+                "ConnectsToType": "Backplane0Port",
+                "Name": "BPNPort0",
+                "Type": "DownstreamPort"
+            }
+        ],
+        "Name": "NVMe_E1S_SSD_01",
+        "Type": "NVMe",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 41, 'ADDRESS': 83})",
+        "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+            "Bus": "41",
+            "Address": "0x6a",
+            "Name": "NVMeFru"
+        },
+        "xyz.openbmc_project.Inventory.Item.Drive":{
+            "FormFactor" : "xyz.openbmc_project.Inventory.Item.Drive.DriveFormFactor.EDSFF_1U_Short"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+            "LocationCode" : "NVMe Slot 1"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Slot"
+        }
+    },
+    {
+        "Exposes": [
+            {
+                "ConnectsToType": "Backplane0Port",
+                "Name": "BPNPort0",
+                "Type": "DownstreamPort"
+            }
+        ],
+        "Name": "NVMe_E1S_SSD_02",
+        "Type": "NVMe",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 42, 'ADDRESS': 83})",
+        "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+            "Bus": "42",
+            "Address": "0x6a",
+            "Name": "NVMeFru"
+        },
+        "xyz.openbmc_project.Inventory.Item.Drive":{
+            "FormFactor" : "xyz.openbmc_project.Inventory.Item.Drive.DriveFormFactor.EDSFF_1U_Short"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+            "LocationCode" : "NVMe Slot 2"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Slot"
+        }
+    },
+    {
+        "Exposes": [
+            {
+                "ConnectsToType": "Backplane0Port",
+                "Name": "BPNPort0",
+                "Type": "DownstreamPort"
+            }
+        ],
+        "Name": "NVMe_E1S_SSD_03",
+        "Type": "NVMe",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 43, 'ADDRESS': 83})",
+        "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+            "Bus": "43",
+            "Address": "0x6a",
+            "Name": "NVMeFru"
+        },
+        "xyz.openbmc_project.Inventory.Item.Drive":{
+            "FormFactor" : "xyz.openbmc_project.Inventory.Item.Drive.DriveFormFactor.EDSFF_1U_Short"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+            "LocationCode" : "NVMe Slot 3"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Slot"
+        }
+    },
+    {
+        "Exposes": [
+            {
+                "ConnectsToType": "Backplane1Port",
+                "Name": "BPNPort1",
+                "Type": "DownstreamPort"
+            }
+        ],
+        "Name": "NVMe_E1S_SSD_04",
+        "Type": "NVMe",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 44, 'ADDRESS': 83})",
+        "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+            "Bus": "44",
+            "Address": "0x6a",
+            "Name": "NVMeFru"
+        },
+        "xyz.openbmc_project.Inventory.Item.Drive":{
+            "FormFactor" : "xyz.openbmc_project.Inventory.Item.Drive.DriveFormFactor.EDSFF_1U_Short"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+            "LocationCode" : "NVMe Slot 4"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Slot"
+        }
+    },
+    {
+        "Exposes": [
+            {
+                "ConnectsToType": "Backplane1Port",
+                "Name": "BPNPort1",
+                "Type": "DownstreamPort"
+            }
+        ],
+        "Name": "NVMe_E1S_SSD_05",
+        "Type": "NVMe",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 45, 'ADDRESS': 83})",
+        "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+            "Bus": "45",
+            "Address": "0x6a",
+            "Name": "NVMeFru"
+        },
+        "xyz.openbmc_project.Inventory.Item.Drive":{
+            "FormFactor" : "xyz.openbmc_project.Inventory.Item.Drive.DriveFormFactor.EDSFF_1U_Short"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+            "LocationCode" : "NVMe Slot 5"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Slot"
+        }
+    },
+    {
+        "Exposes": [
+            {
+                "ConnectsToType": "Backplane1Port",
+                "Name": "BPNPort1",
+                "Type": "DownstreamPort"
+            }
+        ],
+        "Name": "NVMe_E1S_SSD_06",
+        "Type": "NVMe",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 46, 'ADDRESS': 83})",
+        "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+            "Bus": "46",
+            "Address": "0x6a",
+            "Name": "NVMeFru"
+        },
+        "xyz.openbmc_project.Inventory.Item.Drive":{
+            "FormFactor" : "xyz.openbmc_project.Inventory.Item.Drive.DriveFormFactor.EDSFF_1U_Short"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+            "LocationCode" : "NVMe Slot 6"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Slot"
+        }
+    },
+    {
+        "Exposes": [
+            {
+                "ConnectsToType": "Backplane1Port",
+                "Name": "BPNPort1",
+                "Type": "DownstreamPort"
+            }
+        ],
+        "Name": "NVMe_E1S_SSD_07",
+        "Type": "NVMe",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 47, 'ADDRESS': 83})",
+        "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+            "Bus": "47",
+            "Address": "0x6a",
+            "Name": "NVMeFru"
+        },
+        "xyz.openbmc_project.Inventory.Item.Drive":{
+            "FormFactor" : "xyz.openbmc_project.Inventory.Item.Drive.DriveFormFactor.EDSFF_1U_Short"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+            "LocationCode" : "NVMe Slot 7"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Slot"
+        }
+    }
+]

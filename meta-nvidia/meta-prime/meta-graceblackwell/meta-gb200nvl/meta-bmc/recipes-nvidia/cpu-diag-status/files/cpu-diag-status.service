@@ -1,0 +1,14 @@
+[Unit]
+Description= CPU diagnostic status Service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/env cpu-diag-status.sh 
+SyslogIdentifier=cpu-diag-status
+
+#
+# This is also started periodically by cpu-diag-status.timer
+#
+
+[Install]
+#WantedBy=multi-user.target

@@ -5,14 +5,14 @@ DEPENDS += "systemd \
 	    pkgconfig"
 
 SRC_URI += " \
-    file://enterprise-numbers \
+    file://iana-enterprise-numbers \
     "
 
 # make sure that the enterprise-numbers file gets installed in the root FS
-FILES:${PN} += "/usr/share/misc/enterprise-numbers"
+FILES:${PN} += "/usr/share/misc/iana-enterprise-numbers"
 do_compile:prepend() {
     # copy the SRC_URI version of enterprise-numbers
     # to the build dir to prevent a fetch
     mkdir -p "${WORKDIR}/build"
-    cp "${WORKDIR}/enterprise-numbers" "${WORKDIR}/build/enterprise-numbers"
+    cp "${WORKDIR}/iana-enterprise-numbers" "${WORKDIR}/build/iana-enterprise-numbers"
 }

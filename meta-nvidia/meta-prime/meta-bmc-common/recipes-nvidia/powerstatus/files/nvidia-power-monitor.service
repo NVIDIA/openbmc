@@ -11,7 +11,7 @@ StartLimitIntervalSec=1
 Restart=always
 Type=notify
 ExecStart=/usr/bin/env power_status_monitor.sh
-ExecStartPost=/bin/sleep 4
+ExecStartPost=/bin/sleep 2
 ExecStop=/usr/bin/env rm /run/bmc-state/RUN_POWER_PG
 SyslogIdentifier=power-status
 

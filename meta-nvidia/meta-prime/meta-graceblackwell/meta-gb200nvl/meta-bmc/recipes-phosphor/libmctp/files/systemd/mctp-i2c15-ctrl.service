@@ -1,0 +1,13 @@
+[Unit]
+Description=MCTP I2C 15 control daemon
+After=mctp-i2c15-demux.service obmc-power-on@0.target
+Requires=mctp-i2c15-demux.service
+
+[Service]
+#Restart=always
+RestartSec=10
+ExecStart=/usr/bin/mctp-ctrl -m 1 -t 1 -f /usr/share/mctp/mctp_cfg_smbus15.json -n 15 -d 1 -v 1
+SyslogIdentifier=mctp-i2c15-ctrl
+
+[Install]
+WantedBy=obmc-power-on@0.target

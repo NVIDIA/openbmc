@@ -1,0 +1,14 @@
+[Unit]
+Description=MCTP SPI 2 demultiplexer daemon
+PartOf=hmc-recovery.target
+
+[Service]
+Type=notify
+Restart=always
+ExecStartPre=/bin/bash -c '/usr/bin/set-hmc-mux.sh BMC; sleep 1'
+ExecStart=/usr/bin/mctp-demux-daemon astspi spi_config_file=/usr/share/mctp/mctp_cfg_spi2.json
+SyslogIdentifier=mctp-spi2-demux
+WatchdogSec=10
+
+[Install]
+WantedBy=hmc-recovery.target

@@ -1,0 +1,24 @@
+[Unit]
+Description=XID event handler service
+
+After=nvidia-fpga-ready.target
+After=nvidia-gpu-manager.service
+After=xyz.openbmc_project.Logging.service
+Conflicts=nvidia-fpga-notready.target
+
+# since periodic checking is based on systemd restarts, disable restart rate limiting
+StartLimitIntervalSec=0
+
+[Service]
+LogLevelMax=warning
+Restart=always
+# Tuneable value for XID check interval. To change, add an systemd drop-in override.
+RestartSec=5
+
+ExecStart=/usr/bin/xid-event-util-wrapper --monitor-from-file /usr/share/xid_devices.csv
+# If an error occurs while checking a device, the script will return 1.
+# Don't mark the service failed. (rc=0 is included per definition of this option)
+SuccessExitStatus=1
+
+[Install]
+WantedBy=nvidia-fpga-ready.target

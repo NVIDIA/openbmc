@@ -72,18 +72,6 @@ check_rw_filesystems()
         return 1
     fi
 
-    confirm_mountpoint /var/lib/logging
-    rc=$?
-    if [[ $rc -ne 0 ]]; then
-        echo "Erasing /dev/mtd7 partition on detection of corruption"
-        flash_eraseall -q /dev/mtd7
-        fw_setenv dataflashrecovery yes
-        # Need time here to ensure any background uboot-env (flash) update finishes before reboot
-        sleep 5
-        systemctl reboot --force
-        return 2
-    fi
-
     # All mountpoints confirmed
     return 0
 }

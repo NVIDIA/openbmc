@@ -46,12 +46,12 @@
     "Memory_Available": {
         "Threshold": {
             "Critical_Lower": {
-                "Value": 15.0,
+                "Value": 10.0,
                 "Log": true,
                 "Target": "HMSystemRecovery@.service"
             },
 	    "Warning_Lower": {
-                "Value": 20.0,
+                "Value": 30.0,
                 "Log": true,
                 "Target": "HMSystemWarning@.service"
             }
@@ -110,6 +110,68 @@
             },
 	    "Warning_Lower": {
                 "Value": 30.0,
+                "Log": true,
+                "Target": "HMSystemWarning@.service"
+            }
+        }
+    },
+    "Storage_FDR": {
+        "Path": "/var/emmc/fdr",
+        "Threshold": {
+            "Critical_Lower": {
+                "Value": 20.0,
+                "Log": true,
+                "Target": "HMSystemRecovery@.service"
+            },
+	    "Warning_Lower": {
+                "Value": 30.0,
+                "Log": true,
+                "Target": "HMSystemWarning@.service"
+            }
+        }
+    },
+    "Storage_FWSTORAGE": {
+        "Path": "/var/emmc/firmware-storage",
+        "Threshold": {
+            "Critical_Lower": {
+                "Value": 20.0,
+                "Log": true,
+                "Target": "HMSystemRecovery@.service"
+            },
+	    "Warning_Lower": {
+                "Value": 30.0,
+                "Log": true,
+                "Target": "HMSystemWarning@.service"
+            }
+        }
+    },
+    "EMMC_Lifetime": {
+        "Path": "/sys/block/mmcblk0/device/life_time",
+        "Window_size": 1,
+        "Threshold": {
+            "Critical_Upper": {
+                "Value": 9,
+                "Log": true,
+                "Target": "HMSystemRecovery@.service"
+            },
+            "Warning_Upper": {
+                "Value": 8,
+                "Log": true,
+                "Target": "HMSystemWarning@.service"
+            }
+        }
+    },
+    "EMMC_Blocks": {
+        "Path": "/sys/block/mmcblk0/device/pre_eol_info",
+        "Window_size": 1,
+        "Threshold": {
+            "Critical_Upper": {
+                "Value": 2,
+                "Log": true,
+                "Target": "HMSystemRecovery@.service"
+            },
+            "Warning_Upper": {
+                "Value": 1,
                 "Log": true,
                 "Target": "HMSystemWarning@.service"
             }

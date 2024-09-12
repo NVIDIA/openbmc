@@ -1,0 +1,21 @@
+{
+  "i2c":{
+    "i2c_src_address":24,
+    "src_eid":11,
+    "buses":[
+      {
+        "bus_number":"i2c2",
+        "bus_number_smq":"i2c2",
+        "socket_name":"mctp-i2c2-mux",
+        "endpoints":[
+          {
+            "eid_type":"static",
+            "eid":2,
+            "i2c_slave_address":114,
+            "description":"FPGA0 ERoT endpoint"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,12 +1,11 @@
 # Use NVIDIA gitlab Phosphor Debug Collector
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 SRC_URI = "git://github.com/NVIDIA/phosphor-debug-collector;protocol=https;branch=develop"
-SRCREV = "3e29de658f449146db0b3a76097588db9282445a"
+SRCREV = "7c5b46a11be40075f58f7cca3777c32a7b9365bf"
 
 SRC_URI += "file://create-dump-dbus.service"
 
 EXTRA_OEMESON += "-DBMC_DUMP_MAX_LIMIT=1"
-EXTRA_OEMESON += "-DBMC_CORE_DUMP_MAX_LIMIT=1"
 EXTRA_OEMESON += "-DBMC_DUMP_MAX_SIZE=8192"
 EXTRA_OEMESON += "-DBMC_DUMP_TOTAL_SIZE=16384"
 EXTRA_OEMESON += "-Dtests=disabled"

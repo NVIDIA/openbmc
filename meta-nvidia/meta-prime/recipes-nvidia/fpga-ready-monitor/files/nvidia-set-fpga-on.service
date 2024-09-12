@@ -1,14 +1,11 @@
 [Unit]
-Description=NVIDIA BMC FPGA Ready target
-Wants=
+Description=Set NVIDIA BMC FPGA Ready target
+Requires=nvidia-fpga-ready.target
 StartLimitIntervalSec=1
 
 [Service]
 Restart=no
 Type=simple
-ExecStart=systemctl start nvidia-fpga-ready.target
+ExecStart=/bin/echo "Starting FPGA Ready Target"
 SyslogIdentifier=nvidia-fpga-ready-service
-
-[Install]
-WantedBy=multi-user.target
 

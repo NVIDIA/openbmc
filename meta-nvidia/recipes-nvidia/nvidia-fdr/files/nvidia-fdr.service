@@ -9,6 +9,10 @@ ExecReload=kill -s HUP $MAINPID
 ExecStart=/usr/bin/nvidia-fdr
 Type=simple
 Restart=on-failure
+
+StartLimitInterval=1000
+StartLimitBurst=3
+
 #WorkingDirectory=/home/root
 #StateDirectory=bmcweb
 

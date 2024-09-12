@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/bmcweb;protocol=https;branch=develop"
-SRCREV = "de7000058d80ba02886cc4c2e075717922126e03"
+SRCREV = "e9431b2f442d5423178d09d373b0d26713ad8e20"
 
 EXTRA_OEMESON += "-Dredfish-dump-log=enabled"
 EXTRA_OEMESON += "-Dredfish-new-powersubsystem-thermalsubsystem=enabled"
@@ -9,6 +9,8 @@ EXTRA_OEMESON += "-Dupdate-service-task-timeout=5 -Dhttp-body-limit=300"
 EXTRA_OEMESON += "-Dfirmware-image-limit=200"
 EXTRA_OEMESON += "-Dbmcweb-logging=error"
 EXTRA_OEMESON += "-Dinsecure-enable-redfish-query=enabled"
+EXTRA_OEMESON += "-Dbmcweb-response-timeout=180"
+EXTRA_OEMESON += "-Dbmcweb-chunking=enabled"
 
 def get_oeconf(d, policy_var, meson_var):
     val = d.getVar(policy_var , True)
