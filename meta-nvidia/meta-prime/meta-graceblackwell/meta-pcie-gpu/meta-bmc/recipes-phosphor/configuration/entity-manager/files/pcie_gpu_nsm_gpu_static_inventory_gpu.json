@@ -1,0 +1,15 @@
+[
+  {
+    "Exposes": [],
+    "Name": "NSM_DEV_ARIEL_GPU_0",
+    "Probe": "TRUE",
+    "Type": "NSM_Configs",
+    "xyz.openbmc_project.NsmDevice": {
+      "DEVICE_TYPE": 0,
+      "INSTANCE_NUMBER": 3,
+      "UUID": "STATIC:0:3",
+      "LOCATION_NUMBER": 0
+    }
+  }
+]
+

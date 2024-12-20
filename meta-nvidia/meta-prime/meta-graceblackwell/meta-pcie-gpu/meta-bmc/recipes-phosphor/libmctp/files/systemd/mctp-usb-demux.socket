@@ -1,0 +1,10 @@
+[Unit]
+Description=MCTP USB 1-1.2.5 demux Unix domain socket
+
+[Socket]
+ListenSequentialPacket=@mctp-usb-mux-1-1-2-5
+Accept=no
+
+[Install]
+WantedBy=sockets.target
+

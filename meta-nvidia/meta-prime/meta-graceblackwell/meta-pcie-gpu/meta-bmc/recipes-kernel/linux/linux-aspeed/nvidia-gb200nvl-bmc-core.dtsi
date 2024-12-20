@@ -1,0 +1,586 @@
+// SPDX-License-Identifier: GPL-2.0+
+/dts-v1/;
+
+#include "aspeed/aspeed-g6.dtsi"
+#include <dt-bindings/gpio/aspeed-gpio.h>
+
+&gpio0 {
+    gpio-line-names =
+
+    /* gpio-line-names are the combination of <signal>-<I/O> , "" is the placeholder for the unused pins*/
+
+    /* 208 (26*8) 3.3V GPIOs */
+
+    /*A0-A7*/
+    "", "", "", "", "", "", "", "",
+
+    /*B0-B7*/
+    "", "", "", "", "", "", "", "",
+
+    /*C0-C7*/
+    "SGPIO_I2C_MUX_SEL-O", 
+    "", "", "", "", "", "", "",
+
+    /*D0-D7*/
+    "", "", "", 
+    "UART1_MUX_SEL-O", 
+    "", 
+    "FPGA_PEX_RST_L-O", 
+    "", "",
+
+    /*E0-E7*/
+    "RTL8221_PHY_RST_L-O", 
+    "RTL8211_PHY_INT_L-I", 
+    "", 
+    "UART3_MUX_SEL-O", 
+    "", "", "", 
+    "SGPIO_BMC_EN-O",
+
+    /*F0-F7*/
+    "", "", "", "", "", "", "", "",
+
+    /*G0-G7*/
+    "", "", "", "", "", "", "", "",
+
+    /*H0-H7*/
+    "", "", "", "", "", "", "", "",
+
+    /*I0-I7*/
+    "", "", "", "", "",
+    "QSPI2_RST_L-O", 
+    "GLOBAL_WP_BMC-O",
+    "BMC_DDR4_TEN-O",
+
+    /*J0-J7*/
+    "", "", "", "", "", "", "", "",
+
+    /*K0-K7*/
+    "", "", "", "", "", "", "", "",
+
+    /*L0-L7*/
+    "", "", "", "", "", "", "", "",
+
+    /*M0-M7*/
+    "PCIE_EP_RST_EN-O", 
+    "BMC_FRU_WP-O", 
+    "HMC_RESET_L-O", 
+    "STBY_POWER_EN-O", 
+    "STBY_POWER_PG-I", 
+    "PCIE_EP_RST_L-O", 
+    "", "",
+
+    /*N0-N7*/
+    "", "", "", "", "", "", "", "",
+
+    /*O0-O7*/
+    "", "", "", "", "", "", "", "",
+
+    /*P0-P7*/
+    "", "", "", "", "", "", "", "",
+
+    /*Q0-Q7*/
+    "", "", "", "", "", "", "", "",
+
+    /*R0-R7*/
+    "", "", "", "", "", "", "", "",
+
+    /*S0-S7*/
+    "", "", "", "", "", "", "", "",
+
+    /*T0-T7*/
+    "", "", "", "", "", "", "", "",
+
+    /*U0-U7*/
+    "", "", "", "", "", "", "", "",
+
+    /*V0-V7*/
+    "AP_EROT_REQ-O",
+    "EROT_AP_GNT-I",
+    "",
+    "",
+    "PCB_TEMP_ALERT-I",
+    "", "", "",
+
+    /*W0-W7*/
+    "", "", "", "", "", "", "", "",
+
+    /*X0-X7*/
+    "", "", 
+    "TPM_MUX_SEL-O", 
+    "", "", "", "", "",
+
+    /*Y0-Y7*/
+    "", "", "", 
+    "EMMC_RST-O",
+    "","", "", "",
+
+    /*Z0-Z7*/
+    "BMC_READY-O", 
+    "", "", "", "", "", "", "";
+};
+
+&gpio1 {
+    /* 36 1.8V GPIOs */
+    gpio-line-names =
+    /*A0-A7*/
+    "", "", "", "", "", "", "", "",
+
+    /*B0-B7*/
+    "", "", "", "", "", "",
+    "IO_EXPANDER_INT_L-I",
+    "",
+
+    /*C0-C7*/
+    "", "", "", "", "", "", "", "",
+
+    /*D0-D7*/
+    "", "", "", "", "", "",
+    "SPI_HOST_TPM_RST_L-O",
+    "SPI_BMC_FPGA_INT_L-I",
+
+    /*E0-E7*/
+    "", "", "", "", "", "", "", "";
+};
+
+&sgpiom0 {
+	status="okay";
+	ngpios = <128>;
+
+    gpio-line-names =
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"RUN_POWER_FAULT_L-I",
+"SYS_RST_IN_L-O",
+"RUN_POWER_PG-I",
+"PWR_BRAKE_L-O",
+"SYS_RST_OUT_L-I",
+"RUN_POWER_EN-O",
+"L0L1_RST_REQ_OUT_L-I",
+"SHDN_FORCE_L-O",
+"L2_RST_REQ_OUT_L-I",
+"SHDN_REQ_L-O",
+"SHDN_OK_L-I",
+"UID_LED_N-O",
+"BMC_I2C1_FPGA_ALERT_L-I",
+"SYS_FAULT_LED_N-O",
+"BMC_I2C0_FPGA_ALERT_L-I",
+"PWR_LED_N-O",
+"FPGA_RSVD_FFU3-I",
+"",
+"FPGA_RSVD_FFU2-I",
+"",
+"FPGA_RSVD_FFU1-I",
+"",
+"FPGA_RSVD_FFU0-I",
+"BMC_I2C_SSIF_ALERT_L-O",
+"CPU_BOOT_DONE-I",
+"JTAG_MUX_SELECT-O",
+"SPI_BMC_FPGA_INT_L-I",
+"RTC_CLR_L-O",
+"THERM_BB_WARN_L-I",
+"UART_MUX_SEL-O",
+"THERM_BB_OVERT_L-I",
+"",
+"CPU0_UPHY3_PRSNT1_L-I",
+"IOBRD0_RUN_POWER_EN-O",
+"CPU0_UPHY3_PRSNT0_L-I",
+"IOBRD1_RUN_POWER_EN-O",
+"CPU0_UPHY2_PRSNT1_L-I",
+"FPGA_RSVD_FFU4-O",
+"CPU0_UPHY2_PRSNT0_L-I",
+"FPGA_RSVD_FFU5-O",
+"CPU0_UPHY1_PRSNT1_L-I",
+"FPGA_RSVD_FFU6-O",
+"CPU0_UPHY1_PRSNT0_L-I",
+"FPGA_RSVD_FFU7-O",
+"CPU0_UPHY0_PRSNT1_L-I",
+"RSVD_NV_PLT_DETECT-O",
+"CPU0_UPHY0_PRSNT0_L-I",
+"SPI1_INT_L-O",
+"CPU1_UPHY3_PRSNT1_L-I",
+"",
+"CPU1_UPHY3_PRSNT0_L-I",
+"HMC_EROT_MUX_STATUS",
+"CPU1_UPHY2_PRSNT1_L-I",
+"",
+"CPU1_UPHY2_PRSNT0_L-I",
+"",
+"CPU1_UPHY1_PRSNT1_L-I",
+"",
+"CPU1_UPHY1_PRSNT0_L-I",
+"",
+"CPU1_UPHY0_PRSNT1_L-I",
+"",
+"CPU1_UPHY0_PRSNT0_L-I",
+"",
+"FAN1_PRESENT_L-I",
+"",
+"FAN0_PRESENT_L-I",
+"",
+"",
+"",
+"IPEX_CABLE_PRSNT_L-I",
+"",
+"M2_1_PRSNT_L-I",
+"",
+"M2_0_PRSNT_L-I",
+"",
+"CPU1_UPHY4_PRSNT1_L-I",
+"",
+"CPU0_UPHY4_PRSNT0_L-I",
+"",
+"",
+"",
+"I2C_RTC_ALERT_L-I",
+"",
+"FAN7_PRESENT_L-I",
+"",
+"FAN6_PRESENT_L-I",
+"",
+"FAN5_PRESENT_L-I",
+"",
+"FAN4_PRESENT_L-I",
+"",
+"FAN3_PRESENT_L-I",
+"",
+"FAN2_PRESENT_L-I",
+"",
+"IOBRD0_IOX_INT_L-I",
+"",
+"IOBRD1_PRSNT_L-I",
+"",
+"IOBRD0_PRSNT_L-I",
+"",
+"IOBRD1_PWR_GOOD-I",
+"",
+"IOBRD0_PWR_GOOD-I",
+"",
+"",
+"",
+"",
+"",
+"FAN_FAIL_IN_L-I",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"PDB_CABLE_PRESENT_L-I",
+"",
+"",
+"",
+"CHASSIS_PWR_BRK_L-I",
+"",
+"",
+"",
+"IOBRD1_IOX_INT_L-I",
+"",
+"10GBE_SMBALRT_L-I",
+"",
+"PCIE_WAKE_L-I",
+"",
+"I2C_M21_ALERT_L-I",
+"",
+"I2C_M20_ALERT_L-I",
+"",
+"TRAY_FAST_SHDN_L-I",
+"",
+"UID_BTN_N-I",
+"",
+"PWR_BTN_L-I",
+"",
+"PSU_SMB_ALERT_L-I",
+"",
+"",
+"",
+"",
+"",
+"NODE_LOC_ID[0]-I",
+"",
+"NODE_LOC_ID[1]-I",
+"",
+"NODE_LOC_ID[2]-I",
+"",
+"NODE_LOC_ID[3]-I",
+"",
+"NODE_LOC_ID[4]-I",
+"",
+"NODE_LOC_ID[5]-I",
+"",
+"FAN10_PRESENT_L-I",
+"",
+"FAN9_PRESENT_L-I",
+"",
+"FAN8_PRESENT_L-I",
+"",
+"FPGA1_READY_HMC-I",
+"",
+"DP_HPD-I",
+"",
+"HMC_I2C3_FPGA_ALERT_L-I",
+"",
+"HMC_I2C2_FPGA_ALERT_L-I",
+"",
+"FPGA0_READY_HMC-I",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"LEAK_DETECT_ALERT_L-I",
+"",
+"MOD1_B2B_CABLE_PRESENT_L-I",
+"",
+"MOD1_CLINK_CABLE_PRESENT_L-I",
+"",
+"FAN11_PRESENT_L-I",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"RSVD_SGPIO_IN_CRC[0]",
+"RSVD_SGPIO_O_CRC[7]",
+"RSVD_SGPIO_IN_CRC[1]",
+"RSVD_SGPIO_O_CRC[6]",
+"RSVD_SGPIO_IN_CRC[2]",
+"RSVD_SGPIO_O_CRC[5]",
+"RSVD_SGPIO_IN_CRC[3]",
+"RSVD_SGPIO_O_CRC[4]",
+"RSVD_SGPIO_IN_CRC[4]",
+"RSVD_SGPIO_O_CRC[3]",
+"RSVD_SGPIO_IN_CRC[5]",
+"RSVD_SGPIO_O_CRC[2]",
+"RSVD_SGPIO_IN_CRC[6]",
+"RSVD_SGPIO_O_CRC[1]",
+"RSVD_SGPIO_IN_CRC[7]",
+"RSVD_SGPIO_O_CRC[0]";
+};
+
+// I2C5 GPIO Expander
+&i2c4 {
+    // Module 0, Expander @0x21
+    exp4: pca9555@21 {
+ 		compatible = "nxp,pca9555";
+ 		reg = <0x21>;
+		gpio-controller;
+		#gpio-cells = <2>;
+
+        #address-cells = <1>;
+        #size-cells = <0>;
+        interrupt-controller;
+        #interrupt-cells = <2>;
+        interrupt-parent = <&gpio1>;
+        interrupts = <ASPEED_GPIO(B, 6) IRQ_TYPE_LEVEL_LOW>;
+
+        gpio-line-names =
+            "RTC_MUX_SEL-O",
+            "PCI_MUX_SEL-O",
+            "TPM_MUX_SEL-O",
+            "FAN_MUX-SEL-O",
+            "SGMII_MUX_SEL-O",
+            "DP_MUX_SEL-O",
+            "UPHY3_USB_SEL-O",
+            "NCSI_MUX_SEL-O",
+            "BMC_PHY_RST-O",
+            "RTC_CLR_L-O",
+            "BMC_12V_CTRL-O",
+            "PS_RUN_IO0_PG-I",
+            "",
+            "",
+            "",
+            "";
+ 	};
+};
+
+// I2C9 GPIO Expanders
+&i2c9 {
+    // Module 0, Expander @0x20
+    exp0: pca9555@20 {
+ 		compatible = "nxp,pca9555";
+ 		reg = <0x20>;
+		gpio-controller;
+		#gpio-cells = <2>;
+
+        #address-cells = <1>;
+        #size-cells = <0>;
+        interrupt-controller;
+        #interrupt-cells = <2>;
+        interrupt-parent = <&gpio1>;
+        interrupts = <ASPEED_GPIO(B, 6) IRQ_TYPE_LEVEL_LOW>;
+
+        gpio-line-names =
+            "FPGA_THERM_OVERT_L-I",
+            "FPGA_READY_BMC-I",
+            "HMC_BMC_DETECT-O",
+            "HMC_PGOOD-O",
+            "",
+            "BMC_STBY_CYCLE-O",
+            "FPGA_EROT_FATAL_ERROR_L-I",
+            "WP_HW_EXT_CTRL_L-O",
+            "EROT_FPGA_RST_L-O",
+            "FPGA_EROT_RECOVERY_L-O",
+            "BMC_EROT_FPGA_SPI_MUX_SEL-O",
+            "USB_HUB_RESET_L-O",
+            "NCSI_CS1_SEL-O",
+            "SGPIO_EN_L-O",
+            "B2B_IOEXP_INT_L-I",
+            "I2C_BUS_MUX_RESET_L-O";
+ 	};
+
+    // Module 1, Expander @0x21
+    exp1: pca9555@21 {
+ 		compatible = "nxp,pca9555";
+ 		reg = <0x21>;
+		gpio-controller;
+		#gpio-cells = <2>;
+
+        #address-cells = <1>;
+        #size-cells = <0>;
+        interrupt-controller;
+        #interrupt-cells = <2>;
+        interrupt-parent = <&gpio1>;
+        interrupts = <ASPEED_GPIO(B, 6) IRQ_TYPE_LEVEL_LOW>;
+
+        gpio-line-names =
+            "SEC_FPGA_THERM_OVERT_L-I",
+            "SEC_FPGA_READY_BMC-I",
+            "",
+            "",
+            "",
+            "",
+            "SEC_FPGA_EROT_FATAL_ERROR_L-I",
+            "SEC_WP_HW_EXT_CTRL_L-O",
+            "SEC_EROT_FPGA_RST_L-O",
+            "SEC_FPGA_EROT_RECOVERY_L-O",
+            "SEC_BMC_EROT_FPGA_SPI_MUX_SEL-O",
+            "SEC_USB2_HUB_RST_L-O",
+            "",
+            "",
+            "",
+            "SEC_I2C_BUS_MUX_RESET_L-O";
+ 	};
+
+    // HMC Expander @0x27
+    exp2: pca9555@27 {
+ 		compatible = "nxp,pca9555";
+ 		reg = <0x27>;
+		gpio-controller;
+		#gpio-cells = <2>;
+
+        #address-cells = <1>;
+        #size-cells = <0>;
+        interrupt-controller;
+        #interrupt-cells = <2>;
+        interrupt-parent = <&gpio1>;
+        interrupts = <ASPEED_GPIO(B, 6) IRQ_TYPE_LEVEL_LOW>;
+
+        gpio-line-names =
+            "HMC_PRSNT_L-I",
+            "HMC_READY-I",
+            "HMC_EROT_FATAL_ERROR_L-I",
+            "I2C_MUX_SEL-O",
+            "HMC_EROT_SPI_MUX_SEL-O",
+            "HMC_EROT_RECOVERY_L-O",
+            "HMC_EROT_RST_L-O",
+            "GLOBAL_WP_HMC-O",
+            "FPGA_RST_L-O",
+            "USB2_HUB_RST-O",
+            "CPU_UART_MUX_SEL-O",
+            "",
+            "",
+            "",
+            "",
+            "";
+ 	};
+    // HMC Expander @0x74
+    exp3: pca9555@74 {
+        compatible = "nxp,pca9555";
+        reg = <0x74>;
+		gpio-controller;
+		#gpio-cells = <2>;
+
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        interrupt-controller;
+        #interrupt-cells = <2>;
+        interrupt-parent = <&gpio1>;
+        interrupts = <ASPEED_GPIO(B, 6) IRQ_TYPE_LEVEL_LOW>;
+
+        gpio-line-names =
+            "IOB_PRSNT_L",
+            "IOB_DP_HPD",
+            "IOX_BMC_RESET",
+            "IOB_IOEXP_INT_L",
+            "IOB_UID_LED_L",
+            "IOB_UID_BTN_L",
+            "IOB_SYS_RST_BTN_L",
+            "IOB_PWR_LED_L",
+            "IOB_PWR_BTN_L",
+            "IOB_PHY_RST",
+            "CPLD_JTAG_MUX_SEL",
+            "",
+            "",
+            "",
+            "",
+            "";
+    };
+};
+
+// EMMC group that excludes WP pin
+&pinctrl {
+    pinctrl_emmcg5_default: emmcg5_default {
+        function = "EMMC";
+        groups = "EMMCG5";
+    };
+};
+

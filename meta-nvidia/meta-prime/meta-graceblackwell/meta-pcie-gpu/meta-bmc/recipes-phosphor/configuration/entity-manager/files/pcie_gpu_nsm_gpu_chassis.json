@@ -1,0 +1,735 @@
+[
+  {
+    "Exposes": [
+      {
+        "Name": "HGX_GPU_0",
+        "Type": "NSM_Chassis",
+        "UUID": "STATIC:0:3",
+        "DeviceType": "0",
+        "Chassis": {
+          "Type": "NSM_Chassis",
+          "DEVICE_UUID": "$DEVICE_UUID"
+        },
+        "Asset": {
+          "Type": "NSM_Asset",
+          "Manufacturer": "NVIDIA"
+        },
+        "Dimension": {
+          "Type": "NSM_Dimension"
+        },
+        "ChassisType": {
+          "Type": "NSM_ChassisType",
+          "ChassisType": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        },
+        "Health": {
+          "Type": "NSM_Health",
+          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        },
+        "PowerLimit": {
+          "Type": "NSM_PowerLimit",
+          "Priority": false
+        },
+        "PrettyName": {
+          "Type": "NSM_PrettyName",
+          "Name": "GPU_0"
+        }
+      },
+      {
+        "ChassisName": "HGX_GPU_0",
+        "Name": "Assembly0",
+        "Type": "NSM_ChassisAssembly",
+        "UUID": "STATIC:0:3",
+        "Area": {
+          "Type": "NSM_Area",
+          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
+        },
+        "Asset": {
+          "Type": "NSM_Asset",
+          "Name": "GPU Board Assembly",
+          "Vendor": "NVIDIA"
+        },
+        "Health": {
+          "Type": "NSM_Health",
+          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        },
+        "Location": {
+          "Type": "NSM_Location",
+          "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        }
+      },
+      {
+        "ChassisName": "HGX_GPU_0",
+        "Name": "Assembly1",
+        "Type": "NSM_ChassisAssembly",
+        "UUID": "STATIC:0:3",
+        "DeviceAssembly": true,
+        "Area": {
+          "Type": "NSM_Area",
+          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
+        },
+        "Asset": {
+          "Type": "NSM_Asset",
+          "Name": "GPU Device Assembly",
+          "Vendor": "NVIDIA"
+        },
+        "Health": {
+          "Type": "NSM_Health",
+          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        },
+        "Location": {
+          "Type": "NSM_Location",
+          "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        }
+      },
+      {
+        "ChassisName": "HGX_GPU_0",
+        "Name": "GPU_0",
+        "Type": "NSM_ChassisPCIeDevice",
+        "UUID": "STATIC:0:3",
+        "DEVICE_UUID": "$DEVICE_UUID",
+        "Asset": {
+          "Type": "NSM_Asset",
+          "Name": "HGX_GPU_0",
+          "Manufacturer": "NVIDIA"
+        },
+        "Associations": [
+          {
+            "Forward": "chassis",
+            "Backward": "pciedevice",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_0"
+          }
+        ],
+        "Health": {
+          "Type": "NSM_Health",
+          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        },
+        "PCIeDevice": {
+          "Type": "NSM_PCIeDevice",
+          "DeviceType": "SingleFunction",
+          "Functions": [
+            0
+          ]
+        },
+        "LTSSMState": {
+          "Type": "NSM_LTSSMState",
+          "DeviceIndex": 0,
+          "Priority": false
+        },
+        "ClockOutputEnableState": {
+          "Type": "NSM_ClockOutputEnableState",
+          "InstanceNumber": "0"
+        }
+      },
+      {
+        "Name": "HGX_GPU 0 TEMP_0",
+        "Type": "NSM_Temp",
+        "Associations": [
+          {
+            "Forward": "chassis",
+            "Backward": "all_sensors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU 0"
+          },
+          {
+            "Forward": "processor",
+            "Backward": "all_sensors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/accelerator/GPU 0"
+          }
+        ],
+        "ThermalParameters": [
+          {
+            "Name": "UpperCaution",
+            "Dynamic": false,
+            "Value": 82.0
+          }
+        ],
+        "UUID": "STATIC:0:3",
+        "PhysicalContext": "GPU",
+        "Aggregated": true,
+        "SensorId": 0,
+        "Priority": true
+      },
+      {
+        "Name": "HGX_GPU 0 TEMP_1",
+        "Type": "NSM_Temp",
+        "Associations": [
+          {
+            "Forward": "chassis",
+            "Backward": "all_sensors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU 0"
+          },
+          {
+            "Forward": "processor",
+            "Backward": "all_sensors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/accelerator/GPU 0"
+          }
+        ],
+        "ThermalParameters": [
+          {
+            "Name": "LowerFatal",
+            "Dynamic": false,
+            "Value": -5.0
+          },
+          {
+            "Name": "LowerCritical",
+            "Dynamic": false,
+            "Value": -2.0
+          },
+          {
+            "Name": "LowerCaution",
+            "Dynamic": false,
+            "Value": -0.05
+          }
+        ],
+        "UUID": "STATIC:0:3",
+        "PhysicalContext": "GPU",
+        "Implementation": "Synthesized",
+        "ReadingBasis": "Headroom",
+        "Description": "Thermal Limit(TLIMIT) Temperature is the distance in deg C from the GPU temperature to the first throttle limit.",
+        "Aggregated": true,
+        "SensorId": 2,
+        "Priority": true
+      },
+      {
+        "Name": "HGX_GPU 0 DRAM_0_Temp_0",
+        "Type": "NSM_Temp",
+        "Associations": [
+          {
+            "Forward": "chassis",
+            "Backward": "all_sensors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU 0"
+          },
+          {
+            "Forward": "processor",
+            "Backward": "all_sensors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/accelerator/GPU 0"
+          },
+          {
+            "Forward": "memory",
+            "Backward": "all_sensors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/dimm/GPU 0 DRAM_0"
+          }
+        ],
+        "ThermalParameters": [
+          {
+            "Name": "UpperFatal",
+            "Dynamic": false,
+            "Value": 110.0
+          },
+          {
+            "Name": "UpperCritical",
+            "Dynamic": false,
+            "Value": 107.0
+          },
+          {
+            "Name": "UpperCaution",
+            "Dynamic": false,
+            "Value": 105.0
+          }
+        ],
+        "UUID": "STATIC:0:3",
+        "PhysicalContext": "GPU",
+        "Aggregated": true,
+        "SensorId": 1,
+        "Priority": true
+      },
+      {
+        "Name": "HGX_GPU 0 Power_0",
+        "Type": "NSM_Power",
+        "CompositeNumericSensors": [
+          "/xyz/openbmc_project/sensors/power/HGX_Chassis_0_TotalGPU_Power_0"
+        ],
+        "Associations": [
+          {
+            "Forward": "chassis",
+            "Backward": "all_sensors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU 0"
+          },
+          {
+            "Forward": "processor",
+            "Backward": "all_sensors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/accelerator/GPU 0"
+          }
+        ],
+        "PeakValue": {
+          "SensorId": 0,
+          "AveragingInterval": 0,
+          "Aggregated": true,
+          "Priority": false
+        },
+        "UUID": "STATIC:0:3",
+        "PhysicalContext": "GPU",
+        "MaxAllowableOperatingValue": 1020.0,
+        "Aggregated": true,
+        "SensorId": 0,
+        "AveragingInterval": 0,
+        "Priority": true
+      },
+      {
+        "Name": "HGX_GPU 0 DRAM_0_Power_0",
+        "Type": "NSM_Power",
+        "Associations": [
+          {
+            "Forward": "chassis",
+            "Backward": "all_sensors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU 0"
+          },
+          {
+            "Forward": "processor",
+            "Backward": "all_sensors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/accelerator/GPU 0"
+          },
+          {
+            "Forward": "memory",
+            "Backward": "all_sensors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/dimm/GPU_ 0 DRAM_0"
+          }
+        ],
+        "UUID": "STATIC:0:3",
+        "PhysicalContext": "GPU",
+        "Aggregated": true,
+        "SensorId": 1,
+        "AveragingInterval": 0,
+        "Priority": true
+      },
+      {
+        "Name": "HGX_GPU 0 Energy_0",
+        "Type": "NSM_Energy",
+        "Associations": [
+          {
+            "Forward": "chassis",
+            "Backward": "all_sensors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU 0"
+          },
+          {
+            "Forward": "processor",
+            "Backward": "all_sensors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/accelerator/GPU 0"
+          }
+        ],
+        "UUID": "STATIC:0:3",
+        "PhysicalContext": "GPU",
+        "Aggregated": true,
+        "SensorId": 0,
+        "Priority": true
+      },
+      {
+        "Name": "HGX_GPU 0 Voltage_0",
+        "Type": "NSM_Voltage",
+        "Associations": [
+          {
+            "Forward": "chassis",
+            "Backward": "all_sensors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU 0"
+          },
+          {
+            "Forward": "processor",
+            "Backward": "all_sensors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/accelerator/GPU 0"
+          }
+        ],
+        "UUID": "STATIC:0:3",
+        "PhysicalContext": "GPU",
+        "Aggregated": true,
+        "SensorId": 0,
+        "Priority": false
+      },
+      {
+        "Name": "HGX_Driver_GPU_0",
+        "Type": "NSM_GPU_SWInventory",
+        "Associations": [
+          {
+            "Forward": "inventory",
+            "Backward": "software",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0"
+          },
+          {
+            "Forward": "software_version",
+            "Backward": "updateable",
+            "AbsolutePath": "/xyz/openbmc_project/software"
+          }
+        ],
+        "UUID": "STATIC:0:3",
+        "Manufacturer": "NVIDIA"
+      },
+      {
+        "Name": "GlobalEventSetting",
+        "Type": "NSM_EventSetting",
+        "UUID": "STATIC:0:3",
+        "EventGenerationSetting": 2
+      },
+      {
+        "Name": "deviceCapabilityDiscoveryEventSetting",
+        "Type": "NSM_EventConfig",
+        "MessageType": 0,
+        "UUID": "STATIC:0:3",
+        "SubscribedEventIDs": [
+          1
+        ],
+        "AcknowledgementEventIds": []
+      },
+      {
+        "Name": "PlatformEnvironmentEventSetting",
+        "Type": "NSM_EventConfig",
+        "MessageType": 3,
+        "UUID": "STATIC:0:3",
+        "SubscribedEventIDs": [
+          0,
+          1
+        ]
+      },
+      {
+        "Name": "XIDEventSetting",
+        "Type": "NSM_Event_XID",
+        "UUID": "STATIC:0:3",
+        "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_0",
+        "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "Severity": "Critical",
+        "LoggingNamespace": "GPU_0 XID",
+        "Resolution": "Regarding XID documentation and further actions please refer to XID and sXID Catalog for NVIDIA Data Center Products (NVOnline: 1115699)",
+        "MessageArgs": [
+          "GPU_0 Driver Event Message",
+          "[{Timestamp}][{SequenceNumber}][{Flags:x}] XID {EventMessageReason} {MessageTextString}"
+        ]
+      },
+      {
+        "Name": "ResetRequiredEventSetting",
+        "Type": "NSM_Event_Reset_Required",
+        "UUID": "STATIC:0:3",
+        "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_0",
+        "MessageId": "Base.1.13.ResetRequired",
+        "Severity": "Critical",
+        "LoggingNamespace": "GPU_0",
+        "Resolution": "Reset the GPU or power cycle the Baseboard.",
+        "MessageArgs": [
+          "GPU_0",
+          "ForceRestart"
+        ]
+      },
+      {
+        "Name": "NVLink",
+        "Type": "NSM_NVLink",
+        "ParentObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0",
+        "DeviceType": "0",
+        "UUID": "STATIC:0:3",
+        "Priority": false,
+        "Count": 18
+      },
+      {
+        "Name": "GPU_0 ClockLimit_0",
+        "Type": "NSM_ControlClockLimit_0",
+        "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU",
+        "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0",
+        "Associations": [
+          {
+            "Forward": "parent_chassis",
+            "Backward": "clock_controls",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU 0"
+          }
+        ],
+        "UUID": "STATIC:0:3",
+        "ClockMode": "com.nvidia.ClockMode.Mode.MaximumPerformance",
+        "Priority": false
+      },
+      {
+        "Name": "GPU_0 ProcessorModule",
+        "Type": "NSM_ModulePowerControl",
+        "Priority": false,
+        "UUID": "STATIC:0:3"
+      },
+      {
+        "Name": "GPU_0 Processor",
+        "Type": "NSM_Processor",
+        "Associations": [
+          {
+            "Forward": "parent_chassis",
+            "Backward": "all_processors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU 0"
+          },
+          {
+            "Forward": "system_interface",
+            "Backward": "",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU 0 /PCIeDevices/GPU 0"
+          },
+          {
+            "Forward": "all_memory",
+            "Backward": "parent_processor",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU 0 DRAM_0"
+          }
+        ],
+        "UUID": "STATIC:0:3",
+        "DEVICE_UUID": "$DEVICE_UUID",
+        "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0",
+        "Asset": {
+          "Type": "NSM_Asset",
+          "Manufacturer": "NVIDIA",
+          "PartNumber": "$BOARD_PART_NUMBER",
+          "SerialNumber": "$SERIAL_NUMBER",
+          "Model": "$BOARD_PRODUCT_NAME"
+        },
+        "PortDisableFuture": {
+          "Type": "NSM_PortDisableFuture",
+          "Priority": false
+        },
+        "MIGMode": {
+          "Type": "NSM_MIG",
+          "Priority": false
+        },
+        "ECCMode": {
+          "Type": "NSM_ECC",
+          "Priority": false
+        },
+        "EDPpScalingFactor": {
+          "Type": "NSM_EDPp",
+          "Priority": false
+        },
+        "PowerCap": {
+          "Type": "NSM_PowerCap",
+          "Priority": false,
+          "CompositeNumericSensors": [
+            "/xyz/openbmc_project/inventory/system/chassis/power/control/TotalGPU_Power_0"
+          ]
+        },
+        "PCIe": {
+          "Type": "NSM_PCIe",
+          "Priority": false,
+          "DeviceId": 0,
+          "Count": 1
+        },
+        "CpuOperatingConfig": {
+          "Type": "NSM_CpuOperatingConfig",
+          "Priority": false
+        },
+        "ProcessorPerformance": {
+          "Type": "NSM_ProcessorPerformance",
+          "Priority": false,
+          "DeviceId": 0
+        },
+        "MemCapacityUtil": {
+          "Type": "NSM_MemCapacityUtil",
+          "Priority": false
+        },
+        "InbandReconfigPermissions": {
+          "Type": "NSM_InbandReconfigPermissions",
+          "Priority": false,
+          "Features": [
+            "InSystemTest",
+            "FusingMode",
+            "CCMode",
+            "BAR0Firewall",
+            "CCDevMode",
+            "TGPCurrentLimit",
+            "TGPRatedLimit",
+            "TGPMaxLimit",
+            "TGPMinLimit",
+            "ClockLimit",
+            "NVLinkDisable",
+            "ECCEnable",
+            "PCIeVFConfiguration",
+            "RowRemappingAllowed",
+            "RowRemappingFeature",
+            "HBMFrequencyChange",
+            "HULKLicenseUpdate",
+            "ForceTestCoupling",
+            "BAR0TypeConfig",
+            "EDPpScalingFactor",
+            "PowerSmoothingPrivilegeLevel1",
+            "PowerSmoothingPrivilegeLevel2"
+          ]
+        },
+        "TotalNvLinksCount": {
+          "Type": "NSM_TotalNvLinksCount",
+          "Priority": false
+        }
+      },
+      {
+        "Name": "GPU_0 Memory",
+        "Type": "NSM_Memory",
+        "Associations": [
+          {
+            "Forward": "parent_processor",
+            "Backward": "all_memory",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/accelerator/GPU 0"
+          },
+          {
+            "Forward": "parent_chassis",
+            "Backward": "all_memory",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_0"
+          },
+          {
+            "Forward": "all_sensors",
+            "Backward": "memory",
+            "AbsolutePath": "/xyz/openbmc_project/sensors/temperature/HGX_GPU_0 _DRAM_0_Temp_0"
+          },
+          {
+            "Forward": "all_sensors",
+            "Backward": "memory",
+            "AbsolutePath": "/xyz/openbmc_project/sensors/power/HGX_GPU_0 _DRAM_0_Power_0"
+          }
+        ],
+        "ErrorCorrection": "xyz.openbmc_project.Inventory.Item.Dimm.Ecc.SingleBitECC",
+        "DeviceType": "xyz.openbmc_project.Inventory.Item.Dimm.DeviceType.HBM",
+        "UUID": "STATIC:0:3",
+        "Priority": false,
+        "InventoryObjPath": "/xyz/openbmc_project/inventory/system/dimm/GPU_0",
+        "RowRemapping": {
+          "Type": "NSM_RowRemapping",
+          "Priority": false
+        },
+        "ECCMode": {
+          "Type": "NSM_ECC",
+          "Priority": false
+        },
+        "MemCapacityUtil": {
+          "Type": "NSM_MemCapacityUtil",
+          "Priority": false
+        }
+      },
+      {
+        "Name": "GPU_0 PCIe_0",
+        "Type": "NSM_GPU_PCIe_0",
+        "UUID": "STATIC:0:3",
+        "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0",
+        "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK",
+        "ChasisPowerState": "xyz.openbmc_project.State.Chassis.PowerState.On",
+        "DeviceIndex": 0,
+        "Associations": [],
+        "PortInfo": {
+          "Type": "NSM_PortInfo",
+          "PortType": "xyz.openbmc_project.Inventory.Decorator.PortInfo.PortType.UpstreamPort",
+          "PortProtocol": "xyz.openbmc_project.Inventory.Decorator.PortInfo.PortProtocol.PCIe",
+          "Priority": false
+        }
+      },
+      {
+        "Name": "GPU_0 GPM_Aggregated_Metrics",
+        "Type": "NSM_GPMMetrics",
+        "UUID": "STATIC:0:3",
+        "Priority": false,
+        "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0",
+        "RetrievalSource": 1,
+        "GpuInstance": 255,
+        "ComputeInstance": 255,
+        "MetricsBitfield": [
+          255,
+          255,
+          31
+        ],
+        "MemoryBandwidth": true,
+        "MemoryInventoryObjPath": "/xyz/openbmc_project/inventory/system/dimm/GPU_0 DRAM_0",
+        "PerInstanceMetrics": [
+          {
+            "Name": "GPU_0 GPM_NVDEC_PerInstance_Metrics",
+            "Type": "NSM_GPMPerInstanceMetrics",
+            "Priority": false,
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0",
+            "RetrievalSource": 2,
+            "GpuInstance": 255,
+            "ComputeInstance": 255,
+            "Metric": "NVDEC",
+            "MetricId": 14,
+            "InstanceBitfield": 255
+          },
+          {
+            "Name": "GPU_0 GPM_NVJPG_PerInstance_Metrics",
+            "Type": "NSM_GPMPerInstanceMetrics",
+            "Priority": false,
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0",
+            "RetrievalSource": 2,
+            "GpuInstance": 255,
+            "ComputeInstance": 255,
+            "Metric": "NVJPG",
+            "MetricId": 15,
+            "InstanceBitfield": 255
+          }
+        ]
+      },
+      {
+        "Name": "GPU_0 GPM_Port_Metrics",
+        "Type": "NSM_GPMPortMetrics",
+        "UUID": "STATIC:0:3",
+        "Priority": false,
+        "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0",
+        "RetrievalSource": 0,
+        "GpuInstance": 255,
+        "ComputeInstance": 255,
+        "Metrics": [
+          "NVLinkRawTxBandwidthGbps",
+          "NVLinkDataTxBandwidthGbps",
+          "NVLinkRawRxBandwidthGbps",
+          "NVLinkDataRxBandwidthGbps"
+        ],
+        "Ports": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ],
+        "InstanceBitfield": 262143
+      },
+      {
+        "Name": "NetworkPortEventSetting",
+        "Type": "NSM_EventConfig",
+        "MessageType": 1,
+        "UUID": "STATIC:0:3",
+        "SubscribedEventIDs": [
+          0
+        ],
+        "AcknowledgementEventIds": []
+      },
+      {
+        "Name": "ThresholdEventSetting",
+        "Type": "NSM_Event_Threshold",
+        "UUID": "STATIC:0:3",
+        "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_0",
+        "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "Severity": "Critical",
+        "LoggingNamespace": "HGX_GPU 0 Threshold",
+        "Resolution": "Regarding Port Error documentation and further actions please refer to (TBD)",
+        "MessageArgs": [
+          "HGX_GPU 0",
+          "No Error"
+        ]
+      }
+    ],
+    "Probe": "FOUND('NSM_DEV_ARIEL_GPU_0')",
+    "Name": "HGX_GPU 0",
+    "Type": "Component",
+    "Parent_Chassis": "/xyz/openbmc_project/inventory/system/board/HGX_ProcessorModule_0",
+    "xyz.openbmc_project.Inventory.Decorator.Instance": {
+      "InstanceNumber": "0"
+    },
+    "xyz.openbmc_project.Inventory.Decorator.Location": {
+      "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+    },
+    "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+      "LocationCode": "GPU_0"
+    },
+    "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+      "LocationContext": "HGX_Chassis_0/ProcessorModule_0"
+    },
+    "xyz.openbmc_project.Inventory.Decorator.Replaceable": {
+      "FieldReplaceable": false
+    },
+    "xyz.openbmc_project.Inventory.Item.Chassis": {
+      "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+    },
+    "xyz.openbmc_project.Configuration.NSMReady": {
+      "C1G1_GPU_0_Ready": "Enabled"
+    }
+  }
+]
+

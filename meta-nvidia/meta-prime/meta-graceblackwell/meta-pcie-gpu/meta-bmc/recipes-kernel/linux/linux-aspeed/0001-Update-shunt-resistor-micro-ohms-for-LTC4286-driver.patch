@@ -1,0 +1,30 @@
+From 3d544f5f233c28accc1e7c9c7595092ec6d53398 Mon Sep 17 00:00:00 2001
+From: Lance Stringham <lstringham@nvidia.com>
+Date: Mon, 14 Oct 2024 22:49:59 +0000
+Subject: [PATCH] Update shunt-resistor-micro-ohms for LTC4286 driver
+
+Since we need to load the HSC configuration at runtime rather than use a
+DT on GBL200, we need to patch the kernel directly with the value from
+the HSC schematics from our ODM.
+---
+ drivers/hwmon/pmbus/ltc4286.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/hwmon/pmbus/ltc4286.c b/drivers/hwmon/pmbus/ltc4286.c
+index aabd0bcdfeee..0f9d7fe27359 100644
+--- a/drivers/hwmon/pmbus/ltc4286.c
++++ b/drivers/hwmon/pmbus/ltc4286.c
+@@ -105,7 +105,9 @@ static int ltc4286_probe(struct i2c_client *client)
+ 
+ 	if (of_property_read_u32(client->dev.of_node,
+ 				 "shunt-resistor-micro-ohms", &rsense))
+-		rsense = 300; /* 0.3 mOhm if not set via DT */
++		rsense = 200; /* Normally this would be read from the DT, but since we
++		               * need to load at runtime, we need to patch it directly
++		               * based on the HSC schematics from our supplier. */
+ 
+ 	if (rsense == 0)
+ 		return -EINVAL;
+-- 
+2.34.1
+

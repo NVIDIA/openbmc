@@ -1,0 +1,20 @@
+[
+  {
+    "Exposes": [
+      {
+        "Name": "GPUMapping",
+        "Type": "NSM_GetInstanceIDByMctpUUID",
+        "MappingArray": [
+          "f72d6fb0-5675-11ed-9b6a-0242ac120002",
+          "f72d6fb2-5675-11ed-9b6a-0242ac120002"
+        ]
+      }
+    ],
+    "Name": "Mapping",
+    "Probe": "xyz.openbmc_project.FruDevice({'BUS': 10, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'P3809'})",
+    "Type": "NSM_Configs",
+    "xyz.openbmc_project.Configuration.NSMReady": {
+      "C1G1_Mapping_Ready": "Enabled"
+    }
+  }
+]

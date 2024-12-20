@@ -1,0 +1,832 @@
+// SPDX-License-Identifier: GPL-2.0+
+/dts-v1/;
+
+#include "nvidia-gb200nvl-bmc-core.dtsi"
+#include <dt-bindings/leds/common.h>
+
+/ {
+    model = "AST2600 GB200NVL BMC";
+    compatible = "aspeed,ast2600";
+
+	aliases {
+		serial2 = &uart3;
+		serial4 = &uart5;
+		i2c16   = &imux16;
+		i2c17   = &imux17;
+		i2c18   = &imux18;
+		i2c19   = &imux19;
+		i2c20   = &imux20;
+		i2c21   = &imux21;
+		i2c22   = &imux22;
+		i2c23   = &imux23;
+		i2c24   = &imux24;
+		i2c25   = &imux25;
+		i2c26   = &imux26;
+		i2c27   = &imux27;
+		i2c28   = &imux28;
+		i2c29   = &imux29;
+		i2c30   = &imux30;
+		i2c31   = &imux31;
+		i2c32   = &imux32;
+		i2c33   = &imux33;
+		i2c34   = &imux34;
+		i2c35   = &imux35;
+		i2c36   = &imux36;
+		i2c37   = &imux37;
+		i2c38   = &imux38;
+		i2c39   = &imux39;
+		i2c40	= &e1si2c0;
+		i2c41	= &e1si2c1;
+		i2c42	= &e1si2c2;
+		i2c43	= &e1si2c3;
+		i2c44	= &e1si2c4;
+		i2c45	= &e1si2c5;
+		i2c46	= &e1si2c6;
+		i2c47	= &e1si2c7;
+		i2c48	= &i2c5mux0;
+		i2c49   = &m2riser;
+		i2c50	= &i2c5mux2;
+		i2c51	= &i2c5mux3;
+		i2c52	= &i2c25mux0;
+		i2c53	= &i2c25mux1;
+		i2c54	= &i2c25mux2;
+		i2c55	= &i2c25mux3;
+	};
+
+	chosen {
+		stdout-path = &uart5;
+		bootargs = "console=tty0 console=ttyS4,115200n8 earlyprintk";
+	};
+
+	memory@80000000 {
+		device_type = "memory";
+		reg = <0x80000000 0x80000000>;
+	};
+
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		vga_memory: framebuffer@9f000000 {
+			no-map;
+			reg = <0x9f000000 0x01000000>; /* 16M */
+		};
+
+
+		ramoops@a0000000 {
+			compatible = "ramoops";
+			reg = <0xa0000000 0x100000>; /* 1MB */
+			record-size = <0x10000>; /* 64KB */
+			max-reason = <2>; /* KMSG_DUMP_OOPS */
+		};
+
+		gfx_memory: framebuffer {
+			size = <0x01000000>;
+			alignment = <0x01000000>;
+			compatible = "shared-dma-pool";
+			reusable;
+		};
+
+		video_engine_memory: jpegbuffer {
+			size = <0x02000000>;	/* 32M */
+			alignment = <0x01000000>;
+			compatible = "shared-dma-pool";
+			reusable;
+		};
+	};
+
+    power-gpios{
+        n2-gpios = <&gpio0 ASPEED_GPIO(N, 2) (GPIO_ACTIVE_HIGH|GPIO_PULL_UP)>;
+        n3-gpios = <&gpio0 ASPEED_GPIO(N, 3) (GPIO_ACTIVE_HIGH|GPIO_PULL_UP)>;
+    };
+
+    leds {
+        compatible = "gpio-leds";
+        uid_led {
+                gpios = <&sgpiom0 27 GPIO_ACTIVE_LOW>;
+        };
+        fault_led {
+                gpios = <&sgpiom0 29 GPIO_ACTIVE_LOW>;
+        };
+        power_led {
+                gpios = <&sgpiom0 31 GPIO_ACTIVE_LOW>;
+        };
+
+        // Non-LEDs:
+        //   BMC_READY-O GPIO pin (not an LED) is being bound to the GPIO LED driver.
+        // Notes:
+        // * This is a workaround and leverages the GPIO LED driver to enable control of
+        //   reset tolerance and still allow the GPIO to be controlled from user space.
+        // * The standard Linux GPIO driver allows control of reset tolerance, however
+        //   does not expose user space APIs for user space control of the GPIO pin.
+        // * GPIO_TRANSITORY = reset tolerance is disabled
+        // * Any non-leds should be added below this line.
+        bmc_ready_noled {
+            gpios = <&gpio0 ASPEED_GPIO(Z, 0) (GPIO_ACTIVE_HIGH|GPIO_TRANSITORY)>;
+        };
+    };
+
+    buttons {
+        power-btn {
+            gpio = <&sgpiom0 156 GPIO_ACTIVE_LOW>;
+        };
+        uid-btn {
+            gpio = <&sgpiom0 154 GPIO_ACTIVE_LOW>;
+        };
+    };
+};
+
+// Enabled Primary flash on FMC for bring up activity
+&fmc {
+    status = "okay";
+    flash@0 {
+        status = "okay";
+        compatible = "jedec,spi-nor";
+        label = "bmc";
+        spi-max-frequency = <50000000>;
+#include "aspeed/aspeed-bmc-nvidia-gh-flash-layout-64.dtsi"
+    };
+};
+
+&fmcraw {
+    status = "okay";
+    spidev@0 {
+        compatible = "hgx,glacier";
+        status = "okay";
+    };
+};
+
+&spi1raw {
+    status = "okay";
+    pinctrl-names = "default";
+    pinctrl-0 = <&pinctrl_spi1_default>;
+    spidev@0 {
+        spi-max-frequency = <25000000>;
+        compatible = "hgx,glacier";
+        status = "okay";
+    };
+};
+
+&spi2 {
+    status = "okay";
+    pinctrl-names = "default";
+    pinctrl-0 = <&pinctrl_spi2_default>;
+
+    // Data SPI is 64MB in size
+    flash@0 {
+        status = "okay";
+        label = "config";
+        spi-max-frequency = <50000000>;
+        partitions {
+            compatible = "fixed-partitions";
+            #address-cells = <1>;
+            #size-cells = <1>;
+
+            u-boot-env@0 {
+                reg = <0x0 0x40000>;            // 256KB at offset 0
+                label = "u-boot-env";
+            };
+
+            rwfs@40000 {
+                reg = <0x40000 0x1000000>;      // 16MB at offset 0x40000
+                label = "rwfs";
+            };
+
+            log@0x1040000 {
+                reg = <0x1040000 0x2800000>;    // 40MB at offset 0x1040000
+                label = "log";                  // Move log to EMMC, make this unused
+            };
+        };
+    };
+};
+
+&uart1 {
+        status = "okay";        
+};
+
+&uart3 {
+        //Enabling SOL
+        status = "okay";
+        
+};
+
+&uart5 {
+    // BMC Debug Console
+    status = "okay";
+};
+
+&uart_routing {
+       status = "okay";
+};
+
+// MAC1 (per schematics, 1-based MAC1-MAC4) of AST2600 connected to external PHY
+// This is "mac0" in zero-based DTS
+&mdio0 {
+    status = "okay";
+    ethphy0: ethernet-phy@0 {
+        compatible = "ethernet-phy-ieee802.3-c22";
+        reg = <0>;
+    };
+
+};
+
+&mdio3 {
+    status = "okay";
+    ethphy3: ethernet-phy@2 {
+        compatible = "ethernet-phy-ieee802.3-c22";
+        reg = <2>;
+    };
+};
+
+&mac0 {
+    status = "okay";
+    pinctrl-names = "default";
+    phy-mode = "rgmii-rxid";
+    max-speed = <1000>;
+    phy-handle = <&ethphy3>;
+    pinctrl-0 = <&pinctrl_rgmii1_default>;
+};
+
+&mac2 {
+    status = "okay";
+    phy-mode = "rmii";
+    use-ncsi;
+    pinctrl-names = "default";
+    pinctrl-0 = <&pinctrl_rmii3_default>;
+};
+
+
+// Enable emmc
+&emmc_controller {
+    status = "okay";
+};
+
+&emmc {
+    non-removable;
+    pinctrl-0 = <&pinctrl_emmcg5_default>;
+    bus-width = <4>;
+    max-frequency = <52000000>;
+    clk-phase-mmc-hs200 = <9>, <225>;
+};
+
+/*
+ * Enable USB port A as device (via the virtual hub) to host
+ */
+&vhub {
+    status = "okay";
+    pinctrl-names = "default"; 
+    /* 
+        Uncomment below line to enable internal EHCI controller
+        Current config uses xHCI Port1
+    */
+    // pinctrl-0 = <&pinctrl_usb2adp_default>;
+};
+
+&video {
+	status = "okay";
+	memory-region = <&video_engine_memory>;
+};
+
+// USB 2.0 to HMC, on USB Port B
+&ehci1 {
+   status = "okay";
+};
+
+// USB 1.0
+&uhci {
+   status = "okay";
+};
+
+// I2C1, SSIF IPMI interface
+&i2c0 {
+    status = "okay";
+    clock-frequency = <400000>;
+	disable-master = <1>;
+    i2c-tck-thddat-config = <0x0099EC00>;
+    ssif-bmc@10 {
+        compatible = "ssif-bmc";
+        alert-gpio = <&sgpiom0 39 GPIO_ACTIVE_LOW>;
+        pulse_width_us = <5>;
+        timeout_ms = <4995>;
+        reg = <0x10>;
+        };
+};
+
+// I2C2
+// BMC_I2C1_FPGA - Secondary FPGA
+// HMC EROT
+&i2c1 {
+    status = "okay";
+    clock-frequency = <400000>;
+    multi-master;
+    i2c-scl-clk-low-timeout-us = <32000>;
+    i2c-tck-thddat-config = <0x0099EC00>;
+};
+
+// I2C3
+// BMC_I2C0_FPGA - Primary FPGA
+// HMC FRU EEPROM
+&i2c2 {
+    status = "okay";
+    clock-frequency = <400000>;
+    multi-master;
+    i2c-scl-clk-low-timeout-us = <32000>;
+    i2c-tck-thddat-config = <0x0099EC00>;
+};
+
+// I2C4
+&i2c3 {
+    status = "disabled";
+};
+
+// I2C5
+// RTC Driver
+// IO Expander
+&i2c4 {
+    status = "okay";
+    clock-frequency = <400000>;
+    i2c-tck-thddat-config = <0x0099EC00>;
+};
+
+// I2C6
+// Module 0/1 I2C MUX x3 
+&i2c5 {
+    status = "okay";
+    clock-frequency = <400000>;
+    multi-master;
+    i2c-scl-clk-low-timeout-us = <32000>;
+    i2c-tck-thddat-config = <0x0099EC00>;
+
+    i2c-switch@71 {
+        compatible = "nxp,pca9546";
+        #address-cells = <1>;
+        #size-cells = <0>;
+        reg = <0x71>;
+        i2c-mux-idle-disconnect;
+
+        imux16: i2c@0 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <0>;
+        };
+
+        imux17: i2c@1 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <1>;
+        };
+
+        imux18: i2c@2 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <2>;
+        };
+
+        imux19: i2c@3 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <3>;
+        };
+    };
+
+    i2c-switch@72 {
+        compatible = "nxp,pca9546";
+        #address-cells = <1>;
+        #size-cells = <0>;
+        reg = <0x72>;
+        i2c-mux-idle-disconnect;
+
+        imux20: i2c@0 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <0>;
+        };
+
+        imux21: i2c@1 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <1>;
+        };
+
+        imux22: i2c@2 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <2>;
+        };
+
+        imux23: i2c@3 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <3>;
+        };
+    };
+
+    i2c-switch@73 {
+        compatible = "nxp,pca9546";
+        #address-cells = <1>;
+        #size-cells = <0>;
+        reg = <0x73>;
+        i2c-mux-idle-disconnect;
+
+        imux24: i2c@0 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <0>;
+        };
+
+        imux25: i2c@1 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <1>;
+
+            i2c-switch@70 {
+                compatible = "nxp,pca9546";
+                #address-cells = <1>;
+                #size-cells = <0>;
+                reg = <0x70>;
+                i2c-mux-idle-disconnect;
+
+                i2c25mux0: i2c@0 {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    reg = <0>;
+                };
+
+                i2c25mux1: i2c@1 {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    reg = <1>;
+                };
+
+                i2c25mux2: i2c@2 {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    reg = <2>;
+                };
+
+                i2c25mux3: i2c@3 {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    reg = <3>;
+                };
+            };
+        };
+
+        imux26: i2c@2 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <2>;
+        };
+
+        imux27: i2c@3 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <3>;
+        };
+    };
+
+    //A MUX for a riser with a secondary M.2 installed.
+    i2c-switch@74 {
+        compatible = "nxp,pca9546";
+        #address-cells = <1>;
+        #size-cells = <0>;
+        reg = <0x74>;
+        i2c-mux-idle-disconnect;
+
+        i2c5mux0: i2c@0 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <0>;
+        };
+
+        //Optional/secondary M.2 drive slot
+        m2riser: i2c@1 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <1>;
+        };
+
+        i2c5mux2: i2c@2 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <2>;
+        };
+
+        i2c5mux3: i2c@3 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <3>;
+        };
+    };
+
+    i2c-switch@75 {
+        compatible = "nxp,pca9546";
+        #address-cells = <1>;
+        #size-cells = <0>;
+        reg = <0x75>;
+        i2c-mux-idle-disconnect;
+
+        imux28: i2c@0 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <0>;
+        };
+
+        imux29: i2c@1 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <1>;
+        };
+
+        imux30: i2c@2 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <2>;
+        };
+
+        imux31: i2c@3 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <3>;
+        };
+    };
+
+    i2c-switch@76 {
+        compatible = "nxp,pca9546";
+        #address-cells = <1>;
+        #size-cells = <0>;
+        reg = <0x76>;
+        i2c-mux-idle-disconnect;
+
+        imux32: i2c@0 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <0>;
+        };
+
+        imux33: i2c@1 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <1>;
+        };
+
+        imux34: i2c@2 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <2>;
+        };
+
+        imux35: i2c@3 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <3>;
+        };
+    };
+
+    i2c-switch@77 {
+        compatible = "nxp,pca9546";
+        #address-cells = <1>;
+        #size-cells = <0>;
+        reg = <0x77>;
+        i2c-mux-idle-disconnect;
+
+        imux36: i2c@0 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <0>;
+        };
+
+        imux37: i2c@1 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <1>;
+        };
+
+        imux38: i2c@2 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <2>;
+        };
+
+        imux39: i2c@3 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <3>;
+        };
+    };
+};
+
+// I2C7
+// Module 0/1 Leak Sensors
+// Module 0/1 Fan Controllers
+&i2c6 {
+    status = "okay";
+    clock-frequency = <400000>;
+    i2c-tck-thddat-config = <0x0099EC00>;
+    hsc@12 {
+        compatible = "ti,lm5066i";
+        reg = <0x12>;
+        shunt-resistor-micro-ohms = <190>;
+        status = "okay";
+    };
+    hsc@14 {
+        compatible = "ti,lm5066i";
+        reg = <0x14>;
+        shunt-resistor-micro-ohms = <190>;
+        status = "okay";
+    };
+    max31790_1 {
+        compatible = "maxim,max31790";
+        reg = <0x20>;
+        #address-cells = <1>;
+        #size-cells = <0>;
+    };
+    max31790_2 {
+        compatible = "maxim,max31790";
+        reg = <0x23>;
+        #address-cells = <1>;
+        #size-cells = <0>;
+    };
+    max31790_3 {
+        compatible = "maxim,max31790";
+        reg = <0x2c>;
+        #address-cells = <1>;
+        #size-cells = <0>;
+    };
+    max31790_4 {
+        compatible = "maxim,max31790";
+        reg = <0x2f>;
+        #address-cells = <1>;
+        #size-cells = <0>;
+    };
+};
+
+// I2C9
+// M.2
+&i2c8 {
+    status = "okay";
+    clock-frequency = <400000>;
+    multi-master;
+    i2c-scl-clk-low-timeout-us = <32000>;
+    i2c-tck-thddat-config = <0x0099EC00>;
+};
+
+// I2C10
+// HMC IO Expander
+// Module 0/1 IO Expanders
+&i2c9 {
+    status = "okay";
+    clock-frequency = <400000>;
+    i2c-tck-thddat-config = <0x0099EC00>;
+};
+
+// I2C11
+// BMC FRU EEPROM
+// BMC Temp Sensor
+&i2c10 {
+    status = "okay";
+    clock-frequency = <400000>;
+    i2c-tck-thddat-config = <0x0099EC00>;
+    // BMC FRU EEPROM - 256 bytes
+    eeprom@50 {
+        compatible = "atmel,24c02";
+        reg = <0x50>;
+        pagesize = <8>;
+    };
+};
+
+// I2C12
+&i2c11 {
+    status = "disabled";
+};
+
+// I2C13
+&i2c12 {
+    status = "disabled";
+};
+
+// I2C14
+// Module 0 UPHY3 SMBus
+&i2c13 {
+    status = "disabled";
+};
+
+// I2C15
+// Module 1 UPHY3 SMBus
+&i2c14 {
+    status = "okay";
+    clock-frequency = <100000>;
+    multi-master;
+    i2c-scl-clk-low-timeout-us = <32000>;
+    i2c-tck-thddat-config = <0x00EFD000>;
+
+    //E1.S drive slot 0-3
+	i2c-switch@77 {
+        compatible = "nxp,pca9546";
+        #address-cells = <1>;
+        #size-cells = <0>;
+        reg = <0x77>;
+        i2c-mux-idle-disconnect;
+
+        e1si2c0: i2c@0 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <0>;
+        };
+
+        e1si2c1: i2c@1 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <1>;
+        };
+
+        e1si2c2: i2c@2 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <2>;
+        };
+
+        e1si2c3: i2c@3 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <3>;
+        };
+    };
+};
+
+// I2C16
+&i2c15 {
+    status = "okay";
+    clock-frequency = <100000>;
+    multi-master;
+    i2c-scl-clk-low-timeout-us = <32000>;
+    i2c-tck-thddat-config = <0x00EFD000>;
+
+    //E1.S drive slot 4-7
+	i2c-switch@77 {
+        compatible = "nxp,pca9546";
+        #address-cells = <1>;
+        #size-cells = <0>;
+        reg = <0x77>;
+        i2c-mux-idle-disconnect;
+
+        e1si2c4: i2c@0 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <0>;
+        };
+
+        e1si2c5: i2c@1 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <1>;
+        };
+
+        e1si2c6: i2c@2 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <2>;
+        };
+
+        e1si2c7: i2c@3 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <3>;
+        };
+    };
+};
+
+// PCIe RC
+&pcie {
+    status = "okay";
+
+    interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+
+    pcie_intc0: legacy-interrupt-controller {
+                    interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+    };
+};
+
+// Bridge between AHB bus and PCIe RC.
+&h2x {
+    status = "okay";
+};
+
+&mctp {
+    status = "okay";
+};
+
+&jtag0 {
+    status = "okay";
+};
+
+&jtag1 {
+    mux-gpios = <&sgpiom0 41 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+    status = "okay";
+};
+
+&rng {
+    status = "okay";
+};
+
