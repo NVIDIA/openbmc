@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/bmcweb;protocol=https;branch=develop"
-SRCREV = "e9431b2f442d5423178d09d373b0d26713ad8e20"
+SRCREV = "f0166634d7d175b7dc64f7a33a561694a95cc193"
 
 EXTRA_OEMESON += "-Dredfish-dump-log=enabled"
 EXTRA_OEMESON += "-Dredfish-new-powersubsystem-thermalsubsystem=enabled"
@@ -12,22 +12,8 @@ EXTRA_OEMESON += "-Dinsecure-enable-redfish-query=enabled"
 EXTRA_OEMESON += "-Dbmcweb-response-timeout=180"
 EXTRA_OEMESON += "-Dbmcweb-chunking=enabled"
 
-def get_oeconf(d, policy_var, meson_var):
-    val = d.getVar(policy_var , True)
-    if val is None:
-        return ""
-    if not val:
-        return ""
-    rval = " -D" + meson_var;
-    rval += "="
-    rval += val
-    return rval
-
-EXTRA_OEMESON += "${@get_oeconf(d, 'MIN_UCASE_CHRS', 'min-ucase-characters')}"
-EXTRA_OEMESON += "${@get_oeconf(d, 'MIN_LCASE_CHRS', 'min-lcase-characters')}"
-EXTRA_OEMESON += "${@get_oeconf(d, 'MIN_DIGITS', 'min-digits')}"
-EXTRA_OEMESON += "${@get_oeconf(d, 'MIN_SPEC_CHRS', 'min-special-characters')}"
-EXTRA_OEMESON += "${@get_oeconf(d, 'MIN_PASSWORD_LENGTH', 'min-password-length')}"
+DEPENDS += "libpwquality"
+RDEPENDS:${PN}-runtime += "libpwquality"
 
 # add "redfish-hostiface" group
 GROUPADD_PARAM:${PN}:append = ";redfish-hostiface"

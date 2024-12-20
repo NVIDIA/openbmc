@@ -1,0 +1,202 @@
+{
+    "SensorNamespaces": [
+        {
+            "Namespace": "PlatformEnvironmentMetrics",
+            "ObjectpathKeywords": "sensors/temperature",
+            "PropertyList": ["Value"]
+        },
+        {
+            "Namespace": "PlatformEnvironmentMetrics",
+            "ObjectpathKeywords": "sensors/power",
+            "PropertyList": ["Value"]
+        },
+        {
+            "Namespace": "PlatformEnvironmentMetrics",
+            "ObjectpathKeywords": "sensors/energy",
+            "PropertyList": ["Value"]
+        },
+        {
+            "Namespace": "NVSwitchMetrics",
+            "ObjectpathKeywords": "Switches",
+            "PropertyList": [
+                "ceCount",
+                "ueCount",
+                "L0ToRecoveryCount",
+                "NAKReceivedCount",
+                "NAKSentCount",
+                "ReplayCount",
+                "ReplayRolloverCount",
+                "ceCount",
+                "feCount",
+                "nonfeCount"
+            ]
+        },
+        {
+            "Namespace": "NVSwitchPortMetrics",
+            "ObjectpathKeywords": "Switches/Ports",
+            "PropertyList": [
+                "CurrentSpeed",
+                "DataCRCCount",
+                "FlitCRCCount",
+                "LinkStatus",
+                "MaxSpeed",
+                "RXBytes",
+                "RXNoProtocolBytes",
+                "RXWidth",
+                "RecoveryCount",
+                "ReplayErrorsCount",
+                "RuntimeError",
+                "TXBytes",
+                "TXNoProtocolBytes",
+                "TXWidth",
+                "TrainingError"
+            ]
+        },
+        {
+            "Namespace": "MemoryMetrics",
+            "ObjectpathKeywords": "dimm",
+            "PropertyList": [
+                "MemoryConfiguredSpeedInMhz",
+                "Utilization",
+                "ceCount",
+                "ueCount",
+                "RowRemappingFailureState",
+                "ceRowRemappingCount",
+                "ueRowRemappingCount"
+            ]
+        },
+        {
+            "Namespace": "ProcessorMetrics",
+            "ObjectpathKeywords": "accelerator",
+            "PropertyList": [
+                "ceCount",
+                "ueCount",
+                "OperatingSpeed",
+                "Utilization",
+                "State",
+                "L0ToRecoveryCount",
+                "LanesInUse",
+                "MaxLanes",
+                "NAKReceivedCount",
+                "NAKSentCount",
+                "PCIeType",
+                "ReplayCount",
+                "ReplayRolloverCount",
+                "feCount",
+                "nonfeCount",
+                "AccumulatedGPUContextUtilizationDuration",
+                "AccumulatedSMUtilizationDuration",
+                "GlobalSoftwareViolationThrottleDuration",
+                "HardwareViolationThrottleDuration",
+                "PCIeRXBytes",
+                "PCIeTXBytes",
+                "PowerLimitThrottleDuration",
+                "ThermalLimitThrottleDuration",
+                "ThrottleReason"
+            ]
+        },
+        {
+            "Namespace": "ProcessorGPMMetrics",
+            "ObjectpathKeywords": "accelerator",
+            "PropertyList": [
+                "DMMAUtilizationPercent",
+                "FP16ActivityPercent",
+                "FP32ActivityPercent",
+                "FP64ActivityPercent",
+                "GraphicsEngineActivityPercent",
+                "HMMAUtilizationPercent",
+                "IMMAUtilizationPercent",
+                "IntegerActivityUtilizationPercent",
+                "NVDecInstanceUtilizationPercent",
+                "NVDecUtilizationPercent",
+                "NVJpgInstanceUtilizationPercent",
+                "NVJpgUtilizationPercent",
+                "NVOfaUtilizationPercent",
+                "PCIeRawRxBandwidthGbps",
+                "PCIeRawTxBandwidthGbps",
+                "SMActivityPercent",
+                "SMOccupancyPercent",
+                "TensorCoreActivityPercent",
+                "NVLinkRawTxBandwidthGbps",
+                "NVLinkRawRxBandwidthGbps",
+                "NVLinkDataTxBandwidthGbps",
+                "NVLinkDataRxBandwidthGbps"
+            ]
+        },
+        {
+            "Namespace": "ProcessorPortMetrics",
+            "ObjectpathKeywords": "accelerator/Ports",
+            "PropertyList": [
+                "CurrentSpeed",
+                "DataCRCCount",
+                "FlitCRCCount",
+                "RXBytes",
+                "RXNoProtocolBytes",
+                "RecoveryCount",
+                "ReplayErrorsCount",
+                "RuntimeError",
+                "TXBytes",
+                "TXNoProtocolBytes",
+                "TrainingError",
+                "MaxSpeed",
+                "TXWidth",
+                "RXWidth",
+                "LinkStatus"
+            ]
+        },
+        {
+            "Namespace": "ProcessorPortGPMMetrics",
+            "ObjectpathKeywords": "accelerator/Ports",
+            "PropertyList": [
+                "NVLinkDataRxBandwidthGbps",
+                "NVLinkDataTxBandwidthGbps",
+                "NVLinkRawRxBandwidthGbps",
+                "NVLinkRawTxBandwidthGbps"
+            ]
+        },
+        {
+            "Namespace": "CpuProcessorMetrics",
+            "ObjectpathKeywords": "sensors/utilization",
+            "PropertyList": [
+                "Value"
+            ]
+        },
+        {
+            "Namespace": "CpuProcessorMetrics",
+            "ObjectpathKeywords": "sensors/frequency",
+            "PropertyList": [
+                "Value"
+            ]
+        },
+        {
+            "Namespace": "CpuProcessorMetrics",
+            "ObjectpathKeywords": "sensors/voltage",
+            "PropertyList": [
+                "Value"
+            ]
+        },
+        {
+            "Namespace": "CpuProcessorMetrics",
+            "ObjectpathKeywords": "sensors/counter",
+            "PropertyList": [
+                "MemoryPageRetirementCount"
+            ]
+        },
+        {
+            "Namespace": "CpuProcessorMetrics",
+            "ObjectpathKeywords": "state",
+            "PropertyList": [
+                "Status",
+                "MemorySpareChannelPresence",
+                "LinkState"
+            ]
+        },
+        {
+            "Namespace": "CpuProcessorMetrics",
+            "ObjectpathKeywords": "state/Throttle",
+            "PropertyList": [
+                "Value"
+            ]
+        }
+    ]
+}

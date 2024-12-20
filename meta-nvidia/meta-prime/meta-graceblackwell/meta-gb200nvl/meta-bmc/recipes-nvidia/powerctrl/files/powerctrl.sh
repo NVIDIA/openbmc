@@ -113,6 +113,12 @@ power_on()
         exit 1
     fi
 
+    # NVME CPLDs can only be powered up when RUN_POWER_PG-I=1, so NVMe CPLD
+    # bindings must be done here to ensure that nvme FRUs/sensors/devices behind
+    # CPLD MUX devices can be probed before a power-state change is detected
+    # by FruDevice and EntityManager.
+    /usr/bin/nvme_cpld_probe.sh
+
     #
     # Write SYS_RST_IN_L-O to release system reset
     #
@@ -288,7 +294,7 @@ do_shutdown_request()
     echo 'Waiting for RUN_POWER_PG-I to go low'
     local gpival=1
     trycnt=1
-    until [[ $gpival -eq 0 || $trycnt -gt 120 ]]
+    until [[ $gpival -eq 0 || $trycnt -gt 240 ]]
     do
         gpival=`get_run_power_pg`
         echo "RUN_POWER_PG-I = $gpival"
@@ -300,8 +306,8 @@ do_shutdown_request()
     if [ $gpival -eq 0 ]; then
         echo "Graceful Shutdown Host Succeeded"
     else
-        echo "Graceful Shutdown Host Failed after 1 minute."
-        phosphor_log "SHDN_REQ_L-O: RUN_POWER_PG-I failed to deassert after 1 minute.  Graceful Shutdown Host Failed." $sevErr
+        echo "Graceful Shutdown Host Failed after 2 minutes."
+        phosphor_log "SHDN_REQ_L-O: RUN_POWER_PG-I failed to deassert after 2 minutes.  Graceful Shutdown Host Failed." $sevErr
 
         echo "Revert PowerState to actual chassis power state."
         # The power is good and passes Powering On stage, the actual chassis power status is "On"

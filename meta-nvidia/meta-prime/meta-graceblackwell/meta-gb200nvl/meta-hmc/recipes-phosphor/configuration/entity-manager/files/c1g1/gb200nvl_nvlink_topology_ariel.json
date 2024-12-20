@@ -1,0 +1,347 @@
+[
+  {
+    "Exposes": [
+      {
+        "Name": "GPU_0",
+        "Type": "NVLinkTopology",
+        "Count": 18,
+        "Topology": [
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_0",
+            "LogicalPortNumber": 1,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_0"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_1",
+            "LogicalPortNumber": 2,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_1"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_2",
+            "LogicalPortNumber": 3,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_2"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_3",
+            "LogicalPortNumber": 4,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_3"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_4",
+            "LogicalPortNumber": 5,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_4"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_5",
+            "LogicalPortNumber": 6,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_5"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_6",
+            "LogicalPortNumber": 7,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_6"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_7",
+            "LogicalPortNumber": 8,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_7"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_8",
+            "LogicalPortNumber": 9,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_8"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_9",
+            "LogicalPortNumber": 10,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_9"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_10",
+            "LogicalPortNumber": 11,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_10"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_11",
+            "LogicalPortNumber": 12,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_11"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_12",
+            "LogicalPortNumber": 13,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_12"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_13",
+            "LogicalPortNumber": 14,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_13"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_14",
+            "LogicalPortNumber": 15,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_14"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_15",
+            "LogicalPortNumber": 16,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_15"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_16",
+            "LogicalPortNumber": 17,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_16"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_17",
+            "LogicalPortNumber": 18,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_0/Ports/NVLink_17"
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "GPU_1",
+        "Type": "NVLinkTopology",
+        "Count": 18,
+        "Topology": [
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_0",
+            "LogicalPortNumber": 1,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_0"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_1",
+            "LogicalPortNumber": 2,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_1"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_2",
+            "LogicalPortNumber": 3,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_2"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_3",
+            "LogicalPortNumber": 4,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_3"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_4",
+            "LogicalPortNumber": 5,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_4"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_5",
+            "LogicalPortNumber": 6,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_5"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_6",
+            "LogicalPortNumber": 7,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_6"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_7",
+            "LogicalPortNumber": 8,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_7"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_8",
+            "LogicalPortNumber": 9,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_8"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_9",
+            "LogicalPortNumber": 10,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_9"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_10",
+            "LogicalPortNumber": 11,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_10"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_11",
+            "LogicalPortNumber": 12,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_11"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_12",
+            "LogicalPortNumber": 13,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_12"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_13",
+            "LogicalPortNumber": 14,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_13"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_14",
+            "LogicalPortNumber": 15,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_14"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_15",
+            "LogicalPortNumber": 16,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_15"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_16",
+            "LogicalPortNumber": 17,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_16"
+            ]
+          },
+          {
+            "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_17",
+            "LogicalPortNumber": 18,
+            "Associations": [
+              "associated_processor_ports",
+              "",
+              "/xyz/openbmc_project/inventory/system/accelerator/GPU_1/Ports/NVLink_17"
+            ]
+          }
+        ]
+      }
+    ],
+    "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?1GPU Board PC'})",
+    "Name": "GPU",
+    "Type": "LinkTopology"
+  }
+]

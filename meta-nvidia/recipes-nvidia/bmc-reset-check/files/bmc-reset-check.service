@@ -3,7 +3,7 @@ Description=Check for BMC reset
 After=xyz.openbmc_project.Logging.service
 
 [Service]
-Type=oneshot
+Type=forking
 ExecStart=/usr/bin/bmc_reset_check.sh
 
 [Install]

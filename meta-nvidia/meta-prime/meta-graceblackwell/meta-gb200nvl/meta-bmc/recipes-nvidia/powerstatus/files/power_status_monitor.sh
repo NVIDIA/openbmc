@@ -5,6 +5,9 @@ source /usr/bin/system_state_files.sh
 # Inherit Logging
 source /etc/default/nvidia_event_logging.sh
 
+# Inherit create_eeprom library
+source /usr/bin/create_eeprom_devices.sh
+
 # Get platform variables
 source /etc/default/platform_var.conf
 
@@ -160,9 +163,26 @@ while true; do
         # It causes an unexpected and unnecessary MCTP/GPU restart
         if [ "$on_edge" == "1" ]; then
             phosphor_log "Host Powered ON." $sevNot
-            /bin/bash /usr/bin/check_cpu_boot_status.sh
+            if systemctl is-active --quiet check_cpu_boot_status.service; then
+                systemctl restart --no-block check_cpu_boot_status.service
+            else
+                systemctl start --no-block check_cpu_boot_status.service
+            fi
         fi
 
+        # Bind WGI210AT I2C Mux
+        if [ ! -d "/sys/bus/i2c/drivers/pca954x/25-0070" ]; then
+            echo 25-0070 > /sys/bus/i2c/drivers/pca954x/bind
+        fi
+
+        # Create IPEX, HDD, QSFP, and 1G NIC FRU EEPROM devices
+        create_poweron_eeprom_devices
+
+        # Get the fan controllers out of standby mode
+        i2ctransfer -f -y 6 w2@0x20 0x00 0x00
+        i2ctransfer -f -y 6 w2@0x23 0x00 0x00
+        i2ctransfer -f -y 6 w2@0x2c 0x00 0x00
+        i2ctransfer -f -y 6 w2@0x2f 0x00 0x00
     else
         #
         # Write to these as quickly as possible
@@ -196,6 +216,19 @@ while true; do
             set_gpio "$pci_mux_sel_pin" 0
         fi
 
+        # Unbind WGI210AT I2C Mux
+        if [ -d "/sys/bus/i2c/drivers/pca954x/25-0070" ]; then
+            echo 25-0070 > /sys/bus/i2c/drivers/pca954x/unbind
+        fi
+
+        # Remove IPEX, HDD, QSFP, and 1G NIC FRU EEPROM devices
+        remove_poweron_eeprom_devices
+
+        # Set the fan controllers to standby mode (this gets their PWMs to 0 while the fans aren't powered)
+        i2ctransfer -f -y 6 w2@0x20 0x00 0xa0
+        i2ctransfer -f -y 6 w2@0x23 0x00 0xa0
+        i2ctransfer -f -y 6 w2@0x2c 0x00 0xa0
+        i2ctransfer -f -y 6 w2@0x2f 0x00 0xa0
     fi
 
     # Wait for next transition

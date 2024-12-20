@@ -30,45 +30,43 @@ cleanup_file="/usr/bin/cleanup_vme.sh"
 file_name="/tmp/vmeplayer_${2}.vme"
 
 # Find the CPLD descriptor to perform an update
-if [[ "$3" == *"vme0"*  ]]; then
-    #Allow VME0 updater to start
+wait_for_jtag_busy_to_stop() {
+    local timeout=120  # 2 minutes
+    local interval=5   # Check every 5 seconds
+    local elapsed=0
+
+    while [[ "$(jtag_busy)" == "1" ]]; do
+        if [[ $elapsed -ge $timeout ]]; then
+            echo "Timeout, couldn't update $1"
+            exit 1
+        fi
+        echo "Waiting for $1 to finish..."
+        sleep $interval
+        ((elapsed += interval))
+    done
+}
+
+if [[ "$3" == *"vme0"* ]]; then
+    # Wait if VME1 is still running
+    wait_for_jtag_busy_to_stop "vme1"
+
+    # Allow VME0 updater to start
     systemctl start vme-jtag-busy.target
 
 elif [[ "$3" == *"vme1"* ]]; then
     # Safety - prevent race
-    sleep 2;
-    busy_stat=`jtag_busy`
-    if [[ "$busy_stat" == "1" ]]; then
-        #Allow 60s for vme0 to finish
-        echo " Waiting for vme0 to finish.."
-        sleep 60;
-    else
-        break
-    fi
+    sleep 20
 
-    # 12 * 5s = 60s timeout
-    retry=12 
-    for i in $(seq 1 $retry); do
-        busy_stat=`jtag_busy`
-        if [[ "$busy_stat" == "1" ]]; then
-            #Allow 60s for vme0 to finish
-            echo " Waiting for vme0 to finish.."
-            sleep 5;
-        else
-            break
-        fi
-    done
+    # Wait if VME0 is still running
+    wait_for_jtag_busy_to_stop "vme0"
 
-    #Timeout
-    if [[ "$busy_stat" == "1" ]]; then
-        echo "Timeout, couldn't update $3"
-        exit 1
-    fi
-else 
+    # Allow VME1 updater to start
+    systemctl start vme-jtag-busy.target
+
+else
     echo "VME descriptor type unknown"
     exit 1
 fi
-
 
 #strip 4K of signature
 tail -c +4097 $1 > "$file_name"

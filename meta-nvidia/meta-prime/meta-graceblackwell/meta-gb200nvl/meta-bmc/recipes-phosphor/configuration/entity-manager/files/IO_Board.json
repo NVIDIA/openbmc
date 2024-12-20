@@ -4,8 +4,8 @@
             {
                 "Address": "0x1f",
                 "Bus": 16,
-                "Name": "IOB_0_CX7_0_Local_Temp_0",
-                "Name1": "IOB_0_CX7_0_Temp_0",
+                "Name": "IO_Board_0_CX7_0_Local_Temp_0",
+                "Name1": "IO_Board_0_CX7_0_Temp_0",
                 "Labels": [
                     "temp2"
                 ],
@@ -38,8 +38,8 @@
             {
                 "Address": "0x1f",
                 "Bus": 18,
-                "Name": "IOB_0_CX7_1_Local_Temp_0",
-                "Name1": "IOB_0_CX7_1_Temp_0",
+                "Name": "IO_Board_0_CX7_1_Local_Temp_0",
+                "Name1": "IO_Board_0_CX7_1_Temp_0",
                 "Labels": [
                     "temp2"
                 ],
@@ -70,68 +70,68 @@
                 "Type": "TMP421"
             },
             {
-                "Name": "IOB_0_CX7_0",
+                "Name": "IO_Board_0_CX7_0",
                 "Type": "I2CDeviceAssociation",
                 "Bus": 16,
                 "Address": 50
             },
             {
-                "Name": "IOB_0_CX7_0_Temp",
+                "Name": "IO_Board_0_CX7_0_Temp",
                 "Type": "SensorAuxName",
                 "SensorId": 1,
                 "Bus": 16,
                 "Address": 50,
-                "AuxNames": ["IOB_0_CX7_0_Temp"]
+                "AuxNames": ["IO_Board_0_CX7_0_Temp"]
             },
             {
-                "Name": "IOB_0_CX7_0_Port_0_Temp",
+                "Name": "IO_Board_0_CX7_0_Port_0_Temp",
                 "Type": "SensorAuxName",
                 "SensorId": 8,
                 "Bus": 16,
                 "Address": 50,
-                "AuxNames": ["IOB_0_CX7_0_Port_0_Temp"]
+                "AuxNames": ["IO_Board_0_CX7_0_Port_0_Temp"]
             },
             {
-                "Name": "IOB_0_CX7_0_Port_0_State",
+                "Name": "IO_Board_0_CX7_0_Port_0_State",
                 "Type": "SensorAuxName",
                 "SensorId": 4,
                 "Bus": 16,
                 "Address": 50,
-                "AuxNames": ["IOB_0_CX7_0_Port_0_State"]
+                "AuxNames": ["IO_Board_0_CX7_0_Port_0_State"]
             },
             {
-                "Name": "IOB_0_CX7_1",
+                "Name": "IO_Board_0_CX7_1",
                 "Type": "I2CDeviceAssociation",
                 "Bus": 18,
                 "Address": 50
             },
             {
-                "Name": "IOB_0_CX7_1_Temp",
+                "Name": "IO_Board_0_CX7_1_Temp",
                 "Type": "SensorAuxName",
                 "SensorId": 1,
                 "Bus": 18,
                 "Address": 50,
-                "AuxNames": ["IOB_0_CX7_1_Temp"]
+                "AuxNames": ["IO_Board_0_CX7_1_Temp"]
             },
             {
-                "Name": "IOB_0_CX7_1_Port_0_Temp",
+                "Name": "IO_Board_0_CX7_1_Port_0_Temp",
                 "Type": "SensorAuxName",
                 "SensorId": 8,
                 "Bus": 18,
                 "Address": 50,
-                "AuxNames": ["IOB_0_CX7_1_Port_0_Temp"]
+                "AuxNames": ["IO_Board_0_CX7_1_Port_0_Temp"]
             },
             {
-                "Name": "IOB_0_CX7_1_Port_0_State",
+                "Name": "IO_Board_0_CX7_1_Port_0_State",
                 "Type": "SensorAuxName",
                 "SensorId": 4,
                 "Bus": 18,
                 "Address": 50,
-                "AuxNames": ["IOB_0_CX7_1_Port_0_State"]
+                "AuxNames": ["IO_Board_0_CX7_1_Port_0_State"]
             }
         ],
         "Name": "IO_Board_0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': '.?P4768.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80})",
         "Type": "Board",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Manufacturer": "$BOARD_MANUFACTURER",
@@ -151,11 +151,63 @@
         "xyz.openbmc_project.Inventory.Item.NetworkInterface": {},
         "xyz.openbmc_project.Inventory.Decorator.Instance": {
             "InstanceNumber": 1
+        },
+        "xyz.openbmc_project.Association.Definitions": {
+            "Associations": [
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/IO_Board_0_Board_FRU_Assembly0"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/IO_Board_0_Product_FRU_Assembly1"
+                ]
+            ]
         }
     },
     {
-        "Name": "IOB_0_CX7_0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': '.?P4768.?'})",
+        "Name": "IO_Board_0 Board FRU Assembly0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+            "BuildDate": "$BOARD_MANUFACTURE_DATE",
+            "Manufacturer": "$BOARD_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "IO_Board_0 Product FRU Assembly1",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$PRODUCT_PRODUCT_NAME",
+            "PartNumber": "$PRODUCT_PART_NUMBER",
+            "SerialNumber": "$PRODUCT_SERIAL_NUMBER",
+            "Manufacturer": "$PRODUCT_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Revision": {
+            "Version": "$PRODUCT_VERSION"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "IO_Board_0_CX7_0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80})",
         "Type": "NetworkAdapter",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
             "Bus": 16,
@@ -185,8 +237,8 @@
         "xyz.openbmc_project.Inventory.Item.NetworkInterface": {}
     },
     {
-        "Name": "IOB_0_CX7_1",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': '.?P4768.?'})",
+        "Name": "IO_Board_0_CX7_1",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80})",
         "Type": "NetworkAdapter",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
             "Bus": 18,
@@ -220,8 +272,8 @@
             {
                 "Address": "0x1f",
                 "Bus": 28,
-                "Name": "IOB_1_CX7_0_Local_Temp_0",
-                "Name1": "IOB_1_CX7_0_Temp_0",
+                "Name": "IO_Board_1_CX7_0_Local_Temp_0",
+                "Name1": "IO_Board_1_CX7_0_Temp_0",
                 "Labels": [
                     "temp2"
                 ],
@@ -254,8 +306,8 @@
             {
                 "Address": "0x1f",
                 "Bus": 30,
-                "Name": "IOB_1_CX7_1_Local_Temp_0",
-                "Name1": "IOB_1_CX7_1_Temp_0",
+                "Name": "IO_Board_1_CX7_1_Local_Temp_0",
+                "Name1": "IO_Board_1_CX7_1_Temp_0",
                 "Labels": [
                     "temp2"
                 ],
@@ -286,56 +338,68 @@
                 "Type": "TMP421"
             },
             {
-                "Name": "IOB_1_CX7_0",
+                "Name": "IO_Board_1_CX7_0",
                 "Type": "I2CDeviceAssociation",
                 "Bus": 28,
                 "Address": 50
             },
             {
-                "Name": "IOB_1_CX7_0_Temp",
+                "Name": "IO_Board_1_CX7_0_Temp",
                 "Type": "SensorAuxName",
                 "SensorId": 1,
-                "AuxNames": ["IOB_1_CX7_0_Temp"]
+                "Bus": 28,
+                "Address": 50,
+                "AuxNames": ["IO_Board_1_CX7_0_Temp"]
             },
             {
-                "Name": "IOB_1_Port_0_Temp",
+                "Name": "IO_Board_1_CX7_0_Port_0_Temp",
                 "Type": "SensorAuxName",
                 "SensorId": 8,
-                "AuxNames": ["IOB_1_Port_0_Temp"]
+                "Bus": 28,
+                "Address": 50,
+                "AuxNames": ["IO_Board_1_CX7_0_Port_0_Temp"]
             },
             {
-                "Name": "IOB_1_CX7_0_Port_0_State",
+                "Name": "IO_Board_1_CX7_0_Port_0_State",
                 "Type": "SensorAuxName",
                 "SensorId": 4,
-                "AuxNames": ["IOB_1_CX7_0_Port_0_State"]
+                "Bus": 28,
+                "Address": 50,
+                "AuxNames": ["IO_Board_1_CX7_0_Port_0_State"]
             },
             {
-                "Name": "IOB_1_CX7_1",
+                "Name": "IO_Board_1_CX7_1",
                 "Type": "I2CDeviceAssociation",
                 "Bus": 30,
                 "Address": 50
             },
             {
-                "Name": "IOB_1_CX7_1_Temp",
+                "Name": "IO_Board_1_CX7_1_Temp",
                 "Type": "SensorAuxName",
                 "SensorId": 1,
-                "AuxNames": ["IOB_1_CX7_1_Temp"]
+                "Bus": 30,
+                "Address": 50,
+                "AuxNames": ["IO_Board_1_CX7_1_Temp"]
             },
             {
-                "Name": "IOB_1_CX7_1_Port_0_Temp",
+                "Name": "IO_Board_1_CX7_1_Port_0_Temp",
                 "Type": "SensorAuxName",
                 "SensorId": 8,
-                "AuxNames": ["IOB_1_CX7_1_Port_0_Temp"]
+                "Bus": 30,
+                "Address": 50,
+                "AuxNames": ["IO_Board_1_CX7_1_Port_0_Temp"]
             },
             {
-                "Name": "IOB_1_CX7_1_Port_0_State",
+                "Name": "IO_Board_1_CX7_1_Port_0_State",
                 "Type": "SensorAuxName",
                 "SensorId": 4,
-                "AuxNames": ["IOB_1_CX7_1_Port_0_State"]
+                "Bus": 30,
+                "Address": 50,
+                "AuxNames": ["IO_Board_1_CX7_1_Port_0_State"]
             }
         ],
         "Name": "IO_Board_1",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': '.?P4768.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80})",
         "Type": "Board",
         "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Baseboard_0",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
@@ -356,11 +420,63 @@
         "xyz.openbmc_project.Inventory.Item.NetworkInterface": {},
         "xyz.openbmc_project.Inventory.Decorator.Instance": {
             "InstanceNumber": 1
+        },
+        "xyz.openbmc_project.Association.Definitions": {
+            "Associations": [
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/IO_Board_1_Board_FRU_Assembly0"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/IO_Board_1_Product_FRU_Assembly1"
+                ]
+            ]
         }
     },
     {
-        "Name": "IOB_1_CX7_0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': '.?P4768.?'})",
+        "Name": "IO_Board_1 Board FRU Assembly0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+            "BuildDate": "$BOARD_MANUFACTURE_DATE",
+            "Manufacturer": "$BOARD_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "IO_Board_1 Product FRU Assembly1",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$PRODUCT_PRODUCT_NAME",
+            "PartNumber": "$PRODUCT_PART_NUMBER",
+            "SerialNumber": "$PRODUCT_SERIAL_NUMBER",
+            "Manufacturer": "$PRODUCT_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Revision": {
+            "Version": "$PRODUCT_VERSION"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "IO_Board_1_CX7_0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80})",
         "Type": "NetworkAdapter",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
             "Bus": 28,
@@ -390,8 +506,8 @@
         "xyz.openbmc_project.Inventory.Item.NetworkInterface": {}
     },
     {
-        "Name": "IOB_1_CX7_1",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': '.?P4768.?'})",
+        "Name": "IO_Board_1_CX7_1",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80})",
         "Type": "NetworkAdapter",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
             "Bus": 30,

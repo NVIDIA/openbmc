@@ -41,16 +41,16 @@ fw_setenv ${ENV_ETH} "${MAC_ADDR}"
 
 if fw_setenv ${ENV_ETH} "${MAC_ADDR}";
 then
-    echo "WARNING: Setting ethaddr gives exit code $(echo "$?")"
+    echo "WARNING: Setting ethaddr to u-boot env, exit code $(echo "$?")"
 fi
 
-# Request to restart the service
-ifconfig ${ETHERNET_INTERFACE} down
-if ! ifconfig ${ETHERNET_INTERFACE} hw ether "${MAC_ADDR}";
+# Request to systemd-networkd for MAC assignment
+if ! busctl set-property xyz.openbmc_project.Network \
+/xyz/openbmc_project/network/eth0 xyz.openbmc_project.Network.MACAddress \
+MACAddress s "${MAC_ADDR}"
 then
     phosphor_log "ERROR: Can not update MAC ADDR to ${ETHERNET_INTERFACE}" $sevErr
 	exit 1
 fi
-ifconfig ${ETHERNET_INTERFACE} up
 
 echo "Successfully updated the MAC address ${MAC_ADDR} to ${ENV_ETH} and ${ETHERNET_INTERFACE}"

@@ -18,11 +18,12 @@ DEPENDS += "nlohmann-json"
 DEPENDS += "cli11"
 DEPENDS += "libmctp"
 DEPENDS += "nvidia-tal"
+DEPENDS += "googletest"
 
 #EXTRA_OEMESON = "-Dtests=disabled"
 
 SRC_URI = "git://github.com/NVIDIA/nsmd;protocol=https;branch=develop"
-SRCREV = "48c244dd1f48538276306f91f036940d234acdad"
+SRCREV = "47f08c48240d20e5215b43384ca882463b8f8b4a"
 S = "${WORKDIR}/git"
 
 SYSTEMD_SERVICE:${PN} = "nsmd.service"

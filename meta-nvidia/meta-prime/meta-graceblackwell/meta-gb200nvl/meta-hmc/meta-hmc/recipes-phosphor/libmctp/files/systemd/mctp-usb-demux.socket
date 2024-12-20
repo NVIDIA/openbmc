@@ -1,0 +1,15 @@
+[Unit]
+Description=MCTP USB 1-1 demux Unix domain socket
+
+[Socket]
+# lsusb -tv
+# /:  Bus 001.Port 001: Dev 001, Class=root_hub, Driver=ehci-platform/1p, 480M
+#     ID 1d6b:0002
+#    |__ Port 001: Dev 002, If 0, Class=[unknown], Driver=usbfs, 480M
+#        ID 0955:ffff
+# bus id = 1, port num = 1, socket name will be mctp-usb-mux-<busid>-<port1>-<port2>...
+ListenSequentialPacket=@mctp-usb-mux-1-1
+Accept=no
+
+[Install]
+WantedBy=sockets.target

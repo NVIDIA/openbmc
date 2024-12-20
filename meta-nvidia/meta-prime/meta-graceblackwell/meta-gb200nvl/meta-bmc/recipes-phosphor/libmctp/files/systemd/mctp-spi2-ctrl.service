@@ -6,6 +6,7 @@ PartOf=hmc-recovery.target
 
 [Service]
 Restart=always
+Environment=SYSLOG_IDENTIFIER=mctp-spi2-ctrl
 ExecStart=/usr/bin/mctp-spi-ctrl -t 6 -m 1 -d 20 -v 0 -f /usr/share/mctp/mctp_cfg_spi2.json
 SyslogIdentifier=mctp-spi2-ctrl
 

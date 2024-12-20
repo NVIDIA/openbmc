@@ -28,6 +28,60 @@
         },
         "xyz.openbmc_project.Inventory.Item.Chassis": {
             "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        },
+        "xyz.openbmc_project.Association.Definitions": {
+            "Associations": [
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/CBC_0_Chassis_FRU_Assembly0"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/CBC_0_Board_FRU_Assembly1"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/CBC_0_Product_FRU_Assembly2"
+                ]
+            ]
+        }
+    },
+    {
+        "Name": "CBC_0 Chassis FRU Assembly0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 84, 'BOARD_PRODUCT_NAME': '.?Cartridge.?|.?CBC.?', 'BOARD_MANUFACTURER': 'Nvidia|NVIDIA'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "PartNumber": "$CHASSIS_PART_NUMBER",
+            "SerialNumber": "$CHASSIS_SERIAL_NUMBER"
+        }
+    },
+    {
+        "Name": "CBC_0 Board FRU Assembly1",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 84, 'BOARD_PRODUCT_NAME': '.?Cartridge.?|.?CBC.?', 'BOARD_MANUFACTURER': 'Nvidia|NVIDIA'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+            "BuildDate": "$BOARD_MANUFACTURE_DATE",
+            "Manufacturer": "$BOARD_MANUFACTURER"
+        }
+    },
+    {
+        "Name": "CBC_0 Product FRU Assembly2",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 84, 'BOARD_PRODUCT_NAME': '.?Cartridge.?|.?CBC.?', 'BOARD_MANUFACTURER': 'Nvidia|NVIDIA'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$PRODUCT_PRODUCT_NAME",
+            "PartNumber": "$PRODUCT_PART_NUMBER",
+            "SerialNumber": "$PRODUCT_SERIAL_NUMBER",
+            "Manufacturer": "$PRODUCT_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Revision": {
+            "Version": "$PRODUCT_VERSION"
         }
     },
     {
@@ -59,6 +113,60 @@
         },
         "xyz.openbmc_project.Inventory.Item.Chassis": {
             "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        },
+        "xyz.openbmc_project.Association.Definitions": {
+            "Associations": [
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/CBC_1_Chassis_FRU_Assembly0"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/CBC_1_Board_FRU_Assembly1"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/CBC_1_Product_FRU_Assembly2"
+                ]
+            ]
+        }
+    },
+    {
+        "Name": "CBC_1 Chassis FRU Assembly0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 85, 'BOARD_PRODUCT_NAME': '.?Cartridge.?|.?CBC.?', 'BOARD_MANUFACTURER': 'Nvidia|NVIDIA'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "PartNumber": "$CHASSIS_PART_NUMBER",
+            "SerialNumber": "$CHASSIS_SERIAL_NUMBER"
+        }
+    },
+    {
+        "Name": "CBC_1 Board FRU Assembly1",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 85, 'BOARD_PRODUCT_NAME': '.?Cartridge.?|.?CBC.?', 'BOARD_MANUFACTURER': 'Nvidia|NVIDIA'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+            "BuildDate": "$BOARD_MANUFACTURE_DATE",
+            "Manufacturer": "$BOARD_MANUFACTURER"
+        }
+    },
+    {
+        "Name": "CBC_1 Product FRU Assembly2",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 85, 'BOARD_PRODUCT_NAME': '.?Cartridge.?|.?CBC.?', 'BOARD_MANUFACTURER': 'Nvidia|NVIDIA'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$PRODUCT_PRODUCT_NAME",
+            "PartNumber": "$PRODUCT_PART_NUMBER",
+            "SerialNumber": "$PRODUCT_SERIAL_NUMBER",
+            "Manufacturer": "$PRODUCT_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Revision": {
+            "Version": "$PRODUCT_VERSION"
         }
     },
     {
@@ -90,6 +198,60 @@
         },
         "xyz.openbmc_project.Inventory.Item.Chassis": {
             "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        },
+        "xyz.openbmc_project.Association.Definitions": {
+            "Associations": [
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/CBC_2_Chassis_FRU_Assembly0"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/CBC_2_Board_FRU_Assembly1"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/CBC_2_Product_FRU_Assembly2"
+                ]
+            ]
+        }
+    },
+    {
+        "Name": "CBC_2 Chassis FRU Assembly0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 84, 'BOARD_PRODUCT_NAME': '.?Cartridge.?|.?CBC.?', 'BOARD_MANUFACTURER': 'Nvidia|NVIDIA'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "PartNumber": "$CHASSIS_PART_NUMBER",
+            "SerialNumber": "$CHASSIS_SERIAL_NUMBER"
+        }
+    },
+    {
+        "Name": "CBC_2 Board FRU Assembly1",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 84, 'BOARD_PRODUCT_NAME': '.?Cartridge.?|.?CBC.?', 'BOARD_MANUFACTURER': 'Nvidia|NVIDIA'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+            "BuildDate": "$BOARD_MANUFACTURE_DATE",
+            "Manufacturer": "$BOARD_MANUFACTURER"
+        }
+    },
+    {
+        "Name": "CBC_2 Product FRU Assembly2",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 84, 'BOARD_PRODUCT_NAME': '.?Cartridge.?|.?CBC.?', 'BOARD_MANUFACTURER': 'Nvidia|NVIDIA'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$PRODUCT_PRODUCT_NAME",
+            "PartNumber": "$PRODUCT_PART_NUMBER",
+            "SerialNumber": "$PRODUCT_SERIAL_NUMBER",
+            "Manufacturer": "$PRODUCT_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Revision": {
+            "Version": "$PRODUCT_VERSION"
         }
     },
     {
@@ -121,6 +283,60 @@
         },
         "xyz.openbmc_project.Inventory.Item.Chassis": {
             "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        },
+        "xyz.openbmc_project.Association.Definitions": {
+            "Associations": [
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/CBC_3_Chassis_FRU_Assembly0"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/CBC_3_Board_FRU_Assembly1"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/CBC_3_Product_FRU_Assembly2"
+                ]
+            ]
+        }
+    },
+    {
+        "Name": "CBC_3 Chassis FRU Assembly0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 85, 'BOARD_PRODUCT_NAME': '.?Cartridge.?|.?CBC.?', 'BOARD_MANUFACTURER': 'Nvidia|NVIDIA'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "PartNumber": "$CHASSIS_PART_NUMBER",
+            "SerialNumber": "$CHASSIS_SERIAL_NUMBER"
+        }
+    },
+    {
+        "Name": "CBC_3 Board FRU Assembly1",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 85, 'BOARD_PRODUCT_NAME': '.?Cartridge.?|.?CBC.?', 'BOARD_MANUFACTURER': 'Nvidia|NVIDIA'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+            "BuildDate": "$BOARD_MANUFACTURE_DATE",
+            "Manufacturer": "$BOARD_MANUFACTURER"
+        }
+    },
+    {
+        "Name": "CBC_3 Product FRU Assembly2",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 85, 'BOARD_PRODUCT_NAME': '.?Cartridge.?|.?CBC.?', 'BOARD_MANUFACTURER': 'Nvidia|NVIDIA'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$PRODUCT_PRODUCT_NAME",
+            "PartNumber": "$PRODUCT_PART_NUMBER",
+            "SerialNumber": "$PRODUCT_SERIAL_NUMBER",
+            "Manufacturer": "$PRODUCT_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Revision": {
+            "Version": "$PRODUCT_VERSION"
         }
     }
 ]

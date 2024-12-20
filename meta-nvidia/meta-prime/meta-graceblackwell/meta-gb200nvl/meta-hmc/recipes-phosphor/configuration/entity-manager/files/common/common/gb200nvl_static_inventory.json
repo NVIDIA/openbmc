@@ -1,0 +1,129 @@
+[
+  {
+    "Exposes": [],
+    "Name": "NSM_DEV_FPGA_0",
+    "Probe": "TRUE",
+    "Type": "NSM_Configs",
+    "xyz.openbmc_project.NsmDevice": {
+      "DEVICE_TYPE": 3,
+      "INSTANCE_NUMBER": 0,
+      "UUID": "STATIC:3:0"
+    }
+  },
+  {
+    "Exposes": [],
+    "Name": "NSM_DEV_FPGA_1",
+    "Probe": "TRUE",
+    "Type": "NSM_Configs",
+    "xyz.openbmc_project.NsmDevice": {
+      "DEVICE_TYPE": 3,
+      "INSTANCE_NUMBER": 1,
+      "UUID": "STATIC:3:1"
+    }
+  },
+  {
+    "Exposes": [],
+    "Name": "NSM_ERoT_FPGA_0",
+    "Probe": "TRUE",
+    "Type": "NSM_Configs",
+    "xyz.openbmc_project.NsmDevice": {
+      "DEVICE_TYPE": 4,
+      "INSTANCE_NUMBER": 1,
+      "UUID": "STATIC:4:1"
+    }
+  },
+  {
+    "Exposes": [],
+    "Name": "NSM_ERoT_FPGA_1",
+    "Probe": "TRUE",
+    "Type": "NSM_Configs",
+    "xyz.openbmc_project.NsmDevice": {
+      "DEVICE_TYPE": 4,
+      "INSTANCE_NUMBER": 2,
+      "UUID": "STATIC:4:2"
+    }
+  },
+  {
+    "Exposes": [],
+    "Name": "NSM_ERoT_BMC_0",
+    "Probe": "TRUE",
+    "Type": "NSM_Configs",
+    "xyz.openbmc_project.NsmDevice": {
+      "DEVICE_TYPE": 4,
+      "INSTANCE_NUMBER": 0,
+      "UUID": "STATIC:4:0"
+    }
+  },
+  {
+    "Exposes": [
+      {
+        "Name": "HGX_ProcessorModule_Management_0",
+        "GpioLine": "MOD1_B2B_CABLE_PRESENT_L-I",
+        "Polarity": "active_low",
+        "Type": "GPIOCableSensing"
+      }
+    ],
+    "Name": "HGX_ProcessorModule_Management_0",
+    "Probe": "TRUE",
+    "Type": "Cable",
+    "xyz.openbmc_project.Inventory.Decorator.Asset": {
+      "PartNumber": "755-24975-0029-000"
+    },
+    "xyz.openbmc_project.Association.Definitions": {
+      "Associations": [
+        [
+          "connecting",
+          "connected_to",
+          "/xyz/openbmc_project/inventory/system/board/HGX_ProcessorModule_0"
+        ],
+        [
+          "connecting",
+          "connected_to",
+          "/xyz/openbmc_project/inventory/system/board/HGX_ProcessorModule_1"
+        ]
+      ]
+    },
+    "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+      "LocationCode": "Management_Cable_0"
+    },
+    "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+      "LocationContext": "HGX_Chassis_0/ProcessorModule_0"
+    }
+  },
+  {
+    "Exposes": [
+      {
+        "Name": "HGX_ProcessorModule_Clink_0",
+        "GpioLine": "MOD1_CLINK_CABLE_PRESENT_L-I",
+        "Polarity": "active_low",
+        "Type": "GPIOCableSensing"
+      }
+    ],
+    "Name": "HGX_ProcessorModule_Clink_0",
+    "Probe": "TRUE",
+    "Type": "Cable",
+    "xyz.openbmc_project.Inventory.Decorator.Asset": {
+      "PartNumber": "755-24975-0026-000"
+    },
+    "xyz.openbmc_project.Association.Definitions": {
+      "Associations": [
+        [
+          "connecting",
+          "connected_to",
+          "/xyz/openbmc_project/inventory/system/board/HGX_ProcessorModule_0"
+        ],
+        [
+          "connecting",
+          "connected_to",
+          "/xyz/openbmc_project/inventory/system/board/HGX_ProcessorModule_1"
+        ]
+      ]
+    },
+    "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+      "LocationCode": "Clink_Cable_0"
+    },
+    "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+      "LocationContext": "HGX_Chassis_0/ProcessorModule_0"
+    }
+  }
+]

@@ -7,6 +7,7 @@ PartOf=fpga0-erot-recovery.target
 [Service]
 Restart=always
 RestartSec=10
+Environment=SYSLOG_IDENTIFIER=mctp-i2c2-ctrl
 ExecStart=/usr/bin/mctp-ctrl -m 1 -t 1 -f /usr/share/mctp/mctp_cfg_smbus2.json -n 2 -d 1 -v 1
 SyslogIdentifier=mctp-i2c2-ctrl
 

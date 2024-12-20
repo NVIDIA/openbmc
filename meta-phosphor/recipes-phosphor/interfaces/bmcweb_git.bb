@@ -32,13 +32,13 @@ PACKAGECONFIG ??= "mutual-tls-auth"
 PACKAGECONFIG[insecure-redfish-expand]="-Dinsecure-enable-redfish-query=enabled"
 PACKAGECONFIG[mutual-tls-auth]="-Dmutual-tls-auth=enabled,-Dmutual-tls-auth=disabled"
 
-MUTUAL_TLS_PARSING="username"
+MUTUAL_TLS_PARSING="UserPrincipalName"
 
 EXTRA_OEMESON = " \
     --buildtype=minsize \
     -Dtests=${@bb.utils.contains('PTEST_ENABLED', '1', 'enabled', 'disabled', d)} \
     ${@bb.utils.contains('PACKAGECONFIG', 'mutual-tls-auth', \
-        '-Dmutual-tls-common-name-parsing=' + d.getVar('MUTUAL_TLS_PARSING', True), \
+        '-Dmutual-tls-common-name-parsing-default=' + d.getVar('MUTUAL_TLS_PARSING', True), \
         '', d)} \
 "
 

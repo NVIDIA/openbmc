@@ -119,10 +119,24 @@ generate_otp_image() {
 }
 
 generate_uid() {
-	source="/dev/urandom"
+    source="/dev/urandom"
+    attempt=0
+    max_attempts=10
 
-	randpart="0x$(dd if=${source} bs=8 count=1 2>/dev/null | hexdump -e '/1 "%02x"')"
-	printf "0x%x" $(( $randpart | 0xf000000000000000 ))
+    while true; do
+        randpart="0x$(dd if=${source} bs=8 count=1 2>/dev/null | hexdump -e '/1 "%02x"')"
+        # Check if randpart contains non-hex characters
+        if [[ "$randpart" =~ ^0x[0-9a-fA-F]+$ ]]; then
+            printf "0x%x" $(( $randpart | 0xf000000000000000 ))
+            return
+        else
+            attempt=$((attempt + 1))
+            if [ "$attempt" -ge "$max_attempts" ]; then
+                echo "Failure: Non-hex characters detected in randpart after $max_attempts attempts."
+                return 1
+            fi
+        fi
+    done
 }
 
 generate_otp_files() {

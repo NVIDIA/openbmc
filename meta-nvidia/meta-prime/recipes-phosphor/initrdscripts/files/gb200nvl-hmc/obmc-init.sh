@@ -200,6 +200,14 @@ optbase=/run/initramfs/init-options-base
 urlfile=/run/initramfs/init-download-url
 update=/run/initramfs/update
 
+overlayfile=/init-options-overlay
+
+if [ -f "$overlayfile" ]; then
+	overlay_dirs="$(cat $overlayfile | tr -s '\n' ' ')"
+else
+	overlay_dirs=""
+fi
+
 if test -e /${optfile##*/}
 then
 	cp /${optfile##*/} $optfile
@@ -446,7 +454,20 @@ echo "unbind aspeed spi flash driver"
 
 mkdir -p $upper $work
 
-mount -t overlay -o lowerdir=$rodir,upperdir=$upper,workdir=$work cow /root
+if [ -n "$overlay_dirs" ]; then
+	mount --bind $rodir /root
+	for ovdir in $overlay_dirs; do
+        if [ -d "$rodir/$ovdir" ]; then
+			rm -rf "$work/$ovdir"
+            mkdir -p "$upper/$ovdir" "$work/$ovdir"
+            mount -t overlay -o noexec,nodev,nosuid,lowerdir=$rodir/$ovdir,upperdir=$upper/$ovdir,workdir=$work/$ovdir cow /root/$ovdir
+        else
+            echo "Warning $rodir/$ovdir doesn't exist for in overlay config"
+        fi
+	done
+else
+	mount -t overlay -o lowerdir=$rodir,upperdir=$upper,workdir=$work cow /root
+fi
 
 while ! chroot /root /bin/sh -c "test -x '$init' -a -s '$init'"
 do

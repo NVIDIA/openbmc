@@ -109,7 +109,11 @@ create_journal_link() {
            cleanUp_Journal_folder "$mount_point"
            ln -s -T "$mount_point"/journal-logs /var/log/journal
            journalctl --flush
-
+           mkdir -p "$mount_point"/journal-logs/previous-boot-logs
+           if [ -f "$mount_point/journal-logs/previous-boot-logs/previous_boot.log" ]; then
+                rm -rf "$mount_point/journal-logs/previous-boot-logs/previous_boot.log"
+           fi
+           journalctl -b -1 -n 2000 > "$mount_point"/journal-logs/previous-boot-logs/previous_boot.log
            return 0
        else
            # Mount point exists but doesn't have required filesystem, return error code 2

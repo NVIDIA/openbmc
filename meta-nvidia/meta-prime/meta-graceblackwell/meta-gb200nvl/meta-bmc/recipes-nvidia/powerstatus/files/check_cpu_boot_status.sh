@@ -45,7 +45,7 @@ fi
 # If FruDevice has data, wait 3s to make sure all frus are ready
 sleep 3
 
-cpu_info_board_list="P4975\|P5859"
+cpu_info_board_list="P4975\|P5859\|PG548"
 
 # Initialize CPU count and targets based on product name
 while read -r line; do

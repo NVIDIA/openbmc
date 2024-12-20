@@ -11,7 +11,9 @@ EXTRA_OEMESON:append = " \
 "
 
 EXTRA_OEMESON:append = " -Dmodule_num=1 \
+                         -Ddragon_chassis_cpld=enabled \
 "
+DEPENDS:append = " libgpiod "
 
 do_install:append() {
         install -D ${WORKDIR}/files/cpld_config.json ${D}${datadir}/${PN}/cpld_config.json

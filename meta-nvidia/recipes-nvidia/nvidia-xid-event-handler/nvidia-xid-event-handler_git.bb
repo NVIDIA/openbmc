@@ -17,7 +17,7 @@ DEPENDS += "systemd"
 # You could change the passphase to empty by 'ssh-keygen -p -f ~/.ssh/<your_gitlab_id_file>'
 # This issue will be solved when we upstream all codes to github.
 SRC_URI += "git://github.com/NVIDIA/nvidia-monitor-eventing;protocol=https;branch=develop"
-SRCREV = "f6bb2333f956a1913be99d2f35038bb0a3590f5e"
+SRCREV = "7a82b789415328fd93c094aba8d9a6cfb05b6c2f"
 S = "${WORKDIR}/git"
 
 SVC_NAME = "nvidia-xid-event-handler.service"

@@ -728,7 +728,7 @@ index 000000000000..0474d90ebe52
 +		.name = "pcf85053a",
 +		.of_match_table = of_match_ptr(dev_ids),
 +	},
-+	.probe_new = &pcf85053a_probe,
++	.probe = &pcf85053a_probe,
 +};
 +
 +module_i2c_driver(pcf85053a_driver);

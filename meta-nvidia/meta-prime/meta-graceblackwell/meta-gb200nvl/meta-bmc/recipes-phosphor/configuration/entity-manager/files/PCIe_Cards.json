@@ -2,37 +2,71 @@
     {
         "Exposes": [
             {
-                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME",
+                "Address": "0x1f",
+                "Bus": 14,
+                "Name": "NIC_0_Local_Temp_0",
+                "Name1": "BF3_Slot_$PCIE_LABEL_NIC_Temp_0",
+                "PowerState": "On",
+                "Labels": [
+                    "temp2"
+                ],
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 100.0,
+                        "Index": 2
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 98.0,
+                        "Index": 2
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 95.0,
+                        "Index": 2
+                    }
+                ],
+                "Type": "TMP421"
+            },
+            {
+                "Name": "BF3_Slot_$PCIE_LABEL",
                 "Type": "I2CDeviceAssociation",
                 "Bus": "$BUS",
                 "Address": "50"
             },
             {
-                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Temp",
+                "Name": "BF3_Slot_$PCIE_LABEL_Temp",
                 "Type": "SensorAuxName",
                 "SensorId": 1,
-                "AuxNames": ["Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Temp"]
+                "AuxNames": ["BF3_Slot_$PCIE_LABEL_Temp"]
             },
             {
-                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_0_Temp",
+                "Name": "BF3_Slot_$PCIE_LABEL_Port_0_Temp",
                 "Type": "SensorAuxName",
                 "SensorId": 8,
-                "AuxNames": ["Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_0_Temp"]
+                "AuxNames": ["BF3_Slot_$PCIE_LABEL_Port_0_Temp"]
             },
             {
-                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_1_Temp",
+                "Name": "BF3_Slot_$PCIE_LABEL_Port_1_Temp",
                 "Type": "SensorAuxName",
                 "SensorId": 9,
-                "AuxNames": ["Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_1_Temp"]
+                "AuxNames": ["BF3_Slot_$PCIE_LABEL_Port_1_Temp"]
             },
             {
-                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_0_State",
+                "Name": "BF3_Slot_$PCIE_LABEL_Port_0_State",
                 "Type": "SensorAuxName",
                 "SensorId": 4,
                 "AuxNames": ["Port_0"]
             },
             {
-                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_1_State",
+                "Name": "BF3_Slot_$PCIE_LABEL_Port_1_State",
                 "Type": "SensorAuxName",
                 "SensorId": 5,
                 "AuxNames": ["Port_1"]
@@ -119,37 +153,71 @@
     {
         "Exposes": [
             {
-                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME",
+                "Address": "0x1f",
+                "Bus": 15,
+                "Name": "NIC_1_Local_Temp_0",
+                "Name1": "BF3_Slot_$PCIE_LABEL_NIC_Temp_0",
+                "PowerState": "On",
+                "Labels": [
+                    "temp2"
+                ],
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 100.0,
+                        "Index": 2
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 98.0,
+                        "Index": 2
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 95.0,
+                        "Index": 2
+                    }
+                ],
+                "Type": "TMP421"
+            },
+            {
+                "Name": "BF3_Slot_$PCIE_LABEL",
                 "Type": "I2CDeviceAssociation",
                 "Bus": "$BUS",
                 "Address": "50"
             },
             {
-                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Temp",
+                "Name": "BF3_Slot_$PCIE_LABEL_Temp",
                 "Type": "SensorAuxName",
                 "SensorId": 1,
-                "AuxNames": ["Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Temp"]
+                "AuxNames": ["BF3_Slot_$PCIE_LABEL_Temp"]
             },
             {
-                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_0_Temp",
+                "Name": "BF3_Slot_$PCIE_LABEL_Port_0_Temp",
                 "Type": "SensorAuxName",
                 "SensorId": 8,
-                "AuxNames": ["Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_0_Temp"]
+                "AuxNames": ["BF3_Slot_$PCIE_LABEL_Port_0_Temp"]
             },
             {
-                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_1_Temp",
+                "Name": "BF3_Slot_$PCIE_LABEL_Port_1_Temp",
                 "Type": "SensorAuxName",
                 "SensorId": 9,
-                "AuxNames": ["Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_1_Temp"]
+                "AuxNames": ["BF3_Slot_$PCIE_LABEL_Port_1_Temp"]
             },
             {
-                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_0_State",
+                "Name": "BF3_Slot_$PCIE_LABEL_Port_0_State",
                 "Type": "SensorAuxName",
                 "SensorId": 4,
                 "AuxNames": ["Port_0"]
             },
             {
-                "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Port_1_State",
+                "Name": "BF3_Slot_$PCIE_LABEL_Port_1_State",
                 "Type": "SensorAuxName",
                 "SensorId": 5,
                 "AuxNames": ["Port_1"]

@@ -1,0 +1,26 @@
+[
+  {
+    "Exposes": [
+      {
+        "Name": "GPUMapping",
+        "Type": "NSM_GetInstanceIDByMctpUUID",
+        "MappingArray": [
+          "f72d6fb0-5675-11ed-9b6a-0242ac120002",
+          "f72d6fb2-5675-11ed-9b6a-0242ac120002"
+        ]
+      },
+      {
+        "Name": "ERoTMapping",
+        "Type": "NSM_GetInstanceIDByMctpUUID",
+        "MappingArray": [
+          "f72d6fa0-5675-11ed-9b6a-0242ac120002",
+          "f72d6f50-5675-11ed-9b6a-0242ac120002",
+          "f72d6f51-5675-11ed-9b6a-0242ac120002"
+        ]
+      }
+    ],
+    "Name": "Mapping",
+    "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?1GPU Board PC'})",
+    "Type": "NSM_Configs"
+  }
+]

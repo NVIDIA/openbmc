@@ -1,0 +1,8 @@
+[Unit]
+Description=NVIDIA FPGA1 Ready service
+
+[Service]
+Restart=no
+Type=simple
+ExecStart=/bin/sh -c 'fpga1_ready.sh ready'
+SyslogIdentifier=nvidia-fpga1-ready-service

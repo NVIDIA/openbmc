@@ -23,6 +23,16 @@ FILES:${PN} += " \
     ${sysconfdir}/udev/rules.d/90-bmc-host-net.rules \
 "
 
+inherit systemd
+inherit obmc-phosphor-systemd
+
+DEPENDS = "systemd"
+
+SYSTEMD_PACKAGES = "${PN}"
+SYSTEMD_SERVICE:${PN} = " \
+        ncsi-eth1-disable.service \
+        "
+
 do_install:append() {
     install -d ${D}${sysconfdir}/systemd/network
     install -m 0644 ${WORKDIR}/00-bmc-hmcusb0.network ${D}${sysconfdir}/systemd/network

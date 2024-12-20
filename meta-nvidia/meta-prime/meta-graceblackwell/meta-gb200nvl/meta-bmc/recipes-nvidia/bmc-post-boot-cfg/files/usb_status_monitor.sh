@@ -4,21 +4,19 @@ BMC_IP=172.31.13.241
 HMC_IP=172.31.13.251
 
 declare -i loop_delay=5
-hmcusb0_disconnected=false
 
 function wait_for_hmc_ready()
 {
     local gpioname="HMC_READY-I"
     local delay_secs=1
-    hmc_status=0
+    hmc_status=-1
     trycnt=1
-    until [[ $hmc_status -gt 0 ]]
+    until [[ $hmc_status -eq 0 ]]
     do
-        # TODO: The logic for checking hmc status might change in the future
-        hmc_status=$(busctl get-property com.Nvidia.FWStatus \
-        /xyz/openbmc_project/software/FW_RECOVERY_HGX_FW_BMC_0 \
-        xyz.openbmc_project.State.Decorator.Health Health | grep -c "xyz.openbmc_project.State.Decorator.Health.HealthType.OK")
-        if [ $hmc_status -eq 0 ]; then
+        # Check if /xyz/openbmc_project/software/FW_RECOVERY_HGX_FW_BMC_0 exist
+        # If yes, then HMC is in recovery mode
+        hmc_status=$(busctl tree com.Nvidia.FWStatus | grep -c "FW_RECOVERY_HGX_FW_BMC_0")
+        if [ $hmc_status -eq 1 ]; then
             sleep $delay_secs
         fi
 
@@ -30,17 +28,38 @@ function wait_for_hmc_ready()
     done
 }
 
-function update_hmcusb0_status()
+function wait_for_hmc_ping()
+{
+    local delay_secs=5
+    trycnt=1
+    max_retries=120
+    while true; do
+        # Ping HMC
+        ping -c 5 $HMC_IP > /dev/null
+        rc=$?
+        if [[ $rc -eq 0 ]]; then
+            echo "[INFO] HMC is responding to ping"
+            return 0
+        fi
+
+        # If HMC does not respond, log an error and exit with return code
+        if [ $trycnt -ge $max_retries ]; then
+            echo "[ERROR] HMC not responding to ping"
+            return 1
+        fi
+        ((trycnt++))
+        sleep $delay_secs
+    done
+}
+
+function check_hmcusb0_status()
 {
     usb_status=$(networkctl status hmcusb0 | grep 'Online state:' | sed 's/^[^:]*[:]//')
     if [[ $usb_status != *"online"* ]]; then
-        hmcusb0_disconnected=true
+        return 1
     fi
 
-    ping -c 3 $HMC_IP > /dev/null
-    if [[ $? != 0 ]]; then
-        hmcusb0_disconnected=true
-    fi
+    return 0
 }
 
 function rebind_usb_driver()
@@ -60,13 +79,19 @@ function rebind_usb_driver()
 
 ############################### main ##########################################
 while true; do
-    # init to false for each cycle
-    hmcusb0_disconnected=false
-    # Wait for HMC to signal ready
-    wait_for_hmc_ready
-    update_hmcusb0_status
-    if [ "$hmcusb0_disconnected" == "true" ]; then
+
+    check_hmcusb0_status
+    rc=$?
+    if [[ $rc -ne 0 ]]; then
+        # USB connection is down, attempt to recover
         rebind_usb_driver
+        wait_for_hmc_ping
+        ping_rc=$?
+        if [[ $ping_rc -eq 0 ]]; then
+            echo "[INFO] BMC/HMC USB Connection restored"
+        else
+            echo "[ERROR] Failed to restore BMC/HMC USB Connection"
+        fi
     fi
     sleep $loop_delay
 done

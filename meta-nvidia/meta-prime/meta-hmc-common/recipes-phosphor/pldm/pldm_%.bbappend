@@ -1,5 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
+EXTRA_OEMESON:append = " -Dlocal-eid-over-i2c=8 "
+
 SRC_URI:append = " file://pldm-mctp-pcie.conf \
                  "
 FILES:${PN}:append = " ${systemd_system_unitdir}/pldmd.service.d/* "

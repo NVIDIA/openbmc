@@ -2,6 +2,7 @@
 Name=usb0
 
 [Network]
+Address=172.31.13.251/24
 DHCP=false
 LinkLocalAddressing=false
 IPv6AcceptRA=false

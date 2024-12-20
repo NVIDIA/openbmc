@@ -16,17 +16,15 @@ S = "${WORKDIR}"
 SRC_URI = " file://nvme_lib.sh \
             file://nvme_cpld_probe.sh \
             file://nvme_cpld_remove.sh \
-            file://nvidia-nvmecpld-probe.service \
             file://nvidia-nvmecpld-remove.service \
           "
 
-SYSTEMD_SERVICE:${PN} = "nvidia-nvmecpld-probe.service nvidia-nvmecpld-remove.service "
+SYSTEMD_SERVICE:${PN} = "nvidia-nvmecpld-remove.service "
 
 do_install:append() {
     install -d ${D}/${bindir}
     install -m 0755 ${WORKDIR}/nvme_lib.sh ${D}/${bindir}/
     install -m 0755 ${WORKDIR}/nvme_cpld_probe.sh ${D}/${bindir}/
     install -m 0755 ${WORKDIR}/nvme_cpld_remove.sh ${D}/${bindir}/
-    install -m 0644 ${WORKDIR}/nvidia-nvmecpld-probe.service ${D}${base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/nvidia-nvmecpld-remove.service ${D}${base_libdir}/systemd/system/
 }

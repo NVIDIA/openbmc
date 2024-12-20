@@ -2,7 +2,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI = "git://github.com/NVIDIA/phosphor-bmc-code-mgmt;protocol=https;branch=develop"
 
-SRCREV = "7da210521f143cbe639a216b3114024225e6282d"
+SRCREV = "cdd15fc66429f1d0e54c7bafdd63bd25ba96a08e"
 
 EXTRA_OEMESON += " \
     -Dusb-code-update=disabled\

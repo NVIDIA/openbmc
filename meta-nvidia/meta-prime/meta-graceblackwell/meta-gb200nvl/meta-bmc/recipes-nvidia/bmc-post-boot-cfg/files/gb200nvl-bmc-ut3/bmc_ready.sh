@@ -17,6 +17,9 @@ source /usr/bin/multi_module_detection.sh
 # Get platform variables
 source /etc/default/platform_var.conf
 
+# Get NVME CPLD/FRU libraray
+source /usr/bin/nvme_lib.sh
+
 # Get file pointers to system state files:
 #     MANUAL_PCI_MUX_SEL_FILE
 source /usr/bin/system_state_files.sh
@@ -203,71 +206,109 @@ bind_i2c_muxes()
 
     # Module 0, I2C5 Mux @0x71
     # Creates virtual Buses 16-19
-    echo pca9546 0x71 > /sys/class/i2c-dev/i2c-5/device/new_device
-    rc=$?
-    if [[ $rc -ne 0 ]]; then
-        echo "[ERROR] Failed to bind IO Expander 5-0071 to pca9546 driver"
-    else
-        echo -2 > /sys/bus/i2c/drivers/pca954x/5-0071/idle_state
-        echo "IO Expander 5-0071 has been bound to /sys/bus/i2c/drivers/pca954x"
+    if [ ! -d  "/sys/bus/i2c/drivers/pca954x/5-0071" ]; then
+        echo 5-0071 > /sys/bus/i2c/drivers/pca954x/bind
+        rc=$?
+        if [[ $rc -ne 0 ]]; then
+            echo "[ERROR] Failed to bind IO Expander 5-0071 to pca9546 driver"
+        else
+            echo -2 > /sys/bus/i2c/drivers/pca954x/5-0071/idle_state
+            echo "IO Expander 5-0071 has been bound to /sys/bus/i2c/drivers/pca954x"
+        fi
     fi
     # Module 0, I2C5 Mux @0x72
     # Creates virtual Buses 20-23
-    echo pca9546 0x72 > /sys/class/i2c-dev/i2c-5/device/new_device
-    rc=$?
-    if [[ $rc -ne 0 ]]; then
-        echo "[ERROR] Failed to bind IO Expander 5-0072 to pca9546 driver"
-    else
-        echo -2 > /sys/bus/i2c/drivers/pca954x/5-0072/idle_state
-        echo "IO Expander 5-0072 has been bound to /sys/bus/i2c/drivers/pca954x"
+    if [ ! -d  "/sys/bus/i2c/drivers/pca954x/5-0072" ]; then
+        echo 5-0072 > /sys/bus/i2c/drivers/pca954x/bind
+        rc=$?
+        if [[ $rc -ne 0 ]]; then
+            echo "[ERROR] Failed to bind IO Expander 5-0072 to pca9546 driver"
+        else
+            echo -2 > /sys/bus/i2c/drivers/pca954x/5-0072/idle_state
+            echo "IO Expander 5-0072 has been bound to /sys/bus/i2c/drivers/pca954x"
+        fi
     fi
     # Module 0, I2C5 Mux @0x73
     # Creates virtual Buses 24-27
-    echo pca9546 0x73 > /sys/class/i2c-dev/i2c-5/device/new_device
-    rc=$?
-    if [[ $rc -ne 0 ]]; then
-        echo "[ERROR] Failed to bind IO Expander 5-0073 to pca9546 driver"
-    else
-        echo -2 > /sys/bus/i2c/drivers/pca954x/5-0073/idle_state
-        echo "IO Expander 5-0073 has been bound to /sys/bus/i2c/drivers/pca954x"
+    if [ ! -d  "/sys/bus/i2c/drivers/pca954x/5-0073" ]; then
+        echo 5-0073 > /sys/bus/i2c/drivers/pca954x/bind
+        rc=$?
+        if [[ $rc -ne 0 ]]; then
+            echo "[ERROR] Failed to bind IO Expander 5-0073 to pca9546 driver"
+        else
+            echo -2 > /sys/bus/i2c/drivers/pca954x/5-0073/idle_state
+            echo "IO Expander 5-0073 has been bound to /sys/bus/i2c/drivers/pca954x"
+        fi
     fi
 
 
     # Module 1, I2C5 Mux @0x75
     # Creates virtual Buses 28-31
-    echo pca9546 0x75 > /sys/class/i2c-dev/i2c-5/device/new_device
-    rc=$?
-    if [[ $rc -ne 0 ]]; then
-        echo "[ERROR] Failed to bind IO Expander 5-0075 to pca9546 driver"
-    else
-        echo -2 > /sys/bus/i2c/drivers/pca954x/5-0075/idle_state
-        echo "IO Expander 5-0075 has been bound to /sys/bus/i2c/drivers/pca954x"
+    if [ ! -d  "/sys/bus/i2c/drivers/pca954x/5-0075" ]; then
+        echo 5-0075 > /sys/bus/i2c/drivers/pca954x/bind
+        rc=$?
+        if [[ $rc -ne 0 ]]; then
+            echo "[ERROR] Failed to bind IO Expander 5-0075 to pca9546 driver"
+        else
+            echo -2 > /sys/bus/i2c/drivers/pca954x/5-0075/idle_state
+            echo "IO Expander 5-0075 has been bound to /sys/bus/i2c/drivers/pca954x"
+        fi
     fi
     # Module 1, I2C5 Mux @0x76
     # Creates virtual Buses 32-35
-    echo pca9546 0x76 > /sys/class/i2c-dev/i2c-5/device/new_device
-    rc=$?
-    if [[ $rc -ne 0 ]]; then
-        echo "[ERROR] Failed to bind IO Expander 5-0076 to pca9546 driver"
-    else
-        echo -2 > /sys/bus/i2c/drivers/pca954x/5-0076/idle_state
-        echo "IO Expander 5-0076 has been bound to /sys/bus/i2c/drivers/pca954x"
+    if [ ! -d  "/sys/bus/i2c/drivers/pca954x/5-0076" ]; then
+        echo 5-0076 > /sys/bus/i2c/drivers/pca954x/bind
+        rc=$?
+        if [[ $rc -ne 0 ]]; then
+            echo "[ERROR] Failed to bind IO Expander 5-0076 to pca9546 driver"
+        else
+            echo -2 > /sys/bus/i2c/drivers/pca954x/5-0076/idle_state
+            echo "IO Expander 5-0076 has been bound to /sys/bus/i2c/drivers/pca954x"
+        fi
     fi
     # Module 1, I2C5 Mux @0x77
-    # Creates virtual Buses 36-37
-    echo pca9546 0x77 > /sys/class/i2c-dev/i2c-5/device/new_device
-    rc=$?
-    if [[ $rc -ne 0 ]]; then
-        echo "[ERROR] Failed to bind IO Expander 5-0077 to pca9546 driver"
-    else
-        echo -2 > /sys/bus/i2c/drivers/pca954x/5-0077/idle_state
-        echo "IO Expander 5-0077 has been bound to /sys/bus/i2c/drivers/pca954x"
+    # Creates virtual Buses 36-39
+    if [ ! -d  "/sys/bus/i2c/drivers/pca954x/5-0077" ]; then
+        echo 5-0077 > /sys/bus/i2c/drivers/pca954x/bind
+        rc=$?
+        if [[ $rc -ne 0 ]]; then
+            echo "[ERROR] Failed to bind IO Expander 5-0077 to pca9546 driver"
+        else
+            echo -2 > /sys/bus/i2c/drivers/pca954x/5-0077/idle_state
+            echo "IO Expander 5-0077 has been bound to /sys/bus/i2c/drivers/pca954x"
+        fi
     fi
+
+    # Reminder: The following Muxes only work when RUN_POWER is ON, and the
+    # allocated I2C virtual bus numbers are all reserved/fixed in DTS.
+    # When powering up the host, these MUXes will be checked and re-bound again
+    # if bmc is booted when host off.
+
+    # Backplane0, I2C14-Mux@0x77 controls virtual buses 40-43
+    # Backplane1, I2C15-Mux@0x77 controls virtual buses 44-47
+    # M.2 riser , I2C5-Mux@0x74  controls virtual buses 48-51
 
     return 0
 
 }
 
+#######################################
+# Bind HSC Sensors
+# HSC needs instantiation on cold
+# boot despite being defined
+# in the DTS. They appear only after 
+# stby power to the BMC, although 
+# they are always on aux. 
+# ARGUMENTS:
+#   None
+# RETURN:
+#   0 Always
+bind_hsc()
+{
+    echo "6-0012" > /sys/bus/i2c/drivers/lm25066/bind 
+    echo "6-0014" > /sys/bus/i2c/drivers/lm25066/bind
+    return 0
+}
 
 
 #######################################
@@ -385,7 +426,19 @@ bind_gpio_expanders()
             echo "IO Expander 9-0027 has been bound to /sys/bus/i2c/drivers/pca953x"
         fi
     fi
+    #IO expander for muxes controling access to pcie spi chip
+    if [[ -z `ls /sys/bus/i2c/drivers/pca953x | grep "9-0074"` ]]; then
+        echo "Could not find 9-0074, manually binding PCA driver"
+        echo "9-0074" > /sys/bus/i2c/drivers/pca953x/bind
+        rc=$?
 
+        if [[ $rc -ne 0 ]]; then
+            echo "[ERROR] Failed to bind IO Expander 9-0074 to pca9555 driver"
+            return 1
+        else
+            echo "IO Expander 9-0074 has been bound to /sys/bus/i2c/drivers/pca953x"
+        fi
+    fi
     # Module 0, IO Board IO Expander
     # I2C MUX, Bus5 @0x72
     # MUX Channel-1, Virtual I2C21 @0x20
@@ -480,6 +533,11 @@ fi
 bind_i2c_muxes
 
 #
+# Bind HSCs after STBY_POWER
+#
+bind_hsc
+
+#
 # Bind IO Expander driver after STBY_POWER
 # IO Expander requires STBY_POWER 
 #
@@ -545,6 +603,12 @@ wait_gpio_assert  "FPGA_READY_BMC-I"
 rc=$?
 if [[ $rc -ne 0 ]]; then
     exit 1
+fi
+
+wait_gpio_assert  "SEC_FPGA_READY_BMC-I"
+rc=$?
+if [[ $rc -ne 0 ]]; then
+    echo "ERROR: Secondary FPGA did not boot"
 fi
 
 # Bind all EEPROM drivers for EEPROMs powered by STBY_POWER

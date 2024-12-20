@@ -4,7 +4,7 @@ Requires=mctp-i2c14-ctrl.service mctp-i2c14-demux.service
 Requires=mctp-i2c15-ctrl.service mctp-i2c15-demux.service
 After=mctp-i2c14-ctrl.service
 After=mctp-i2c15-ctrl.service
-After=obmc-power-on@0.target
+After=cpu-boot-done.service
 
 [Service]
 Restart=always
@@ -13,4 +13,4 @@ ExecStart=/usr/bin/nvme
 SyslogIdentifier=nvme-manager
 
 [Install]
-WantedBy=obmc-power-on@0.target
+WantedBy=cpu-boot-done.service

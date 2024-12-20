@@ -1,0 +1,13 @@
+[Unit]
+Description=NVIDIA Software Error Injection (SW EINJ) Service
+After=xyz.openbmc_project.ObjectMapper.service
+
+[Service]
+Type=dbus
+SyslogIdentifier=nvidia-sw-einj
+ExecStart=/usr/bin/env nvidia-sw-einj
+Restart=always
+BusName=com.Nvidia.Software.Error.Injection
+
+[Install]
+WantedBy=multi-user.target

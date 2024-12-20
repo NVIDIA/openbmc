@@ -6,7 +6,4 @@ nvme_cpld_unbind 5 74 force
 nvme_cpld_unbind 15 77 force
 nvme_cpld_unbind 14 77 force
 
-#Unbind EEPROMs
-nvme_remove_gb200_eeproms
-
 echo "NVME CPLD remove completed."

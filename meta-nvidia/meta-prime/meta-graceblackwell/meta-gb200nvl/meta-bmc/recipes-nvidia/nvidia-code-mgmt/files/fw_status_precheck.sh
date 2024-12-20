@@ -1,9 +1,10 @@
 #!/bin/bash
 
-# check if MC_READY-I is unused or not 
-if [ "$(gpioinfo | grep -i "HMC_READY-I" | grep -c "unused")" -eq 0 ]; then
-    echo "HMC_READY-I is in use, exiting..."
-    exit 1
+status=$(systemctl status bmc-boot-complete)
+
+if echo "$status" | grep -q "Active: activating"; then
+   echo "bmc-boot-complete still running"
+   exit 1
 fi
 
 # check if recovery_config is populated or not

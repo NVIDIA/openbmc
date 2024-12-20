@@ -26,7 +26,7 @@ EXTRA_OEMESON += "-Dtests=disabled"
 # You could change the passphase to empty by 'ssh-keygen -p -f ~/.ssh/<your_gitlab_id_file>'
 # This issue will be solved when we upstream all codes to github.
 SRC_URI += "git://github.com/NVIDIA/nvidia-oobaml;protocol=https;branch=develop"
-SRCREV = "77b0e4afc5ea8b46ef10a29b6bc2b59ea82ccd2a"
+SRCREV = "c089083fe31ace1f480f9b7cde81fcc3eb540175"
 S = "${WORKDIR}/git"
 
 FILES:${PN}:append = " ${bindir}/oobamld"

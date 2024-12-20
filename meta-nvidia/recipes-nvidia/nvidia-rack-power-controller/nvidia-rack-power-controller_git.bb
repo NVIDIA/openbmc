@@ -1,19 +1,35 @@
 SUMMARY = "Rack Power Controller"
 DESCRIPTION = "Rack Power Controller"
- 
+
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=424b4b48c3ba5f01f3b673daccb8ccd5"
 
 SRC_URI = "git://github.com/NVIDIA/RackPowerController;protocol=https;branch=main"
-SRCREV = "110e74c29c2e73c3955c23597f05af10152857b8"
+SRCREV = "5a196b23f273ca3a9ea060b38bf85ef53d0f302a"
 
 inherit pkgconfig meson
+inherit systemd
+inherit obmc-phosphor-systemd
 
 DEPENDS = " \
     redis-plus-plus \
     yaml-cpp \
     nlohmann-json \
+    phosphor-dbus-interfaces \
+    sdbusplus \
+    systemd \
 "
 
 S = "${WORKDIR}/git"
 
+#INHIBIT_PACKAGE_STRIP = "1"
+#INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
+
+FILESEXTRAPATHS:append := ":${THISDIR}/files"
+
+SYSDSVCS = " nvidia-rack-power-controller.service "
+
+FILES:${PN}:append = " ${systemd_system_unitdir}/${SYSDSVCS}"
+
+SYSTEMD_PACKAGES = "${PN}"
+SYSTEMD_SERVICE:${PN} = "${SYSDSVCS}"

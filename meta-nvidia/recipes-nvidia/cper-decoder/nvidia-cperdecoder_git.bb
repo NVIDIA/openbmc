@@ -10,7 +10,7 @@ DEPENDS += "cli11"
 DEPENDS += "nlohmann-json"
 
 SRC_URI = "git://github.com/NVIDIA/cper-decoder;protocol=https;branch=develop"
-SRCREV = "057f914ab0ff7ff6bb74057d0ba9081327e42e21"
+SRCREV = "62c1fdcdff62eceb57a6bb0ad5cbd7d94836daa2"
 
 S = "${WORKDIR}/git"
 

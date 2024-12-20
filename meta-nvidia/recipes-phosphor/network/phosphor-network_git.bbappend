@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 SRC_URI = "git://github.com/NVIDIA/phosphor-networkd;protocol=https;branch=develop"
-SRCREV = "d51bcef512b920e15b512fe8b4a2edde2356f835"
+SRCREV = "de4b697833052cb439d1a80c7373b42235500c29"
 
 EXTRA_OECONF:append = " --enable-ipv6-accept-ra=yes"
 

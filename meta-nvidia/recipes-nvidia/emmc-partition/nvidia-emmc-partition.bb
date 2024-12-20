@@ -20,8 +20,14 @@ SRC_URI:append:hgx = " file://hgx/create-partition.sh \
 SRC_URI:append:hgxb = " file://hgxb/create-partition.sh \
                        file://hgxb/emmc-mount.conf"
 
+SRC_URI:append:hgxb300 = " file://hgxb300/create-partition.sh \
+                       file://hgxb300/emmc-mount.conf"
+
 SRC_URI:append:skinnyjoe = " file://gh/create-partition.sh \
                             file://gh/emmc-mount.conf"
+
+SRC_URI:append:mgx-3809 = " file://mgx-3809/create-partition.sh \
+                            file://mgx-3809/emmc-mount.conf"
 
 FILES:${PN}:append = " /usr/share/ /usr/share/emmc /usr/share/emmc-mount.conf"
 DEPENDS = "systemd"
@@ -48,9 +54,17 @@ do_install:append:hgxb() {
     install -m 0644 ${WORKDIR}/hgxb/emmc-mount.conf ${D}/usr/share/emmc/
 }
 
+do_install:append:hgxb300() {
+    install -m 0755 ${WORKDIR}/hgxb300/create-partition.sh ${D}/${bindir}/
+    install -m 0644 ${WORKDIR}/hgxb300/emmc-mount.conf ${D}/usr/share/emmc/
+}
+
 do_install:append:skinnyjoe() {
     install -m 0755 ${WORKDIR}/gh/create-partition.sh ${D}/${bindir}/
     install -m 0644 ${WORKDIR}/gh/emmc-mount.conf ${D}/usr/share/emmc/
 }
 
-
+do_install:append:mgx-3809() {
+    install -m 0755 ${WORKDIR}/mgx-3809/create-partition.sh ${D}/${bindir}/
+    install -m 0644 ${WORKDIR}/mgx-3809/emmc-mount.conf ${D}/usr/share/emmc/
+}

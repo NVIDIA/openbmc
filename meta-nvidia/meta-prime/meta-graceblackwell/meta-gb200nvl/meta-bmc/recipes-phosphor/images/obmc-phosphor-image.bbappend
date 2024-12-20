@@ -12,6 +12,7 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " biosconfig-manager \
                                     nvidia-mc-aspeed-lib \
                                     nvidia-power-apps \
                                     nvidia-mac-update \
+                                    nvidia-bmc-compliance \
                                     nvidia-vmep \
                                     phosphor-host-postd \
                                     phosphor-post-code-manager \
@@ -22,6 +23,7 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " biosconfig-manager \
                                     set-hmc-time \
                                     nvidia-tal \
                                     i2c-dump-util \
+                                    openocd \
                                   "
 
 OBMC_IMAGE_EXTRA_INSTALL:append = " ipmitool \
@@ -35,7 +37,6 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " ipmitool \
 OBMC_IMAGE_EXTRA_INSTALL:append = " \
                                     phosphor-ipmi-ssif \
                                     nvidia-ipmi-oem \
-                                    write-protect \
                                   "
 
 OBMC_IMAGE_EXTRA_INSTALL:append = " libmctp \
@@ -50,3 +51,13 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " phosphor-gpio-monitor "
 # TODO: temporarily commented out to maintain compatibility with CI system
 # IMAGE_NAME:append = "-${BUILD_TYPE}"
 # IMAGE_LINK_NAME:append = "-${BUILD_TYPE}"
+
+NVIDIA_ADMIN_ACCOUNT_PARAMS = "\
+  useradd --groups priv-admin,redfish,web,ipmi,hostconsole -s /bin/sh admin; \
+  usermod -p '\$6\$QJXcS28/6LB9qyvS\$CQk0HXAJdi5LcRlp/P1zkwcy8MSrGppFYlvJbm5z6Q3SXt7Hg/QuD1BEXOqi9jME9vDrZdz7mxrrdki0WvVIA0' admin; \
+  passwd-expire admin; \
+  ${@bb.utils.contains('BUILD_TYPE', 'prod', " passwd-expire root;", '', d)} \
+  ${@bb.utils.contains('BUILD_TYPE', 'prod', " usermod --lock -e 1 root;", '', d)} \
+  "
+
+EXTRA_USERS_PARAMS:pn-obmc-phosphor-image += "${@bb.utils.contains('DISTRO_FEATURES', 'nvidia-admin-account', " ${NVIDIA_ADMIN_ACCOUNT_PARAMS}", '', d)}"

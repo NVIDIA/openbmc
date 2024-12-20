@@ -15,7 +15,7 @@
         "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/Oem/Nvidia/NVJpgInstanceUtilizationPercent/{InstanceId}",
         "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/Oem/Nvidia/NVDecInstanceUtilizationPercent/{InstanceId}",
         "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/Oem/Nvidia/NVDecUtilizationPercent",
-        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/Oem/Nvidia/IntergerActivityUtilizationPercent",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/Oem/Nvidia/IntegerActivityUtilizationPercent",
         "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/Oem/Nvidia/IMMAUtilizationPercent",
         "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/Oem/Nvidia/HMMAUtilizationPercent",
         "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/ProcessorMetrics#/Oem/Nvidia/GraphicsEngineActivityPercent",

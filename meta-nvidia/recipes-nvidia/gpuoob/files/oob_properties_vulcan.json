@@ -1446,6 +1446,13 @@
       "description": "NVLink Reference Clock Output Buffer Enable State"
     },
     {
+      "name": "nvswitch.inventory.serialNumber",
+      "unit": "string",
+      "category": "static",
+      "accessor": "nvswitch.opcode.serialNumber",
+      "description": "NVSwitch Serial Number"
+    },
+    {
       "name": "nvswitch.inventory.capabilities",
       "unit": "bitMask",
       "category": "dynamic",

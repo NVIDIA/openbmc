@@ -7,6 +7,10 @@ inherit systemd
 SRC_URI:append = " \
            file://phosphor-multi-gpio-monitor.json \
            file://phosphor-multi-gpio-monitor.service \
+           file://power-fault@.service \
+           file://fan-fail@.service \
+           file://overtemp@.service \
+           file://error_log.sh \
            "
 
 RDEPENDS:${PN} += "bash sbiosbootaccess phosphor-gpio-monitor-monitor "
@@ -17,8 +21,15 @@ do_install:append() {
 
         install -d ${D}${base_libdir}/systemd/system
         install -m 0644 ${WORKDIR}/phosphor-multi-gpio-monitor.service ${D}${base_libdir}/systemd/system/phosphor-multi-gpio-monitor.service
+        install -m 0644 ${WORKDIR}/power-fault@.service ${D}${base_libdir}/systemd/system/power-fault@.service
+        install -m 0644 ${WORKDIR}/fan-fail@.service ${D}${base_libdir}/systemd/system/fan-fail@.service
+        install -m 0644 ${WORKDIR}/overtemp@.service ${D}${base_libdir}/systemd/system/overtemp@.service
+        install -m 0755 ${WORKDIR}/error_log.sh ${D}/${bindir}/
 }
 
 FILES:${PN}-monitor:append= " \
          ${base_libdir}/systemd/system/phosphor-multi-gpio-monitor.service \
+         ${base_libdir}/systemd/system/power-fault@.service \
+         ${base_libdir}/systemd/system/fan-fail@.service \
+         ${base_libdir}/systemd/system/overtemp@.service \
         "

@@ -3,7 +3,7 @@
 # specifics of our Git repo, branch names, and source revision.
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
-SRCREV="84be4eed920653f2d9904329c6a8261ce608701b"
+SRCREV="24ddd8cad367fb2ab775977ce7271713ecef6a38"
 SRC_URI = "git://github.com/NVIDIA/u-boot;protocol=https;branch=v2019.04-aspeed-openbmc \
            file://0001-Set-drive-strengths-to-600Mv.patch \
            "

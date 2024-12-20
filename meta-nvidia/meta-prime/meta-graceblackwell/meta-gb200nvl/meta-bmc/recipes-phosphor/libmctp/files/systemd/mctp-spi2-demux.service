@@ -5,6 +5,7 @@ PartOf=hmc-recovery.target
 [Service]
 Type=notify
 Restart=always
+Environment=SYSLOG_IDENTIFIER=mctp-spi2-demux
 ExecStartPre=/bin/bash -c '/usr/bin/set-hmc-mux.sh BMC; sleep 1'
 ExecStart=/usr/bin/mctp-demux-daemon astspi spi_config_file=/usr/share/mctp/mctp_cfg_spi2.json
 SyslogIdentifier=mctp-spi2-demux

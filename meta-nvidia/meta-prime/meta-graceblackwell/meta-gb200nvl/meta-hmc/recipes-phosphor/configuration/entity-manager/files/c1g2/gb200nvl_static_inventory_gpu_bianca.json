@@ -1,0 +1,50 @@
+[
+  {
+    "Exposes": [],
+    "Name": "NSM_DEV_BIANCA_GPU_0",
+    "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?2GPU Board PC'})",
+    "Type": "NSM_Configs",
+    "xyz.openbmc_project.NsmDevice": {
+      "DEVICE_TYPE": 0,
+      "INSTANCE_NUMBER": 0,
+      "UUID": "STATIC:0:0",
+      "LOCATION_NUMBER": 0
+    }
+  },
+  {
+    "Exposes": [],
+    "Name": "NSM_DEV_BIANCA_GPU_1",
+    "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?2GPU Board PC'})",
+    "Type": "NSM_Configs",
+    "xyz.openbmc_project.NsmDevice": {
+      "DEVICE_TYPE": 0,
+      "INSTANCE_NUMBER": 1,
+      "UUID": "STATIC:0:1",
+      "LOCATION_NUMBER": 1
+    }
+  },
+  {
+    "Exposes": [],
+    "Name": "NSM_DEV_BIANCA_GPU_2",
+    "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?2GPU Board PC'})",
+    "Type": "NSM_Configs",
+    "xyz.openbmc_project.NsmDevice": {
+      "DEVICE_TYPE": 0,
+      "INSTANCE_NUMBER": 2,
+      "UUID": "STATIC:0:2",
+      "LOCATION_NUMBER": 2
+    }
+  },
+  {
+    "Exposes": [],
+    "Name": "NSM_DEV_BIANCA_GPU_3",
+    "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?2GPU Board PC'})",
+    "Type": "NSM_Configs",
+    "xyz.openbmc_project.NsmDevice": {
+      "DEVICE_TYPE": 0,
+      "INSTANCE_NUMBER": 3,
+      "UUID": "STATIC:0:3",
+      "LOCATION_NUMBER": 3
+    }
+  }
+]

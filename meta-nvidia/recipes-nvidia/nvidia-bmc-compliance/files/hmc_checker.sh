@@ -507,7 +507,8 @@ output=$(_log_ busctl tree "$dbus_name" | grep -o '/0/[0-9]\+$' | sed 's/\/0\///
 # Returns:
 #   flattened list of the MCTP SPI tree EIDs
 get_hmc_dbus_mctp_spi_tree_eids() {
-output=$(_log_ busctl tree xyz.openbmc_project.MCTP.Control.SPI | grep -o '/0/[0-9]\+$' | sed 's/\/0\///') && echo $output
+local dbus_name="$1"
+name=${dbus_name:-'xyz.openbmc_project.MCTP.Control.SPI'} && output=$(_log_ busctl tree "$name" | grep -o '/0/[0-9]\+$' | sed 's/\/0\///') && echo $output
 }
 
 # HMC-HMC_EROT-MCTP_VDM-01
@@ -596,10 +597,11 @@ eid=${hmc_erot_spi_eid:-14} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 
 #   valid MCTP UUID
 get_hmc_dbus_mctp_spi_spi_uuid() {
 local eid="$1"
+local dbus_name="$2"
 local output
 
 # default EID to 0, HMC ERoT via MCTP over SPI
-erot_id=${eid:-0} && output=$(_log_ busctl introspect xyz.openbmc_project.MCTP.Control.SPI /xyz/openbmc_project/mctp/0/"$erot_id" | grep '.UUID' | grep -o '"[^"]*"' | tr -d '"') && echo $output
+name=${dbus_name:-'xyz.openbmc_project.MCTP.Control.SPI'} && erot_id=${eid:-0} && output=$(_log_ busctl introspect "${name}" /xyz/openbmc_project/mctp/0/"$erot_id" | grep '.UUID' | grep -o '"[^"]*"' | tr -d '"') && echo $output
 }
 
 # HMC-HMC_EROT-DBUS-13
@@ -1330,6 +1332,72 @@ else
 fi
 
 # EC Key Revoke state
+echo $output
+}
+
+# HMC-HMC_EROT-Key-07
+# Function to get EC RBP key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC RBP key revoke state
+get_hmc_erot_ec_rbp_key_revoke_state_vdm() {
+local hmc_erot_eid="$1"
+local eid
+local response
+local output
+# default 14 to HMC ERoT EID
+eid=${hmc_erot_eid:-14} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[@]:2:16}
+else
+    # Invalid
+    output=""
+fi
+
+# EC RBP Key Revoke state
+echo $output
+}
+
+# HMC-HMC_EROT-Key-08
+# Function to get AP RBP key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid AP RBP key revoke state
+get_hmc_erot_ap_rbp_key_revoke_state_vdm() {
+local hmc_erot_eid="$1"
+local eid
+local response
+local output
+# default 14 to HMC ERoT EID
+eid=${hmc_erot_eid:-14} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[@]:19:16}
+else
+    # Invalid
+    output=""
+fi
+
+# AP RBP Key Revoke state
 echo $output
 }
 
@@ -2572,6 +2640,72 @@ else
 fi
 
 # EC Key Revoke state
+echo $output
+}
+
+# HMC-FPGA_EROT-Key-07
+# Function to get EC RBP key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC RBP key revoke state
+get_fpga_erot_ec_rbp_key_revoke_state_vdm() {
+local fpga_erot_eid="$1"
+local eid
+local response
+local output
+# default 13 to FPGA ERoT EID
+eid=${fpga_erot_eid:-13} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[@]:2:16}
+else
+    # Invalid
+    output=""
+fi
+
+# EC RBP Key Revoke state
+echo $output
+}
+
+# HMC-FPGA_EROT-Key-08
+# Function to get AP RBP key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid AP RBP key revoke state
+get_fpga_erot_ap_rbp_key_revoke_state_vdm() {
+local fpga_erot_eid="$1"
+local eid
+local response
+local output
+# default 13 to FPGA ERoT EID
+eid=${fpga_erot_eid:-13} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[@]:19:16}
+else
+    # Invalid
+    output=""
+fi
+
+# AP RBP Key Revoke state
 echo $output
 }
 
@@ -4691,7 +4825,7 @@ echo $output
 # Returns:
 #   valid EC key revoke state
 get_cx7_erot_ap_key_revoke_state_vdm() {
-local fpga_erot_eid="$1"
+local cx7_erot_eid="$1"
 local eid
 local response
 local output
@@ -4714,6 +4848,72 @@ else
 fi
 
 # EC Key Revoke state
+echo $output
+}
+
+# HMC-CX7_EROT-Key-07
+# Function to get EC RBP key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC RBP key revoke state
+get_cx7_erot_ec_rbp_key_revoke_state_vdm() {
+local cx7_erot_eid="$1"
+local eid
+local response
+local output
+# default 17 to CX7 ERoT EID
+eid=${cx7_erot_eid:-17} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[@]:2:16}
+else
+    # Invalid
+    output=""
+fi
+
+# EC RBP Key Revoke state
+echo $output
+}
+
+# HMC-CX7_EROT-Key-08
+# Function to get AP RBP key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid AP RBP key revoke state
+get_cx7_erot_ap_rbp_key_revoke_state_vdm() {
+local cx7_erot_eid="$1"
+local eid
+local response
+local output
+# default 17 to CX7 ERoT EID
+eid=${cx7_erot_eid:-17} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[@]:19:16}
+else
+    # Invalid
+    output=""
+fi
+
+# AP RBP Key Revoke state
 echo $output
 }
 
@@ -5767,6 +5967,72 @@ else
 fi
 
 # EC Key Revoke state
+echo $output
+}
+
+# HMC-NVSWITCH_EROT-Key-07
+# Function to get EC RBP key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC RBP key revoke state
+get_nvswitch_erot_ec_rbp_key_revoke_state_vdm() {
+local nvswitch_erot_eid="$1"
+local eid
+local response
+local output
+# default 15 to NVSWITCH ERoT EID
+eid=${nvswitch_erot_eid:-15} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[@]:2:16}
+else
+    # Invalid
+    output=""
+fi
+
+# EC RBP Key Revoke state
+echo $output
+}
+
+# HMC-NVSWITCH_EROT-Key-08
+# Function to get AP RBP key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid AP RBP key revoke state
+get_nvswitch_erot_ap_rbp_key_revoke_state_vdm() {
+local nvswitch_erot_eid="$1"
+local eid
+local response
+local output
+# default 15 to NVSWITCH ERoT EID
+eid=${nvswitch_erot_eid:-15} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[@]:19:16}
+else
+    # Invalid
+    output=""
+fi
+
+# AP RBP Key Revoke state
 echo $output
 }
 
@@ -6841,6 +7107,40 @@ case $output in
 02) echo "copy in progress";;
 *) echo "unknown";;
 esac
+}
+
+# BMC-CPLD_JTAG-Version-01
+# Function to get JTAG bus status
+# Arguments:
+#   $1: JTAG bus number
+#   $2: CPLD setup file location
+#   $3: JTAG ID decode
+#   $3: Number of expected CPLDs
+# Returns:
+#   Number of devices found
+get_bmc_jtag_bus_state() {
+local jtag_bus_num="$1"
+local jtag_setupfile="$2"
+local id_decode="$3"
+local num_cpld="$4"
+local response
+local output
+
+setup=${jtag_setupfile:-"/usr/bin/setup_vme.sh"}
+setup_res=$($setup)
+if [[ "$?" == "1" ]]; then
+    echo "Setup Failed: Ensure RUN_POWER is on and JTAG GPIO is asserted"
+fi
+
+bus=${jtag_bus_num:-"1"} && id=${id_decode:-"0x12bc043"} && num=${num_cpld:-"4"} && \
+response=($(_log_ /usr/bin/jtag_test -j /dev/jtag${bus} -v -i ${id} | grep 'Found number of devices' | cut -d ':' -f 2))
+
+if [[ -n "${response}" && "$response" -gt "0" ]]; then
+    echo "${response}"
+else
+    # Invalid
+    echo ""
+fi
 }
 
 

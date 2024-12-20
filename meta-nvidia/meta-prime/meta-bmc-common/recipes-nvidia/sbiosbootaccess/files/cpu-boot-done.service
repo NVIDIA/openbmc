@@ -3,4 +3,4 @@ Description=CPU boot done service
 
 [Service]
 Type=oneshot
-ExecStart=/bin/sh -c 'control-bios-host-interface.sh boot-done'
+ExecStart=/bin/sh -c 'cpu-boot-done.sh'

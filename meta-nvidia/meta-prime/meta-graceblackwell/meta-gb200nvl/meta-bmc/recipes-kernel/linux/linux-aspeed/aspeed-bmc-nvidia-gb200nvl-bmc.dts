@@ -47,6 +47,10 @@
 		i2c49   = &m2riser;
 		i2c50	= &i2c5mux2;
 		i2c51	= &i2c5mux3;
+		i2c52	= &i2c25mux0;
+		i2c53	= &i2c25mux1;
+		i2c54	= &i2c25mux2;
+		i2c55	= &i2c25mux3;
 	};
 
 	chosen {
@@ -297,8 +301,9 @@
 // I2C1, SSIF IPMI interface
 &i2c0 {
     status = "okay";
-    bus-frequency = <400000>;
+    clock-frequency = <400000>;
 	disable-master = <1>;
+    i2c-tck-thddat-config = <0x0099EC00>;
     ssif-bmc@10 {
         compatible = "ssif-bmc";
         alert-gpio = <&sgpiom0 39 GPIO_ACTIVE_LOW>;
@@ -313,8 +318,10 @@
 // HMC EROT
 &i2c1 {
     status = "okay";
-    bus-frequency = <400000>;
+    clock-frequency = <400000>;
     multi-master;
+    i2c-scl-clk-low-timeout-us = <32000>;
+    i2c-tck-thddat-config = <0x0099EC00>;
 };
 
 // I2C3
@@ -322,8 +329,10 @@
 // HMC FRU EEPROM
 &i2c2 {
     status = "okay";
-    bus-frequency = <400000>;
+    clock-frequency = <400000>;
     multi-master;
+    i2c-scl-clk-low-timeout-us = <32000>;
+    i2c-tck-thddat-config = <0x0099EC00>;
 };
 
 // I2C4
@@ -336,15 +345,18 @@
 // IO Expander
 &i2c4 {
     status = "okay";
-    bus-frequency = <400000>;
+    clock-frequency = <400000>;
+    i2c-tck-thddat-config = <0x0099EC00>;
 };
 
 // I2C6
 // Module 0/1 I2C MUX x3 
 &i2c5 {
     status = "okay";
-    bus-frequency = <400000>;
+    clock-frequency = <400000>;
     multi-master;
+    i2c-scl-clk-low-timeout-us = <32000>;
+    i2c-tck-thddat-config = <0x0099EC00>;
 
     i2c-switch@71 {
         compatible = "nxp,pca9546";
@@ -427,6 +439,38 @@
             #address-cells = <1>;
             #size-cells = <0>;
             reg = <1>;
+
+            i2c-switch@70 {
+                compatible = "nxp,pca9546";
+                #address-cells = <1>;
+                #size-cells = <0>;
+                reg = <0x70>;
+                i2c-mux-idle-disconnect;
+
+                i2c25mux0: i2c@0 {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    reg = <0>;
+                };
+
+                i2c25mux1: i2c@1 {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    reg = <1>;
+                };
+
+                i2c25mux2: i2c@2 {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    reg = <2>;
+                };
+
+                i2c25mux3: i2c@3 {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    reg = <3>;
+                };
+            };
         };
 
         imux26: i2c@2 {
@@ -578,7 +622,20 @@
 // Module 0/1 Fan Controllers
 &i2c6 {
     status = "okay";
-    bus-frequency = <400000>;
+    clock-frequency = <400000>;
+    i2c-tck-thddat-config = <0x0099EC00>;
+    hsc@12 {
+        compatible = "ti,lm5066i";
+        reg = <0x12>;
+        shunt-resistor-micro-ohms = <190>;
+        status = "okay";
+    };
+    hsc@14 {
+        compatible = "ti,lm5066i";
+        reg = <0x14>;
+        shunt-resistor-micro-ohms = <190>;
+        status = "okay";
+    };
     max31790_1 {
         compatible = "maxim,max31790";
         reg = <0x20>;
@@ -609,7 +666,10 @@
 // M.2
 &i2c8 {
     status = "okay";
-    bus-frequency = <400000>;
+    clock-frequency = <400000>;
+    multi-master;
+    i2c-scl-clk-low-timeout-us = <32000>;
+    i2c-tck-thddat-config = <0x0099EC00>;
 };
 
 // I2C10
@@ -617,7 +677,8 @@
 // Module 0/1 IO Expanders
 &i2c9 {
     status = "okay";
-    bus-frequency = <400000>;
+    clock-frequency = <400000>;
+    i2c-tck-thddat-config = <0x0099EC00>;
 };
 
 // I2C11
@@ -625,7 +686,8 @@
 // BMC Temp Sensor
 &i2c10 {
     status = "okay";
-    bus-frequency = <400000>;
+    clock-frequency = <400000>;
+    i2c-tck-thddat-config = <0x0099EC00>;
     // BMC FRU EEPROM - 256 bytes
     eeprom@50 {
         compatible = "atmel,24c02";
@@ -654,8 +716,10 @@
 // Module 1 UPHY3 SMBus
 &i2c14 {
     status = "okay";
-    bus-frequency = <100000>;
+    clock-frequency = <100000>;
     multi-master;
+    i2c-scl-clk-low-timeout-us = <32000>;
+    i2c-tck-thddat-config = <0x00EFD000>;
 
     //E1.S drive slot 0-3
 	i2c-switch@77 {
@@ -694,8 +758,10 @@
 // I2C16
 &i2c15 {
     status = "okay";
-    bus-frequency = <100000>;
+    clock-frequency = <100000>;
     multi-master;
+    i2c-scl-clk-low-timeout-us = <32000>;
+    i2c-tck-thddat-config = <0x00EFD000>;
 
     //E1.S drive slot 4-7
 	i2c-switch@77 {
@@ -756,6 +822,7 @@
 };
 
 &jtag1 {
+    mux-gpios = <&sgpiom0 41 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
     status = "okay";
 };
 

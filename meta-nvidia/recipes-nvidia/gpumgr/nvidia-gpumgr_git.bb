@@ -29,7 +29,7 @@ EXTRA_OECONF += "--enable-sensor-prefix"
 # You could change the passphase to empty by 'ssh-keygen -p -f ~/.ssh/<your_gitlab_id_file>'
 # This issue will be solved when we upstream all codes to github.
 SRC_URI = "git://github.com/NVIDIA/nvidia-gpu-manager;protocol=https;branch=develop"
-SRCREV = "ca299be30552eed2f1bb5a7ef9766999868b9d81"
+SRCREV = "dce83eea5d422d9b0d1912c10c8c9258958e35f2"
 S = "${WORKDIR}/git"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
@@ -56,6 +56,12 @@ SRC_URI:append:e4830-hgxb-hmc = " file://e4830-hgxb-hmc/fpga_ready_sense.sh \
                              file://hgxb/nvidia-gpu-manager-hgx.conf"
 SRC_URI:append:e4830-hgxb-bmc = " file://e4830-hgxb-bmc/fpga_ready_sense.sh \
                              file://hgxb/nvidia-gpu-manager-hgx.conf"
+SRC_URI:append:hgxb300 = " file://hgxb300/nvidia-gpu-manager-hgx.conf \
+			file://hgxb300/eeprom-write.sh \
+			file://hgxb300/fru_manager.json"
+SRC_URI:append:evb-ast2600-hgxb300 = " file://evb-ast2600-hgxb300/nvidia-gpu-manager-hgx.conf \
+			file://evb-ast2600-hgxb300/eeprom-write.sh \
+			file://evb-ast2600-hgxb300/fru_manager.json"
 
 SRC_URI:append = " file://device.json"
 SRC_URI:append = " file://ist-config.json"
@@ -214,5 +220,22 @@ do_install:append:hgxb() {
 	mkdir ${D}${datadir}/nvidia-fru-manager/
     install -D ${WORKDIR}/hgxb/fru_manager.json ${D}${datadir}/nvidia-fru-manager/
     install -m 0755   ${WORKDIR}/hgxb/eeprom-write.sh ${D}/${bindir}/
+}
+do_install:append:hgxb300() {
+    install -d ${D}/${bindir}
+    install -m 0644 ${WORKDIR}/hgxb300/nvidia-gpu-manager-hgx.conf \
+                    ${D}${systemd_system_unitdir}/nvidia-gpu-manager.service.d/
+	mkdir ${D}${datadir}/nvidia-fru-manager/
+    install -D ${WORKDIR}/hgxb300/fru_manager.json ${D}${datadir}/nvidia-fru-manager/
+    install -m 0755   ${WORKDIR}/hgxb300/eeprom-write.sh ${D}/${bindir}/
+}
+
+do_install:append:evb-ast2600-hgxb300() {
+    install -d ${D}/${bindir}
+    install -m 0644 ${WORKDIR}/evb-ast2600-hgxb300/nvidia-gpu-manager-hgx.conf \
+                    ${D}${systemd_system_unitdir}/nvidia-gpu-manager.service.d/
+	mkdir ${D}${datadir}/nvidia-fru-manager/
+    install -D ${WORKDIR}/evb-ast2600-hgxb300/fru_manager.json ${D}${datadir}/nvidia-fru-manager/
+    install -m 0755   ${WORKDIR}/evb-ast2600-hgxb300/eeprom-write.sh ${D}/${bindir}/
 }
 

@@ -1,0 +1,276 @@
+[
+    {
+        "Exposes": [
+            {
+                "Address": "$address",
+                "Bus": "$bus",
+                "Name": "ProcMod_0",
+                "Type": "EEPROM_24C64"
+            }
+        ],
+        "Name": "HGX ProcessorModule 0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 3, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': '.?CG1.?|.?PG548.?'})",
+        "Type": "Board",
+        "Parent_Chassis":  "/xyz/openbmc_project/inventory/system/chassis/HGX_Chassis_0",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "$BOARD_MANUFACTURER",
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+            "Bus": "$bus",
+            "Address": "$address",
+            "Name": "ProcMod_0"
+        },
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Module"
+        },
+        "xyz.openbmc_project.Inventory.Item.ProcessorModule": {},
+        "xyz.openbmc_project.Inventory.Decorator.Instance": {
+            "InstanceNumber": 0
+        },
+        "xyz.openbmc_project.Association.Definitions": {
+	      "Associations": [
+            [
+                "assembly",
+                "parent_chassis",
+                "/xyz/openbmc_project/inventory/system/processormodule0/ProcMod_0_Board_FRU_Assembly0"
+            ],
+            [
+                "assembly",
+                "parent_chassis",
+                "/xyz/openbmc_project/inventory/system/processormodule0/ProcMod_0_Product_FRU_Assembly1"
+            ]
+	      ]
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Backplane"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+            "LocationCode": "ProcessorModule_0"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": "HGX_Chassis_0"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Replaceable": {
+             "FieldReplaceable": true
+        }
+    },
+    {
+        "Name": "ProcMod_0 Board FRU Assembly0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 3, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': '.?CG1.?|.?PG548.?'})",
+        "Type": "ProcessorModule0",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+            "BuildDate": "$BOARD_MANUFACTURE_DATE",
+            "Manufacturer": "$BOARD_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Item.Assembly": {},
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Backplane"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": "HGX_Chassis_0"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+            "LocationCode": "ProcessorModule_0"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Area": {
+            "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPUSubsystem"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "ProcMod_0 Product FRU Assembly1",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 3, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': '.?CG1.?|.?PG548.?'})",
+        "Type": "ProcessorModule0",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$PRODUCT_PRODUCT_NAME",
+            "PartNumber": "$PRODUCT_PART_NUMBER",
+            "SerialNumber": "$PRODUCT_SERIAL_NUMBER",
+            "Manufacturer": "$PRODUCT_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Revision": {
+            "Version": "$PRODUCT_VERSION"
+        },
+        "xyz.openbmc_project.Inventory.Item.Assembly": {},
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Backplane"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+            "LocationCode": "ProcessorModule_0"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": "HGX_Chassis_0"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Area": {
+            "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPUSubsystem"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "HGX_CPU_0",
+        "Probe": "FOUND('HGX ProcessorModule 0')",
+        "Type": "Component",
+        "Parent_Chassis":  "/xyz/openbmc_project/inventory/system/board/HGX_ProcessorModule_0",
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+            "LocationCode": "G1:0.0"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": "HGX_Chassis_0/ProcessorModule_0"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Replaceable": {
+             "FieldReplaceable": false
+        },
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        }
+    },
+    {
+        "Exposes": [
+            {
+                "Address": "$address",
+                "Bus": "$bus",
+                "Name": "ProcMod_1",
+                "Type": "EEPROM_24C64"
+            }
+        ],
+        "Name": "HGX ProcessorModule 1",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': '.?CG1.?|.?PG548.?'})",
+        "Type": "Board",
+        "Parent_Chassis":  "/xyz/openbmc_project/inventory/system/chassis/HGX_Chassis_0",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "$BOARD_MANUFACTURER",
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+            "Bus": "$bus",
+            "Address": "$address",
+            "Name": "ProcMod_1"
+        },
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Module"
+        },
+        "xyz.openbmc_project.Inventory.Item.ProcessorModule": {},
+        "xyz.openbmc_project.Inventory.Decorator.Instance": {
+            "InstanceNumber": 1
+        },
+        "xyz.openbmc_project.Association.Definitions": {
+          "Associations": [
+              [
+                "assembly",
+                "parent_chassis",
+                "/xyz/openbmc_project/inventory/system/processormodule1/ProcMod_1_Board_FRU_Assembly0"
+              ],
+              [
+                "assembly",
+                "parent_chassis",
+                "/xyz/openbmc_project/inventory/system/processormodule1/ProcMod_1_Product_FRU_Assembly1"
+              ]
+          ]
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Backplane"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+            "LocationCode": "ProcessorModule_1"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": "HGX_Chassis_0"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Replaceable": {
+             "FieldReplaceable": true
+        }
+    },
+    {
+        "Name": "ProcMod_1 Board FRU Assembly0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': '.?CG1.?|.?PG548.?'})",
+        "Type": "ProcessorModule1",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+            "BuildDate": "$BOARD_MANUFACTURE_DATE",
+            "Manufacturer": "$BOARD_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Item.Assembly": {},
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Backplane"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+            "LocationCode": "ProcessorModule_1"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": "HGX_Chassis_0"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Area": {
+            "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPUSubsystem"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "ProcMod_1 Product FRU Assembly1",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': '.?CG1.?|.?PG548.?'})",
+        "Type": "ProcessorModule1",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$PRODUCT_PRODUCT_NAME",
+            "PartNumber": "$PRODUCT_PART_NUMBER",
+            "SerialNumber": "$PRODUCT_SERIAL_NUMBER",
+            "Manufacturer": "$PRODUCT_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Revision": {
+            "Version": "$PRODUCT_VERSION"
+        },
+        "xyz.openbmc_project.Inventory.Item.Assembly": {},
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Backplane"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+            "LocationCode": "ProcessorModule_1"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": "HGX_Chassis_0"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Area": {
+            "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPUSubsystem"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "HGX_CPU_1",
+        "Probe": "FOUND('HGX ProcessorModule 1')",
+        "Type": "Component",
+        "Parent_Chassis":  "/xyz/openbmc_project/inventory/system/board/HGX_ProcessorModule_1",
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+            "LocationCode": "G1:1.0"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": "HGX_Chassis_0/ProcessorModule_1"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Replaceable": {
+             "FieldReplaceable": false
+        },
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        }
+    }
+]

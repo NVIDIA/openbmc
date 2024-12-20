@@ -6,6 +6,7 @@ PartOf=fpga0-erot-recovery.target
 [Service]
 Type=notify
 Restart=always
+Environment=SYSLOG_IDENTIFIER=mctp-i2c2-demux
 ExecStart=/usr/bin/mctp-demux-daemon smbus i2c_bus=2 i2c_config_file=/usr/share/mctp/mctp_cfg_smbus2.json
 SyslogIdentifier=mctp-i2c2-demux
 

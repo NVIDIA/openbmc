@@ -13,7 +13,7 @@ auth	[success=2 default=ignore]	pam_unix.so quiet
 -auth    [success=1 default=ignore]  	pam_ldap.so ignore_unknown_user ignore_authinfo_unavail
 # Control gets here when no authentication module succeeds.  Increment the
 # failure tally and return failure status to PAM.
-auth    [default=die]                   pam_faillock.so authfail deny=0 even_deny_root unlock_time=0 root_unlock_time=0
+auth    [default=die]                   pam_faillock.so authfail
 # Control gets here when authentication succeeds.  Check if the user is locked
 # out due to consecutive authentication failures and return status accordingly.
 auth    sufficient                      pam_faillock.so authsucc

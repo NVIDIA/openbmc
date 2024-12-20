@@ -14,6 +14,7 @@ DEPENDS += "nlohmann-json"
 DEPENDS += "sdbusplus ${PYTHON_PN}-sdbus++-native"
 DEPENDS += "sdeventplus"
 DEPENDS += "curl"
+DEPENDS += "cli11"
 RDEPENDS:${PN} = "bash"
 
 EXTRA_OEMESON += "-Dtests=disabled"
@@ -23,9 +24,21 @@ EXTRA_OEMESON += "-Dtests=disabled"
 # This issue will be solved when we upstream all codes to github.
 
 SRC_URI += "git://github.com/NVIDIA/software-error-injection;protocol=https;branch=develop"
-SRCREV = "5222e28c00abad39d06014bd73bf311abb9c7494"
+SRCREV = "4ba40a4f843d080329f962178ca133c13ae4cc15"
 
 S = "${WORKDIR}/git"
+
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+SRC_URI += " \
+    file://nvidia-sw-einj.service \
+    "
+
+SYSTEMD_PACKAGES = "${PN}"
+SYSTEMD_SERVICE:${PN} = "nvidia-sw-einj.service"
+
+FILES:${PN}:append = " ${systemd_system_unitdir}"
+FILES:${PN}:append = " ${systemd_system_unitdir}/nvidia-sw-einj.service"
+FILES:${PN}:append = " ${datadir}/sw-einj/HMC_SW_EInj_Injector.tar.xz"
 
 FILESEXTRAPATHS:prepend := "${S}:"
 
@@ -35,7 +48,8 @@ FILESEXTRAPATHS:prepend := "${S}/deploy:"
 do_install:append() {
     install -d ${D}${datadir}/sw-einj
     ${S}/generate_injector_tar_file.sh --no-build-tools --no-ssh-deploy
+    install -d ${D}${systemd_system_unitdir}
+    install -m 0644 ${WORKDIR}/nvidia-sw-einj.service ${D}${systemd_system_unitdir}/
     TAR_FILE=$(ls ${S}/deploy/*)
     install -m 0644 ${TAR_FILE} ${D}${datadir}/sw-einj
-    install -m 0755 ${S}/sw-einj-tool ${D}${bindir}/
 }

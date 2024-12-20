@@ -12,7 +12,7 @@ inherit meson pkgconfig obmc-phosphor-systemd
 S = "${WORKDIR}/git"
 
 SRC_URI = "git://github.com/NVIDIA/nvidia-retimer;protocol=https;branch=develop"
-SRCREV = "a677c15e0afcbf4e2422aa0e48d92a3f8e4aeaff"
+SRCREV = "a2019c25362f28e2481c125e699dfc4c64b3ec25"
 
 
 PV = "0.1+git${SRCPV}"

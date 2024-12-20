@@ -1,0 +1,8 @@
+[Unit]
+Description=NVIDIA FPGA1 Not Ready service
+
+[Service]
+Restart=no
+Type=simple
+ExecStart=/bin/sh -c 'fpga1_ready.sh notready'
+SyslogIdentifier=nvidia-fpga1-notready-service

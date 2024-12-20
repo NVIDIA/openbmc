@@ -16,6 +16,13 @@ remove_otp_files() {
     fi
 }
 
+if [ -f /usr/bin/otp-bus.sh ]; then
+    source /usr/bin/otp-bus.sh
+else
+    echo "/usr/bin/otp-bus.sh not found. setting i2c bus to 0"
+    OTP_BUS=0
+fi
+
 echo "Checking OTP provisioning status..."
 if [ x"${OTP_HW_ENABLED}" = x"1" ]; then
     # 8/10/2022 - OTP is not supported in qemu; otp read / prog call
@@ -24,11 +31,11 @@ if [ x"${OTP_HW_ENABLED}" = x"1" ]; then
     # on I2C 0 bus
     # 1 device (2 address characters) indicates a qemu machine
     # sleep is added to account for th boot-up time of the bus and devices
-    I2C_0_DEVICES=$(i2cdetect -y 0 | \
+    I2C_0_DEVICES=$(i2cdetect -y $OTP_BUS | \
         cut -c5- | sed 1d | tr -dc '[:alnum:]' | wc -c)
     if [ "${I2C_0_DEVICES}" -le "2" ]; then
         sleep 20
-        I2C_0_DEVICES=$(i2cdetect -y 0 | \
+        I2C_0_DEVICES=$(i2cdetect -y $OTP_BUS | \
         cut -c5- | sed 1d | tr -dc '[:alnum:]' | wc -c)
         echo "I2C-0 bus devices found (x2):" ${I2C_0_DEVICES}
         if [ "${I2C_0_DEVICES}" -le "2" ]; then

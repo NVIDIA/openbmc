@@ -5,9 +5,11 @@ OBMC_IMAGE_EXTRA_INSTALL:append:ranger = " ${@bb.utils.contains('DISTRO_FEATURES
 OBMC_IMAGE_EXTRA_INSTALL:append:oberon-bmc = " phosphor-health-monitor"
 OBMC_IMAGE_EXTRA_INSTALL:append:oberon-hmc = " phosphor-health-monitor nvidia-debug-token-status-query-wrapper"
 OBMC_IMAGE_EXTRA_INSTALL:append:hgxb = " phosphor-health-monitor nvidia-debug-token-status-query-wrapper"
-OBMC_IMAGE_EXTRA_INSTALL:append:gb200nvl-bmc = " phosphor-health-monitor"
+OBMC_IMAGE_EXTRA_INSTALL:append:gb200nvl-bmc = " phosphor-health-monitor nvidia-debug-token-status-query-wrapper"
 OBMC_IMAGE_EXTRA_INSTALL:append:gb200nvl-hmc = " phosphor-health-monitor nvidia-debug-token-status-query-wrapper"
+OBMC_IMAGE_EXTRA_INSTALL:append:hoppercb = " phosphor-health-monitor nvidia-debug-token-status-query-wrapper"
 OBMC_IMAGE_EXTRA_INSTALL:append = " systemd-coredump-conf"
+OBMC_IMAGE_EXTRA_INSTALL += " lsof"
 
 # Add the "service" account.
 inherit extrausers

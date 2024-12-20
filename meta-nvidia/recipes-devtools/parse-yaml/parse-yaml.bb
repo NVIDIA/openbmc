@@ -3,7 +3,7 @@ SUMMARY = "A simple yaml parser implemented in bash."
 PV = "0.1"
 
 SRC_URI += "git://github.com/mrbaseman/parse_yaml;name=parse_yaml;protocol=https;branch=master"
-SRCREV = "3752ef979d8e389cfaba43a804663cafdb033afd"
+SRCREV = "c0349563865c80423bcdcd576ce515008c928fc3"
 
 LICENSE = "GPLv3"
 LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=d32239bcb673463ab874e80d47fae504"

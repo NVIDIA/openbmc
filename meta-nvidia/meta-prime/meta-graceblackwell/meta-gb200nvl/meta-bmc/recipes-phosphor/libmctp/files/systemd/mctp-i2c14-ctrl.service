@@ -1,13 +1,14 @@
 [Unit]
 Description=MCTP I2C 14 control daemon
-After=mctp-i2c14-demux.service obmc-power-on@0.target
+After=mctp-i2c14-demux.service cpu-boot-done.service
 Requires=mctp-i2c14-demux.service
 
 [Service]
 #Restart=always
 RestartSec=10
+Environment=SYSLOG_IDENTIFIER=mctp-i2c14-ctrl
 ExecStart=/usr/bin/mctp-ctrl -m 1 -t 1 -f /usr/share/mctp/mctp_cfg_smbus14.json -n 14 -d 1 -v 1
 SyslogIdentifier=mctp-i2c14-ctrl
 
 [Install]
-WantedBy=obmc-power-on@0.target
+WantedBy=cpu-boot-done.service

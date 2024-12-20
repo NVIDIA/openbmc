@@ -209,12 +209,17 @@
             },
             "device_inventory": {
                "create": {
-                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/CX7_0",
+                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/IRoT_CX7_0",
                   "associations": [
+                    {
+                       "forward": "parent_chassis",
+                       "reverse": "all_chassis",
+                       "endpoint": "/xyz/openbmc_project/inventory/system/board/IO_Board_0"
+                    },
                     {
                         "forward": "inventory",
                         "reverse": "associated_ROT",
-                        "endpoint": "/xyz/openbmc_project/inventory/system/chassis/CX7_0"
+                        "endpoint": "/xyz/openbmc_project/inventory/system/board/IO_Board_0"
                     }
                   ]
                }
@@ -255,12 +260,17 @@
             },
             "device_inventory": {
                "create": {
-                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/CX7_1",
+                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/IRoT_CX7_1",
                   "associations": [
+                    {
+                       "forward": "parent_chassis",
+                       "reverse": "all_chassis",
+                       "endpoint": "/xyz/openbmc_project/inventory/system/board/IO_Board_0"
+                    },
                     {
                         "forward": "inventory",
                         "reverse": "associated_ROT",
-                        "endpoint": "/xyz/openbmc_project/inventory/system/chassis/CX7_1"
+                        "endpoint": "/xyz/openbmc_project/inventory/system/board/IO_Board_0"
                     }
                   ]
                }
@@ -301,12 +311,17 @@
             },
             "device_inventory": {
                "create": {
-                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/CX7_2",
+                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/IRoT_CX7_2",
                   "associations": [
+                    {
+                       "forward": "parent_chassis",
+                       "reverse": "all_chassis",
+                       "endpoint": "/xyz/openbmc_project/inventory/system/board/IO_Board_1"
+                    },
                     {
                         "forward": "inventory",
                         "reverse": "associated_ROT",
-                        "endpoint": "/xyz/openbmc_project/inventory/system/chassis/CX7_2"
+                        "endpoint": "/xyz/openbmc_project/inventory/system/board/IO_Board_1"
                     }
                   ]
                }
@@ -347,12 +362,17 @@
             },
             "device_inventory": {
                "create": {
-                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/CX7_3",
+                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/IRoT_CX7_3",
                   "associations": [
+                    {
+                       "forward": "parent_chassis",
+                       "reverse": "all_chassis",
+                       "endpoint": "/xyz/openbmc_project/inventory/system/board/IO_Board_1"
+                    },
                     {
                         "forward": "inventory",
                         "reverse": "associated_ROT",
-                        "endpoint": "/xyz/openbmc_project/inventory/system/chassis/CX7_3"
+                        "endpoint": "/xyz/openbmc_project/inventory/system/board/IO_Board_1"
                     }
                   ]
                }

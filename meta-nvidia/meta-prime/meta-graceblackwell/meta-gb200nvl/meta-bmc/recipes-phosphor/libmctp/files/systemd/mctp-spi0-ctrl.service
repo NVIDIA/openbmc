@@ -5,6 +5,7 @@ Requires=mctp-spi0-demux.service
 
 [Service]
 Restart=always
+Environment=SYSLOG_IDENTIFIER=mctp-spi0-ctrl
 ExecStart=/usr/bin/mctp-spi-ctrl -t 6 -m 1 -d 20 -v 0 -f /usr/share/mctp/mctp_cfg_spi0.json
 ExecStop=/usr/bin/mctp-vdm-util -c restart_notification -t 0
 SyslogIdentifier=mctp-spi0-ctrl

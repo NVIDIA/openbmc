@@ -1,10 +1,11 @@
-From c5d6d1aea547faeb4d6cbb3b45993624f68b147e Mon Sep 17 00:00:00 2001
+From eefa59bc11c08c5bb38bfe142a110b164b0a74bc Mon Sep 17 00:00:00 2001
 From: Tony Ao <tao@nvidia.com>
-Date: Sun, 23 Jun 2024 22:28:33 -0700
+Date: Thu, 21 Nov 2024 20:56:23 -0800
 Subject: [PATCH] remove H24 and E26 from RMII3 group Situation: - gb200nvl
- supports ncsi and this feature does not need GPIOC0(H24) and GPIOD3(E26).
- Therefore, GPIOC0(H24) and GPIOD3(E26) are used as GPIOs on this platform
- GPIOC0-SGPIO_I2C_MUX_SEL-O GPIOD3-UART1_MUX_SEL-O
+
+supports ncsi and this feature does not need GPIOC0(H24) and GPIOD3(E26).
+Therefore, GPIOC0(H24) and GPIOD3(E26) are used as GPIOs on this platform
+GPIOC0-SGPIO_I2C_MUX_SEL-O GPIOD3-UART1_MUX_SEL-O
 
 Change:
 - remove H24 and E26 from RMII3 group
@@ -13,18 +14,18 @@ Change:
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-index 63cb15b4e432..83e104fd9f52 100644
+index e4ab595f4a27..d4cf27aa6d9e 100644
 --- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
 +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
 @@ -249,7 +249,7 @@ PIN_DECL_2(E26, GPIOD3, RGMII3RXD3, RMII3RXER);
  
  FUNC_GROUP_DECL(RGMII3, H24, J22, H22, H23, G22, F22, G23, G24, F23, F26, F25,
  		E26);
--FUNC_GROUP_DECL(RMII3, H24, J22, H22, H23, G23, F23, F26, F25, E26);
-+FUNC_GROUP_DECL(RMII3, J22, H22, H23, G23, F23, F26, F25);
+-GROUP_DECL(RMII3, H24, J22, H22, H23, G23, F23, F26, F25, E26);
++GROUP_DECL(RMII3, J22, H22, H23, G23, F23, F26, F25);
+ GROUP_DECL(NCSI3, J22, H22, H23, G23, F23, F26, F25, E26);
+ FUNC_DECL_2(RMII3, RMII3, NCSI3);
  
- #define F24 28
- SIG_EXPR_LIST_DECL_SESG(F24, NCTS3, NCTS3, SIG_DESC_SET(SCU410, 28));
 -- 
 2.34.1
 

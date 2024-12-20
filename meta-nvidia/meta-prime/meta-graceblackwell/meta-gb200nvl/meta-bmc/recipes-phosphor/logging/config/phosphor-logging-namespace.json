@@ -35,6 +35,12 @@
             "ID": "SEL",
             "ErrorCapacity": 0,
             "InfoErrorCapacity": 3000
+        },
+        {
+            "ID": "Manager",
+            "ErrorCapacity": 100,
+            "InfoErrorCapacity": 200,
+            "PersistInfoLog": false
         }
     ]
 }

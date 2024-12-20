@@ -1,0 +1,15 @@
+[Unit]
+Description=NVIDIA BMC FPGA Ready Init Service
+Requires=hmc-boot-complete.service
+After=mapper-wait@-xyz-openbmc_project-state-chassis0.service
+After=hmc-boot-complete.service
+StartLimitIntervalSec=1
+Before=com.Nvidia.FWStatus.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/env fpga_ready_init.sh
+SyslogIdentifier=nvidia-fpga-ready-init
+
+[Install]
+WantedBy=hmc-boot-complete.service

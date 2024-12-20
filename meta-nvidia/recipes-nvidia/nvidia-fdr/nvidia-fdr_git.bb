@@ -8,12 +8,12 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 # Use below if local development repo is prefered, please commit the change first.
-#SRC_URI = "git:///path/to/nvidia-fdr;protocol=file;;branch=<branch name>"
-SRC_URI = "git://github.com/NVIDIA/nvidia-fdr;protocol=https;branch=develop"
+SRC_URI = "git:///home/guptar/openBMC/nvbmc/nvidia-fdr;branch=develop"
+#SRC_URI = "git://git@gitlab-master.nvidia.com:12051/dgx/nvidia-fdr;protocol=https;branch=develop"
 
 # Modify these as desired
 #PV = "1.0+git${SRCPV}"
-SRCREV = "e9e446b9f2dbca90e2daeba0f46bdbb2437f9913"
+SRCREV = "22d3166deb391b8cc05ca812d65b2bdd5781898c"
 
 S = "${WORKDIR}/git"
 

@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+## TODO: <placeholder> will be rewritten with fpga regtbl way.
+
+# Copyright (c) 2024, NVIDIA CORPORATION.  All rights reserved.
+#
+#  NVIDIA CORPORATION and its licensors retain all intellectual property
+#  and proprietary rights in and to this software, related documentation
+#  and any modifications thereto.  Any use, reproduction, disclosure or
+#  distribution of this software and related documentation without an express
+#  license agreement from NVIDIA CORPORATION is strictly prohibited.
+set -o pipefail
+
+APP_NAME="single-device-mctp-error-detection"
+APP_VER="0.1"
+
+show_help()
+{
+    echo "A wrapper for single-device-mctp-error-detection, ver=${APP_VER}."
+    echo "<usage>"
+    echo "  ${APP_NAME} [-dry-run] <dev_type>"
+    echo
+    echo "<options>"
+    echo "  -dry-run          - Only print mctp-error-detection cmdline."
+    echo
+    echo "  dev_type          - Device Types Supported: GPU, NVSwitch, PCIeSwitch0"
+    echo
+}
+
+
+## MAIN
+
+DRY_RUN=0
+
+## -dry-run just prints the mctp-error-detection command line
+if [ "$1"  = "-dry-run" ]; then
+   DRY_RUN=1
+   shift
+fi
+
+if [ $# -ne 1 ]; then
+    show_help
+    exit 1
+fi
+
+exit 0

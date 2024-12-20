@@ -1,0 +1,27 @@
+{
+    "Exposes": [
+        {
+            "Name": "HGX_FW_FPGA_0",
+            "MctpUUID" : "f72d6f50-5675-11ed-9b6a-0242ac120002",
+            "GPIO": "FPGA0_READY-I",
+            "IsERoT": false,
+            "Polarity": "ActiveHigh",
+            "RisingTarget": "nvidia-set-fpga-on.service",
+            "FallingTarget": "nvidia-set-fpga-off.service",
+            "Type": "GPIORecovery"
+        },
+        {
+            "Name": "HGX_FW_FPGA_1",
+            "MctpUUID" : "f72d6f51-5675-11ed-9b6a-0242ac120002",
+            "GPIO": "FPGA1_READY-I",
+            "IsERoT": false,
+            "Polarity": "ActiveHigh",
+            "RisingTarget": "nvidia-fpga1-ready.service",
+            "FallingTarget": "nvidia-fpga1-notready.service",
+            "Type": "GPIORecovery"
+        }
+    ],
+    "Name": "GPIO_Recovery_Devices",
+    "Probe": "TRUE",
+    "Type": "Recovery_Config"
+}

@@ -14,6 +14,7 @@ SRC_URI += " \
 	file://otp-provisioning.sh;sha256sum=5cc73d2ed1b6011a2b7ae41d5f836029510e3d272da2f63e802022615232d342 \
 	file://otp-user-area.py;sha256sum=1526e913c4b0d4d7694d98af116e431ef90df383ddd76ac104cda7ddaec8ab46 \
 	file://setup.py;sha256sum=61768167d440d701fde67b0d79c0d2e5c2d185b5d176a6e1cbc3f86022528d17 \
+	file://otp-bus.sh;sha256sum=108506055ce59cdee5be94da652bc84959fe8e2deb14f794ad731ed248614622 \
 	"
 
 LICENSE = "Apache-2.0"
@@ -42,6 +43,7 @@ do_install() {
 	install -d ${D}${OTP_STATUS_FILE_DIR}
 
 	install -m 0755 ${WORKDIR}/otp-monitor.sh ${D}/${bindir}/
+	install -m 0755 ${WORKDIR}/otp-bus.sh ${D}/${bindir}/
 
 	install -d ${D}${base_libdir}/systemd/system/
 	install -m 644 ${S}/otp-monitor.service ${D}${base_libdir}/systemd/system/

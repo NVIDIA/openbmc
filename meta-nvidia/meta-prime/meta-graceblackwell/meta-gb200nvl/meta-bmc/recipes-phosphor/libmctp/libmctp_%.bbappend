@@ -8,6 +8,7 @@ SRC_URI:append= " file://set-hmc-mux.sh \
                   file://mctp_cfg_smbus1.json \
                   file://mctp_cfg_smbus2.json \
                   file://mctp_cfg_smbus5.json \
+                  file://mctp_cfg_smbus8.json \
                   file://mctp_cfg_smbus14.json \
                   file://mctp_cfg_smbus15.json \
                   file://mctp_cfg_spi0.json \
@@ -21,6 +22,9 @@ SRC_URI:append= " file://set-hmc-mux.sh \
                   file://systemd/mctp-i2c5-ctrl.service \
                   file://systemd/mctp-i2c5-demux.service \
                   file://systemd/mctp-i2c5-demux.socket \
+                  file://systemd/mctp-i2c8-ctrl.service \
+                  file://systemd/mctp-i2c8-demux.service \
+                  file://systemd/mctp-i2c8-demux.socket \
                   file://systemd/mctp-i2c14-ctrl.service \
                   file://systemd/mctp-i2c14-demux.service \
                   file://systemd/mctp-i2c14-demux.socket \
@@ -53,6 +57,9 @@ SYSTEMD_SERVICE:${PN}:append = " mctp-i2c2-demux.socket"
 SYSTEMD_SERVICE:${PN}:append = " mctp-i2c5-ctrl.service"
 SYSTEMD_SERVICE:${PN}:append = " mctp-i2c5-demux.service"
 SYSTEMD_SERVICE:${PN}:append = " mctp-i2c5-demux.socket"
+SYSTEMD_SERVICE:${PN}:append = " mctp-i2c8-ctrl.service"
+SYSTEMD_SERVICE:${PN}:append = " mctp-i2c8-demux.service"
+SYSTEMD_SERVICE:${PN}:append = " mctp-i2c8-demux.socket"
 SYSTEMD_SERVICE:${PN}:append = " mctp-i2c14-ctrl.service"
 SYSTEMD_SERVICE:${PN}:append = " mctp-i2c14-demux.service"
 SYSTEMD_SERVICE:${PN}:append = " mctp-i2c14-demux.socket"
@@ -77,6 +84,7 @@ do_install:append() {
     install -m 0644 ${WORKDIR}/mctp_cfg_smbus1.json ${D}${datadir}/mctp/mctp_cfg_smbus1.json
     install -m 0644 ${WORKDIR}/mctp_cfg_smbus2.json ${D}${datadir}/mctp/mctp_cfg_smbus2.json
     install -m 0644 ${WORKDIR}/mctp_cfg_smbus5.json ${D}${datadir}/mctp/mctp_cfg_smbus5.json
+    install -m 0644 ${WORKDIR}/mctp_cfg_smbus8.json ${D}${datadir}/mctp/mctp_cfg_smbus8.json
     install -m 0644 ${WORKDIR}/mctp_cfg_smbus14.json ${D}${datadir}/mctp/mctp_cfg_smbus14.json
     install -m 0644 ${WORKDIR}/mctp_cfg_smbus15.json ${D}${datadir}/mctp/mctp_cfg_smbus15.json
     install -m 0644 ${WORKDIR}/mctp_cfg_spi0.json ${D}${datadir}/mctp/mctp_cfg_spi0.json
@@ -91,6 +99,9 @@ do_install:append() {
     install -m 0644 ${WORKDIR}/systemd/mctp-i2c5-ctrl.service  ${D}${nonarch_base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/systemd/mctp-i2c5-demux.service ${D}${nonarch_base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/systemd/mctp-i2c5-demux.socket  ${D}${nonarch_base_libdir}/systemd/system/
+    install -m 0644 ${WORKDIR}/systemd/mctp-i2c8-ctrl.service  ${D}${nonarch_base_libdir}/systemd/system/
+    install -m 0644 ${WORKDIR}/systemd/mctp-i2c8-demux.service ${D}${nonarch_base_libdir}/systemd/system/
+    install -m 0644 ${WORKDIR}/systemd/mctp-i2c8-demux.socket  ${D}${nonarch_base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/systemd/mctp-i2c14-ctrl.service  ${D}${nonarch_base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/systemd/mctp-i2c14-demux.service ${D}${nonarch_base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/systemd/mctp-i2c14-demux.socket  ${D}${nonarch_base_libdir}/systemd/system/

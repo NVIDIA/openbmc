@@ -3,6 +3,7 @@ FILESEXTRAPATHS:append := "${THISDIR}/files:"
 RDEPENDS:${PN} = " bash "
 
 SRC_URI:append = " file://fw_status_precheck.sh \
+                   file://cpldmanager.env \
                    file://systemd/hmc-ready.service \
                    file://systemd/hmc-notready.service \
                    file://systemd/com.Nvidia.FWStatus.service \
@@ -15,6 +16,8 @@ EXTRA_OEMESON:append = " -DGLACIER_RECOVERY_SUPPORT=enabled"
 EXTRA_OEMESON:append = " -DGLACIER_RECOVERY_SUPPORTED_MODEL=Nvidia:GlacierRecovery:DBC2D178F70711EEBB65CFE7103AC1AC"
 EXTRA_OEMESON:append = " -DGLACIER_RECOVERY_TIMEOUT=180"
 EXTRA_OEMESON:append = " -DFWSTATUS_SUPPORT=enabled"
+EXTRA_OEMESON:append = " -DCPLD_SUPPORT=enabled"
+
 EXTRA_OEMESON:append:gb200nvl-bmc-ut3 = " -DMTD_UPDATER_SUPPORT=enabled -DBMC_SUPPORTED_MODEL='Nvidia:BMC_MTD:678aac1134244bcc8a750bb622a3cfeb' "
 
 SYSTEMD_SERVICE:${PN}:append = " com.Nvidia.DebugTokenInstall.Updater.service"
@@ -25,6 +28,9 @@ SYSTEMD_SERVICE:${PN}:append = " glacier-recovery@.service"
 SYSTEMD_SERVICE:${PN}:append = " com.Nvidia.FWStatus.service"
 SYSTEMD_SERVICE:${PN}:append = " hmc-ready.service"
 SYSTEMD_SERVICE:${PN}:append = " hmc-notready.service"
+SYSTEMD_SERVICE:${PN}:append = " cpld-update@.service"
+SYSTEMD_SERVICE:${PN}:append = " com.Nvidia.CPLD_N.Updater@.service"
+SYSTEMD_SERVICE:${PN}:append = " com.Nvidia.CPLD_N.Starter.service"
 
 SYSTEMD_SERVICE:${PN}:append:gb200nvl-bmc-ut3 = " com.Nvidia.MTD.Updater.bmc.service"
 SYSTEMD_SERVICE:${PN}:append:gb200nvl-bmc-ut3 = " mtd-update@.service"
@@ -60,6 +66,9 @@ do_install:append() {
 
     install -d ${D}/${bindir}
     install -m 0755 ${WORKDIR}/fw_status_precheck.sh ${D}/${bindir}/
+
+    install -d ${D}${sysconfdir}/cpldupdate
+    install -m 0644 ${WORKDIR}/cpldmanager.env ${D}${sysconfdir}/cpldupdate/cpldmanager.env
 
     install -m 0644 ${WORKDIR}/systemd/hmc-ready.service ${D}${nonarch_base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/systemd/hmc-notready.service ${D}${nonarch_base_libdir}/systemd/system/

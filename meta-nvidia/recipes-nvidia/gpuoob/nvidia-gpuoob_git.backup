@@ -27,14 +27,14 @@ CXXFLAGS += " -DCFG_FILE_PATH=\\"${GPUOOB_CFG_PATH}\\" -DWITH_DSO_HANDLE -DTOTAL
 # Using NVIDIA Gitlab URI for OpenBMC for now, please make sure your Gitlab key doesn't have a passphase.
 # You could change the passphase to empty by 'ssh-keygen -p -f ~/.ssh/<your_gitlab_id_file>'
 # This issue will be solved when we upstream all codes to github.
-SRC_URI += "git://github.com/NVIDIA/nvidia-gpuoob;protocol=https;branch=develop"
-SRCREV = "35d67e1eb4181198ecfa52a91e96f4a653bb4a3b"
+SRC_URI += "git://git@gitlab-master.nvidia.com:12051/dgx/nvidia-gpuoob;protocol=https;branch=develop"
+SRCREV = "5a376fb3fbcacc94fdbfd22d3aff9512d4eb683d"
 S = "${WORKDIR}/git"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 #FILESEXTRAPATHS:prepend := "${THISDIR}/files/${MACHINE}:"
 
-SRC_URI += " \
+SRC_URI += "\
     file://oob_cfg.json \
     file://oob_profile_delta.json \
     file://oob_properties_delta.json \
@@ -55,6 +55,8 @@ SRC_URI += " \
     file://starship/ \
     file://hgxb/ \
     file://e4830-hgxb-hmc/ \
+    file://hgxb300/ \
+    file://evb-ast2600-hgxb300/ \
     file://total_req_queue_check.py \
     "
 
@@ -71,6 +73,9 @@ MANIFEST_JSON:legoc1    = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_lego.json"
 MANIFEST_JSON:legoc2    = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_lego.json"
 MANIFEST_JSON:e4830-hgxb-hmc  = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_hgxb.json"
 MANIFEST_JSON:hgxb  = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_hgxb.json"
+MANIFEST_JSON:e4830-hgxb300-hmc  = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_hgxb300.json"
+MANIFEST_JSON:hgxb300  = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_hgxb300.json"
+MANIFEST_JSON:evb-ast2600-hgxb300  = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_hgxb300.json"
 
 do_configure:prepend() {
     PROP_COUNTS=`python3 ${WORKDIR}/total_req_queue_check.py ${PROPS_JSON} ${MANIFEST_JSON}`

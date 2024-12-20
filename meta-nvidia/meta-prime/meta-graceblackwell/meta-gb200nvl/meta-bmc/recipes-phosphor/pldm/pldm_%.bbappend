@@ -1,5 +1,7 @@
 RDEPENDS:${PN} += " bash"
 inherit systemd
+EXTRA_OEMESON:append = " -Dsensor-polling-time=999 "
+
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI:append = " file://fw_update_config.json \

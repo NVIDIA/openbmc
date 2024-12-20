@@ -70,6 +70,58 @@ bmc_set_stby_pg_gpio_out()
 }
 
 #######################################
+# Apply GB200 PDB VR settings
+#
+# ARGUMENTS:
+#   None
+# RETURN:
+#   None
+bmc_set_pdb_vr()
+{
+    i2cset -y 6 0x60 0xEB 0x0796 w
+    i2cset -y 6 0x61 0xEB 0x0796 w
+}
+
+#######################################
+# Set RUN_POWER_PG (asserted) related GPIOs
+#
+# This function is used to assert correct levels
+# for critical power control GPIOs.
+#
+# This function is intended to be used only if/when
+# the BMC was hard reset (with #SRST) while this host
+# is running. This condition occurs during BMC FW Update
+# as the EROT will assert #SRST on the BMC as part of
+# the FW Udpate flow. This causes the BMC's GPOs to 
+# de-assert resulting in unexpected host reboots. This 
+# function is used to prevent this failure case.
+#
+# ARGUMENTS:
+#   None
+# RETURN:
+#   None
+recover_run_power_pg_gpio_state()
+{
+    echo "Restoring associated RUN_POWER_PG GPIOs..."
+
+    echo "Set GPIO line RUN_POWER_EN-O to 1"
+    echo 1 > /sys/class/gpio/gpio${sysfs_run_power}/value
+
+    set_gpio_level "PWR_BRAKE_L-O" $HIGH
+
+    set_gpio_level "SHDN_REQ_L-O" $HIGH
+
+    set_gpio_level "SHDN_FORCE_L-O" $HIGH
+
+    # Match the SYS_RST_OUT-I setting with 
+    # the current reset state of the CPU
+    sys_rst_out_status=$(gpioget `gpiofind "SYS_RST_OUT_L-I"`)
+    echo "SYS_RST_OUT_L-I = $sys_rst_out_status"
+
+    set_gpio_level "SYS_RST_IN_L-O" $sys_rst_out_status
+}
+
+#######################################
 # Assert BMC_READY-O
 # ARGUMENTS:
 #   None
@@ -282,12 +334,28 @@ bind_i2c_muxes()
 
     # Backplane0, I2C14-Mux@0x77 controls virtual buses 40-43
     # Backplane1, I2C15-Mux@0x77 controls virtual buses 44-47
-    # M.2 riser , I2C5-Mux@0x74  controls virtual buses 48-51
 
     return 0
 
 }
 
+#######################################
+# Bind HSC Sensors
+# HSC needs instantiation on cold
+# boot despite being defined
+# in the DTS. They appear only after 
+# stby power to the BMC, although 
+# they are always on aux. 
+# ARGUMENTS:
+#   None
+# RETURN:
+#   0 Always
+bind_hsc()
+{
+    echo "6-0012" > /sys/bus/i2c/drivers/lm25066/bind 
+    echo "6-0014" > /sys/bus/i2c/drivers/lm25066/bind
+    return 0
+}
 
 
 #######################################
@@ -462,6 +530,20 @@ if [[ $gpival -eq 0 ]]; then
     bmc_set_initial_gpio_out
 fi
 
+# WAR for ERoT Asserting SRST after BMC FW Update
+# 1. Determine if FPGA and RUN_POWER is up. Use this
+# as an indicator that the BMC was reset
+# when RUN_POWER was up.
+# 2. Assert the associated power control GPIOs accordingly
+# for RUN_POWER_PG-I (high) no matter if the BMC was reset
+# via #SRST or not.
+fpga_ready_status=$(gpioget `gpiofind "FPGA_READY_BMC-I"`)
+run_power_pg_status=$(gpioget `gpiofind "RUN_POWER_PG-I"`)
+if [[ $fpga_ready_status -eq 1 && $run_power_pg_status -eq 1 ]]; then
+    echo "FPGA_READY_BMC-I and RUN_POWER_PG-I are already asserted"
+    recover_run_power_pg_gpio_state
+fi
+
 #
 # Write STBY_POWER_EN=1 to turn on the standby power to the HMC and FPGA and let it boot
 #
@@ -482,14 +564,21 @@ fi
 bind_i2c_muxes
 
 #
+# Bind HSCs after STBY_POWER
+#
+bind_hsc
+
+#
 # Bind IO Expander driver after STBY_POWER
 # IO Expander requires STBY_POWER 
 #
 bind_gpio_expanders
 
 set_gpio_level "USB_HUB_RESET_L-O" $LOW
+set_gpio_level "SEC_USB2_HUB_RST_L-O" $LOW
 sleep 1
 set_gpio_level "USB_HUB_RESET_L-O" $HIGH
+set_gpio_level "SEC_USB2_HUB_RST_L-O" $HIGH
 
 #
 # Write HMC_PGOOD-O=1 to enable PCIe discovery of FPGA
@@ -553,14 +642,20 @@ if [[ $rc -ne 0 ]]; then
     exit 1
 fi
 
+wait_gpio_assert  "SEC_FPGA_READY_BMC-I"
+rc=$?
+if [[ $rc -ne 0 ]]; then
+    echo "ERROR: Secondary FPGA did not boot"
+fi
+
 # Bind all EEPROM drivers for EEPROMs powered by STBY_POWER
 create_eeprom_devices
 
-# Bind NVME EEPROMs powered by RUN_POWER.
-nvme_create_gb200_eeproms
-
 # Print BMC Boot Banner
 bmc_boot_banner
+
+#Enable PDB VR settings
+bmc_set_pdb_vr
 
 # Enable UART3 -> UART1 routing. 
 # Note: 1->3 will not work, SOL will function normally

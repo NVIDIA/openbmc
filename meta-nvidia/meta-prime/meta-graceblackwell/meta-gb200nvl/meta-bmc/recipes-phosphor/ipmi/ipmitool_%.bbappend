@@ -1,3 +1,5 @@
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+
 SRC_URI = "git://github.com/ipmitool/ipmitool.git;protocol=https;branch=master"
 SRCREV = "be11d948f89b10be094e28d8a0a5e8fb532c7b60"
 
@@ -6,6 +8,7 @@ DEPENDS += "systemd \
 
 SRC_URI += " \
     file://iana-enterprise-numbers \
+    file://0001-meta-gh200nvl-ipmitool-lan-print-1-rc-code-is-return.patch \
     "
 
 # make sure that the enterprise-numbers file gets installed in the root FS

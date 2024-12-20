@@ -1,0 +1,10 @@
+{
+    "endpoints" : [
+        {
+            "eid" : 17,
+            "name" : "satmc",
+            "visible" : false,
+            "description" : "Satellite Management Controller"
+        }
+    ]
+}

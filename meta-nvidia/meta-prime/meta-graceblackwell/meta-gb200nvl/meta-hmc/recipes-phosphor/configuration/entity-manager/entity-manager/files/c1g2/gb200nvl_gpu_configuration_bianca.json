@@ -1,0 +1,39 @@
+{
+  "Exposes": [
+    {
+      "I2CAddress": 109,
+      "I2CBus": 1,
+      "Name": "HGX_FW_GPU_0",
+      "ChassisName": "HGX_IRoT_GPU_0",
+      "MctpUUID": "f72d6fb0-5675-11ed-9b6a-0242ac120002",
+      "Type": "OCPRecovery"
+    },
+    {
+      "I2CAddress": 110,
+      "I2CBus": 1,
+      "Name": "HGX_FW_GPU_1",
+      "ChassisName": "HGX_IRoT_GPU_1",
+      "MctpUUID": "f72d6fb1-5675-11ed-9b6a-0242ac120002",
+      "Type": "OCPRecovery"
+    },
+    {
+      "I2CAddress": 109,
+      "I2CBus": 2,
+      "Name": "HGX_FW_GPU_2",
+      "ChassisName": "HGX_IRoT_GPU_2",
+      "MctpUUID": "f72d6fb2-5675-11ed-9b6a-0242ac120002",
+      "Type": "OCPRecovery"
+    },
+    {
+      "I2CAddress": 110,
+      "I2CBus": 2,
+      "Name": "HGX_FW_GPU_3",
+      "ChassisName": "HGX_IRoT_GPU_3",
+      "MctpUUID": "f72d6fb3-5675-11ed-9b6a-0242ac120002",
+      "Type": "OCPRecovery"
+    }
+  ],
+  "Name": "OCP_Recovery_Devices",
+  "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?2GPU Board PC'})",
+  "Type": "Recovery_Config"
+}

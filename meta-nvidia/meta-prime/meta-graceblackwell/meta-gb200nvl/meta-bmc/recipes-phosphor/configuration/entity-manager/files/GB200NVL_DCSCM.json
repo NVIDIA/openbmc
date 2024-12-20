@@ -16,19 +16,19 @@
                         "Direction": "greater than",
                         "Name": "upper non recoverable",
                         "Severity": 4,
-                        "Value": 85.0
+                        "Value": 95.0
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper  critical",
                         "Severity": 3,
-                        "Value": 83.0
+                        "Value": 93.0
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper non critical",
                         "Severity": 0,
-                        "Value": 80.0
+                        "Value": 90.0
                     },
                     {
                         "Direction": "less than",
@@ -38,198 +38,6 @@
                     }
                 ],
                 "Type": "TMP75"
-            },
-            {
-                "Address": "0x4d",
-                "Bus": 23,
-                "Name": "IO_Board_0_Temp_0",
-                "Thresholds": [
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper non recoverable",
-                        "Severity": 4,
-                        "Value": 45.0
-                    },
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper critical",
-                        "Severity": 3,
-                        "Value": 43.0
-                    },
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper non critical",
-                        "Severity": 0,
-                        "Value": 40.0
-                    }
-                ],
-                "Type": "TMP75"
-            },
-            {
-                "Address": "0x4e",
-                "Bus": 6,
-                "Name": "PDB_0_Inlet_Temp_0",
-                "Thresholds": [
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper non recoverable",
-                        "Severity": 4,
-                        "Value": 55.0
-                    },
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper critical",
-                        "Severity": 3,
-                        "Value": 53.0
-                    },
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper non critical",
-                        "Severity": 0,
-                        "Value": 50.0
-                    }
-                ],
-                "Type": "TMP75"
-            },
-            {
-                "Address": "0x1f",
-                "Bus": 14,
-                "Name": "NIC_0_Local_Temp_0",
-                "Name1": "NIC_0_Temp_0",
-                "Labels": [
-                    "temp2"
-                ],
-                "Thresholds": [
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper non recoverable",
-                        "Severity": 4,
-                        "Value": 100.0,
-                        "Index": 2
-                    },
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper critical",
-                        "Severity": 3,
-                        "Value": 98.0,
-                        "Index": 2
-                    },
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper non critical",
-                        "Severity": 0,
-                        "Value": 95.0,
-                        "Index": 2
-                    }
-                ],
-                "Type": "TMP421"
-            },
-            {
-                "Address": "0x1f",
-                "Bus": 15,
-                "Name": "NIC_1_Local_Temp_0",
-                "Name1": "NIC_1_Temp_0",
-                "Labels": [
-                    "temp2"
-                ],
-                "Thresholds": [
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper non recoverable",
-                        "Severity": 4,
-                        "Value": 100.0,
-                        "Index": 2
-                    },
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper critical",
-                        "Severity": 3,
-                        "Value": 98.0,
-                        "Index": 2
-                    },
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper non critical",
-                        "Severity": 0,
-                        "Value": 95.0,
-                        "Index": 2
-                    }
-                ],
-                "Type": "TMP421"
-            },
-            {
-                    "Address": "0x6a",
-                    "Bus": 8,
-                    "Name": "STATUS_M2_0",
-                    "PowerState": "On",
-                    "PollRate": 1,
-                    "EntityId": 4,
-                    "EntityInstance": 1,
-                    "Type": "Nvmem2"
-            },
-            {
-                    "Address": "0x6a",
-                    "Bus": 49,
-                    "Name": "STATUS_M2_1",
-                    "PowerState": "On",
-                    "PollRate": 1,
-                    "EntityId": 4,
-                    "EntityInstance": 2,
-                    "Type": "Nvmem2"
-            },
-            {
-                "Address": "0x6a",
-                "Bus": 8,
-                "Name": "TEMP_M.2_0_NVME",
-                "PowerState": "On",
-                "Thresholds": [
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper non recoverable",
-                        "Severity": 4,
-                        "Value": 75
-                    },
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper critical",
-                        "Severity": 3,
-                        "Value": 72
-                    },
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper non critical",
-                        "Severity": 0,
-                        "Value": 70
-                    }
-                ],
-                "Type": "NVME1000"
-            },
-            {
-                "Address": "0x6a",
-                "Bus": 49,
-                "Name": "TEMP_M.2_1_NVME",
-                "PowerState": "On",
-                "Thresholds": [
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper non recoverable",
-                        "Severity": 4,
-                        "Value": 75
-                    },
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper critical",
-                        "Severity": 3,
-                        "Value": 72
-                    },
-                    {
-                        "Direction": "greater than",
-                        "Name": "upper non critical",
-                        "Severity": 0,
-                        "Value": 70
-                    }
-                ],
-                "Type": "NVME1000"
             }
         ],
         "Name": "BMC_0",

@@ -1,23 +1,42 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/phosphor-user-manager;protocol=https;branch=develop"
 SRC_URI += "file://upgrade_hostconsole_group.sh"
-SRCREV = "f3566405089015521fd8f9c07d0a8a27ed9fbf56"
+SRCREV = "201f3dd65d46bf9f4111caacbd843a70ba23af33"
 
-def get_oeconf(d, policy_var, meson_var):
-    val = d.getVar(policy_var , True)
-    if val is None:
+DEPENDS += "libpwquality"
+DEPENDS += "libpam"
+
+def get_oeconf(d, filename, policy_var, search_key):
+    import re
+    import os
+
+    folder_path = d.expand("${TOPDIR}/password-policy")
+    full_path = os.path.join(folder_path, filename) 
+    if not os.path.exists(full_path):
+        bb.warn(f"Config file NOT found: {full_path}")
         return ""
-    if not val:
-        return ""
-    rval = " -D" + policy_var;
-    rval += "="
-    rval += val
+    rval = ""
+
+    try:
+        with open(full_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#'):
+                    match = re.match(rf'^{search_key}\s*=\s*(\S+)', line)
+                    if match:
+                        search_result = match.group(1)
+                        rval = " -D" + policy_var;
+                        rval += "="
+                        rval += search_result
+                        #bb.warn(f"Found value for {rval}: {rval}")
+                        break
+            else:
+                bb.warn(f"{search_key} not found in config file")
+
+    except Exception as e:
+        bb.error(f"Error reading config file: {str(e)}")
+
     return rval
-
-EXTRA_OEMESON += "${@get_oeconf(d, 'MIN_UCASE_CHRS', 'min-ucase-characters')}"
-EXTRA_OEMESON += "${@get_oeconf(d, 'MIN_LCASE_CHRS', 'min-lcase-characters')}"
-EXTRA_OEMESON += "${@get_oeconf(d, 'MIN_DIGITS', 'min-digits')}"
-EXTRA_OEMESON += "${@get_oeconf(d, 'MIN_SPEC_CHRS', 'min-special-characters')}"
-EXTRA_OEMESON += "${@get_oeconf(d, 'MIN_PASSWORD_LENGTH', 'min-password-length')}"
-EXTRA_OEMESON += "${@get_oeconf(d, 'MAX_FAILED_LOGIN_ATTEMPTS', 'max-failed-login-attempts')}"
-EXTRA_OEMESON += "${@get_oeconf(d, 'ACCOUNT_UNLOCK_TIMEOUT', 'account-unlock-timeout')}"
+EXTRA_OEMESON += "${@get_oeconf(d, 'pwquality.conf', 'MIN_PASSWORD_LENGTH', 'minlen')}"
+EXTRA_OEMESON += "${@get_oeconf(d, 'faillock.conf', 'ACCOUNT_UNLOCK_TIMEOUT', 'unlock_time')}"
+EXTRA_OEMESON += "${@get_oeconf(d, 'faillock.conf', 'MAX_FAILED_LOGIN_ATTEMPTS', 'deny')}"

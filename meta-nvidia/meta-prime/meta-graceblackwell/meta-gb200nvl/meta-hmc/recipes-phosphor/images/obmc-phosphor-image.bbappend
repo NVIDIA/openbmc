@@ -23,6 +23,7 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " \
                                     nvidia-bmc-compliance \
                                     nvidia-mc-aspeed-lib \
                                     nvidia-tal \
+                                    nvidia-fdr \
                                     hmc-temp-sensor \
                                     phosphor-settings-manager \
                                     nvidia-tal \
@@ -41,4 +42,3 @@ IMAGE_FEATURES:remove = " \
 # TODO: temporarily commented out to maintain compatibility with CI system
 # IMAGE_NAME:append = "-${BUILD_TYPE}"
 # IMAGE_LINK_NAME:append = "-${BUILD_TYPE}"
-#nvidia-fdr

@@ -15,7 +15,9 @@ RDEPENDS:${PN} = "bash nvidia-mc-lib biosconfig-manager"
 FILESEXTRAPATHS:append := "${THISDIR}/files:"
 
 FILES:${PN} = " ${bindir}/delete-hi-user.sh \
-                ${bindir}/control-bios-host-interface.sh "
+                ${bindir}/control-bios-host-interface.sh \
+                ${bindir}/cpu-boot-done.sh \
+                ${bindir}/rescan-frus.sh "
                 
 
 SYSTEMD_PACKAGES = "${PN}"
@@ -28,12 +30,16 @@ SRC_URI = " \
       file://control-bios-host-interface.sh \
       file://cpu-boot-done.service \
       file://cpu-boot-undone.service \
+      file://cpu-boot-done.sh \
+      file://rescan-frus.sh \
      "
 
 do_install() {
     install -d ${D}${bindir}
     install -m 0755 ${S}/delete-hi-user.sh ${D}/${bindir}/delete-hi-user.sh
     install -m 0755 ${S}/control-bios-host-interface.sh ${D}/${bindir}/control-bios-host-interface.sh
+    install -m 0755 ${S}/cpu-boot-done.sh ${D}/${bindir}/cpu-boot-done.sh
+    install -m 0755 ${S}/rescan-frus.sh ${D}/${bindir}/rescan-frus.sh
 
     install -d ${D}${systemd_system_unitdir}
 }

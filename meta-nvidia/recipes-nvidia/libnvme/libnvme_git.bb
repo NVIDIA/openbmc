@@ -2,7 +2,7 @@ SUMMARY = "NVMe-MI Library"
 DESCRIPTION = "NVMe-MI Library"
 
 SRC_URI = "git://github.com/NVIDIA/libnvme;protocol=https;branch=develop"
-SRCREV= "b9ea1afb71d54e776eef51a7cf519af94459bd0b"
+SRCREV= "89f0a88f8588a763ee0e4bf5201de33f72eb3413"
 
 
 LICENSE = "LGPL-2.1"

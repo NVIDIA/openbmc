@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI = "git://github.com/NVIDIA/libpldm;protocol=https;branch=develop"
-SRCREV = "4e381b7b858b30cd1f6135a1e18528368e3bba90"
+SRCREV = "5609534129e5ff82e5f22907e60fedf7fca8a839"
 
 EXTRA_OEMESON += " \
     -Doem-nvidia=enabled \

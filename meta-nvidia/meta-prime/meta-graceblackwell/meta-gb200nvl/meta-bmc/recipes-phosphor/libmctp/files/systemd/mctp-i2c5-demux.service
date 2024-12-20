@@ -1,14 +1,16 @@
 [Unit]
 Description=MCTP I2C 5 demultiplexer daemon
 Wants=mctp-i2c5-demux.socket
+After=cpu-boot-done.service
 Conflicts=obmc-power-off@0.target
 ConditionPathExists=/sys/bus/i2c/devices/5-0071
 
 [Service]
 Type=notify
 Restart=always
+Environment=SYSLOG_IDENTIFIER=mctp-i2c5-demux
 ExecStart=/usr/bin/mctp-demux-daemon smbus i2c_bus=5 i2c_config_file=/usr/share/mctp/mctp_cfg_smbus5.json
 SyslogIdentifier=mctp-i2c5-demux
 
 [Install]
-WantedBy=obmc-power-on@0.target
+WantedBy=cpu-boot-done.service

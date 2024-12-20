@@ -135,11 +135,11 @@ function main()
         echo "$bootStatusFatalErrCode" > $bootStatusFatalErrFileName
 
         querryBootTmpFileName="${name}_query_boot_status.log"
-        /usr/bin/mctp-vdm-util -c query_boot_status -t ${eid} -m -j &>> $querryBootTmpFileName
+        /usr/bin/mctp-vdm-util -c query_boot_status -t ${eid} -m -j &>> "/tmp/${querryBootTmpFileName}"
         if [ $? -ne 0 ]; then
             echo "An error occured while running query_boot_status for eid ${eid}"
         fi
-        mv -f $querryBootTmpFileName $TMP_DIR_PATH
+        mv -f "/tmp/${querryBootTmpFileName}" $TMP_DIR_PATH
     done
 
     response=$(get_subtree_paths)
@@ -151,25 +151,33 @@ function main()
             if [[ $? -eq 0 ]]; then
                   # Split the properties into variables
                     IFS=',' read -r deviceName i2c_address i2c_bus <<< "$properties"
-                    echo "ocp-recovery-tool GetDeviceStatus for the ${deviceName} on i2c bus ${i2c_bus} and i2c address ${i2c_address}" &>> "${deviceName}.log"
-                    /usr/bin/ocp-recovery-tool GetDeviceStatus -b $i2c_bus -s $i2c_address &>> "${deviceName}.log"
+                    echo "ocp-recovery-tool GetDeviceStatus for the ${deviceName} on i2c bus ${i2c_bus} and i2c address ${i2c_address}" &>> "/tmp/${deviceName}.log"
+                    /usr/bin/ocp-recovery-tool GetDeviceStatus -b $i2c_bus -s $i2c_address &>> "/tmp/${deviceName}.log"
                     if [ $? -ne 0 ]; then
                         echo "ocp-recovery-tool GetDeviceStatus failed for the ${deviceName} on i2c bus ${i2c_bus} and i2c address ${i2c_address}"
                     fi
-                    echo "ocp-recovery-tool GetRecoveryStatus for the ${deviceName} on i2c bus ${i2c_bus} and i2c address ${i2c_address}" &>> "${deviceName}.log"
-                    /usr/bin/ocp-recovery-tool GetRecoveryStatus -b $i2c_bus -s $i2c_address &>> "${deviceName}.log"
+                    echo "ocp-recovery-tool GetRecoveryStatus for the ${deviceName} on i2c bus ${i2c_bus} and i2c address ${i2c_address}" &>> "/tmp/${deviceName}.log"
+                    /usr/bin/ocp-recovery-tool GetRecoveryStatus -b $i2c_bus -s $i2c_address &>> "/tmp/${deviceName}.log"
                     if [ $? -ne 0 ]; then
-                        echo "ocp-recovery-tool GetRecoveryStatus failed for the ${deviceName} on i2c bus ${i2c_bus} and i2c address ${i2c_address}" &>> "${deviceName}.log"
+                        echo "ocp-recovery-tool GetRecoveryStatus failed for the ${deviceName} on i2c bus ${i2c_bus} and i2c address ${i2c_address}" &>> "/tmp/${deviceName}.log"
                     fi
                     rm -f $CMS_LOG_FILE
                     cmsTmpFileName="${deviceName}_CMS.bin"
-                    echo "ocp-recovery-tool GetCMSLogs for the ${deviceName} on i2c bus ${i2c_bus} and i2c address ${i2c_address}" &>> "${deviceName}.log"
-                    /usr/bin/ocp-recovery-tool GetCMSLogs -b $i2c_bus -s $i2c_address -w 2 &>> "${deviceName}.log"
+                    echo "ocp-recovery-tool GetCMSLogs for the ${deviceName} on i2c bus ${i2c_bus} and i2c address ${i2c_address}" &>> "/tmp/${deviceName}.log"
+                    /usr/bin/ocp-recovery-tool GetCMSLogs -b $i2c_bus -s $i2c_address -w 2 &>> "/tmp/${deviceName}.log"
                     if [ $? -ne 0 ]; then
                         echo "ocp-recovery-tool GetCMSLogs failed for the ${deviceName} on i2c bus ${i2c_bus} and i2c address ${i2c_address}"
                     fi
+		    oobhubTmpFileName="${deviceName}_OOBHUB.bin"
+		    echo "OOBHUB logs for the ${deviceName} on i2c bus ${i2c_bus} and i2c address ${i2c_address}" &>> "/tmp/${deviceName}.log"
+		    i2ctransfer -y $i2c_bus w1@$i2c_address 0x2c r256 &>> /tmp/oobhub_logs.bin
+		    if [ $? -ne 0 ]; then
+                        echo "i2ctransfer for OOBHUB logs failed for the ${deviceName} on i2c bus ${i2c_bus} and i2c address ${i2c_address}"
+			rm /tmp/oobhub_logs.bin
+		    fi
+		    mv -f /tmp/oobhub_logs.bin "$TMP_DIR_PATH/$oobhubTmpFileName"
             fi
-        mv -f "${deviceName}.log" "$TMP_DIR_PATH"
+        mv -f "/tmp/${deviceName}.log" "$TMP_DIR_PATH"
         mv -f "$CMS_LOG_FILE" "$TMP_DIR_PATH/$cmsTmpFileName"
     done
 
