@@ -1,0 +1,50 @@
+[
+    {
+        "Name": "IRoT_CX7_0",
+        "Probe": "xyz.openbmc_project.Common.UUID({'UUID': 'ae0a96c0-cb06-11e5-a837-3c6d66141f00'})",
+        "Type": "Chassis",
+        "xyz.openbmc_project.Inventory.Item.SPDMResponder": {},
+        "xyz.openbmc_project.Inventory.Decorator.Replaceable": {
+            "FieldReplaceable": false
+        },
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        }
+    },
+    {
+        "Name": "IRoT_CX7_1",
+        "Probe": "xyz.openbmc_project.Common.UUID({'UUID': 'ae0a96c0-cb06-11e5-a837-3c6d66141f04'})",
+        "Type": "Chassis",
+        "xyz.openbmc_project.Inventory.Item.SPDMResponder": {},
+        "xyz.openbmc_project.Inventory.Decorator.Replaceable": {
+            "FieldReplaceable": false
+        },
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        }
+    },
+    {
+        "Name": "IRoT_CX7_2",
+        "Probe": "xyz.openbmc_project.Common.UUID({'UUID': 'ae0a96c0-cb06-11e5-a837-3c6d66141ee4'})",
+        "Type": "Chassis",
+        "xyz.openbmc_project.Inventory.Item.SPDMResponder": {},
+        "xyz.openbmc_project.Inventory.Decorator.Replaceable": {
+            "FieldReplaceable": false
+        },
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        }
+    },
+    {
+        "Name": "IRoT_CX7_3",
+        "Probe": "xyz.openbmc_project.Common.UUID({'UUID': 'ae0a96c0-cb06-11e5-a837-3c6d66141ee0'})",
+        "Type": "Chassis",
+        "xyz.openbmc_project.Inventory.Item.SPDMResponder": {},
+        "xyz.openbmc_project.Inventory.Decorator.Replaceable": {
+            "FieldReplaceable": false
+        },
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        }
+    }
+]

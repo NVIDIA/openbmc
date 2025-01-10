@@ -1,0 +1,96 @@
+[
+    {
+        "Exposes": [
+            {
+                "Bus": "0x06",
+                "Address": "0x50",
+                "Name": "PDB_0",
+                "Type": "EEPROM_24C256"
+            },
+            {
+                "Bus": "0x06",
+                "Address": "0x45",
+                "Name": "PDB_0_HSC_0",
+                "Type": "LTC4287",
+                "Labels": [
+                    "iout1",
+                    "vin",
+                    "vout1",
+                    "pin",
+                    "temp1"
+                ],
+                // Per HW Eng EEs, iout is equivalent to iin so it's not
+                // relevant where it's measured by the sensor and can simply
+                // be reported as current.
+                "iout1_Name": "PDB_0_HSC_0_Cur_0",
+                "vin_Name": "PDB_0_HSC_0_Volt_In_0",
+                "vout1_Name": "PDB_0_HSC_0_Volt_Out_0",
+                "pin_Name": "PDB_0_HSC_0_Pwr_0",
+                "temp1_Name": "PDB_0_HSC_0_Temp_0"
+            },
+            {
+                "Bus": "0x06",
+                "Address": "0x46",
+                "Name": "PDB_0_HSC_1",
+                "Type": "LTC4287",
+                "Labels": [
+                    "iout1",
+                    "vin",
+                    "vout1",
+                    "pin",
+                    "temp1"
+                ],
+                "iout1_Name": "PDB_0_HSC_1_Cur_0",
+                "vin_Name": "PDB_0_HSC_1_Volt_In_0",
+                "vout1_Name": "PDB_0_HSC_1_Volt_Out_0",
+                "pin_Name": "PDB_0_HSC_1_Pwr_0",
+                "temp1_Name": "PDB_0_HSC_1_Temp_0"
+            }
+        ],
+        "Name": "PDB_0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'Quanta Cloud Technology Inc.', 'BOARD_PRODUCT_NAME': 'S8B PDB BD'})",
+        "Type": "Board",
+        "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Chassis_0",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "$BOARD_MANUFACTURER",
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+            "ChassisType": "$CHASSIS_TYPE",
+            "ChassisPartNumber": "$CHASSIS_PART_NUMBER",
+            "ChassisSerial": "$CHASSIS_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+            "Bus": "0x06",
+            "Address": "0x50",
+            "Name": "PDB_0"
+        },
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        },
+        "xyz.openbmc_project.Association.Definitions": {
+            "Associations": [
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/PDB_0_Chassis_FRU_Assembly0"
+                ]
+            ]
+        }
+    },
+    {
+        "Name": "PDB_0 Chassis FRU Assembly0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'Quanta Cloud Technology Inc.', 'BOARD_PRODUCT_NAME': 'S8B PDB BD'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "PartNumber": "$CHASSIS_PART_NUMBER",
+            "SerialNumber": "$CHASSIS_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    }
+]

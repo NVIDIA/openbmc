@@ -1,0 +1,328 @@
+[
+    {
+        "Exposes": [
+            {
+                "Bus": "0x06",
+                "Address": "0x50",
+                "Name": "PDB_0",
+                "Type": "EEPROM_24C02"
+            },
+            {
+                "Address": "0x60",
+                "Bus": 6,
+                "Labels": [
+                    "temp1",
+                    "temp2"
+                ],
+                "Name": "PDB_0_Vreg_0",
+                "Type": "RAA228004",
+                "temp1_Name": "PDB_0_Vreg_0_Temp_0",
+                "temp2_Name": "PDB_0_Vreg_0_Temp_1",
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 110.0,
+                        "Label": "temp1"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 107.0,
+                        "Label": "temp1"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 105.0,
+                        "Label": "temp1"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 110.0,
+                        "Label": "temp2"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 107.0,
+                        "Label": "temp2"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 105.0,
+                        "Label": "temp2"
+                    }
+                ]
+            },
+            {
+                "Address": "0x61",
+                "Bus": 6,
+                "Labels": [
+                    "temp1",
+                    "temp2"
+                ],
+                "Name": "PDB_0_Vreg_1",
+                "Type": "RAA228004",
+                "temp1_Name": "PDB_0_Vreg_1_Temp_0",
+                "temp2_Name": "PDB_0_Vreg_1_Temp_1",
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 110.0,
+                        "Label": "temp1"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 107.0,
+                        "Label": "temp1"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 105.0,
+                        "Label": "temp1"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 110.0,
+                        "Label": "temp2"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 107.0,
+                        "Label": "temp2"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 105.0,
+                        "Label": "temp2"
+                    }
+                ]
+            },
+            {
+                "Address": "0x12",
+                "Bus": 6,
+                "Labels": [
+                    "iin",
+                    "pin",
+                    "temp1",
+                    "vout1",
+                    "vin"
+                ],
+                "Name": "PDB_0_HSC_0",
+                "Type": "LM5066i",
+                "iin_Name": "PDB_0_HSC_0_Cur_0",
+                "pin_Name": "PDB_0_HSC_0_Pwr_0",
+                "temp1_Name": "PDB_0_HSC_0_Temp_0",
+                "vout1_Name": "PDB_0_HSC_0_Volt_Out_0",
+                "vin_Name": "PDB_0_HSC_0_Volt_In_0",
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 110.0,
+                        "Label": "temp1"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 107.0,
+                        "Label": "temp1"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 105.0,
+                        "Label": "temp1"
+                    }
+                ]
+            },
+            {
+                "Address": "0x14",
+                "Bus": 6,
+                "Labels": [
+                    "iin",
+                    "pin",
+                    "temp1",
+                    "vout1",
+                    "vin"
+                ],
+                "Name": "PDB_0_HSC_1",
+                "Type": "LM5066i",
+                "iin_Name": "PDB_0_HSC_1_Cur_0",
+                "pin_Name": "PDB_0_HSC_1_Pwr_0",
+                "temp1_Name": "PDB_0_HSC_1_Temp_0",
+                "vout1_Name": "PDB_0_HSC_1_Volt_Out_0",
+                "vin_Name": "PDB_0_HSC_1_Volt_In_0",
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 110.0,
+                        "Label": "temp1"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 107.0,
+                        "Label": "temp1"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 105.0,
+                        "Label": "temp1"
+                    }
+                ]
+            },
+            {
+                "Address": "0x4e",
+                "Bus": 6,
+                "Name": "PDB_0_Inlet_Temp_0",
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 85.0
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 83.0
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 80.0
+                    }
+                ],
+                "Type": "TMP75"
+            }
+        ],
+        "Name": "PDB_0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '.?675-24975-0000.?|.?675-24975-0300.?|.?675-24975-0400.?|.?675-24975-2000.?'})",
+        "Type": "Board",
+        "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Chassis_0/Chassis_0",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "$BOARD_MANUFACTURER",
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+            "ChassisType": "$CHASSIS_TYPE",
+            "ChassisPartNumber": "$CHASSIS_PART_NUMBER",
+            "ChassisSerial": "$CHASSIS_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+            "Bus": "0x06",
+            "Address": "0x50",
+            "Name": "PDB_0"
+        },
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        },
+        "xyz.openbmc_project.Association.Definitions": {
+            "Associations": [
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/PDB_0_Chassis_FRU_Assembly0"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/PDB_0_Board_FRU_Assembly1"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/PDB_0_Product_FRU_Assembly2"
+                ]
+            ]
+        }
+    },
+    {
+        "Name": "PDB_0 Chassis FRU Assembly0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '.?675-24975-0000.?|.?675-24975-0300.?|.?675-24975-0400.?|.?675-24975-2000.?'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "PartNumber": "$CHASSIS_PART_NUMBER",
+            "SerialNumber": "$CHASSIS_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "PDB_0 Board FRU Assembly1",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '.?675-24975-0000.?|.?675-24975-0300.?|.?675-24975-0400.?|.?675-24975-2000.?'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+            "BuildDate": "$BOARD_MANUFACTURE_DATE",
+            "Manufacturer": "$BOARD_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "PDB_0 Product FRU Assembly2",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '.?675-24975-0000.?|.?675-24975-0300.?|.?675-24975-0400.?|.?675-24975-2000.?'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$PRODUCT_PRODUCT_NAME",
+            "PartNumber": "$PRODUCT_PART_NUMBER",
+            "SerialNumber": "$PRODUCT_SERIAL_NUMBER",
+            "Manufacturer": "$PRODUCT_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Revision": {
+            "Version": "$PRODUCT_VERSION"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Area": {
+            "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.Board"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    }
+]
