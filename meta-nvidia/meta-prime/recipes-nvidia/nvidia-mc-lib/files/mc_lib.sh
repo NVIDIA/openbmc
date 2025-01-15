@@ -11,6 +11,12 @@ mc_function_files=(
 
 source /usr/bin/system_state_files.sh
 
+get_gpio() #(pin)
+{
+    local pin=$1;shift
+    gpioget `gpiofind "$pin"`
+}
+
 #
 # Exchange RUN_POWER_PG via a tmp file with nvidia-power-monitor
 # power_status_monitor.sh captures the real GPIO line and mirrors it's
@@ -18,16 +24,30 @@ source /usr/bin/system_state_files.sh
 #
 get_run_power_pg()
 {
-    if [ -f "$RUN_POWER_PG_FILE" ]; then
-        RUN_POWER_PG=`cat $RUN_POWER_PG_FILE`
+    power_monitor_active=`systemctl is-active nvidia-power-monitor`
+
+    if [ $power_monitor_active != "active" ]; then
+    {
+        # If power-status-monitor not active, just get it from the GPIO
+        echo `get_gpio RUN_POWER_PG-I`
+    }
     else
-        #
-        # If RUN_POWER_PG is empty we may not have powered host on yet
-        # so assuming power off is a safe bet
-        #
-        RUN_POWER_PG=0
+    {
+        if [ -f "$RUN_POWER_PG_FILE" ]; then
+        {
+            echo `cat $RUN_POWER_PG_FILE`
+        }
+        else
+        {
+            #
+            # If RUN_POWER_PG_FILE does not exist, the power monitor may not be started
+            # so assuming power off
+            #
+            echo "0"
+        }
+        fi
+    }
     fi
-    echo "$RUN_POWER_PG"
 }
 
 #

@@ -6,10 +6,7 @@ DEPENDS += " libusb1 "
 
 EXTRA_OEMESON += " -Denable-usb=enabled "
 
-# Temporarily disable batching MCTP packets
-# FPGA bug: FPGA cannot support PLDM flashing 
-# on cascaded systems
-EXTRA_OEMESON += " -Dmctp-batch-tx=disabled "
+EXTRA_OEMESON += " -Dmctp-batch-tx=enabled "
 
 # Needed for systemd dependency: We need to start mctp after the FPGA is up (and on pcie bus)
 RDEPENDS:${PN}:append = " nvidia-fpga-ready-monitor "

@@ -1,0 +1,14 @@
+[Unit]
+Description=NVIDIA Power Status Monitor Service
+Wants=mapper-wait@-xyz-openbmc_project-state-chassis0.service
+After=mapper-wait@-xyz-openbmc_project-state-chassis0.service
+Wants=mapper-wait@-xyz-openbmc_project-state-host0.service
+After=mapper-wait@-xyz-openbmc_project-state-host0.service
+StartLimitIntervalSec=1
+
+[Service]
+ExecStart=/usr/bin/env hmc-power-state
+SyslogIdentifier=hmc-power-state
+
+[Install]
+WantedBy=multi-user.target

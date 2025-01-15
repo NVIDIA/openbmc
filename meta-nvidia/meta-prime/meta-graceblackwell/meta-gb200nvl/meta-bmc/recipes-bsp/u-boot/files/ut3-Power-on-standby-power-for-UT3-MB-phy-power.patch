@@ -1,0 +1,46 @@
+From 43792d398ce5e1a53da6a0a1da6229820bc46257 Mon Sep 17 00:00:00 2001
+From: Curtis Chuang <shengchihc@nvidia.com>
+Date: Tue, 1 Oct 2024 22:19:24 -0700
+Subject: [PATCH] Power on standby power for UT3 MB phy power
+
+Signed-off-by: Curtis Chuang <shengchihc@nvidia.com>
+---
+ board/aspeed/evb_ast2600/evb_ast2600.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/board/aspeed/evb_ast2600/evb_ast2600.c b/board/aspeed/evb_ast2600/evb_ast2600.c
+index 72ecb18c15..d36eefae26 100755
+--- a/board/aspeed/evb_ast2600/evb_ast2600.c
++++ b/board/aspeed/evb_ast2600/evb_ast2600.c
+@@ -121,13 +121,28 @@ static void __maybe_unused espi_init(void)
+ 	reg |= 0x10;
+ 	writel(reg, ESPI_BASE + 0x000);
+ }
++#define AST_GPIOMNOP_DATA     (GPIO_BASE + 0x078)
++#define AST_GPIOMNOP_DRCTN     (GPIO_BASE + 0x07C)
++static void __maybe_unused stbypower_on(void)
++{
++	u32 direction, value;
++
++	direction = readl(AST_GPIOMNOP_DRCTN);
++	direction |= GENMASK(3, 3);
++	writel(direction, AST_GPIOMNOP_DRCTN);
+ 
++	value = readl(AST_GPIOMNOP_DATA);
++	value |= GENMASK(3, 3);
++	writel(value, AST_GPIOMNOP_DATA);
++
++}
+ int board_early_init_f(void)
+ {
+ #if 0
+ 	port80h_snoop_init();
+ 	sgpio_init();
+ #endif
++	stbypower_on();
+ 	espi_init();
+ 	return 0;
+ }
+-- 
+2.34.1
+

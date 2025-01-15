@@ -24,7 +24,6 @@ SYSDSVCS = "nvidia-power-monitor.service \
             "
 
 SRC_URI = "file://power_status_monitor.sh \
-           file://power_status_inc.sh \
            file://shutdown_ok_monitor.sh \
            file://standby_power_status_monitor.sh \
            file://nvidia-sync-host-req-transition.sh \
@@ -38,7 +37,6 @@ do_install() {
     install -d ${D}${bindir}
     install -d ${D}${systemd_system_unitdir}
     install -m 0755 ${WORKDIR}/power_status_monitor.sh ${D}${bindir}/
-    install -m 0755 ${WORKDIR}/power_status_inc.sh ${D}${bindir}/
     install -m 0755 ${WORKDIR}/shutdown_ok_monitor.sh ${D}${bindir}/
     install -m 0755 ${WORKDIR}/standby_power_status_monitor.sh ${D}${bindir}/
     install -m 0755 ${WORKDIR}/nvidia-sync-host-req-transition.sh ${D}${bindir}/

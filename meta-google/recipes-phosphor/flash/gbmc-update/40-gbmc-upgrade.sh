@@ -28,6 +28,11 @@ else
 fi
 
 gbmc_upgrade_dl_unpack() {
+  if [ -z "${bootfile_url-}" ]; then
+    echo "bootfile_url is empty" >&2
+    return 1
+  fi
+
   echo "Fetching $bootfile_url" >&2
 
   # We only support tarballs at the moment, our URLs will always denote
@@ -51,7 +56,7 @@ gbmc_upgrade_dl_unpack() {
   while true; do
     local st=()
     curl -LSsk --max-time $((timeout - SECONDS)) "$bootfile_url" |
-      tar "${tflags[@]}" --wildcards -xC "$tmpdir" "${GBMC_UPGRADE_UNPACK_FILES[@]}" 2>"$tmpdir"/tarerr \
+      tar "${tflags[@]}" --wildcards --warning=none -xC "$tmpdir" "${GBMC_UPGRADE_UNPACK_FILES[@]}" 2>"$tmpdir"/tarerr \
       && st=("${PIPESTATUS[@]}") || st=("${PIPESTATUS[@]}")
     # Curl failures should continue
     if (( st[0] == 0 )); then
@@ -74,12 +79,16 @@ gbmc_upgrade_dl_unpack() {
 }
 
 gbmc_upgrade_hook() {
-  [ -n "${bootfile_url-}" ] || return 0
-
   local tmpdir
   tmpdir="$(mktemp -d)" || return
+  if ! gbmc_upgrade_dl_unpack; then
+    echo 'upgrade unpack failed' >&2
+    # shellcheck disable=SC2153
+    rm -rf -- "$tmpdir" "$GBMC_UPGRADE_SIG" "$GBMC_UPGRADE_IMG"
+    return 1
+  fi
   # shellcheck disable=SC2015
-  gbmc_upgrade_dl_unpack && gbmc_br_run_hooks GBMC_UPGRADE_HOOKS || true
+  gbmc_br_run_hooks GBMC_UPGRADE_HOOKS || true
   # shellcheck disable=SC2153
   rm -rf -- "$tmpdir" "$GBMC_UPGRADE_SIG" "$GBMC_UPGRADE_IMG"
 }

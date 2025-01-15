@@ -13,7 +13,7 @@ DEPENDS = " \
     ${@bb.utils.contains('PTEST_ENABLED', '1', 'gtest', '', d)} \
     ${@bb.utils.contains('PTEST_ENABLED', '1', 'gmock', '', d)} \
 "
-SRCREV = "f2caadcee107d537be6fdb8e04bcc975eaa594c6"
+SRCREV = "1b5eb497fc9aeb6486deced6627e70ebd092a896"
 PV = "1.0+git${SRCPV}"
 
 SRC_URI = "git://github.com/openbmc/bmcweb.git;branch=master;protocol=https"
@@ -32,7 +32,7 @@ PACKAGECONFIG ??= "mutual-tls-auth"
 PACKAGECONFIG[insecure-redfish-expand]="-Dinsecure-enable-redfish-query=enabled"
 PACKAGECONFIG[mutual-tls-auth]="-Dmutual-tls-auth=enabled,-Dmutual-tls-auth=disabled"
 
-MUTUAL_TLS_PARSING="UserPrincipalName"
+MUTUAL_TLS_PARSING="CommonName"
 
 EXTRA_OEMESON = " \
     --buildtype=minsize \

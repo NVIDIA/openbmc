@@ -1,5 +1,10 @@
 [Unit]
 Description=Service to execute when the system goes off
+Wants=mapper-wait@-xyz-openbmc_project-state-chassis0.service
+After=mapper-wait@-xyz-openbmc_project-state-chassis0.service
+Wants=mapper-wait@-xyz-openbmc_project-state-host0.service
+After=mapper-wait@-xyz-openbmc_project-state-host0.service
+Conflicts=cpu_is_on.service
 
 [Service]
 Type=oneshot

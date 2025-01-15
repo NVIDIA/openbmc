@@ -410,13 +410,13 @@ power_status()
 enable_power_brake()
 {
     echo "Asserting power brake"
-    set_gpio PWR_BRAKE_L-O 1
+    set_gpio PWR_BRAKE_L-O 0
 }
 
 disable_power_brake()
 {
     echo "Deasserting power brake"
-    set_gpio PWR_BRAKE_L-O 0
+    set_gpio PWR_BRAKE_L-O 1
 }
 
 ### MAIN ###

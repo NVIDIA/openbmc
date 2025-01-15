@@ -8,8 +8,7 @@ EXTRA_OEMESON:append = " -Dhealth-rollup-alternative=enabled"
 EXTRA_OEMESON:append = " -Dredfish-dbus-event=enabled"
 EXTRA_OEMESON:append = " -Dsort-event-log=enabled"
 
-# increasing update timeout to count for all psu updates
-EXTRA_OEMESON:append = " -Dupdate-service-task-timeout=60"
+EXTRA_OEMESON:append = " -Dupdate-service-task-timeout=20"
 
 EXTRA_OEMESON:append = " -Darray-bootprogress=enabled"
 EXTRA_OEMESON:append = " -Dhost-iface=enabled "

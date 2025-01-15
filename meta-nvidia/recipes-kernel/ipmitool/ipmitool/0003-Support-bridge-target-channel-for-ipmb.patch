@@ -1,0 +1,52 @@
+From f65ff0d232981fdb209077d05a1ae0697f748296 Mon Sep 17 00:00:00 2001
+From: Shakeeb Pasha <spasha@nvidia.com>
+Date: Tue, 15 Jun 2021 11:03:25 +0530
+Subject: [PATCH] Support bridge target channel for ipmb
+
+Pass bridge target channel for ipmb requests,
+to be able to send ipmb requests on multiple channels.
+
+Target channel depends on the ipmbbridged json config.
+
+Tested with multiple host config as:
+```
+First host
+ipmitool -I ipmb -B 0 mc info
+
+Second host
+ipmitool -I ipmb -B 4 mc info
+
+```
+---
+ lib/ipmi_main.c         | 2 ++
+ src/plugins/ipmb/ipmb.c | 4 ++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/lib/ipmi_main.c b/lib/ipmi_main.c
+index 510bc2d..f296d77 100644
+--- a/lib/ipmi_main.c
++++ b/lib/ipmi_main.c
+@@ -905,6 +905,8 @@ ipmi_main(int argc, char ** argv,
+ 		}
+ 	}
+ 
++	ipmi_main_intf->transit_channel = transit_channel;
++
+ 	if (!ipmi_oem_active(ipmi_main_intf, "i82571spt")) {
+ 		/*
+ 		 * Attempt picmg/vita discovery of the actual interface
+diff --git a/src/plugins/ipmb/ipmb.c b/src/plugins/ipmb/ipmb.c
+index 9d2a0ec..eb3f374 100644
+--- a/src/plugins/ipmb/ipmb.c
++++ b/src/plugins/ipmb/ipmb.c
+@@ -85,8 +85,8 @@ ipmi_ipmb_sendrecv(struct ipmi_intf *intf,
+ 		goto out_no_free;
+ 	}
+ 	/* pack the header: netfn, lun, cmd */
+-	rc = sd_bus_message_append(request, SD_BUS_TYPE_4_BYTES, 0, req->msg.netfn,
+-	                           req->msg.lun, req->msg.cmd);
++	rc = sd_bus_message_append(request, SD_BUS_TYPE_4_BYTES, intf->transit_channel, req->msg.netfn,
++							   req->msg.lun, req->msg.cmd);
+ 	if (rc < 0) {
+ 		lprintf(LOG_ERR, "%s: failed to append parameters\n", __func__);
+ 		goto out_free_request;

@@ -6,8 +6,8 @@ SRC_URI:append = " file://common/Grace_Bianca_Superchip.json \
                    file://common/blacklist.json \
                    file://common/gb200nvl_cpld_chassis.json \
                    file://common/gb200nvl_erot_bmc_chassis.json \
-                   file://common/gb200nvl_erot_chassis.json \
                    file://common/gb200nvl_erot_configuration.json \
+                   file://common/gb200nvl_erot_cpu_chassis.json \
                    file://common/gb200nvl_erot_fpga_chassis.json \
                    file://common/gb200nvl_gpio_configuration.json \
                    file://common/gb200nvl_memory_systems_cpu.json \
@@ -22,6 +22,7 @@ SRC_URI:append = " file://common/Grace_Bianca_Superchip.json \
                    file://c1g1/gb200nvl_nvlink_topology_ariel.json \
                    file://c1g1/gb200nvl_processor_systems_gpu_ariel.json \
                    file://c1g1/gb200nvl_static_inventory_gpu_ariel.json \
+                   file://c1g1/gb200nvl_c1g1_NSMReady.json \
                    file://c1g2/gb200nvl_fpga_chassis_bianca.json \
                    file://c1g2/gb200nvl_gpu_chassis_bianca.json \
                    file://c1g2/gb200nvl_gpu_configuration_bianca.json \
@@ -31,6 +32,7 @@ SRC_URI:append = " file://common/Grace_Bianca_Superchip.json \
                    file://c1g2/gb200nvl_nvlink_topology_bianca.json \
                    file://c1g2/gb200nvl_processor_systems_gpu_bianca.json \
                    file://c1g2/gb200nvl_static_inventory_gpu_bianca.json \
+                   file://c1g2/gb200nvl_c1g2_NSMReady.json \
                  "
 
 do_install:append() {
@@ -45,8 +47,8 @@ do_install:append() {
 
      install -m 0444 ${WORKDIR}/common/gb200nvl_cpld_chassis.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/common/gb200nvl_erot_bmc_chassis.json ${D}/usr/share/entity-manager/configurations
-     install -m 0444 ${WORKDIR}/common/gb200nvl_erot_chassis.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/common/gb200nvl_erot_configuration.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/common/gb200nvl_erot_cpu_chassis.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/common/gb200nvl_erot_fpga_chassis.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/common/gb200nvl_gpio_configuration.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/common/gb200nvl_memory_systems_cpu.json ${D}/usr/share/entity-manager/configurations
@@ -62,6 +64,7 @@ do_install:append() {
      install -m 0444 ${WORKDIR}/c1g1/gb200nvl_nvlink_topology_ariel.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/c1g1/gb200nvl_processor_systems_gpu_ariel.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/c1g1/gb200nvl_static_inventory_gpu_ariel.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/c1g1/gb200nvl_c1g1_NSMReady.json ${D}/usr/share/entity-manager/configurations
 
      install -m 0444 ${WORKDIR}/c1g2/gb200nvl_fpga_chassis_bianca.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/c1g2/gb200nvl_gpu_chassis_bianca.json ${D}/usr/share/entity-manager/configurations
@@ -72,5 +75,6 @@ do_install:append() {
      install -m 0444 ${WORKDIR}/c1g2/gb200nvl_nvlink_topology_bianca.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/c1g2/gb200nvl_processor_systems_gpu_bianca.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/c1g2/gb200nvl_static_inventory_gpu_bianca.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/c1g2/gb200nvl_c1g2_NSMReady.json ${D}/usr/share/entity-manager/configurations
 
 }

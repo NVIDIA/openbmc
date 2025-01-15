@@ -5,6 +5,9 @@ SRC_URI:append = " file://0001-meta-gb200-nvl-Patch-for-Hotplug-detect-DP-signal
                    file://gb200nvl-bmc.cfg \
 "
 
+SRC_URI:append:gb200nvl-bmc-ut3 = " file://ut3-Power-on-standby-power-for-UT3-MB-phy-power.patch \
+                                  "
+
 SRC_URI += "file://spl_images/prod/u-boot-spl.bin;sha256sum=6f7f2d73a9053699e3e111de1ba5a16d4f1091e01c2aa4acc5effd9cedc57f24"
 
 SPL_PROD_BINARY = "${WORKDIR}/spl_images/prod/u-boot-spl.bin"

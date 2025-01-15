@@ -1,0 +1,21 @@
+
+# rotate 0  - Log files are rotated 0 time, will have the snapshot and the active log
+# compress  - Old versions of log files are compressed with gzip
+# maxsize 1M   - Will rotate when the log reaches to 1M or the appropriate time has passed
+# dateext      - Archive old versions of log files adding a daily extension like YYYYMMDD
+# dateformat   - Specify the extension for dateext with Year-Month-Day.Seconds
+# missingok    - If the log file is missing, go on to the next one without issuing an error message
+# The rsyslog will be reload after rotation, this mode is strongly recommended by rsyslog upstream
+
+/var/log/hmc.log
+{
+    rotate 0
+    compress
+    maxsize 1M
+    dateext
+    dateformat -%Y%m%d.%s
+    missingok
+    postrotate
+    systemctl reload rsyslog 2> /dev/null || true
+    endscript
+}

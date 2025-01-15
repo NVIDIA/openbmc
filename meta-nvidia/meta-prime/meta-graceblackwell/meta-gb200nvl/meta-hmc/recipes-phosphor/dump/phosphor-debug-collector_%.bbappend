@@ -57,13 +57,10 @@ EXTRA_OEMESON += "-DFDR_DUMP_MAX_LIMIT=1"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}:"
 
-RDEPENDS:${PN}-manager = "bash nvidia-cperdecoder"
-FILES:${PN}-manager +=  "${bindir}/cper_dump.sh"
 FILES:${PN}-manager +=  "${bindir}/fw_atts_dump.sh"
 FILES:${PN}-manager +=  "${bindir}/hw_checkout_dump.sh"
 
 do_install:append() {
-    install -m 755 ${WORKDIR}/cper_dump.sh ${D}${bindir}/
     install -m 755 ${WORKDIR}/fw_atts_dump.sh ${D}${bindir}/
     install -m 755 ${WORKDIR}/hw_checkout_dump.sh ${D}${bindir}/
 }

@@ -12,6 +12,7 @@ SRC_URI:append = " \
            file://overtemp@.service \
            file://error_log.sh \
            "
+SRC_URI:append:gb200nvl-bmc-ut3 = " file://phosphor-multi-gpio-monitor-ut3.json "
 
 RDEPENDS:${PN} += "bash sbiosbootaccess phosphor-gpio-monitor-monitor "
 
@@ -26,6 +27,11 @@ do_install:append() {
         install -m 0644 ${WORKDIR}/overtemp@.service ${D}${base_libdir}/systemd/system/overtemp@.service
         install -m 0755 ${WORKDIR}/error_log.sh ${D}/${bindir}/
 }
+
+do_install:append:gb200nvl-bmc-ut3() {
+		install -m 0644 ${WORKDIR}/phosphor-multi-gpio-monitor-ut3.json ${D}/usr/share/phosphor-gpio-monitor/phosphor-multi-gpio-monitor.json
+}
+
 
 FILES:${PN}-monitor:append= " \
          ${base_libdir}/systemd/system/phosphor-multi-gpio-monitor.service \

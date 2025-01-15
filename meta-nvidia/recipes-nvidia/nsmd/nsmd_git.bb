@@ -21,9 +21,10 @@ DEPENDS += "nvidia-tal"
 DEPENDS += "googletest"
 
 #EXTRA_OEMESON = "-Dtests=disabled"
+EXTRA_OEMESON:hgxb += "-Dmctp-eid0-filtering=true"
 
 SRC_URI = "git://github.com/NVIDIA/nsmd;protocol=https;branch=develop"
-SRCREV = "47f08c48240d20e5215b43384ca882463b8f8b4a"
+SRCREV = "a55bafcda4b1b27a02646afd7c748db0a8e3c47b"
 S = "${WORKDIR}/git"
 
 SYSTEMD_SERVICE:${PN} = "nsmd.service"

@@ -1,0 +1,37 @@
+From 2dfcea889d8a85c740f24d28b0455a0be7447bff Mon Sep 17 00:00:00 2001
+From: "Radivoje (Ogi) Jovanovic" <rjovanovic@nvidia.com>
+Date: Tue, 4 Jun 2024 17:29:04 -0700
+Subject: [PATCH] do not use json schema validator
+
+openbmc moved recently to json schema validator 4.21.1.
+this version pulls in rpds, but openbmc does not build
+nor uses rust. due to this otptool is no longer functional.
+
+Signed-off-by: Radivoje (Ogi) Jovanovic <rjovanovic@nvidia.com>
+---
+ socsec/otptool.py | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/socsec/otptool.py b/socsec/otptool.py
+index efeab96d..445209a0 100755
+--- a/socsec/otptool.py
++++ b/socsec/otptool.py
+@@ -26,7 +26,6 @@ import struct
+ import os
+ import math
+ from bitarray import bitarray
+-from jsonschema import validate
+ from Crypto.Hash import SHA384
+ from socsec import parse_path
+ from socsec import insert_bytearray
+@@ -444,7 +443,6 @@ class OTP(object):
+             "additionalProperties": False,
+             "properties": scu_protect_schema
+         }
+-        validate(otp_config, schema)
+ 
+     def genKeyHeader_a0(self, key_config, key_folder):
+         types = key_config['types']
+-- 
+2.43.0
+

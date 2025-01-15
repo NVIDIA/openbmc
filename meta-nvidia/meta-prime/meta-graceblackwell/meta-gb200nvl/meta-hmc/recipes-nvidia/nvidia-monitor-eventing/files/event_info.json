@@ -504,7 +504,7 @@
         "origin_of_condition": "/redfish/v1/Systems/HGX_Baseboard_0",
         "message_args": {
           "patterns": [
-            "FPGA_EROT SPI_ERR_INT",
+            "ERoT_FPGA_0 SPI_ERR_INT",
             "Abnormal State Change"
           ],
           "parameters": []
@@ -619,8 +619,107 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "FPGA interrupt PS_RUN_PWR_FAULT happens.",
+      "description": "FPGA report of all power registers. RF event reports all power registers with status. For all possible power registers monitored via this event please see the accompying release not document.",
       "log_namespace": "Baseboard_0"
+    },
+    {
+      "event": "GPU SRAM ECC uncorrectable error count exceed threshold",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU-SRAM-ECC-ERROR",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "memory_status"
+      ],
+      "event_trigger": {},
+      "accessor": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]",
+        "interface": "xyz.openbmc_project.Memory.MemoryECC",
+        "property": "isThresholdExceeded",
+        "check": {
+          "equal": "true"
+        }
+      },
+      "recovery": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]",
+        "interface": "xyz.openbmc_project.Memory.MemoryECC",
+        "property": "isThresholdExceeded",
+        "check": {
+          "equal": "false"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Reset the GPU. If the GPU continues to exhibit the problem, isolate the GPU module for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 0,
+      "event_counter_reset": {
+        "type": "",
+        "metadata": ""
+      },
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] SRAM",
+            "Uncorrectable ECC Threshold Exceeded"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "MemoryECC.ECCModeEnabled",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]",
+          "interface": "xyz.openbmc_project.Memory.MemoryECC",
+          "property": "ECCModeEnabled"
+        },
+        {
+          "name": "MemoryECC.PendingECCState",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]",
+          "interface": "xyz.openbmc_project.Memory.MemoryECC",
+          "property": "PendingECCState"
+        },
+        {
+          "name": "MemoryECC.ceCount",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]",
+          "interface": "xyz.openbmc_project.Memory.MemoryECC",
+          "property": "ceCount"
+        },
+        {
+          "name": "MemoryECC.isLoggingLimitReached",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]",
+          "interface": "xyz.openbmc_project.Memory.MemoryECC",
+          "property": "isLoggingLimitReached"
+        },
+        {
+          "name": "MemoryECC.state",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]",
+          "interface": "xyz.openbmc_project.Memory.MemoryECC",
+          "property": "state"
+        },
+        {
+          "name": "MemoryECC.ueCount",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]",
+          "interface": "xyz.openbmc_project.Memory.MemoryECC",
+          "property": "ueCount"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU has encountered SRAM ECC Uncorrectable error count exceeded threshold.",
+      "log_namespace": "GPU_[0-3]"
     },
     {
       "event": "GPU Row Remapping Pending",
@@ -843,62 +942,6 @@
       "log_namespace": "GPU_[0-3]"
     },
     {
-      "event": "GPU SRAM ECC uncorrectable error count",
-      "device_type": "GPU_[0-3]",
-      "error_id": "GPU-SRAM-ECC-UEC-EVENT",
-      "managed": "no",
-      "rollup_device": "",
-      "category": [
-        "memory_status"
-      ],
-      "event_trigger": {},
-      "accessor": {
-        "type": "DBUS",
-        "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]",
-        "interface": "xyz.openbmc_project.Memory.MemoryECC",
-        "property": "ueCount",
-        "check": {
-          "not_equal": "0"
-        }
-      },
-      "recovery": {
-        "type": "DBUS",
-        "object": "/xyz/openbmc_project/inventory/system/accelerator/GPU_[0-3]",
-        "interface": "xyz.openbmc_project.Memory.MemoryECC",
-        "property": "ueCount",
-        "check": {
-          "equal": "0"
-        }
-      },
-      "severity": "Warning",
-      "resolution": "Reset the GPU. If the GPU continues to exhibit the problem, isolate the server for RMA evaluation.",
-      "debounce": {
-        "type": "",
-        "duration": ""
-      },
-      "trigger_count": 0,
-      "event_counter_reset": {
-        "type": "",
-        "metadata": ""
-      },
-      "redfish": {
-        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
-        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
-        "message_args": {
-          "patterns": [
-            "GPU_[0-3] SRAM",
-            "Uncorrectable ECC Error"
-          ],
-          "parameters": []
-        }
-      },
-      "telemetries": [],
-      "action": "",
-      "value_as_count": true,
-      "description": "GPU has encountered SRAM ECC Uncorrectable error.",
-      "log_namespace": "GPU_[0-3]"
-    },
-    {
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_OCP_DEVICE_STATUS",
@@ -957,7 +1000,7 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU OCP_DEVICE_STATUS",
+      "description": "GPU IROT OCP Device status report. For the possible status codes reported please see the enumeration in the accompying change log document.",
       "log_namespace": "GPU_[0-3]"
     },
     {

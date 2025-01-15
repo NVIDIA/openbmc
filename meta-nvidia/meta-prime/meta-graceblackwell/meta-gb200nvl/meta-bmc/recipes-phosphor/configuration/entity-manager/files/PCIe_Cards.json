@@ -74,7 +74,7 @@
         ],
         "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME",
         "Type": "Board",
-        "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Baseboard_0",
+        "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Chassis_0",
         "Probe": "xyz.openbmc_project.FruDevice({'BUS': 14, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': 'BlueField-3.*'})",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Manufacturer": "$BOARD_MANUFACTURER",
@@ -225,7 +225,7 @@
         ],
         "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME",
         "Type": "Board",
-        "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Baseboard_0",
+        "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Chassis_0",
         "Probe": "xyz.openbmc_project.FruDevice({'BUS': 15, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': 'BlueField-3.*'})",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Manufacturer": "$BOARD_MANUFACTURER",

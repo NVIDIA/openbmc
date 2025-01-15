@@ -4,8 +4,6 @@ Wants=mapper-wait@-xyz-openbmc_project-state-host0.service
 After=mapper-wait@-xyz-openbmc_project-state-host0.service
 Requires=obmc-host-stop@0.target
 After=obmc-host-stop@0.target
-Requires=phosphor-discover-system-state@0.service
-After=phosphor-discover-system-state@0.service
 Conflicts=obmc-host-startmin@0.target
 
 [Service]

@@ -19,8 +19,13 @@
 #   0 Always
 create_eeprom_devices(){
     # I2C-1
-    # Module 1 FRU EEPROM (Device ID: 24AA64)
-    echo 24c64 0x50 > /sys/class/i2c-dev/i2c-1/device/new_device
+
+    # Module 1 FRU EEPROM (Device ID: 24AA64) - 24c64 - 0x50
+    # Skip manually binding it and allow entity-manager to do
+    # autodetection instead since the device doesn't always
+    # exist on all of our platform configurations (i.e. L6 vs.
+    # L10 hardware).
+
     # UT 3.0 U155 (Pin A14, A15)
     echo 24c02 0x57 > /sys/class/i2c-dev/i2c-1/device/new_device
     # CBC 0 and 1 FRU EEPROM
@@ -45,8 +50,13 @@ create_eeprom_devices(){
     echo 24c02 0x57 > /sys/class/i2c-dev/i2c-5/device/new_device
 
     # I2C-6
-    # PDB FRU EEPROM (Device ID: M24C02)
-    echo 24c02 0x50 > /sys/class/i2c-dev/i2c-6/device/new_device
+    # PDB FRU EEPROM (Device ID: M24C02) - Bianca - 24c02 0x50
+    # PDB FRU EEPROM (Device ID: M24256) - Ariel - 24c256 0x50
+    # Allow entity-manager to do autodetection here since the
+    # EEPROM chip addressing mode is different between them and
+    # 8-bit vs. 16-bit autodetection works correctly with these
+    # two chips.
+
     # UT 3.0 U160 (Pin B14, B15)
     echo 24c02 0x57 > /sys/class/i2c-dev/i2c-6/device/new_device
 
@@ -65,15 +75,7 @@ create_eeprom_devices(){
     # I2C-14 and I2C-15
     # BF3 EEPROM (Device ID: BR24G128NUX)
     echo 24c128 0x50 > /sys/class/i2c-dev/i2c-14/device/new_device
-    # IPEX Left FRU
-    echo 24c128 0x55 > /sys/class/i2c-dev/i2c-14/device/new_device
-    # HDD BP Left FRU
-    echo 24c128 0x56 > /sys/class/i2c-dev/i2c-14/device/new_device
     echo 24c128 0x50 > /sys/class/i2c-dev/i2c-15/device/new_device
-    # IPEX Right FRU
-    echo 24c128 0x55 > /sys/class/i2c-dev/i2c-15/device/new_device
-    # HDD Right FRU
-    echo 24c128 0x56 > /sys/class/i2c-dev/i2c-15/device/new_device
     # UT 3.0 U147 (Pin B5, B6)
     echo 24c02 0x57 > /sys/class/i2c-dev/i2c-15/device/new_device
 
@@ -95,4 +97,96 @@ create_eeprom_devices(){
     # MUX Channel-1, Virtual I2C33 @0x50
     echo 24c64 0x50 > /sys/class/i2c-dev/i2c-33/device/new_device
     return 0
+}
+
+#######################################
+# Create FRU EEPROM devices that are behind the system power-on
+#
+# These FRU EEPROMs do not respond until after the system power-on.
+# If the kernel tries to mount these EEPROMs from the
+# device tree (DT) before the system power-on it will fail.
+#
+# ARGUMENTS:
+#   None
+# RETURN:
+#   0 Always
+create_poweron_eeprom_devices(){
+    # I2C-14 and I2C-15
+    # IPEX Left FRU
+    if [ ! -d "/sys/bus/i2c/drivers/at24/14-0055" ]; then
+        echo 24c128 0x55 > /sys/class/i2c-dev/i2c-14/device/new_device
+    fi
+    # HDD BP Left FRU
+    if [ ! -d "/sys/bus/i2c/drivers/at24/14-0056" ]; then
+        echo 24c128 0x56 > /sys/class/i2c-dev/i2c-14/device/new_device
+    fi
+    # IPEX Right FRU
+    if [ ! -d "/sys/bus/i2c/drivers/at24/15-0055" ]; then
+        echo 24c128 0x55 > /sys/class/i2c-dev/i2c-15/device/new_device
+    fi
+    # HDD Right FRU
+    if [ ! -d "/sys/bus/i2c/drivers/at24/15-0056" ]; then
+        echo 24c128 0x56 > /sys/class/i2c-dev/i2c-15/device/new_device
+    fi
+    # I2C-21
+    # OSFP Board Left
+    if [ ! -d "/sys/bus/i2c/drivers/at24/21-0052" ]; then
+        echo 24c128 0x52 > /sys/class/i2c-dev/i2c-21/device/new_device
+    fi
+    # I2C-33
+    # OSFP Board Right
+    if [ ! -d "/sys/bus/i2c/drivers/at24/33-0052" ]; then
+        echo 24c128 0x52 > /sys/class/i2c-dev/i2c-33/device/new_device
+    fi
+    # I2C-54
+    # 1G NIC
+    # I2C MUX, Bus25 @0x70, MUX Channel-2
+    if [ ! -d "/sys/bus/i2c/drivers/at24/54-0051" ]; then
+        echo 24c128 0x51 > /sys/class/i2c-dev/i2c-54/device/new_device
+    fi
+}
+
+#######################################
+# Remove FRU EEPROM devices that are behind the system power-off
+#
+# These FRU EEPROMs are not present when the system power-off.
+#
+# ARGUMENTS:
+#   None
+# RETURN:
+#   0 Always
+remove_poweron_eeprom_devices(){
+    # I2C-14 and I2C-15
+    # IPEX Left FRU
+    if [ -d "/sys/bus/i2c/drivers/at24/14-0055" ]; then
+        echo 0x55 > /sys/class/i2c-dev/i2c-14/device/delete_device
+    fi
+    # HDD BP Left FRU
+    if [ -d "/sys/bus/i2c/drivers/at24/14-0056" ]; then
+        echo 0x56 > /sys/class/i2c-dev/i2c-14/device/delete_device
+    fi
+    # IPEX Right FRU
+    if [ -d "/sys/bus/i2c/drivers/at24/15-0055" ]; then
+        echo 0x55 > /sys/class/i2c-dev/i2c-15/device/delete_device
+    fi
+    # HDD Right FRU
+    if [ -d "/sys/bus/i2c/drivers/at24/15-0056" ]; then
+        echo 0x56 > /sys/class/i2c-dev/i2c-15/device/delete_device
+    fi
+    # I2C-21
+    # OSFP Board Left
+    if [ -d "/sys/bus/i2c/drivers/at24/21-0052" ]; then
+        echo 0x52 > /sys/class/i2c-dev/i2c-21/device/delete_device
+    fi
+    # I2C-33
+    # OSFP Board Right
+    if [ -d "/sys/bus/i2c/drivers/at24/33-0052" ]; then
+        echo 0x52 > /sys/class/i2c-dev/i2c-33/device/delete_device
+    fi
+    # I2C-54
+    # 1G NIC
+    # I2C MUX, Bus25 @0x70, MUX Channel-2
+    if [ -d "/sys/bus/i2c/drivers/at24/54-0051" ]; then
+        echo 0x51 > /sys/class/i2c-dev/i2c-54/device/delete_device
+    fi
 }

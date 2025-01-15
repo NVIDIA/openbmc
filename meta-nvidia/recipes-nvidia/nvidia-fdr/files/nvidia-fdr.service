@@ -4,11 +4,16 @@ Wants=network.target
 After=network.target
 
 [Service]
-Environment=PLATFORMS_PATH=/etc/nvidia-fdr/platforms
+Environment=PLATFORMS_PATH=/tmp/nvidia-fdr/platforms
+
+TimeoutStartSec=360
+ExecStartPre=/usr/bin/fdr_platforms.sh
+
 ExecReload=kill -s HUP $MAINPID
 ExecStart=/usr/bin/nvidia-fdr
 Type=simple
 Restart=on-failure
+
 
 StartLimitInterval=1000
 StartLimitBurst=3

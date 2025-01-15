@@ -3,8 +3,8 @@ FILESEXTRAPATHS:append := "${THISDIR}/files:"
 SRC_URI:append = " file://GB200NVL_DCSCM.json \
                    file://Processor_Module.json \
                    file://HMC_FRU.json \
-                   file://HMC_1GPU.json \
-                   file://HMC_2GPU.json \
+                   file://HMC_C2G2.json \
+                   file://HMC_C2G4.json \
                    file://Cable_Backplane_Cartridge.json \
                    file://PCIe_Cards.json \
                    file://i2cPcieMapping.json \
@@ -20,6 +20,11 @@ SRC_URI:append = " file://GB200NVL_DCSCM.json \
                    file://gb200nvl_gpio_recovery_configuration.json \
                    file://gb200nvl_rot_chassis.json \
                    file://System.json \
+                   file://gb200nvl_erot_recovery_configuration.json \
+                   file://gb200nvl_static_inventory.json \
+                   file://gb200nvl_erot_bmc_chassis.json \
+                   file://gb200nvl_instance_mapping.json \
+                   file://gb200nvl_cpld_chassis.json \
                    "
 
 #Runtime dependency on fru-device defined in meta-prime
@@ -33,8 +38,8 @@ do_install:append() {
      install -m 0444 ${WORKDIR}/GB200NVL_DCSCM.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/Processor_Module.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/HMC_FRU.json ${D}/usr/share/entity-manager/configurations
-     install -m 0444 ${WORKDIR}/HMC_1GPU.json ${D}/usr/share/entity-manager/configurations
-     install -m 0444 ${WORKDIR}/HMC_2GPU.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/HMC_C2G2.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/HMC_C2G4.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/Cable_Backplane_Cartridge.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/IO_Board.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/FIO_Board.json ${D}/usr/share/entity-manager/configurations
@@ -48,6 +53,11 @@ do_install:append() {
      install -m 0444 ${WORKDIR}/gb200nvl_gpio_recovery_configuration.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/gb200nvl_rot_chassis.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/System.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/gb200nvl_erot_recovery_configuration.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/gb200nvl_static_inventory.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/gb200nvl_erot_bmc_chassis.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/gb200nvl_instance_mapping.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/gb200nvl_cpld_chassis.json ${D}/usr/share/entity-manager/configurations
 
      mkdir -p ${D}${base_libdir}/systemd/system/xyz.openbmc_project.FruDevice.service.d
      install -m 0444 ${WORKDIR}/fru-service.conf  ${D}${base_libdir}/systemd/system/xyz.openbmc_project.FruDevice.service.d/

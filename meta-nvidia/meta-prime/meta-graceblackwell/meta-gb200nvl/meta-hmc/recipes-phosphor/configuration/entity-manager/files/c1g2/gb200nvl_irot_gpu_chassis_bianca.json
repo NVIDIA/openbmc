@@ -56,7 +56,7 @@
     "Probe": [
       "xyz.openbmc_project.Common.UUID({'UUID': 'f72d6fb0-5675-11ed-9b6a-0242ac120002'})",
       "AND",
-      "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?2GPU Board PC'})"
+      "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?2GPU Board PC'})"
     ],
     "Type": "Chassis",
     "xyz.openbmc_project.Inventory.Item.SPDMResponder": {},
@@ -136,7 +136,7 @@
     "Probe": [
       "xyz.openbmc_project.Common.UUID({'UUID': 'f72d6fb1-5675-11ed-9b6a-0242ac120002'})",
       "AND",
-      "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?2GPU Board PC'})"
+      "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?2GPU Board PC'})"
     ],
     "Type": "Chassis",
     "xyz.openbmc_project.Inventory.Item.SPDMResponder": {},

@@ -1,7 +1,5 @@
 [Unit]
 Description=Bind expanders afer fpga is up
-Wants=hmc-boot-complete.service
-After=hmc-boot-complete.service
 
 [Service]
 Type=simple
@@ -9,4 +7,4 @@ ExecStart=/usr/bin/bind_expanders.sh
 SyslogIdentifier=bind_expanders
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=nvidia-fpga-ready.target

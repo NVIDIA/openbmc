@@ -1,0 +1,13 @@
+[Unit]
+Description=NVIDIA Rack Power Controller Service
+StopWhenUnneeded=false
+
+[Service]
+RemainAfterExit=yes
+Restart=always
+RestartSec=5
+Type=simple
+ExecStart=/usr/share/nvidia-rack-power-controller/launch_rpc.sh
+
+[Install]
+WantedBy=multi-user.target

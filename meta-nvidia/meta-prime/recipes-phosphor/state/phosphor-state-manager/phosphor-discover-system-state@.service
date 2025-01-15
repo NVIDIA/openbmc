@@ -6,8 +6,9 @@ Wants=mapper-wait@-xyz-openbmc_project-state-host%i.service
 After=mapper-wait@-xyz-openbmc_project-state-host%i.service
 Wants=mapper-wait@-xyz-openbmc_project-state-chassis%i.service
 After=mapper-wait@-xyz-openbmc_project-state-chassis%i.service
-After=op-reset-chassis-on@%i.service
-ConditionPathExists=!/run/bmc-state/CHASSIS_IS_PWR_ON
+Wants=xyz.openbmc_project.Settings.service
+After=xyz.openbmc_project.Settings.service
+After=multi-user.target
 
 [Service]
 Restart=no

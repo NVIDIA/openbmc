@@ -5,7 +5,8 @@
         {
             "variables": [
                 "MONEVT_DAT=\"/run/initramfs/ro/usr/share/mon_evt/dat.json\"",
-                "MONEVT_EVENTINFO=\"/run/initramfs/ro/usr/share/mon_evt/event_info.json\""
+                "MONEVT_EVENTINFO=\"/run/initramfs/ro/usr/share/mon_evt/event_info.json\"",
+                "PLDM_CFG_SETUP_INFO=\"/run/initramfs/ro/usr/share/pldm/platform-config-files/fw_update_config.json\""
             ]
         }
     ]   

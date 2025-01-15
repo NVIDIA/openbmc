@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/phosphor-user-manager;protocol=https;branch=develop"
 SRC_URI += "file://upgrade_hostconsole_group.sh"
-SRCREV = "201f3dd65d46bf9f4111caacbd843a70ba23af33"
+SRCREV = "c90f7e96034110ed674170cc0e874345e9296066"
 
 DEPENDS += "libpwquality"
 DEPENDS += "libpam"

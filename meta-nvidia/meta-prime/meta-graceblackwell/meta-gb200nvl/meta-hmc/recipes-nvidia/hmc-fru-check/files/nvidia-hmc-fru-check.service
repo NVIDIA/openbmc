@@ -1,0 +1,12 @@
+[Unit]
+Description=NVIDIA HMC FRU Check Service
+Requires=xyz.openbmc_project.FruDevice.service
+After=xyz.openbmc_project.FruDevice.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'hmc_fru_checker.sh'
+SyslogIdentifier=hmc-fru-check
+
+[Install]
+WantedBy=multi-user.target

@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI = "git://github.com/NVIDIA/obmc-console;protocol=https;branch=develop"
-SRCREV = "4680e9df311bf8ddc65685d7be031872cbab4862"
+SRCREV = "cb0384c0633ebd44ac7a4abde2b6bb90f4bbb198"
 
 CONSOLE_SERVER_CONF_FMT = "file://server.{0}.conf"
 CONSOLE_CLIENT_CONF_FMT = "file://client.{0}.conf"

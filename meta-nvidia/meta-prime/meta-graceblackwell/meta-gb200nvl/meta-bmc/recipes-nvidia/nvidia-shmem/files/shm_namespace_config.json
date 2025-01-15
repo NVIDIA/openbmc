@@ -1,0 +1,34 @@
+{
+    "SensorNamespaces": [
+        {
+            "Namespace": "PlatformEnvironmentMetrics",
+            "ObjectpathKeywords": "sensors/temperature",
+            "PropertyList": ["Value"]
+        },
+        {
+            "Namespace": "PlatformEnvironmentMetrics",
+            "ObjectpathKeywords": "sensors/power",
+            "PropertyList": ["Value"]
+        },
+        {
+            "Namespace": "PlatformEnvironmentMetrics",
+            "ObjectpathKeywords": "sensors/energy",
+            "PropertyList": ["Value"]
+        },
+        {
+            "Namespace": "PlatformEnvironmentMetrics",
+            "ObjectpathKeywords": "sensors/voltage",
+            "PropertyList": ["Value"]
+        },
+        {
+            "Namespace": "PlatformEnvironmentMetrics",
+            "ObjectpathKeywords": "sensors/fan_tach",
+            "PropertyList": ["Value"]
+        },
+        {
+            "Namespace": "PlatformEnvironmentMetrics",
+            "ObjectpathKeywords": "sensors/fan_pwm",
+            "PropertyList": ["Value"]
+        }
+    ]
+}

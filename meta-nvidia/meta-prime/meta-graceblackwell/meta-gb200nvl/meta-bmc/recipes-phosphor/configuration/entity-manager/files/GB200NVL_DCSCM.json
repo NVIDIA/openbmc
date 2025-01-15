@@ -43,7 +43,7 @@
         "Name": "BMC_0",
         "Probe": "xyz.openbmc_project.FruDevice({'BUS': 10, 'ADDRESS': 80})",
         "Type": "BMC",
-        "Parent_Chassis":  "/xyz/openbmc_project/inventory/system/chassis/Baseboard_0",
+        "Parent_Chassis":  "/xyz/openbmc_project/inventory/system/chassis/Chassis_0",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Manufacturer": "$BOARD_MANUFACTURER",
             "Model": "GB200 NVL",
@@ -59,10 +59,10 @@
             "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
         },
         "xyz.openbmc_project.Inventory.Decorator.Location": {
-            "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
         },
         "xyz.openbmc_project.State.Decorator.Health": {
-            "Health" : "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
         },
         "xyz.openbmc_project.Association.Definitions": {
             "Associations": [
@@ -75,6 +75,11 @@
                     "assembly",
                     "parent_chassis",
                     "/xyz/openbmc_project/inventory/system/bmc/BMC_Product_FRU_Assembly1"
+                ],
+                [
+                    "all_chassis",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/chassis/ERoT_BMC_0"
                 ]
             ]
         }
@@ -120,4 +125,3 @@
         }
     }
 ]
-

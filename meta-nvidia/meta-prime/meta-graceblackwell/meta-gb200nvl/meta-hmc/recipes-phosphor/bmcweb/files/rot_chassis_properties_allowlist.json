@@ -1,0 +1,30 @@
+{
+  "InbandUpdatePolicyEnabled": [
+    "HGX_IRoT_GPU_0",
+    "HGX_IRoT_GPU_1",
+    "HGX_IRoT_GPU_2",
+    "HGX_IRoT_GPU_3"
+  ],
+  "BackgroundCopyStatus": [
+    "HGX_ERoT_BMC_0",
+    "HGX_ERoT_CPU_0",
+    "HGX_ERoT_CPU_1",
+    "HGX_ERoT_FPGA_0",
+    "HGX_ERoT_FPGA_1",
+    "HGX_IRoT_GPU_0",
+    "HGX_IRoT_GPU_1",
+    "HGX_IRoT_GPU_2",
+    "HGX_IRoT_GPU_3"
+  ],
+  "AutomaticBackgroundCopyEnabled": [
+    "HGX_ERoT_BMC_0",
+    "HGX_ERoT_CPU_0",
+    "HGX_ERoT_CPU_1",
+    "HGX_ERoT_FPGA_0",
+    "HGX_ERoT_FPGA_1",
+    "HGX_IRoT_GPU_0",
+    "HGX_IRoT_GPU_1",
+    "HGX_IRoT_GPU_2",
+    "HGX_IRoT_GPU_3"
+  ]
+}

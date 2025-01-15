@@ -139,7 +139,7 @@
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 82.0
+            "Value": 87.0
           }
         ],
         "UUID": "STATIC:0:0",
@@ -172,7 +172,7 @@
           {
             "Name": "LowerCritical",
             "Dynamic": false,
-            "Value": -2.0
+            "Value": -4.0
           },
           {
             "Name": "LowerCaution",
@@ -392,6 +392,20 @@
         ]
       },
       {
+        "Name": "RediscoveryEventSetting",
+        "Type": "NSM_Event_Rediscovery",
+        "UUID": "STATIC:0:0",
+        "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_0",
+        "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "Severity": "Informational",
+        "LoggingNamespace": "GPU_0",
+        "Resolution": "GPU capabilities changed, driver state transitioned",
+        "MessageArgs": [
+          "GPU_0",
+          "rediscovery"
+        ]
+      },
+      {
         "Name": "ResetRequiredEventSetting",
         "Type": "NSM_Event_Reset_Required",
         "UUID": "STATIC:0:0",
@@ -459,6 +473,9 @@
         "UUID": "STATIC:0:0",
         "DEVICE_UUID": "$DEVICE_UUID",
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0",
+        "MNNVLTopology": {
+          "Type": "NSM_MNNVLTopology"
+        },
         "Asset": {
           "Type": "NSM_Asset",
           "Manufacturer": "NVIDIA",
@@ -489,11 +506,33 @@
             "/xyz/openbmc_project/inventory/system/chassis/power/control/TotalGPU_Power_0"
           ]
         },
-        "PCIe": {
-          "Type": "NSM_PCIe",
+        "PowerSmoothing": {
+          "Type": "NSM_PowerSmoothing",
+          "Priority": false
+        },
+        "WorkloadPowerProfile": {
+          "Type": "NSM_WorkloadPowerProfile",
           "Priority": false,
-          "DeviceId": 0,
-          "Count": 1
+          "ProfileIdMap": [
+            "UNKNOWN",
+            "UNKNOWN",
+            "UNKNOWN",
+            "MAX_P",
+            "MAX_Q",
+            "COMPUTE",
+            "MEMORY_BOUND",
+            "NETWORK",
+            "BALANCED",
+            "LLM_INFERENCE",
+            "LLM_TRAINING",
+            "RBM",
+            "DCPCIE",
+            "HMMA_SPARSE",
+            "HMMA_DENSE",
+            "SYNC_BALANCED",
+            "HPC",
+            "MIG"
+          ]
         },
         "CpuOperatingConfig": {
           "Type": "NSM_CpuOperatingConfig",
@@ -695,6 +734,30 @@
           17
         ],
         "InstanceBitfield": 262143
+      },
+      {
+        "Name": "NetworkPortEventSetting",
+        "Type": "NSM_EventConfig",
+        "MessageType": 1,
+        "UUID": "STATIC:0:0",
+        "SubscribedEventIDs": [
+          0
+        ],
+        "AcknowledgementEventIds": []
+      },
+      {
+        "Name": "ThresholdEventSetting",
+        "Type": "NSM_Event_Threshold",
+        "UUID": "STATIC:0:0",
+        "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_0",
+        "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "Severity": "Critical",
+        "LoggingNamespace": "HGX_GPU 0 Threshold",
+        "Resolution": "Regarding Port Error documentation and further actions please refer to (TBD)",
+        "MessageArgs": [
+          "HGX_GPU 0",
+          "No Error"
+        ]
       }
     ],
     "Probe": "FOUND('NSM_DEV_BIANCA_GPU_0')",
@@ -718,6 +781,9 @@
     },
     "xyz.openbmc_project.Inventory.Item.Chassis": {
       "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+    },
+    "xyz.openbmc_project.Configuration.NSMReady": {
+      "C1G2_GPU_0_Ready": "Enabled"
     }
   },
   {
@@ -860,7 +926,7 @@
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 82.0
+            "Value": 87.0
           }
         ],
         "UUID": "STATIC:0:1",
@@ -893,7 +959,7 @@
           {
             "Name": "LowerCritical",
             "Dynamic": false,
-            "Value": -2.0
+            "Value": -4.0
           },
           {
             "Name": "LowerCaution",
@@ -1113,6 +1179,20 @@
         ]
       },
       {
+        "Name": "RediscoveryEventSetting",
+        "Type": "NSM_Event_Rediscovery",
+        "UUID": "STATIC:0:1",
+        "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_1",
+        "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "Severity": "Informational",
+        "LoggingNamespace": "GPU_1",
+        "Resolution": "GPU capabilities changed, driver state transitioned",
+        "MessageArgs": [
+          "GPU_1",
+          "rediscovery"
+        ]
+      },
+      {
         "Name": "ResetRequiredEventSetting",
         "Type": "NSM_Event_Reset_Required",
         "UUID": "STATIC:0:1",
@@ -1180,6 +1260,9 @@
         "UUID": "STATIC:0:1",
         "DEVICE_UUID": "$DEVICE_UUID",
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1",
+        "MNNVLTopology": {
+          "Type": "NSM_MNNVLTopology"
+        },
         "Asset": {
           "Type": "NSM_Asset",
           "Manufacturer": "NVIDIA",
@@ -1210,11 +1293,33 @@
             "/xyz/openbmc_project/inventory/system/chassis/power/control/TotalGPU_Power_0"
           ]
         },
-        "PCIe": {
-          "Type": "NSM_PCIe",
+        "PowerSmoothing": {
+          "Type": "NSM_PowerSmoothing",
+          "Priority": false
+        },
+        "WorkloadPowerProfile": {
+          "Type": "NSM_WorkloadPowerProfile",
           "Priority": false,
-          "DeviceId": 0,
-          "Count": 1
+          "ProfileIdMap": [
+            "UNKNOWN",
+            "UNKNOWN",
+            "UNKNOWN",
+            "MAX_P",
+            "MAX_Q",
+            "COMPUTE",
+            "MEMORY_BOUND",
+            "NETWORK",
+            "BALANCED",
+            "LLM_INFERENCE",
+            "LLM_TRAINING",
+            "RBM",
+            "DCPCIE",
+            "HMMA_SPARSE",
+            "HMMA_DENSE",
+            "SYNC_BALANCED",
+            "HPC",
+            "MIG"
+          ]
         },
         "CpuOperatingConfig": {
           "Type": "NSM_CpuOperatingConfig",
@@ -1416,6 +1521,30 @@
           17
         ],
         "InstanceBitfield": 262143
+      },
+      {
+        "Name": "NetworkPortEventSetting",
+        "Type": "NSM_EventConfig",
+        "MessageType": 1,
+        "UUID": "STATIC:0:1",
+        "SubscribedEventIDs": [
+          0
+        ],
+        "AcknowledgementEventIds": []
+      },
+      {
+        "Name": "ThresholdEventSetting",
+        "Type": "NSM_Event_Threshold",
+        "UUID": "STATIC:0:1",
+        "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_1",
+        "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "Severity": "Critical",
+        "LoggingNamespace": "HGX_GPU 1 Threshold",
+        "Resolution": "Regarding Port Error documentation and further actions please refer to (TBD)",
+        "MessageArgs": [
+          "HGX_GPU 1",
+          "No Error"
+        ]
       }
     ],
     "Probe": "FOUND('NSM_DEV_BIANCA_GPU_1')",
@@ -1439,6 +1568,9 @@
     },
     "xyz.openbmc_project.Inventory.Item.Chassis": {
       "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+    },
+    "xyz.openbmc_project.Configuration.NSMReady": {
+      "C1G2_GPU_1_Ready": "Enabled"
     }
   },
   {
@@ -1581,7 +1713,7 @@
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 82.0
+            "Value": 87.0
           }
         ],
         "UUID": "STATIC:0:2",
@@ -1614,7 +1746,7 @@
           {
             "Name": "LowerCritical",
             "Dynamic": false,
-            "Value": -2.0
+            "Value": -4.0
           },
           {
             "Name": "LowerCaution",
@@ -1834,6 +1966,20 @@
         ]
       },
       {
+        "Name": "RediscoveryEventSetting",
+        "Type": "NSM_Event_Rediscovery",
+        "UUID": "STATIC:0:2",
+        "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_2",
+        "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "Severity": "Informational",
+        "LoggingNamespace": "GPU_2",
+        "Resolution": "GPU capabilities changed, driver state transitioned",
+        "MessageArgs": [
+          "GPU_2",
+          "rediscovery"
+        ]
+      },
+      {
         "Name": "ResetRequiredEventSetting",
         "Type": "NSM_Event_Reset_Required",
         "UUID": "STATIC:0:2",
@@ -1901,6 +2047,9 @@
         "UUID": "STATIC:0:2",
         "DEVICE_UUID": "$DEVICE_UUID",
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_2",
+        "MNNVLTopology": {
+          "Type": "NSM_MNNVLTopology"
+        },
         "Asset": {
           "Type": "NSM_Asset",
           "Manufacturer": "NVIDIA",
@@ -1931,11 +2080,33 @@
             "/xyz/openbmc_project/inventory/system/chassis/power/control/TotalGPU_Power_0"
           ]
         },
-        "PCIe": {
-          "Type": "NSM_PCIe",
+        "PowerSmoothing": {
+          "Type": "NSM_PowerSmoothing",
+          "Priority": false
+        },
+        "WorkloadPowerProfile": {
+          "Type": "NSM_WorkloadPowerProfile",
           "Priority": false,
-          "DeviceId": 0,
-          "Count": 1
+          "ProfileIdMap": [
+            "UNKNOWN",
+            "UNKNOWN",
+            "UNKNOWN",
+            "MAX_P",
+            "MAX_Q",
+            "COMPUTE",
+            "MEMORY_BOUND",
+            "NETWORK",
+            "BALANCED",
+            "LLM_INFERENCE",
+            "LLM_TRAINING",
+            "RBM",
+            "DCPCIE",
+            "HMMA_SPARSE",
+            "HMMA_DENSE",
+            "SYNC_BALANCED",
+            "HPC",
+            "MIG"
+          ]
         },
         "CpuOperatingConfig": {
           "Type": "NSM_CpuOperatingConfig",
@@ -2137,6 +2308,30 @@
           17
         ],
         "InstanceBitfield": 262143
+      },
+      {
+        "Name": "NetworkPortEventSetting",
+        "Type": "NSM_EventConfig",
+        "MessageType": 1,
+        "UUID": "STATIC:0:2",
+        "SubscribedEventIDs": [
+          0
+        ],
+        "AcknowledgementEventIds": []
+      },
+      {
+        "Name": "ThresholdEventSetting",
+        "Type": "NSM_Event_Threshold",
+        "UUID": "STATIC:0:2",
+        "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_2",
+        "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "Severity": "Critical",
+        "LoggingNamespace": "HGX_GPU 2 Threshold",
+        "Resolution": "Regarding Port Error documentation and further actions please refer to (TBD)",
+        "MessageArgs": [
+          "HGX_GPU 2",
+          "No Error"
+        ]
       }
     ],
     "Probe": "FOUND('NSM_DEV_BIANCA_GPU_2')",
@@ -2150,7 +2345,7 @@
       "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
     },
     "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
-      "LocationCode": "GPU_2"
+      "LocationCode": "GPU_0"
     },
     "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
       "LocationContext": "HGX_Chassis_0/ProcessorModule_1"
@@ -2160,6 +2355,9 @@
     },
     "xyz.openbmc_project.Inventory.Item.Chassis": {
       "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+    },
+    "xyz.openbmc_project.Configuration.NSMReady": {
+      "C1G2_GPU_2_Ready": "Enabled"
     }
   },
   {
@@ -2302,7 +2500,7 @@
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 82.0
+            "Value": 87.0
           }
         ],
         "UUID": "STATIC:0:3",
@@ -2335,7 +2533,7 @@
           {
             "Name": "LowerCritical",
             "Dynamic": false,
-            "Value": -2.0
+            "Value": -4.0
           },
           {
             "Name": "LowerCaution",
@@ -2555,6 +2753,20 @@
         ]
       },
       {
+        "Name": "RediscoveryEventSetting",
+        "Type": "NSM_Event_Rediscovery",
+        "UUID": "STATIC:0:3",
+        "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_3",
+        "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "Severity": "Informational",
+        "LoggingNamespace": "GPU_3",
+        "Resolution": "GPU capabilities changed, driver state transitioned",
+        "MessageArgs": [
+          "GPU_3",
+          "rediscovery"
+        ]
+      },
+      {
         "Name": "ResetRequiredEventSetting",
         "Type": "NSM_Event_Reset_Required",
         "UUID": "STATIC:0:3",
@@ -2622,6 +2834,9 @@
         "UUID": "STATIC:0:3",
         "DEVICE_UUID": "$DEVICE_UUID",
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_3",
+        "MNNVLTopology": {
+          "Type": "NSM_MNNVLTopology"
+        },
         "Asset": {
           "Type": "NSM_Asset",
           "Manufacturer": "NVIDIA",
@@ -2652,11 +2867,33 @@
             "/xyz/openbmc_project/inventory/system/chassis/power/control/TotalGPU_Power_0"
           ]
         },
-        "PCIe": {
-          "Type": "NSM_PCIe",
+        "PowerSmoothing": {
+          "Type": "NSM_PowerSmoothing",
+          "Priority": false
+        },
+        "WorkloadPowerProfile": {
+          "Type": "NSM_WorkloadPowerProfile",
           "Priority": false,
-          "DeviceId": 0,
-          "Count": 1
+          "ProfileIdMap": [
+            "UNKNOWN",
+            "UNKNOWN",
+            "UNKNOWN",
+            "MAX_P",
+            "MAX_Q",
+            "COMPUTE",
+            "MEMORY_BOUND",
+            "NETWORK",
+            "BALANCED",
+            "LLM_INFERENCE",
+            "LLM_TRAINING",
+            "RBM",
+            "DCPCIE",
+            "HMMA_SPARSE",
+            "HMMA_DENSE",
+            "SYNC_BALANCED",
+            "HPC",
+            "MIG"
+          ]
         },
         "CpuOperatingConfig": {
           "Type": "NSM_CpuOperatingConfig",
@@ -2858,6 +3095,30 @@
           17
         ],
         "InstanceBitfield": 262143
+      },
+      {
+        "Name": "NetworkPortEventSetting",
+        "Type": "NSM_EventConfig",
+        "MessageType": 1,
+        "UUID": "STATIC:0:3",
+        "SubscribedEventIDs": [
+          0
+        ],
+        "AcknowledgementEventIds": []
+      },
+      {
+        "Name": "ThresholdEventSetting",
+        "Type": "NSM_Event_Threshold",
+        "UUID": "STATIC:0:3",
+        "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_3",
+        "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "Severity": "Critical",
+        "LoggingNamespace": "HGX_GPU 3 Threshold",
+        "Resolution": "Regarding Port Error documentation and further actions please refer to (TBD)",
+        "MessageArgs": [
+          "HGX_GPU 3",
+          "No Error"
+        ]
       }
     ],
     "Probe": "FOUND('NSM_DEV_BIANCA_GPU_3')",
@@ -2871,7 +3132,7 @@
       "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
     },
     "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
-      "LocationCode": "GPU_3"
+      "LocationCode": "GPU_1"
     },
     "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
       "LocationContext": "HGX_Chassis_0/ProcessorModule_1"
@@ -2881,6 +3142,9 @@
     },
     "xyz.openbmc_project.Inventory.Item.Chassis": {
       "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+    },
+    "xyz.openbmc_project.Configuration.NSMReady": {
+      "C1G2_GPU_3_Ready": "Enabled"
     }
   }
 ]

@@ -55,8 +55,6 @@ EXTRA_OEMESON:append = " -Dinsecure-push-style-notification=enabled"
 # Force event notification by http (insecure) as there is a SSL bug
 EXTRA_OEMESON:append = " -Dforce-insecure-event-notification=enabled"
 
-EXTRA_OEMESON:append = " -Dupdate-service-stage-location='/var/emmc/firmware-storage/staged-images/'"
-
 # Enable fdr support
 EXTRA_OEMESON:append = " -Dredfish-fdr-log=enabled"
 
@@ -69,6 +67,9 @@ EXTRA_OEMESON:append = " -Dshmem-platform-metrics=enabled "
 # Assign the OEMDiagnosticDataType for System Dump
 EXTRA_OEMESON:append = " -Doem-diagnostic-allowable-type='FPGA,ROT,FirmwareAttributes,HardwareCheckout'"
 
+# Enable SW EINJ Redfish API
+EXTRA_OEMESON:append = " -Dredfish-sw-einj=enabled"
+
 DEPENDS:append = " nvidia-shmem"
 DEPENDS:append = " nvidia-tal"
 RDEPENDS:${PN}:append = " nvidia-shmem"
@@ -77,8 +78,11 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI:append = " file://fw_uuid_mapping.json"
 
+SRC_URI:append = " file://rot_chassis_properties_allowlist.json"
+
 FILES:${PN}:append = " \
     ${datadir}/${PN}/fw_uuid_mapping.json \
+    ${datadir}/${PN}/rot_chassis_properties_allowlist.json \
     ${systemd_system_unitdir}/bmcweb.service.d/bmcweb-gb200nvl-hmc.conf \
     ${systemd_system_unitdir}/bmcweb.socket.d/bmcweb-socket-gb200nvl-hmc.conf \
 "
@@ -86,6 +90,7 @@ FILES:${PN}:append = " \
 do_install:append() {
     install -d ${D}${datadir}/${PN}/
     install -m 0644 ${WORKDIR}/fw_uuid_mapping.json ${D}${datadir}/${PN}/
+    install -m 0644 ${WORKDIR}/rot_chassis_properties_allowlist.json ${D}${datadir}/${PN}/
 
     install -d ${D}${systemd_system_unitdir}/bmcweb.service.d
     install -m 0644 ${WORKDIR}/bmcweb-gb200nvl-hmc.conf ${D}${systemd_system_unitdir}/bmcweb.service.d/

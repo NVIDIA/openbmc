@@ -7,7 +7,7 @@
             "ChassisName": "HGX_ERoT_CPU_0",
             "MctpUUID" : "f72d6f60-5675-11ed-9b6a-0242ac120002",
             "APName": "HGX_FW_CPU_0",
-            "APEID" : 16,
+            "APEID" : 17,
             "APBootStatusType" : "QueryBootStatus",
             "isRecoverable" : true,
             "HiddenByFPGA" : true,
@@ -20,10 +20,18 @@
             "ChassisName": "HGX_ERoT_CPU_1",
             "MctpUUID" : "f72d6f61-5675-11ed-9b6a-0242ac120002",
             "APName": "HGX_FW_CPU_1",
-            "APEID" : 24,
+            "APEID" : 17,
             "APBootStatusType" : "QueryBootStatus",
             "isRecoverable" : true,
             "HiddenByFPGA" : true,
+            "Type": "GlacierCrisisRecovery"
+        },
+        {
+            "Name": "HGX_FW_ERoT_BMC_0",
+            "ChassisName": "HGX_ERoT_BMC_0",
+            "MctpUUID": "f72d6fa0-5675-11ed-9b6a-0242ac120002",
+            "APBootStatusType": "QueryBootStatus",
+            "isRecoverable": false,
             "Type": "GlacierCrisisRecovery"
         }
     ],

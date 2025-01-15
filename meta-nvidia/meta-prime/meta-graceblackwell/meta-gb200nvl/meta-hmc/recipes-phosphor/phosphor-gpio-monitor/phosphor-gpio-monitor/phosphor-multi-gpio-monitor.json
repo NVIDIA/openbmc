@@ -18,6 +18,7 @@
                         "FALLING": ["hmc-fru-write-protect@off.service"],
                         "RISING": ["hmc-fru-write-protect@on.service"]
                 },
-                "Continue": true
+                "Continue": true,
+                "ExecuteAtStart": true
 	}
 ]

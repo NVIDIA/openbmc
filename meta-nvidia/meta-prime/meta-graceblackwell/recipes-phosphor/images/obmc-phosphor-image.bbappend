@@ -15,4 +15,5 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " \
                                     log-once \
                                     nvidia-power-manager \
                                     nvidia-otp-monitor \
+                                    nvidia-journal-conf \
                                   "

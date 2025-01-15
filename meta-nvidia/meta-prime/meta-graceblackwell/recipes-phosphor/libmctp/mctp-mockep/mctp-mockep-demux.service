@@ -1,0 +1,9 @@
+[Unit]
+Description=MCTP Mock End Point demultiplexer daemon
+
+[Service]
+Type=notify
+Restart=always
+ExecStart=/usr/bin/mctp-mockep-demux astpcie -e 8
+SyslogIdentifier=mctp-mockep-demux
+WatchdogSec=10

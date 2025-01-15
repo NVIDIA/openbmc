@@ -9,7 +9,7 @@
             }
         ],
         "Name": "System_0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'PRODUCT_PRODUCT_NAME': '.?PDB.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '.?675-24975-0000.?|.?675-24975-0300.?|.?675-24975-0400.?|.?675-24975-2000.?'})",
         "Type": "System",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Manufacturer": "NVIDIA",

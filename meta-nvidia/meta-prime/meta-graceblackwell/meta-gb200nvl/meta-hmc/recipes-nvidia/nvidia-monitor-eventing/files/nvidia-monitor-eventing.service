@@ -9,7 +9,7 @@ EnvironmentFile=/etc/default/nvidia-pcm
 ExecStart=/usr/bin/env monitor-eventingd -d ${MONEVT_DAT} -e ${MONEVT_EVENTINFO}
 Restart=always
 TimeoutStartSec=480
-BusName=xyz.openbmc_project.MonitorEventing
+BusName=xyz.openbmc_project.MON_EVT
 
 [Install]
 WantedBy=multi-user.target

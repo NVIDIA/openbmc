@@ -1,5 +1,5 @@
 SRC_URI = "git://github.com/NVIDIA/phosphor-logging;protocol=https;branch=develop"
-SRCREV = "47aaf3762aa414d0771625957ee5a02ef80eb100"
+SRCREV = "ddf74eb524e607c92062c955004077c38da0fb47"
 
 FILESEXTRAPATHS:append := "${THISDIR}/config:"
 

@@ -8,12 +8,12 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 # Use below if local development repo is prefered, please commit the change first.
-SRC_URI = "git:///home/guptar/openBMC/nvbmc/nvidia-fdr;branch=develop"
-#SRC_URI = "git://git@gitlab-master.nvidia.com:12051/dgx/nvidia-fdr;protocol=https;branch=develop"
+#SRC_URI = "git:///path/to/nvidia-fdr;protocol=file;;branch=<branch name>"
+SRC_URI = "git://github.com/NVIDIA/nvidia-fdr;protocol=https;branch=develop"
 
 # Modify these as desired
 #PV = "1.0+git${SRCPV}"
-SRCREV = "22d3166deb391b8cc05ca812d65b2bdd5781898c"
+SRCREV = "76e6b7edbe88b4b1a310e24f18d93277f9e707a9"
 
 S = "${WORKDIR}/git"
 
@@ -48,8 +48,11 @@ SYSTEMD_PACKAGES = "${PN}"
 SYSTEMD_SERVICE:${PN} = "nvidia-fdr.service"
 
 SRC_URI += " \
-    file://nvidia-fdr.service \
-    "
+           file://nvidia-fdr.service \
+           file://fdr_platforms.sh \
+           "
+
+
 
 FILES:${PN}:append = " ${bindir}/fdr"
 FILES:${PN}:append = " ${systemd_system_unitdir}/nvidia-fdr.service"
@@ -57,4 +60,5 @@ FILES:${PN}:append = " ${systemd_system_unitdir}/nvidia-fdr.service"
 do_install:append() {
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/nvidia-*.service ${D}${systemd_system_unitdir}
+    install -m 0755 ${WORKDIR}/fdr_platforms.sh ${D}/${bindir}/
 }

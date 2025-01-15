@@ -113,7 +113,13 @@ create_journal_link() {
            if [ -f "$mount_point/journal-logs/previous-boot-logs/previous_boot.log" ]; then
                 rm -rf "$mount_point/journal-logs/previous-boot-logs/previous_boot.log"
            fi
-           journalctl -b -1 -n 2000 > "$mount_point"/journal-logs/previous-boot-logs/previous_boot.log
+           boot_cnt=$(journalctl --list-boots | wc -l)
+           # Prevent adding an empty file if it's the first boot and without the previous boot log
+           if [ "$boot_cnt" -gt 2 ]; then
+               # Get the BOOT ID with IDX -1
+               boot_id=$(journalctl --list-boots | awk '$1 == "-1" {print $2}')
+               journalctl -b $boot_id -n 2000 > "$mount_point"/journal-logs/previous-boot-logs/previous_boot.log
+           fi
            return 0
        else
            # Mount point exists but doesn't have required filesystem, return error code 2

@@ -7,6 +7,8 @@ SRC_URI:append = " file://mrd_PlatformEnvironmentMetrics.json \
                    file://mrd_ProcessorPortMetrics.json \
                    file://mrd_ProcessorPortGPMMetrics.json \
                    file://mrd_CpuProcessorMetrics.json \
+                   file://mrd_HealthMetrics.json \
+                   file://mrd_ProcessorResetMetrics.json \
                  "
 
 FILES:${PN}:append = " ${datadir}/${PN}/mrd_PlatformEnvironmentMetrics.json \
@@ -16,6 +18,8 @@ FILES:${PN}:append = " ${datadir}/${PN}/mrd_PlatformEnvironmentMetrics.json \
                        ${datadir}/${PN}/mrd_ProcessorPortMetrics.json \
                        ${datadir}/${PN}/mrd_ProcessorPortGPMMetrics.json \
                        ${datadir}/${PN}/mrd_CpuProcessorMetrics.json \
+                       ${datadir}/${PN}/mrd_HealthMetrics.json \
+                       ${datadir}/${PN}/mrd_ProcessorResetMetrics.json \ 
                      "
                      
 do_install:append() {
@@ -27,4 +31,6 @@ do_install:append() {
     install -m 0644 ${WORKDIR}/mrd_ProcessorPortMetrics.json ${D}${datadir}/${PN}/
     install -m 0644 ${WORKDIR}/mrd_ProcessorPortGPMMetrics.json ${D}${datadir}/${PN}/
     install -m 0644 ${WORKDIR}/mrd_CpuProcessorMetrics.json ${D}${datadir}/${PN}/
+    install -m 0644 ${WORKDIR}/mrd_HealthMetrics.json ${D}${datadir}/${PN}/
+    install -m 0644 ${WORKDIR}/mrd_ProcessorResetMetrics.json ${D}${datadir}/${PN}/
 }

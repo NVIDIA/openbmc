@@ -530,20 +530,6 @@ if [[ $gpival -eq 0 ]]; then
     bmc_set_initial_gpio_out
 fi
 
-# WAR for ERoT Asserting SRST after BMC FW Update
-# 1. Determine if FPGA and RUN_POWER is up. Use this
-# as an indicator that the BMC was reset
-# when RUN_POWER was up.
-# 2. Assert the associated power control GPIOs accordingly
-# for RUN_POWER_PG-I (high) no matter if the BMC was reset
-# via #SRST or not.
-fpga_ready_status=$(gpioget `gpiofind "FPGA_READY_BMC-I"`)
-run_power_pg_status=$(gpioget `gpiofind "RUN_POWER_PG-I"`)
-if [[ $fpga_ready_status -eq 1 && $run_power_pg_status -eq 1 ]]; then
-    echo "FPGA_READY_BMC-I and RUN_POWER_PG-I are already asserted"
-    recover_run_power_pg_gpio_state
-fi
-
 #
 # Write STBY_POWER_EN=1 to turn on the standby power to the HMC and FPGA and let it boot
 #
@@ -580,15 +566,6 @@ sleep 1
 set_gpio_level "USB_HUB_RESET_L-O" $HIGH
 set_gpio_level "SEC_USB2_HUB_RST_L-O" $HIGH
 
-#
-# Write HMC_PGOOD-O=1 to enable PCIe discovery of FPGA
-#
-#set_gpio_level "HMC_PGOOD-O" $HIGH
-echo "Setting HMC_PGOOD..."
-echo 1047 > /sys/class/gpio/export
-echo "out" > /sys/class/gpio/gpio1047/direction
-echo 1 > /sys/class/gpio/gpio1047/value
-
 #Discover number of modules connected
 discover_modules
 
@@ -599,6 +576,20 @@ set_gpio_level "SGPIO_BMC_EN-O" $HIGH
 
 # Set BMC_EROT_FPGA_SPI_MUX_SEL-O = 1 to enable FPGA to access its EROT
 set_gpio_level "BMC_EROT_FPGA_SPI_MUX_SEL-O" $HIGH
+
+# WAR for ERoT Asserting SRST after BMC FW Update
+# 1. Determine if FPGA and RUN_POWER is up. Use this
+# as an indicator that the BMC was reset
+# when RUN_POWER was up.
+# 2. Assert the associated power control GPIOs accordingly
+# for RUN_POWER_PG-I (high) no matter if the BMC was reset
+# via #SRST or not.
+fpga_ready_status=$(gpioget `gpiofind "FPGA_READY_BMC-I"`)
+run_power_pg_status=$(gpioget `gpiofind "RUN_POWER_PG-I"`)
+if [[ $fpga_ready_status -eq 1 && $run_power_pg_status -eq 1 ]]; then
+    echo "FPGA_READY_BMC-I and RUN_POWER_PG-I are already asserted"
+    recover_run_power_pg_gpio_state
+fi
 
 # Initialize GPIO out state
 # after STBY power is on and HMC is not ready

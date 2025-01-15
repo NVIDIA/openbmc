@@ -8,7 +8,6 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " \
 
 OBMC_IMAGE_EXTRA_INSTALL:append = " \
                                     nsmd \
-                                    nvidia-cperdecoder \
                                     cper-logger \
                                     spdm \
                                     smbios-mdr \
@@ -29,9 +28,10 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " \
                                     nvidia-tal \
                                     i2c-dump-server \
                                     hmc-fru-write-protect \
+                                    nvidia-hmc-fru-check \
                                   "
 
-OBMC_IMAGE_EXTRA_INSTALL:append = "curl"
+OBMC_IMAGE_EXTRA_INSTALL:append = "curl mctp-mockep"
 
 IMAGE_FEATURES:remove = " \
                           obmc-fru-ipmi \

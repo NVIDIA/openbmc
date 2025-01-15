@@ -2,13 +2,17 @@
 Description=MCTP Nvidia System Management Daemon
 After=mctp-pcie-ctrl.service
 After=xyz.openbmc_project.EntityManager.service
-#TDB add After Clause
+After=xyz.openbmc_project.FruDevice.service
 
 [Service]
 Restart=always
 Type=dbus
+# Delay to ensure the service dependencies are ready
 ExecStartPre=/usr/bin/sleep 20
-ExecStartPre=/bin/bash -c 'for i in {1..60}; do busctl tree xyz.openbmc_project.EntityManager | grep -q "/xyz/openbmc_project/inventory/system/nsm_configs/Mapping/GPUMapping" && exit 0 || sleep 1; done; exit 1'
+
+# Use mapper wait to ensure the required object path is available
+ExecStartPre=mapper wait /xyz/openbmc_project/inventory/system/nsm_configs/Mapping/GPUMapping
+
 ExecStart=/usr/bin/env nsmd
 SyslogIdentifier=nsmd
 BusName=xyz.openbmc_project.NSM

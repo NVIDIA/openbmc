@@ -4,6 +4,16 @@ inherit obmc-phosphor-dbus-service obmc-phosphor-systemd
 
 RDEPENDS:${PN} = " bash "
 
+DEPENDS += " libusb1 "
+
+EXTRA_OEMESON += " -Denable-usb=enabled "
+
+
+SYSTEMD_SERVICE:${PN}:append = " mctp-usb-demux.service \
+                                 mctp-usb-demux.socket \
+                                 mctp-usb-ctrl.service \
+                                "
+
 SRC_URI:append= " file://set-hmc-mux.sh \
                   file://mctp_cfg_smbus1.json \
                   file://mctp_cfg_smbus2.json \
@@ -39,6 +49,7 @@ SRC_URI:append= " file://set-hmc-mux.sh \
                   file://systemd/fpga0-erot-recovery.target \
                   file://systemd/fpga1-erot-recovery.target \
                   file://systemd/hmc-recovery.target \
+                  file://mctp \
                  "
 
 SYSTEMD_SERVICE:${PN}:remove = " mctp-spi-ctrl.service"
@@ -124,6 +135,8 @@ do_install:append() {
     rm -f ${D}${nonarch_base_libdir}/systemd/system/mctp-pcie-ctrl.service
     rm -f ${D}${nonarch_base_libdir}/systemd/system/mctp-pcie-demux.service
     rm -f ${D}${nonarch_base_libdir}/systemd/system/mctp-pcie-demux.socket
+    install -d ${D}${datadir}/mctp
+    install -m 0644 ${WORKDIR}/mctp ${D}${datadir}/mctp/mctp
 }
 
 SYSTEMD_SERVICE:${PN}:remove = "${@bb.utils.contains('DISTRO_FEATURES', 'erotless-bmc', ' mctp-spi-ctrl.service ', '', d)}"

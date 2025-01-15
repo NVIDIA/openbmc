@@ -1,0 +1,11 @@
+{
+  "InbandUpdatePolicyEnabled": [
+  ],
+  "BackgroundCopyStatus": [
+    "ERoT_BMC_0"
+  ],
+  "AutomaticBackgroundCopyEnabled": [
+    "ERoT_BMC_0"
+  ]
+}
+

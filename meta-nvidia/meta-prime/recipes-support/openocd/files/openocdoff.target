@@ -1,0 +1,8 @@
+[Unit]
+Description=NVIDIA OpenOCD Service
+Requires=bmc-boot-complete.service
+After=bmc-boot-complete.service
+Conflicts=openocdon.service
+
+[Install]
+WantedBy=multi-user.target

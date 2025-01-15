@@ -2,7 +2,7 @@
   {
     "Exposes": [],
     "Name": "NSM_DEV_ARIEL_GPU_0",
-    "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?1GPU Board PC'})",
+    "Probe": "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?1GPU Board PC'})",
     "Type": "NSM_Configs",
     "xyz.openbmc_project.NsmDevice": {
       "DEVICE_TYPE": 0,

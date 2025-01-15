@@ -2,6 +2,8 @@
     "Exposes": [
         {
             "Name": "HGX_FW_FPGA_0",
+            "ChassisName": "HGX_ERoT_FPGA_0",
+            "APBootStatusType": "QueryBootStatus",
             "MctpUUID" : "f72d6f50-5675-11ed-9b6a-0242ac120002",
             "GPIO": "FPGA0_READY-I",
             "IsERoT": false,
@@ -12,6 +14,8 @@
         },
         {
             "Name": "HGX_FW_FPGA_1",
+            "ChassisName": "HGX_ERoT_FPGA_1",
+            "APBootStatusType": "QueryBootStatus",
             "MctpUUID" : "f72d6f51-5675-11ed-9b6a-0242ac120002",
             "GPIO": "FPGA1_READY-I",
             "IsERoT": false,

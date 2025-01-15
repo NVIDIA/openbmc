@@ -17,6 +17,8 @@ PACKAGECONFIG[ubifs_layout] = "-Dbmc-layout=ubi"
 PACKAGECONFIG[mmc_layout] = "-Dbmc-layout=mmc"
 PACKAGECONFIG[flash_bios] = "-Dhost-bios-upgrade=enabled, -Dhost-bios-upgrade=disabled"
 PACKAGECONFIG[static-dual-image] = "-Dbmc-static-dual-image=enabled, -Dbmc-static-dual-image=disabled"
+PACKAGECONFIG[software-update-dbus-interface] = "-Dsoftware-update-dbus-interface=enabled, -Dsoftware-update-dbus-interface=disabled"
+
 PV = "1.0+git${SRCPV}"
 PR = "r1"
 
@@ -42,6 +44,7 @@ SYSTEMD_SERVICE:${PN}-updater += " \
 
 SYSTEMD_SERVICE:${PN}-download-mgr +=  " \
     scp-transfer.service \
+    http-download.service \
 "
 
 SYSTEMD_SERVICE:${PN}-updater += "${@bb.utils.contains('PACKAGECONFIG', 'flash_bios', 'obmc-flash-host-bios@.service', '', d)}"
@@ -80,9 +83,10 @@ RPROVIDES:${PN}-version += " \
     virtual-obmc-image-manager \
 "
 
-FILES:${PN}-version += "${bindir}/phosphor-version-software-manager ${exec_prefix}/lib/tmpfiles.d/software.conf"
+FILES:${PN}-version += "${bindir}/phosphor-version-software-manager ${exec_prefix}/lib/tmpfiles.d/software.conf ${bindir}/phosphor-software-manager "
 FILES:${PN}-download-mgr += "${bindir}/phosphor-download-manager"
 FILES:${PN}-download-mgr += "${bindir}/scp-transfer"
+FILES:${PN}-download-mgr += "${bindir}/http-download"
 FILES:${PN}-updater += " \
     ${bindir}/phosphor-image-updater \
     ${bindir}/obmc-flash-bmc \
@@ -106,7 +110,10 @@ ALLOW_EMPTY:${PN} = "1"
 
 PACKAGE_BEFORE_PN += "${SOFTWARE_MGR_PACKAGES}"
 DBUS_PACKAGES = "${SOFTWARE_MGR_PACKAGES}"
-DBUS_SERVICE:${PN}-version += "xyz.openbmc_project.Software.Version.service"
+DBUS_SERVICE:${PN}-version += " \
+    xyz.openbmc_project.Software.Version.service \
+    ${@bb.utils.contains('PACKAGECONFIG', 'software-update-dbus-interface', 'xyz.openbmc_project.Software.Manager.service', '', d)} \
+"
 DBUS_SERVICE:${PN}-download-mgr += "xyz.openbmc_project.Software.Download.service"
 DBUS_SERVICE:${PN}-updater += "xyz.openbmc_project.Software.BMC.Updater.service"
 DBUS_SERVICE:${PN}-sync += "xyz.openbmc_project.Software.Sync.service"

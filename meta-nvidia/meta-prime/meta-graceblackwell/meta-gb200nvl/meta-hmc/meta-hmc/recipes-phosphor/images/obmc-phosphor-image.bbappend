@@ -23,7 +23,6 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " \
                                     nvidia-bmc-compliance \
                                     nvidia-mc-aspeed-lib \
                                     nvidia-tal \
-                                    nvidia-fdr \
                                     hmc-temp-sensor \
                                     phosphor-settings-manager \
                                     nvidia-tal \
@@ -31,7 +30,7 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " \
                                     hmc-fru-write-protect \
                                   "
 
-OBMC_IMAGE_EXTRA_INSTALL:append = "curl sw-einj mctp-mockep"
+OBMC_IMAGE_EXTRA_INSTALL:append = "curl mctp-mockep"
 
 IMAGE_FEATURES:remove = " \
                           obmc-fru-ipmi \

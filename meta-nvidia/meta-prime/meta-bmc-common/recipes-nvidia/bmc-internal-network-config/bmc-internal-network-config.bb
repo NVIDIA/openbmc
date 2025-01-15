@@ -16,12 +16,16 @@ SRC_URI += " \
             file://90-bmc-host-net.rules \
            "
 
+SRC_URI:append:gb200nvl-bmc-ut3 = " file://91-bmc-ut3-usbnet.rules "
+
 FILES:${PN} += " \
     ${sysconfdir}/systemd/network/00-bmc-hmcusb0.network \
     ${sysconfdir}/systemd/network/00-bmc-hostusb0.network \
     ${sysconfdir}/udev/rules.d/90-hmc-net.rules \
     ${sysconfdir}/udev/rules.d/90-bmc-host-net.rules \
 "
+
+FILES:${PN}:append:gb200nvl-bmc-ut3 = " ${sysconfdir}/udev/rules.d/91-bmc-ut3-usbnet.rules "
 
 inherit systemd
 inherit obmc-phosphor-systemd
@@ -41,4 +45,8 @@ do_install:append() {
     install -d ${D}${sysconfdir}/udev/rules.d
     install -m 0644 ${WORKDIR}/90-hmc-net.rules ${D}${sysconfdir}/udev/rules.d
     install -m 0644 ${WORKDIR}/90-bmc-host-net.rules ${D}${sysconfdir}/udev/rules.d
+}
+
+do_install:append:gb200nvl-bmc-ut3() {
+    install -m 0644 ${WORKDIR}/91-bmc-ut3-usbnet.rules ${D}${sysconfdir}/udev/rules.d
 }

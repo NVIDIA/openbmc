@@ -9,10 +9,10 @@
         "/redfish/v1/Systems/HGX_Baseboard_0/Memory/GPU_{GpuId}_DRAM_0/MemoryMetrics#/LifeTime/UncorrectableECCErrorCount",
         "/redfish/v1/Systems/HGX_Baseboard_0/Memory/GPU_{GpuId}_DRAM_0/MemoryMetrics#/Oem/Nvidia/RowRemapping/CorrectableRowRemappingCount",
         "/redfish/v1/Systems/HGX_Baseboard_0/Memory/GPU_{GpuId}_DRAM_0/MemoryMetrics#/Oem/Nvidia/RowRemapping/UncorrectableRowRemappingCount",
-        "/redfish/v1/Systems/HGX_Baseboard_0/Memory/GPU_{GpuId}_DRAM_0/MemoryMetrics#/Oem/Nvidia/RowRemapping/MaxAvailablityBankCount",
-        "/redfish/v1/Systems/HGX_Baseboard_0/Memory/GPU_{GpuId}_DRAM_0/MemoryMetrics#/Oem/Nvidia/RowRemapping/HighAvailablityBankCount",
-        "/redfish/v1/Systems/HGX_Baseboard_0/Memory/GPU_{GpuId}_DRAM_0/MemoryMetrics#/Oem/Nvidia/RowRemapping/PartialAvailablityBankCount",
-        "/redfish/v1/Systems/HGX_Baseboard_0/Memory/GPU_{GpuId}_DRAM_0/MemoryMetrics#/Oem/Nvidia/RowRemapping/LowAvailablityBankCount",
-        "/redfish/v1/Systems/HGX_Baseboard_0/Memory/GPU_{GpuId}_DRAM_0/MemoryMetrics#/Oem/Nvidia/RowRemapping/NoAvailablityBankCount"
+        "/redfish/v1/Systems/HGX_Baseboard_0/Memory/GPU_{GpuId}_DRAM_0/MemoryMetrics#/Oem/Nvidia/RowRemapping/MaxAvailabilityBankCount",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Memory/GPU_{GpuId}_DRAM_0/MemoryMetrics#/Oem/Nvidia/RowRemapping/HighAvailabilityBankCount",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Memory/GPU_{GpuId}_DRAM_0/MemoryMetrics#/Oem/Nvidia/RowRemapping/PartialAvailabilityBankCount",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Memory/GPU_{GpuId}_DRAM_0/MemoryMetrics#/Oem/Nvidia/RowRemapping/LowAvailabilityBankCount",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Memory/GPU_{GpuId}_DRAM_0/MemoryMetrics#/Oem/Nvidia/RowRemapping/NoAvailabilityBankCount"
     ]
 }

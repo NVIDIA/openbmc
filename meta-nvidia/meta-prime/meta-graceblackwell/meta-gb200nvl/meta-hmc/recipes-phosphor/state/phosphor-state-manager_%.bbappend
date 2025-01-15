@@ -2,6 +2,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/csm:"
 
 SRC_URI:append = " file://TelemetryReady.json \
                    file://MctpReady.json \
+                   file://xyz.openbmc_project.State.ConfigurableStateManager.service \
                  "
 
 

@@ -83,9 +83,9 @@ do
     ((Count++))
 done
 
-# A detected tray will put the fans on dbus. If a tray wasn't detected over all this time, then alert the user and set the fans to 80%
+# A detected tray will put the fans on dbus. If a tray wasn't detected over all this time, then alert the user and set the fans to 100%
 if [ $Count -gt 30 ]; then
-    echo "Tray detection failed. CBC FRU EEPROM missing or unprogrammed. Running all fans at 80%."
+    echo "Tray detection failed. CBC FRU EEPROM missing or unprogrammed. Running all fans at 100%."
     phosphor_log "Tray detection failed. PDB FRU EEPROM missing, unprogrammed, or not recognized. Running all fans at 80%." $sevErr
-    fan-manual-speed.sh 80
+    fan-manual-speed.sh 100
 fi

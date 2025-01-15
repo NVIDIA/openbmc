@@ -11,7 +11,7 @@ RDEPENDS:${PN} = "python3-numbers   \
                   picamera-libs     \
 "
 
-SRC_URI = "git://git@github.com/waveform80/picamera;protocol=https;branch=master"
+SRC_URI = "git://git@github.com/waveform80/picamera.git;protocol=ssh;branch=master"
 SRCREV = "7e4f1d379d698c44501fb84b886fadf3fc164b70"
 
 S = "${WORKDIR}/git"

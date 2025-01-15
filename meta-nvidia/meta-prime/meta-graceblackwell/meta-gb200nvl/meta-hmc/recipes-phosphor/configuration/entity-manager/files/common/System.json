@@ -9,7 +9,7 @@
             }
         ],
         "Name": "HGX_Baseboard_0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 3, 'ADDRESS': 80})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 80})",
         "Type": "System",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Manufacturer": "$BOARD_MANUFACTURER",

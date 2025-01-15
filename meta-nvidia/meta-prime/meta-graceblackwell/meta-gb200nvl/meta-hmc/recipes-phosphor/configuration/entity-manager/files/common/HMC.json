@@ -57,19 +57,19 @@
                         "Direction": "greater than",
                         "Name": "upper non recoverable",
                         "Severity": 4,
-                        "Value": 85.0
+                        "Value": 95.0
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper critical",
                         "Severity": 1,
-                        "Value": 80.0
+                        "Value": 93.0
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper non critical",
                         "Severity": 0,
-                        "Value": 75.0
+                        "Value": 90.0
                     },
                     {
                         "Direction": "less than",

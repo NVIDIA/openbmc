@@ -1,20 +1,30 @@
 {
     "Name": "\"HGX GB200\"",
+    "Rule": "MatchOne",
     "Checks": [
         {
             "rule": "MatchOne",
             "objects":[
             ],
-            "interface": "xyz.openbmc_project.Inventory.Decorator.Asset",
-            "property": "Model",
-            "value": "TBD"
+            "interface": "xyz.openbmc_project.FruDevice",
+            "property": "PRODUCT_PRODUCT_NAME",
+            "value": "GB200 1CPU:1GPU Board PC"
+        },
+        {
+            "rule": "MatchOne",
+            "objects":[
+            ],
+            "interface": "xyz.openbmc_project.FruDevice",
+            "property": "PRODUCT_PRODUCT_NAME",
+            "value": "GB200 1CPU: 1GPU Board PC"
         }
     ],  
     "Actions": [
         {
             "variables": [
                 "MONEVT_DAT=\"/run/initramfs/ro/usr/share/mon_evt/dat_GB200.json\"",
-                "MONEVT_EVENTINFO=\"/run/initramfs/ro/usr/share/mon_evt/event_info_GB200.json\""
+                "MONEVT_EVENTINFO=\"/run/initramfs/ro/usr/share/mon_evt/event_info_GB200.json\"",
+                "PLDM_CFG_SETUP_INFO=\"/run/initramfs/ro/usr/share/pldm/platform-config-files/fw_update_config_c1g1.json\""
             ]
         }
     ]   

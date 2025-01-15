@@ -1,0 +1,10 @@
+[Unit]
+Description=MCTP Mock End Point control daemon
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/mctp-mockep-ctrl  -m 3 -t 2 --bindinfo "00 00 00 00 00 01" --pci_own_eid 8 --i2c_own_eid 10 --pci_bridge_eid 12 --i2c_bridge_eid 30 --pci_bridge_pool_start 13 --i2c_bridge_pool_start 32 -d 1 -v 1 
+SyslogIdentifier=mctp-mockep-ctrl
+
+[Install]
+WantedBy=multi-user.target

@@ -1,5 +1,6 @@
 [Unit]
 Description=Check cx7_pldm_state_association
+PartOf=pldmd.service
 BindsTo=mctp-i2c5-ctrl.service
 After=mctp-i2c5-ctrl.service cpu-boot-done.service
 

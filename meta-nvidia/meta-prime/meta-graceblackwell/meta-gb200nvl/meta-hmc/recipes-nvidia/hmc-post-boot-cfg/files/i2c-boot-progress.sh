@@ -147,7 +147,7 @@ function update_rsyslog_status()
     rsyslog_ip=$(busctl get-property xyz.openbmc_project.Syslog.Config /xyz/openbmc_project/logging/config/remote xyz.openbmc_project.Network.Client Address | awk '{ print $2 }')
     rsyslog_port=$(busctl get-property xyz.openbmc_project.Syslog.Config /xyz/openbmc_project/logging/config/remote xyz.openbmc_project.Network.Client Port | awk '{ print $2 }')
 
-    if [[ $rsyslog_ip == '"$BMC_IP"' ]] && [[ $rsyslog_port == "6514" ]];then
+    if [[ $rsyslog_ip == "\"$BMC_IP\"" ]] && [[ $rsyslog_port == "6514" ]];then
         retval=$(($1 | $((1 << $2))))
     fi
     echo $retval
@@ -313,8 +313,8 @@ function monitor()
 
     01)
         echo "Softreboot requested"
-        create_reboot_event_log "Graceful Restart triggered by external command over I2C"  
-        systemctl reboot --force
+        create_reboot_event_log "Reboot triggered by external command over I2C"  
+        reboot
         ;;
     02)
         echo "Network reset requested"
@@ -358,14 +358,14 @@ function monitor()
         fw_setenv emmc_secure_erase_partition /var/emmc/user-logs
         # Need time here to ensure any background uboot-env (flash) update finishes before reboot 
         sleep 5 
-        systemctl reboot --force        
+        reboot        
         ;;          
     0f)
         echo "Factory reset requested"
-        res=$(dbus-send --system --print-reply  --dest=xyz.openbmc_project.Software.BMC.Inventory /xyz/openbmc_project/software  xyz.openbmc_project.Common.FactoryReset.Reset)
+        res=$(dbus-send --system --print-reply  --dest=xyz.openbmc_project.Software.BMC.Inventory /xyz/openbmc_project/software/bmc  xyz.openbmc_project.Common.FactoryReset.Reset)
         echo $res
         create_reboot_event_log "Factory Reset triggered by external command over I2C" 
-        systemctl reboot --force        
+        reboot        
         ;;    
     esac    
 
@@ -484,7 +484,7 @@ function run_fs_health_check()
                 REDFISH_MESSAGE_ARGS "$message_arg"      
         sleep 5  
         create_reboot_event_log "Auto Recovery"  
-        systemctl reboot --force
+        reboot
     fi 
 
     ## moutning log partition can take time in some cases so 
@@ -538,7 +538,7 @@ function run_fs_health_check()
                 echo "Data flash recovery done, rebooting"
                 fw_setenv dataflashrecovery yes  
                 sleep 5    
-                systemctl reboot --force   
+                reboot   
             fi 
             fs_sanity=true        
         fi
@@ -552,12 +552,25 @@ function control_remote_logging()
     then
         busctl set-property xyz.openbmc_project.Syslog.Config \
         /xyz/openbmc_project/logging/config/remote \
+        xyz.openbmc_project.Logging.RsyslogClient Enabled b true
+
+        busctl set-property xyz.openbmc_project.Syslog.Config \
+        /xyz/openbmc_project/logging/config/remote \
+        xyz.openbmc_project.Logging.RsyslogClient Severity s \
+        "xyz.openbmc_project.Logging.RsyslogClient.SeverityType.All"
+
+        busctl set-property xyz.openbmc_project.Syslog.Config \
+        /xyz/openbmc_project/logging/config/remote \
         xyz.openbmc_project.Network.Client Port q 6514
 
         busctl set-property xyz.openbmc_project.Syslog.Config \
         /xyz/openbmc_project/logging/config/remote \
         xyz.openbmc_project.Network.Client Address s "$BMC_IP"
     else
+        busctl set-property xyz.openbmc_project.Syslog.Config \
+        /xyz/openbmc_project/logging/config/remote \
+        xyz.openbmc_project.Logging.RsyslogClient Enabled b false
+
         busctl set-property xyz.openbmc_project.Syslog.Config \
         /xyz/openbmc_project/logging/config/remote \
         xyz.openbmc_project.Network.Client Port q 0

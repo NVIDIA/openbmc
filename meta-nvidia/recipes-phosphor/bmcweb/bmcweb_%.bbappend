@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/bmcweb;protocol=https;branch=develop"
-SRCREV = "f0166634d7d175b7dc64f7a33a561694a95cc193"
+SRCREV = "bc0ceaeff40822f21d450108f17546469388a6e8"
 
 EXTRA_OEMESON += "-Dredfish-dump-log=enabled"
 EXTRA_OEMESON += "-Dredfish-new-powersubsystem-thermalsubsystem=enabled"
@@ -11,6 +11,7 @@ EXTRA_OEMESON += "-Dbmcweb-logging=error"
 EXTRA_OEMESON += "-Dinsecure-enable-redfish-query=enabled"
 EXTRA_OEMESON += "-Dbmcweb-response-timeout=180"
 EXTRA_OEMESON += "-Dbmcweb-chunking=enabled"
+EXTRA_OEMESON += "-Drsyslog-client=enabled"
 
 DEPENDS += "libpwquality"
 RDEPENDS:${PN}-runtime += "libpwquality"

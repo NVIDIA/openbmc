@@ -1,0 +1,12 @@
+[Unit]
+Description=Pldm config setup
+After=nvidia-pcm.service
+Requires=nvidia-pcm.service
+
+[Service]
+Type=oneshot
+EnvironmentFile=-/etc/default/nvidia-pcm
+ExecStart=/bin/bash -c '/usr/bin/env /usr/bin/pldm_cfg_setup.sh ${PLDM_CFG_SETUP_INFO}'
+
+[Install]
+WantedBy=multi-user.target

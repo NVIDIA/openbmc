@@ -1,0 +1,11 @@
+[Unit]
+Description=NVIDIA OpenOCD Service
+Requires=bmc-boot-complete.service
+After=bmc-boot-complete.service
+Requisite=obmc-power-on@0.target
+After=obmc-power-on@0.target
+Conflicts=openocdoff.target
+
+[Service]
+ExecStart=/usr/bin/env openocd -s /usr/share/openocd/scripts -f interface/jtag_driver.cfg -f board/grace-system.cfg
+SyslogIdentifier=OpenOCD

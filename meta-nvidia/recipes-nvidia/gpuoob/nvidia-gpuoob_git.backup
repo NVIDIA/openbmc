@@ -27,7 +27,7 @@ CXXFLAGS += " -DCFG_FILE_PATH=\\"${GPUOOB_CFG_PATH}\\" -DWITH_DSO_HANDLE -DTOTAL
 # Using NVIDIA Gitlab URI for OpenBMC for now, please make sure your Gitlab key doesn't have a passphase.
 # You could change the passphase to empty by 'ssh-keygen -p -f ~/.ssh/<your_gitlab_id_file>'
 # This issue will be solved when we upstream all codes to github.
-SRC_URI += "git://git@gitlab-master.nvidia.com:12051/dgx/nvidia-gpuoob;protocol=https;branch=develop"
+SRC_URI += "git://github.com/NVIDIA/nvidia-gpuoob;protocol=https;branch=develop"
 SRCREV = "5a376fb3fbcacc94fdbfd22d3aff9512d4eb683d"
 S = "${WORKDIR}/git"
 

@@ -1,5 +1,5 @@
 HOST_DEFAULT_TARGETS = " \
-    multi-user.target.requires/obmc-host-reset@{}.target \
+    multi-user.target.wants/obmc-host-reset@{}.target \
     multi-user.target.wants/phosphor-discover-system-state@{}.service \
     obmc-host-start@{}.target.requires/obmc-host-startmin@{}.target \
     obmc-host-start@{}.target.requires/phosphor-reset-host-reboot-attempts@{}.service \
@@ -146,6 +146,13 @@ pkg_postinst:${PN}-host:append() {
         LINK="$D$systemd_system_unitdir/multi-user.target.requires/xyz.openbmc_project.State.Host@${i}.service"
         TARGET="../xyz.openbmc_project.State.Host@.service"
         ln -s $TARGET $LINK
+
+        if ${@bb.utils.contains('PACKAGECONFIG', 'host-gpio', 'true', 'false', d)}
+        then
+            LINK="$D$systemd_system_unitdir/multi-user.target.requires/phosphor-host-condition-gpio@${i}.service"
+            TARGET="../phosphor-host-condition-gpio@.service"
+            ln -s $TARGET $LINK
+        fi
     done
 }
 

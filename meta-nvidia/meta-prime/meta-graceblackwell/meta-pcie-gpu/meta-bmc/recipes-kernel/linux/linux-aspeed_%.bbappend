@@ -3,7 +3,7 @@
 #
 LINUX_VERSION = "6.6.58"
 SRCREV="5f454b4266450a785d6a3a0a21f845c221f8c927"
-KSRC = "git://git@gitlab-master.nvidia.com:12051/dgx/bmc/linux.git;protocol=ssh;branch=develop-6.6"
+KSRC = "git://github.com/NVIDIA/linux;protocol=https;branch=develop-6.6"
 # From 5.10+ the COPYING file changed
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"

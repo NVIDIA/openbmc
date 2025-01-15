@@ -3,8 +3,8 @@
 # Inherit Logging
 source /etc/default/nvidia_event_logging.sh
 
-# Inherit power status check functions
-source /usr/bin/power_status_inc.sh
+# Inherit bmc functions library
+source /usr/bin/mc_lib.sh
 
 # Get platform variables
 source /etc/default/platform_var.conf

@@ -1,0 +1,61 @@
+#!/bin/bash
+
+[ -z "$INPUT_BUS_NAME" ] && INPUT_BUS_NAME="xyz.openbmc_project.GpioStatusHandler"
+[ -z "$INPUT_OBJECT_PATH" ] && INPUT_OBJECT_PATH="/xyz/openbmc_project/GpioStatusHandler"
+[ -z "$INPUT_INTERFACE" ] && INPUT_INTERFACE="xyz.openbmc_project.GpioStatus"
+[ -z "$INPUT_PROPERTY_NAME" ] && INPUT_PROPERTY_NAME="GPU_BASE_PWR_GD"
+[ -z "$INPUT_EXPECTED_PROPERTY_VALUE" ] && INPUT_EXPECTED_PROPERTY_VALUE="true"
+[ -z "$POLL_INTERVAL" ] && POLL_INTERVAL="5s"
+
+while true; do
+    property_read=$(busctl get-property "$INPUT_BUS_NAME" "$INPUT_OBJECT_PATH" "$INPUT_INTERFACE" "$INPUT_PROPERTY_NAME")
+    rc=$?
+    if [ $rc -ne 0 ]; then
+        >&2 echo "unexpected poll return rc: $rc"
+        sleep "$POLL_INTERVAL"
+        continue
+    fi
+    # Even if one p-s-m instance failed the other may be OK so don't sleep/continue like above.
+    current_chassis_prop=$(busctl get-property xyz.openbmc_project.State.Chassis /xyz/openbmc_project/state/chassis0 xyz.openbmc_project.State.Chassis CurrentPowerState)
+    rc=$?
+    if [ $rc -ne 0 ]; then
+        >&2 echo "unexpected Chassis read return rc: $rc"
+    fi
+    current_host_prop=$(busctl get-property xyz.openbmc_project.State.Host /xyz/openbmc_project/state/host0 xyz.openbmc_project.State.Host CurrentHostState)
+    rc=$?
+    if [ $rc -ne 0 ]; then
+        >&2 echo "unexpected Host read return rc: $rc"
+    fi
+
+    if [[ "$property_read" =~ $INPUT_EXPECTED_PROPERTY_VALUE ]]; then
+        # Actual power state is On
+        set_successful=1
+        if [[ ! "$current_chassis_prop" =~ xyz.openbmc_project.State.Chassis.PowerState.On ]]; then
+            echo "setting Chassis power state to On"
+            busctl set-property xyz.openbmc_project.State.Chassis /xyz/openbmc_project/state/chassis0 xyz.openbmc_project.State.Chassis CurrentPowerState s "xyz.openbmc_project.State.Chassis.PowerState.On" || set_successful=0
+        fi
+        if [[ ! "$current_host_prop" =~ xyz.openbmc_project.State.Host.HostState.Running ]]; then
+            echo "setting Host power state to On"
+            busctl set-property xyz.openbmc_project.State.Host /xyz/openbmc_project/state/host0 xyz.openbmc_project.State.Host CurrentHostState s "xyz.openbmc_project.State.Host.HostState.Running" || set_successful=0
+        fi
+        if [ $set_successful -ne 1 ]; then
+            >&2 echo "error setting power state to On"
+        fi
+    else
+        # Actual power state is Off
+        set_successful=1
+        if [[ ! "$current_chassis_prop" =~ xyz.openbmc_project.State.Chassis.PowerState.Off ]]; then
+            echo "setting Chassis power state to Off"
+            busctl set-property xyz.openbmc_project.State.Chassis /xyz/openbmc_project/state/chassis0 xyz.openbmc_project.State.Chassis CurrentPowerState s "xyz.openbmc_project.State.Chassis.PowerState.Off" || set_successful=0
+        fi
+        if [[ ! "$current_host_prop" =~ xyz.openbmc_project.State.Host.HostState.Off ]]; then
+            echo "setting Host power state to Off"
+            busctl set-property xyz.openbmc_project.State.Host /xyz/openbmc_project/state/host0 xyz.openbmc_project.State.Host CurrentHostState s "xyz.openbmc_project.State.Host.HostState.Off" || set_successful=0
+        fi
+        if [ $set_successful -ne 1 ]; then
+            >&2 echo "error setting power state to Off"
+        fi
+    fi
+
+    sleep "$POLL_INTERVAL"
+done

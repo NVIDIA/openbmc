@@ -1,7 +1,7 @@
 SUMMARY = "Redfish Mock"
 HOMEPAGE = "https://gitlab-master.nvidia.com/dgx/redfish"
 
-SRC_URI = "git://git@gitlab-master.nvidia.com:12051/dgx/redfish;protocol=ssh;branch=generated-mock/umbriel"
+SRC_URI = "git://github.com/NVIDIA/redfish;protocol=ssh;branch=generated-mock/umbriel"
 SRCREV = "ee08ade49b2841419eea4f558fd411f984b252c1"
 
 LICENSE = "Apache-2.0"

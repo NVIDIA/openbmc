@@ -2,6 +2,8 @@
 Description=HMC Ready Configuration
 # FIXME: if it's not the right place
 After=network.target
+Requires=nvidia-hmc-fru-check.service
+After=nvidia-hmc-fru-check.service
 
 [Service]
 Restart=no

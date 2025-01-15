@@ -1,8 +1,9 @@
 [Unit]
 Description=Power LED Controller
 After=mapper-wait@-xyz-openbmc_project-led-groups.service
-
 After=mapper-wait@-xyz-openbmc_project-state-host0.service
+Requires=xyz.openbmc_project.State.Boot.PostCode@0.service
+After=xyz.openbmc_project.State.Boot.PostCode@0.service
 
 [Service]
 Restart=always

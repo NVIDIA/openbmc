@@ -5,9 +5,14 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " \
     phosphor-gpio-monitor \
 "
 
-# It is for lsusb app.
+# Monitor gpio presence status
 OBMC_IMAGE_EXTRA_INSTALL:append = " \
-    usbutils \
+    phosphor-gpio-monitor-presence \
+"
+
+# Monitor Chassis power status
+OBMC_IMAGE_EXTRA_INSTALL:append = " \
+    phosphor-power-control \
 "
 
 # Allow scripted access to SITV BMC
@@ -19,4 +24,9 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " \
 OBMC_IMAGE_EXTRA_INSTALL:append = " \
     obmc-phosphor-buttons-signals \
     obmc-phosphor-buttons-handler \
+"
+
+# Monitor gpio status
+OBMC_IMAGE_EXTRA_INSTALL:append = " \
+    phosphor-gpio-monitor-presence \
 "
