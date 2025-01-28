@@ -7,6 +7,7 @@ StartLimitIntervalSec=1
 Restart=no
 Type=simple
 ExecStart=/bin/echo "Starting FPGA Ready Target"
-ExecStartPost=busctl call xyz.openbmc_project.FruDevice /xyz/openbmc_project/FruDevice xyz.openbmc_project.FruDeviceManager ReScan
+ExecStartPost=busctl call xyz.openbmc_project.FruDevice /xyz/openbmc_project/FruDevice xyz.openbmc_project.FruDeviceManager ReScanBus q 1
+ExecStartPost=busctl call xyz.openbmc_project.FruDevice /xyz/openbmc_project/FruDevice xyz.openbmc_project.FruDeviceManager ReScanBus q 2
 SyslogIdentifier=nvidia-fpga-ready-service
 

@@ -29,6 +29,9 @@ SRC_URI:append:skinnyjoe = " file://gh/create-partition.sh \
 SRC_URI:append:mgx-3809 = " file://mgx-3809/create-partition.sh \
                             file://mgx-3809/emmc-mount.conf"
 
+SRC_URI:append:igx-3809 = " file://igx-3809/create-partition.sh \
+                            file://igx-3809/emmc-mount.conf"
+
 FILES:${PN}:append = " /usr/share/ /usr/share/emmc /usr/share/emmc-mount.conf"
 DEPENDS = "systemd"
 RDEPENDS:${PN} = "bash e2fsprogs-e2fsck e2fsprogs-e2fsck e2fsprogs-mke2fs e2fsprogs-tune2fs"
@@ -67,4 +70,9 @@ do_install:append:skinnyjoe() {
 do_install:append:mgx-3809() {
     install -m 0755 ${WORKDIR}/mgx-3809/create-partition.sh ${D}/${bindir}/
     install -m 0644 ${WORKDIR}/mgx-3809/emmc-mount.conf ${D}/usr/share/emmc/
+}
+
+do_install:append:igx-3809() {
+    install -m 0755 ${WORKDIR}/igx-3809/create-partition.sh ${D}/${bindir}/
+    install -m 0644 ${WORKDIR}/igx-3809/emmc-mount.conf ${D}/usr/share/emmc/
 }

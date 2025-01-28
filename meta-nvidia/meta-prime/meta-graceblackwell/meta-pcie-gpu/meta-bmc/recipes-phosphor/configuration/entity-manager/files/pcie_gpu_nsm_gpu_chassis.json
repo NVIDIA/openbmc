@@ -39,6 +39,7 @@
         "Name": "Assembly0",
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:0:3",
+        "DeviceAssembly": false,
         "Area": {
           "Type": "NSM_Area",
           "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
@@ -397,7 +398,8 @@
         "UUID": "STATIC:0:3",
         "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_0",
         "MessageId": "Base.1.13.ResetRequired",
-        "Severity": "Critical",
+        "Severity": "Warning",
+        "ErrorId": "GPU-RST-REQ-EVENT",
         "LoggingNamespace": "GPU_0",
         "Resolution": "Reset the GPU or power cycle the Baseboard.",
         "MessageArgs": [
@@ -508,8 +510,8 @@
           "Type": "NSM_MemCapacityUtil",
           "Priority": false
         },
-        "InbandReconfigPermissions": {
-          "Type": "NSM_InbandReconfigPermissions",
+        "ReconfigPermissions": {
+          "Type": "NSM_ReconfigPermissions",
           "Priority": false,
           "Features": [
             "InSystemTest",

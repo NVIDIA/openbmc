@@ -25,7 +25,6 @@ do
         sleep 3
         busctl tree $FruDevice | grep P4764 > /dev/null
 done
-
 if [ $Times -lt 10 ]
 then
 	echo "HMC FRU found successfully"

@@ -139,6 +139,117 @@ _get_mctp_dbus_conn() {
     echo "$dbus_name"
 }
 
+# Return USB device number enumerated by Linux
+# Arguments:
+#   $1: USB port path in format of BUSNUM-PORTNUM[.PORTNUM]+
+# Returns:
+#   valid USB device number mapped from the input port path
+_get_usb_device_number() {
+    local port_path="$1"
+    local bus_number
+    local search_dir
+    local device_number
+
+    # Format bus number to 3 digits
+    bus_number=$(printf "%03d" "${port_path%%-*}")
+    search_dir="/dev/bus/usb/$bus_number"
+
+    # Iterate through entries in the search directory
+    for entry in "$search_dir"/*; do
+        if res=$(udevadm info -q path "$entry" 2>/dev/null) && echo "$res" | grep -qF "$port_path"; then
+            device_number="${entry##*/}"  # Extract the device number
+            echo "$device_number"
+            return 0  # Exit successfully
+        fi
+    done
+
+    # If no match found, return empty
+    echo ""
+    return 1
+}
+
+# HMC-FPGA-USB-01
+# Function to verify if USB device is operational
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid "yes", "no" otherwise
+is_fpga_usb_operational() {
+local usb_port_path="${1:-"1-1.4"}"
+
+device_number=$(_get_usb_device_number "$usb_port_path")
+bus_number=${usb_port_path%%-*}
+
+[ -z "$device_number" ] && device_number="device_not_found"
+output=$(_log_ lsusb -s "$bus_number:$device_number"); [ -z "$output" ] && echo "no" || echo "yes"
+}
+
+# HMC-FPGA-USB-02
+# Function to get FPGA USB Vendor ID
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Vendor ID
+get_fpga_usb_vendor_id() {
+local usb_port_path="${1:-"1-1.4"}"
+
+device_number=$(_get_usb_device_number "$usb_port_path")
+bus_number=${usb_port_path%%-*}
+
+[ -z "$device_number" ] && device_number="device_not_found"
+id=$(_log_ lsusb -v -s "$bus_number":"$device_number" | grep idVendor | grep -o '0x[0-9a-fA-F]\+') && echo "$id"
+}
+
+# HMC-FPGA-USB-03
+# Function to get FPGA USB Product ID
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Product ID
+get_fpga_usb_product_id() {
+local usb_port_path="${1:-"1-1.4"}"
+
+device_number=$(_get_usb_device_number "$usb_port_path")
+bus_number=${usb_port_path%%-*}
+
+[ -z "$device_number" ] && device_number="device_not_found"
+id=$(_log_ lsusb -v -s "$bus_number":"$device_number" | grep idProduct | grep -o '0x[0-9a-fA-F]\+') && echo "$id"
+}
+
+# HMC-FPGA-USB-04
+# Function to get FPGA USB Interface Class
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Interface SubClass
+get_fpga_usb_interface_class() {
+local usb_port_path="${1:-"1-1.4"}"
+
+device_number=$(_get_usb_device_number "$usb_port_path")
+bus_number=${usb_port_path%%-*}
+
+[ -z "$device_number" ] && device_number="device_not_found"
+# if there are multiple interfaces, this func would capture the first bclass
+class=$(_log_ lsusb -v -s "$bus_number":"$device_number" | awk '/bInterfaceClass/ {print $2; exit}') && echo "$class"
+}
+
+# HMC-FPGA-USB-05
+# Function to get FPGA USB Interface SubClass
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Interface Class
+get_fpga_usb_interface_subclass() {
+local usb_port_path="${1:-"1-1.4"}"
+
+device_number=$(_get_usb_device_number "$usb_port_path")
+bus_number=${usb_port_path%%-*}
+
+[ -z "$device_number" ] && device_number="device_not_found"
+# if there are multiple interfaces, this func would capture the first subclass
+class=$(_log_ lsusb -v -s "$bus_number":"$device_number" | awk '/bInterfaceSubClass/ {print $2; exit}') && echo "$class"
+}
+
 # Component-Level Category: HMC #
 ## HMC: Hardware Interface
 
@@ -177,7 +288,7 @@ is_hmc_usb_operational() {
 local bmc_ip="$1"
 local count="$2"
 
-ip=${bmc_ip:-'192.168.31.2'} && count=${count:-1} && if _log_ ping -c "$count" "$ip" >/dev/null 2>&1; then echo "yes"; else echo "no"; fi
+ip=${bmc_ip:-'192.168.31.2'} && count=${count:-1} && output=$(_log_ ping -c "$count" "$ip" | grep -i unreachable); [ -z "$output" ] && echo "yes" || echo "no"
 }
 
 # Baseboard-HW-Version-01
@@ -509,6 +620,17 @@ output=$(_log_ busctl tree "$dbus_name" | grep -o '/0/[0-9]\+$' | sed 's/\/0\///
 get_hmc_dbus_mctp_spi_tree_eids() {
 local dbus_name="$1"
 name=${dbus_name:-'xyz.openbmc_project.MCTP.Control.SPI'} && output=$(_log_ busctl tree "$name" | grep -o '/0/[0-9]\+$' | sed 's/\/0\///') && echo $output
+}
+
+# HMC-HMC-DBUS-12
+# Function to get MCTP DBus VDM tree EIDs via USB
+# Arguments:
+#   $1: MCTP dbus service name
+# Returns:
+#   flattened list of the MCTP VDM tree EIDs
+get_hmc_dbus_mctp_vdm_tree_eids_usb() {
+local dbus_name=$(_get_mctp_dbus_conn "${1:-"xyz.openbmc_project.MCTP.Control.USB1_1_4"}")
+output=$(_log_ busctl tree "$dbus_name" | grep -o '/0/[0-9]\+$' | sed 's/\/0\///') && echo $output
 }
 
 # HMC-HMC_EROT-MCTP_VDM-01
@@ -1399,6 +1521,28 @@ fi
 
 # AP RBP Key Revoke state
 echo $output
+}
+
+# HMC-HMC_EROT-Key-09
+# Function to get EC key revoke policy via USB VDM
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid revoke policy
+get_hmc_erot_key_revoke_policy_vdm_usb() {
+# default EID to 14, HMC MCTP ERoT SPI
+local eid="${1:-14}"
+local usb_port_path="${2:-"1-1.4"}"
+
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+output=$(_log_ mctp-usb-ctrl -s "7f 00 00 16 47 80 01 1d 01 00" -t 3 -e "${eid}" -w "${usb_port_path}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 11)
+
+case $output in
+00) echo "not set";;
+01) echo "auto";;
+02) echo "decoupled";;
+*) echo "unknown";;
+esac
 }
 
 # HMC-HMC_EROT-Security-01
@@ -2707,6 +2851,28 @@ fi
 
 # AP RBP Key Revoke state
 echo $output
+}
+
+# HMC-FPGA_EROT-Key-09
+# Function to get EC key revoke policy via USB VDM
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid revoke policy
+get_fpga_erot_key_revoke_policy_vdm_usb() {
+# default EID to 13, FPGA MCTP ERoT SPI
+local eid="${1:-13}"
+local usb_port_path="${2:-"1-1.4"}"
+
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+output=$(_log_ mctp-usb-ctrl -s "7f 00 00 16 47 80 01 1d 01 00" -t 3 -e "${eid}" -w "${usb_port_path}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 11)
+
+case $output in
+00) echo "not set";;
+01) echo "auto";;
+02) echo "decoupled";;
+*) echo "unknown";;
+esac
 }
 
 # HMC-FPGA_EROT-Security-01
@@ -4725,6 +4891,7 @@ local cx7_erot_spi_eid="$1"
 # default EID to 17, CX7 MCTP ERoT SPI
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
 eid=${cx7_erot_spi_eid:-17} && output=$(_log_ mctp-pcie-ctrl -s "7f 00 00 16 47 80 01 1d 01 00" -t 2 -e "${eid}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 11)
+eid=${hmc_erot_spi_eid:-14} && output=$(_log_ mctp-usb-ctrl -s "7f 00 00 16 47 80 01 1d 01 00" -t 3 -e "${eid}" -w 1-1.4 -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 11)
 
 case $output in
 00) echo "not set";;
@@ -4915,6 +5082,28 @@ fi
 
 # AP RBP Key Revoke state
 echo $output
+}
+
+# HMC-CX7_EROT-Key-09
+# Function to get EC key revoke policy via USB VDM
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid revoke policy
+get_cx7_erot_key_revoke_policy_vdm_usb() {
+# default EID to 17, CX7 MCTP ERoT SPI
+local eid="${1:-17}"
+local usb_port_path="${2:-"1-1.4"}"
+
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+output=$(_log_ mctp-usb-ctrl -s "7f 00 00 16 47 80 01 1d 01 00" -t 3 -e "${eid}" -w "${usb_port_path}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 11)
+
+case $output in
+00) echo "not set";;
+01) echo "auto";;
+02) echo "decoupled";;
+*) echo "unknown";;
+esac
 }
 
 # HMC-CX7_EROT-Security-01
@@ -6036,6 +6225,28 @@ fi
 echo $output
 }
 
+# HMC-NVSWITCH_EROT-Key-09
+# Function to get EC key revoke policy via USB VDM
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid revoke policy
+get_nvswitch_erot_key_revoke_policy_vdm_usb() {
+# default EID to 15, NVSWITCH MCTP ERoT SPI
+local eid="${1:-15}"
+local usb_port_path="${2:-"1-1.4"}"
+
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+output=$(_log_ mctp-usb-ctrl -s "7f 00 00 16 47 80 01 1d 01 00" -t 3 -e "${eid}" -w "${usb_port_path}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 11)
+
+case $output in
+00) echo "not set";;
+01) echo "auto";;
+02) echo "decoupled";;
+*) echo "unknown";;
+esac
+}
+
 # HMC-NVSWITCH_EROT-Security-01
 # Function to get EC background copy progress state via VDM
 # Arguments:
@@ -7143,6 +7354,88 @@ else
 fi
 }
 
+# HMC-MCU-USB-01
+# Function to verify if USB device is operational
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid "yes", "no" otherwise
+is_mcu_usb_operational() {
+local usb_port_path="${1:-"1-1.1.1"}"
+
+device_number=$(_get_usb_device_number "$usb_port_path")
+bus_number=${usb_port_path%%-*}
+
+[ -z "$device_number" ] && device_number="device_not_found"
+output=$(_log_ lsusb -s "$bus_number:$device_number"); [ -z "$output" ] && echo "no" || echo "yes"
+}
+
+# HMC-MCU-USB-02
+# Function to get MCU USB Vendor ID
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Vendor ID
+get_mcu_usb_vendor_id() {
+local usb_port_path="${1:-"1-1.1.1"}"
+
+device_number=$(_get_usb_device_number "$usb_port_path")
+bus_number=${usb_port_path%%-*}
+
+[ -z "$device_number" ] && device_number="device_not_found"
+id=$(_log_ lsusb -v -s "$bus_number":"$device_number" | grep idVendor | grep -o '0x[0-9a-fA-F]\+') && echo "$id"
+}
+
+# HMC-MCU-USB-03
+# Function to get MCU USB Product ID
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Product ID
+get_mcu_usb_product_id() {
+local usb_port_path="${1:-"1-1.1.1"}"
+
+device_number=$(_get_usb_device_number "$usb_port_path")
+bus_number=${usb_port_path%%-*}
+
+[ -z "$device_number" ] && device_number="device_not_found"
+id=$(_log_ lsusb -v -s "$bus_number":"$device_number" | grep idProduct | grep -o '0x[0-9a-fA-F]\+') && echo "$id"
+}
+
+# HMC-MCU-USB-04
+# Function to get MCU USB Interface Class
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Interface SubClass
+get_mcu_usb_interface_class() {
+local usb_port_path="${1:-"1-1.1.1"}"
+
+device_number=$(_get_usb_device_number "$usb_port_path")
+bus_number=${usb_port_path%%-*}
+
+[ -z "$device_number" ] && device_number="device_not_found"
+# if there are multiple interfaces, this func would capture the first bclass
+class=$(_log_ lsusb -v -s "$bus_number":"$device_number" | awk '/bInterfaceClass/ {print $2; exit}') && echo "$class"
+}
+
+# HMC-MCU-USB-05
+# Function to get MCU USB Interface SubClass
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Interface Class
+get_mcu_usb_interface_subclass() {
+local usb_port_path="${1:-"1-1.1.1"}"
+
+device_number=$(_get_usb_device_number "$usb_port_path")
+bus_number=${usb_port_path%%-*}
+
+[ -z "$device_number" ] && device_number="device_not_found"
+# if there are multiple interfaces, this func would capture the first subclass
+class=$(_log_ lsusb -v -s "$bus_number":"$device_number" | awk '/bInterfaceSubClass/ {print $2; exit}') && echo "$class"
+}
+
 
 <<COMMENT
 # mctp-vdm-util -h
@@ -7315,6 +7608,27 @@ Completion Codes
 0x07 - 0x7E: RESERVED
 0x7F: ERR_BUS_ACCESS
 0x80 - 0xFF: Command specific
+COMMENT
+
+<<COMMENT
+# MCTP NSM, MCTP System Management API
+# mctp-usb-ctrl -husb
+Various command line options mentioned below
+    -v        Verbose level
+    -e        Target Endpoint Id
+    -m        Mode: (0 - Commandline mode, 1 - daemon mode, 2 - SPI test mode)
+    -t        Binding Type (0 - Resvd, 1 - I2C, 2 - PCIe, 3 - USB, 6 - SPI)
+    -b        Binding data (pvt)
+    -d        Delay in seconds (for MCTP enumeration)
+    -s        Tx data (MCTP packet payload: [Req-dgram]-[cmd-code]--)
+    -f        Absolute path to configuration json file
+    -n        Bus number for the selected interface, eg. PCIe 1, PCIe 2, I2C 3, ...
+    -i        usb own eid
+    -p        usb bridge eid
+    -x        usb bridge pool start eid
+    -w        port path of device <busid>-<port1>.<port2> eg 1-2.3
+    -c        option to remove duplicate EID entries from the routing table
+    -z        option to ignore certain EID entries from the routing table supplied as a space separated list in decimal
 COMMENT
 
 <<COMMENT

@@ -1,0 +1,9 @@
+# This rules file is used for dynamic mctp usb multi-bridge when the mctp usb device is added,
+# launch the mctp service with individual port numbers.
+# Replace '.' with '-' Because AF_UNIX wasn't supported '.' as socket names.
+# Remove the interface part (everything including and after the colon)
+SUBSYSTEM=="usb", ACTION=="add", \
+ATTR{bInterfaceClass}=="14", ATTR{bInterfaceSubClass}=="00", \
+PROGRAM="/usr/bin/sh -c 'echo %k | sed -e 's/\\./-/g' -e 's/:.*$//'", \
+TAG+="systemd", \
+ENV{SYSTEMD_WANTS}="mctp-usb-demux@%c.socket mctp-usb-demux@%c.service mctp-usb-ctrl@%c.service"

@@ -3,9 +3,9 @@
 #     ID 1d6b:0002
 #    |__ Port 001: Dev 002, If 0, Class=[unknown], Driver=usbfs, 480M
 #        ID 0955:ffff
-# port_path=<busid>-<port1>-<port2>...
-# -w <busid>-<port1>-<port2>...
-DEMUX_USB_BINDING_OPTS=usb vendor_id=0x0955  product_id=0xFFFF class_id=0x0 port_path=1-1
-MCTP_USB_CTRL_OPTS= -m 1 -t 3 -i 8 -p 12 -x 13 -d 1 -v 1 -w 1-1
+# port_path=<busid>-<port1>.<port2>...
+# -w <busid>-<port1>.<port2>...
+DEMUX_USB_BINDING_OPTS=usb json_file=/usr/share/mctp/mctp_cfg_usb.json
+MCTP_USB_CTRL_OPTS= -m 1 -t 3 -d 1 -v 1 -f /usr/share/mctp/mctp_cfg_usb.json
 DEMUX_SPI_BINDING_OPTS=astspi gpio=649
 MCTP_SPI_CTRL_OPTS= -e 0 -i 3 -t 6 -m 1 -d 20 -v 0 -u f72d6fa0-5675-11ed-9b6a-0242ac120002

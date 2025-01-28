@@ -24,7 +24,7 @@ DEPENDS += "googletest"
 EXTRA_OEMESON:hgxb += "-Dmctp-eid0-filtering=true"
 
 SRC_URI = "git://github.com/NVIDIA/nsmd;protocol=https;branch=develop"
-SRCREV = "a55bafcda4b1b27a02646afd7c748db0a8e3c47b"
+SRCREV = "216416fe22ef0b78e780fa38899d1bfe6f6d23c2"
 S = "${WORKDIR}/git"
 
 SYSTEMD_SERVICE:${PN} = "nsmd.service"

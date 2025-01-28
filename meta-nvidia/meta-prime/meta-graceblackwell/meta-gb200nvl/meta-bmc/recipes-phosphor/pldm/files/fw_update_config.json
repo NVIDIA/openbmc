@@ -18,7 +18,7 @@
                         {
                             "forward": "parent_chassis",
                             "reverse": "all_chassis",
-                            "endpoint": "/xyz/openbmc_project/inventory/system/chassis/Chassis_0"
+                            "endpoint": "/xyz/openbmc_project/inventory/system/bmc/BMC_0"
                         },
                         {
                             "forward": "inventory",

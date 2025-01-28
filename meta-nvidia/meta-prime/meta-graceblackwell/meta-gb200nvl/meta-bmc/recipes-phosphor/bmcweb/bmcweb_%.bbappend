@@ -42,6 +42,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI:append= " file://fw_uuid_mapping.json \
                   file://listener.conf \
+                  file://mrd_PlatformEnvironmentMetrics.json \
                 "
 
 SRC_URI:append = " file://rot_chassis_properties_allowlist.json"
@@ -53,6 +54,7 @@ SYSTEMD_SERVICE:${PN} += " \
 FILES:${PN}:append = " \
     ${datadir}/${PN}/fw_uuid_mapping.json \
     ${datadir}/${PN}/rot_chassis_properties_allowlist.json \
+    ${datadir}/${PN}/mrd_PlatformEnvironmentMetrics.json \
 "
 
 DEPENDS += " \
@@ -66,4 +68,5 @@ do_install:append() {
     install -m 0644 ${WORKDIR}/rot_chassis_properties_allowlist.json ${D}${datadir}/${PN}/
     install -d ${D}${datadir}/rf_listener/
     install -m 0644 ${WORKDIR}/listener.conf ${D}${datadir}/rf_listener/listener.conf
+    install -m 0644 ${WORKDIR}/mrd_PlatformEnvironmentMetrics.json ${D}${datadir}/${PN}/
 }

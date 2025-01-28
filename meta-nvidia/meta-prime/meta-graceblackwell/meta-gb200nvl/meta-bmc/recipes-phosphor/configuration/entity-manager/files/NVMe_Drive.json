@@ -444,7 +444,7 @@
                 "Type": "DownstreamPort"
             }
         ],
-        "Name": "NVMe_E1S_SSD_00",
+        "Name": "NVMe_SSD_200",
         "Type": "NVMe",
         "Probe": "xyz.openbmc_project.Inventory.Item.I2CDevice({'Bus': 14, 'Address': 64})",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
@@ -460,6 +460,9 @@
         },
         "xyz.openbmc_project.Inventory.Decorator.Location": {
             "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Slot"
+        },
+	 "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": "Chassis_0/StorageBackplane_0"
         }
     },
     {
@@ -470,7 +473,7 @@
                 "Type": "DownstreamPort"
             }
         ],
-        "Name": "NVMe_E1S_SSD_01",
+        "Name": "NVMe_SSD_201",
         "Type": "NVMe",
         "Probe": "xyz.openbmc_project.Inventory.Item.I2CDevice({'Bus': 14, 'Address': 64})",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
@@ -486,6 +489,9 @@
         },
         "xyz.openbmc_project.Inventory.Decorator.Location": {
             "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Slot"
+        },
+	 "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": "Chassis_0/StorageBackplane_0"
         }
     },
     {
@@ -496,7 +502,7 @@
                 "Type": "DownstreamPort"
             }
         ],
-        "Name": "NVMe_E1S_SSD_02",
+        "Name": "NVMe_SSD_202",
         "Type": "NVMe",
         "Probe": "xyz.openbmc_project.Inventory.Item.I2CDevice({'Bus': 14, 'Address': 64})",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
@@ -512,6 +518,9 @@
         },
         "xyz.openbmc_project.Inventory.Decorator.Location": {
             "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Slot"
+        },
+	 "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": "Chassis_0/StorageBackplane_0"
         }
     },
     {
@@ -522,7 +531,7 @@
                 "Type": "DownstreamPort"
             }
         ],
-        "Name": "NVMe_E1S_SSD_03",
+        "Name": "NVMe_SSD_203",
         "Type": "NVMe",
         "Probe": "xyz.openbmc_project.Inventory.Item.I2CDevice({'Bus': 14, 'Address': 64})",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
@@ -538,6 +547,9 @@
         },
         "xyz.openbmc_project.Inventory.Decorator.Location": {
             "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Slot"
+        },
+	 "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": "Chassis_0/StorageBackplane_0"
         }
     },
     {
@@ -548,7 +560,7 @@
                 "Type": "DownstreamPort"
             }
         ],
-        "Name": "NVMe_E1S_SSD_04",
+        "Name": "NVMe_SSD_204",
         "Type": "NVMe",
         "Probe": "xyz.openbmc_project.Inventory.Item.I2CDevice({'Bus': 15, 'Address': 64})",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
@@ -564,6 +576,9 @@
         },
         "xyz.openbmc_project.Inventory.Decorator.Location": {
             "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Slot"
+        },
+	 "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": "Chassis_0/StorageBackplane_1"
         }
     },
     {
@@ -574,7 +589,7 @@
                 "Type": "DownstreamPort"
             }
         ],
-        "Name": "NVMe_E1S_SSD_05",
+        "Name": "NVMe_SSD_205",
         "Type": "NVMe",
         "Probe": "xyz.openbmc_project.Inventory.Item.I2CDevice({'Bus': 15, 'Address': 64})",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
@@ -590,6 +605,9 @@
         },
         "xyz.openbmc_project.Inventory.Decorator.Location": {
             "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Slot"
+        },
+	 "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": "Chassis_0/StorageBackplane_1"
         }
     },
     {
@@ -600,7 +618,7 @@
                 "Type": "DownstreamPort"
             }
         ],
-        "Name": "NVMe_E1S_SSD_06",
+        "Name": "NVMe_SSD_206",
         "Type": "NVMe",
         "Probe": "xyz.openbmc_project.Inventory.Item.I2CDevice({'Bus': 15, 'Address': 64})",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
@@ -616,6 +634,9 @@
         },
         "xyz.openbmc_project.Inventory.Decorator.Location": {
             "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Slot"
+        },
+	 "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": "Chassis_0/StorageBackplane_1"
         }
     },
     {
@@ -626,7 +647,7 @@
                 "Type": "DownstreamPort"
             }
         ],
-        "Name": "NVMe_E1S_SSD_07",
+        "Name": "NVMe_SSD_207",
         "Type": "NVMe",
         "Probe": "xyz.openbmc_project.Inventory.Item.I2CDevice({'Bus': 15, 'Address': 64})",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
@@ -642,6 +663,9 @@
         },
         "xyz.openbmc_project.Inventory.Decorator.Location": {
             "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Slot"
+        },
+	 "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": "Chassis_0/StorageBackplane_1"
         }
     },
     {
@@ -652,7 +676,7 @@
                 "Type": "DownstreamPort"
             }
         ],
-        "Name": "NVMe_M2_SSD_00",
+        "Name": "NVMe_SSD_210",
         "Type": "NVMe",
         "Probe": "xyz.openbmc_project.Inventory.Item.I2CDevice({'Bus': 8, 'Address': 106})",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
@@ -668,6 +692,9 @@
         },
         "xyz.openbmc_project.Inventory.Decorator.Location": {
             "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Slot"
+        },
+	 "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": "Chassis_0/NVME_M2_0"
         }
     }
 ]

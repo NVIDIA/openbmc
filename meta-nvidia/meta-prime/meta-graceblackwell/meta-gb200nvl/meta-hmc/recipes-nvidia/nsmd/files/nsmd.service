@@ -1,6 +1,6 @@
 [Unit]
 Description=MCTP Nvidia System Management Daemon
-After=mctp-pcie-ctrl.service
+After=mctp-usb-ctrl.service
 After=xyz.openbmc_project.EntityManager.service
 After=xyz.openbmc_project.FruDevice.service
 

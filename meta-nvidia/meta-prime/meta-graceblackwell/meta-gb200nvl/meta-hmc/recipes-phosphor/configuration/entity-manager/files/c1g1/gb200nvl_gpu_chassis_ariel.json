@@ -39,6 +39,7 @@
         "Name": "Assembly0",
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:0:0",
+        "DeviceAssembly": false,
         "Area": {
           "Type": "NSM_Area",
           "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
@@ -109,11 +110,6 @@
           "Functions": [
             0
           ]
-        },
-        "LTSSMState": {
-          "Type": "NSM_LTSSMState",
-          "DeviceIndex": 0,
-          "Priority": false
         },
         "ClockOutputEnableState": {
           "Type": "NSM_ClockOutputEnableState",
@@ -363,7 +359,8 @@
         "MessageType": 0,
         "UUID": "STATIC:0:0",
         "SubscribedEventIDs": [
-          1
+          1,
+          2
         ],
         "AcknowledgementEventIds": []
       },
@@ -397,7 +394,8 @@
         "UUID": "STATIC:0:0",
         "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_0",
         "MessageId": "Base.1.13.ResetRequired",
-        "Severity": "Critical",
+        "Severity": "Warning",
+        "ErrorId": "GPU-RST-REQ-EVENT",
         "LoggingNamespace": "GPU_0",
         "Resolution": "Reset the GPU or power cycle the Baseboard.",
         "MessageArgs": [
@@ -506,6 +504,34 @@
             "/xyz/openbmc_project/inventory/system/chassis/power/control/TotalGPU_Power_0"
           ]
         },
+        "PowerSmoothing": {
+          "Type": "NSM_PowerSmoothing",
+          "Priority": false
+        },
+        "WorkloadPowerProfile": {
+          "Type": "NSM_WorkloadPowerProfile",
+          "Priority": false,
+          "ProfileIdMap": [
+            "UNKNOWN",
+            "UNKNOWN",
+            "UNKNOWN",
+            "MAX_P",
+            "MAX_Q",
+            "COMPUTE",
+            "MEMORY_BOUND",
+            "NETWORK",
+            "BALANCED",
+            "LLM_INFERENCE",
+            "LLM_TRAINING",
+            "RBM",
+            "DCPCIE",
+            "HMMA_SPARSE",
+            "HMMA_DENSE",
+            "SYNC_BALANCED",
+            "HPC",
+            "MIG"
+          ]
+        },
         "CpuOperatingConfig": {
           "Type": "NSM_CpuOperatingConfig",
           "Priority": false
@@ -519,8 +545,8 @@
           "Type": "NSM_MemCapacityUtil",
           "Priority": false
         },
-        "InbandReconfigPermissions": {
-          "Type": "NSM_InbandReconfigPermissions",
+        "ReconfigPermissions": {
+          "Type": "NSM_ReconfigPermissions",
           "Priority": false,
           "Features": [
             "InSystemTest",
@@ -787,6 +813,7 @@
         "Name": "Assembly0",
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:0:1",
+        "DeviceAssembly": false,
         "Area": {
           "Type": "NSM_Area",
           "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
@@ -857,11 +884,6 @@
           "Functions": [
             0
           ]
-        },
-        "LTSSMState": {
-          "Type": "NSM_LTSSMState",
-          "DeviceIndex": 0,
-          "Priority": false
         },
         "ClockOutputEnableState": {
           "Type": "NSM_ClockOutputEnableState",
@@ -1145,7 +1167,8 @@
         "UUID": "STATIC:0:1",
         "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_1",
         "MessageId": "Base.1.13.ResetRequired",
-        "Severity": "Critical",
+        "Severity": "Warning",
+        "ErrorId": "GPU-RST-REQ-EVENT",
         "LoggingNamespace": "GPU_1",
         "Resolution": "Reset the GPU or power cycle the Baseboard.",
         "MessageArgs": [
@@ -1254,6 +1277,34 @@
             "/xyz/openbmc_project/inventory/system/chassis/power/control/TotalGPU_Power_0"
           ]
         },
+        "PowerSmoothing": {
+          "Type": "NSM_PowerSmoothing",
+          "Priority": false
+        },
+        "WorkloadPowerProfile": {
+          "Type": "NSM_WorkloadPowerProfile",
+          "Priority": false,
+          "ProfileIdMap": [
+            "UNKNOWN",
+            "UNKNOWN",
+            "UNKNOWN",
+            "MAX_P",
+            "MAX_Q",
+            "COMPUTE",
+            "MEMORY_BOUND",
+            "NETWORK",
+            "BALANCED",
+            "LLM_INFERENCE",
+            "LLM_TRAINING",
+            "RBM",
+            "DCPCIE",
+            "HMMA_SPARSE",
+            "HMMA_DENSE",
+            "SYNC_BALANCED",
+            "HPC",
+            "MIG"
+          ]
+        },
         "CpuOperatingConfig": {
           "Type": "NSM_CpuOperatingConfig",
           "Priority": false
@@ -1267,8 +1318,8 @@
           "Type": "NSM_MemCapacityUtil",
           "Priority": false
         },
-        "InbandReconfigPermissions": {
-          "Type": "NSM_InbandReconfigPermissions",
+        "ReconfigPermissions": {
+          "Type": "NSM_ReconfigPermissions",
           "Priority": false,
           "Features": [
             "InSystemTest",

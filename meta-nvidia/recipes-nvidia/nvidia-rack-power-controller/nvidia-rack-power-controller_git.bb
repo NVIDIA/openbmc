@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=424b4b48c3ba5f01f3b673daccb8ccd5"
 
 SRC_URI = "git://github.com/NVIDIA/RackPowerController;protocol=https;branch=main"
-SRCREV = "b34baa6632eda583d492ec8a9f8e4fbf40f06277"
+SRCREV = "934cd0a1799d433bad8508c4eb6b5c16c2846c95"
 
 inherit pkgconfig meson
 inherit systemd

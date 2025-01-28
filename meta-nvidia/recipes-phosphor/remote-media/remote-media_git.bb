@@ -6,7 +6,7 @@ DEPENDS += "phosphor-logging"
 RDEPENDS:${PN} += " nbdkit"
 
 SRC_URI = "git://github.com/NVIDIA/remote-media;protocol=https;branch=develop"
-SRCREV = "c685882b386017468df37bb97349015f10926519"
+SRCREV = "5827e7f54877b8bb785079ccf1b50b5d5ed0f705"
 
 S = "${WORKDIR}/git"
 PV = "1.0+git${SRCPV}"

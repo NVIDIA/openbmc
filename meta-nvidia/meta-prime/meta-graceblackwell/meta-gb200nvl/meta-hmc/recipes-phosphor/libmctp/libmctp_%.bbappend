@@ -19,9 +19,9 @@ SYSTEMD_SERVICE:${PN}:remove = " mctp-spi-ctrl.service \
                                  mctp-pcie-demux.socket  \
                                "
 
-SYSTEMD_SERVICE:${PN}:append = " mctp-usb-demux.service \
-                                 mctp-usb-demux.socket \
-                                 mctp-usb-ctrl.service \
+SYSTEMD_SERVICE:${PN}:append = " mctp-usb-ctrl@.service \
+                                 mctp-usb-demux@.socket \
+                                 mctp-usb-demux@.service \
                                  mctp-spi0-ctrl.service \
                                  mctp-spi0-demux.service \
                                  mctp-spi0-demux.socket \
@@ -30,25 +30,31 @@ SYSTEMD_SERVICE:${PN}:append = " mctp-usb-demux.service \
                                  fpga0-ap-recovery.target \
                                 "
 
-SRC_URI:append = " file://mctp \
+SRC_URI:append = " file://mctp-usb.rules \
+                   file://mctp \
                    file://mctp_cfg_spi0.json \
                    file://mctp_cfg_spi2.json \
+                   file://mctp_cfg_usb.json \
                    file://mctp-ctrl-hmc-usb.conf \
                    file://mctp-demux-hmc-usb.conf \
-                   file://mctp-usb-ctrl.service \
                    file://set-fpga0-spi-mux.sh \
                    file://systemd/mctp-spi0-ctrl.service \
                    file://systemd/mctp-spi0-demux.service \
                    file://systemd/mctp-spi0-demux.socket \
                    file://systemd/mctp-spi2-ctrl.service \
                    file://systemd/mctp-spi2-demux.service \
-                   file://systemd/mctp-usb-demux.socket \
+                   file://systemd/mctp-usb-ctrl@.service \
+                   file://systemd/mctp-usb-demux@.socket \
+                   file://systemd/mctp-usb-demux@.service \
                    file://systemd/fpga0-ap-recovery.target \
                    "
 
-SYSTEMD_OVERRIDE:${PN}:append = "mctp-ctrl-hmc-usb.conf:mctp-usb-ctrl.service.d/mctp-ctrl-hmc-usb.conf "
-SYSTEMD_OVERRIDE:${PN}:append = "mctp-demux-hmc-usb.conf:mctp-usb-demux.service.d/mctp-demux-hmc-usb.conf "
+SYSTEMD_OVERRIDE:${PN}:append = "mctp-ctrl-hmc-usb.conf:mctp-usb-ctrl@.service.d/mctp-ctrl-hmc-usb.conf "
+SYSTEMD_OVERRIDE:${PN}:append = "mctp-demux-hmc-usb.conf:mctp-usb-demux@.service.d/mctp-demux-hmc-usb.conf "
 
+FILES:${PN} += "\
+                   ${nonarch_base_libdir}/udev/rules.d/mctp-usb.rules \
+"
 
 do_install:append() {
     install -d ${D}/${bindir}
@@ -62,14 +68,24 @@ do_install:append() {
     rm -f ${D}${nonarch_base_libdir}/systemd/system/mctp-spi-demux.service
     rm -f ${D}${nonarch_base_libdir}/systemd/system/mctp-spi-demux.socket
 
+    install -d ${D}${sysconfdir}/udev/rules.d
+    install -m 0644 ${WORKDIR}/mctp-usb.rules ${D}${sysconfdir}/udev/rules.d
+
     install -m 0644 ${WORKDIR}/mctp_cfg_spi0.json ${D}${datadir}/mctp/mctp_cfg_spi0.json
     install -m 0644 ${WORKDIR}/mctp_cfg_spi2.json ${D}${datadir}/mctp/mctp_cfg_spi2.json
+    install -m 0644 ${WORKDIR}/mctp_cfg_usb.json ${D}${datadir}/mctp/mctp_cfg_usb.json
     install -m 0644 ${WORKDIR}/systemd/mctp-spi0-ctrl.service  ${D}${nonarch_base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/systemd/mctp-spi0-demux.service ${D}${nonarch_base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/systemd/mctp-spi0-demux.socket  ${D}${nonarch_base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/systemd/mctp-spi2-ctrl.service  ${D}${nonarch_base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/systemd/mctp-spi2-demux.service ${D}${nonarch_base_libdir}/systemd/system/
-    install -m 0644 ${WORKDIR}/systemd/mctp-usb-demux.socket ${D}${nonarch_base_libdir}/systemd/system/
+    # For dynamic multi-bridge, only keep the template unit file
+    rm -f ${D}${systemd_system_unitdir}/mctp-usb-demux.service
+    rm -f ${D}${systemd_system_unitdir}/mctp-usb-ctrl.service
+    rm -f ${D}${systemd_system_unitdir}/mctp-usb-demux.socket
+    install -m 0644 ${WORKDIR}/systemd/mctp-usb-ctrl@.service ${D}${nonarch_base_libdir}/systemd/system/
+    install -m 0644 ${WORKDIR}/systemd/mctp-usb-demux@.socket ${D}${nonarch_base_libdir}/systemd/system/
+    install -m 0644 ${WORKDIR}/systemd/mctp-usb-demux@.service ${D}${nonarch_base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/systemd/fpga0-ap-recovery.target ${D}${nonarch_base_libdir}/systemd/system/
 }
 

@@ -1,0 +1,12 @@
+[Unit]
+Description=MCTP USB demultiplexer daemon
+
+[Service]
+Type=notify
+Restart=always
+Environment=DEMUX_USB_BINDING_OPTS=null
+Environment=SYSLOG_IDENTIFIER=mctp-usb-demux
+EnvironmentFile=-/usr/share/mctp/mctp
+ExecStart=/usr/bin/mctp-demux-daemon $DEMUX_USB_BINDING_OPTS port_path=%i
+SyslogIdentifier=mctp-usb-demux
+WatchdogSec=10

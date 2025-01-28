@@ -10,6 +10,7 @@ SRC_URI:append = " \
 # So by default https and authentication is disabled and can be enabled at runtime.
 EXTRA_OEMESON:append = " -Dtls-auth-opt-in=enabled"
 EXTRA_OEMESON:append = " -Dnvidia-oem-logservices=enabled"
+EXTRA_OEMESON:append = " -Denable-ist-mode=enabled"
 
 # Set HTTPS port to 80
 EXTRA_OEMESON:append = " -Dhttps_port=80"

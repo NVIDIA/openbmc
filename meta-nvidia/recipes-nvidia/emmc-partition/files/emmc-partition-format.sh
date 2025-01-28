@@ -276,6 +276,7 @@ mount_partitions()
     do
         eval "arr=($l)"
         partition_number=${arr[0]}
+        mount_point=${arr[1]}
         str=$(df -T |grep "$device_name"p"$partition_number")
         eval "str_arr=($str)"
         if [ "${str_arr[1]}" != "ext4" ]; then
@@ -289,6 +290,20 @@ mount_partitions()
             dbus_log Error "${msg}"
             mount_partitions_return=2
         fi
+	tmpfile="${mount_point}/selftest_tmpfile"
+	if ! echo "selftest" > ${tmpfile}; then
+            local msg="R/W selftest on mountpoint ${mount_point} failed. Recover FS."
+            echo $msg
+            dbus_log Error "${msg}"
+	    local partition=$partition_name${partition_number}
+	    if mountpoint ${mount_point}; then
+		umount ${mount_point}
+	    fi
+	    mke2fs -t ext4 ${partition}
+	    tune2fs -o journal_data ${partition}
+            mount -t auto ${partition} ${mount_point}
+	fi
+	rm -f ${tmpfile}
     done <<< "$mount_map"
 }
 
