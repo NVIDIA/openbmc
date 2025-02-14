@@ -31,7 +31,7 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " \
                                     nvidia-hmc-fru-check \
                                   "
 
-OBMC_IMAGE_EXTRA_INSTALL:append = "curl sw-einj mctp-mockep"
+OBMC_IMAGE_EXTRA_INSTALL:append = "curl mctp-mockep"
 
 IMAGE_FEATURES:remove = " \
                           obmc-fru-ipmi \

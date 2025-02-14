@@ -20,8 +20,15 @@
                     },
                     {
                         "Direction": "greater than",
-                        "Name": "upper critical",
+                        "Name": "soft shutdown",
                         "Severity": 3,
+                        "Value": 98.0,
+                        "Index": 2
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 1,
                         "Value": 98.0,
                         "Index": 2
                     },
@@ -171,8 +178,15 @@
                     },
                     {
                         "Direction": "greater than",
-                        "Name": "upper critical",
+                        "Name": "soft shutdown",
                         "Severity": 3,
+                        "Value": 98.0,
+                        "Index": 2
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 1,
                         "Value": 98.0,
                         "Index": 2
                     },

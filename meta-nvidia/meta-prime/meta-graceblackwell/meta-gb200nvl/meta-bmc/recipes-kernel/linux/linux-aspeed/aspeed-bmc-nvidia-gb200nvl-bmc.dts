@@ -43,14 +43,18 @@
 		i2c45	= &e1si2c5;
 		i2c46	= &e1si2c6;
 		i2c47	= &e1si2c7;
-		i2c48	= &i2c5mux0;
-		i2c49   = &m2riser;
-		i2c50	= &i2c5mux2;
-		i2c51	= &i2c5mux3;
+		i2c48	= &i2c17mux0;
+		i2c49	= &i2c17mux1;
+		i2c50	= &i2c17mux2;
+		i2c51	= &i2c17mux3;
 		i2c52	= &i2c25mux0;
 		i2c53	= &i2c25mux1;
 		i2c54	= &i2c25mux2;
 		i2c55	= &i2c25mux3;
+		i2c56	= &i2c29mux0;
+		i2c57	= &i2c29mux1;
+		i2c58	= &i2c29mux2;
+		i2c59	= &i2c29mux3;
 	};
 
 	chosen {
@@ -302,7 +306,8 @@
 &i2c0 {
     status = "okay";
     clock-frequency = <400000>;
-	disable-master = <1>;
+    disable-master = <1>;
+    i2c-scl-clk-low-timeout-us = <32000>;
     i2c-tck-thddat-config = <0x0099EC00>;
     ssif-bmc@10 {
         compatible = "ssif-bmc";
@@ -375,6 +380,38 @@
             #address-cells = <1>;
             #size-cells = <0>;
             reg = <1>;
+
+            i2c-switch@74 {
+                compatible = "nxp,pca9546";
+                #address-cells = <1>;
+                #size-cells = <0>;
+                reg = <0x74>;
+                i2c-mux-idle-disconnect;
+
+                i2c17mux0: i2c@0 {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    reg = <0>;
+                };
+
+                i2c17mux1: i2c@1 {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    reg = <1>;
+                };
+
+                i2c17mux2: i2c@2 {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    reg = <2>;
+                };
+
+                i2c17mux3: i2c@3 {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    reg = <3>;
+                };
+            };
         };
 
         imux18: i2c@2 {
@@ -407,6 +444,31 @@
             #address-cells = <1>;
             #size-cells = <0>;
             reg = <1>;
+            pca9555@21 {
+                compatible = "nxp,pca9555";
+                reg = <0x21>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                #address-cells = <1>;
+                #size-cells = <0>;
+                gpio-line-names =
+                    "RST_CX_0_L-O",
+                    "RST_CX_1_L-O",
+                    "CX0_SSD0_PRSNT_L-I",
+                    "CX1_SSD1_PRSNT_L-I",
+                    "CX_BOOT_CMPLT_CX0-I",
+                    "CX_BOOT_CMPLT_CX1-I",
+                    "CX_TWARN_CX0_L-I",
+                    "CX_TWARN_CX1_L-I",
+                    "CX_OVT_SHDN_CX0-I",
+                    "CX_OVT_SHDN_CX1-I",
+                    "FNP_L_CX0-O",
+                    "FNP_L_CX1-O",
+                    "",
+                    "MCU_GPIO-I",
+                    "MCU_RST_N-O",
+                    "MCU_RECOVERY_N-O";
+            };
         };
 
         imux22: i2c@2 {
@@ -486,40 +548,6 @@
         };
     };
 
-    //A MUX for a riser with a secondary M.2 installed.
-    i2c-switch@74 {
-        compatible = "nxp,pca9546";
-        #address-cells = <1>;
-        #size-cells = <0>;
-        reg = <0x74>;
-        i2c-mux-idle-disconnect;
-
-        i2c5mux0: i2c@0 {
-            #address-cells = <1>;
-            #size-cells = <0>;
-            reg = <0>;
-        };
-
-        //Optional/secondary M.2 drive slot
-        m2riser: i2c@1 {
-            #address-cells = <1>;
-            #size-cells = <0>;
-            reg = <1>;
-        };
-
-        i2c5mux2: i2c@2 {
-            #address-cells = <1>;
-            #size-cells = <0>;
-            reg = <2>;
-        };
-
-        i2c5mux3: i2c@3 {
-            #address-cells = <1>;
-            #size-cells = <0>;
-            reg = <3>;
-        };
-    };
-
     i2c-switch@75 {
         compatible = "nxp,pca9546";
         #address-cells = <1>;
@@ -537,6 +565,38 @@
             #address-cells = <1>;
             #size-cells = <0>;
             reg = <1>;
+
+            i2c-switch@74 {
+                compatible = "nxp,pca9546";
+                #address-cells = <1>;
+                #size-cells = <0>;
+                reg = <0x74>;
+                i2c-mux-idle-disconnect;
+
+                i2c29mux0: i2c@0 {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    reg = <0>;
+                };
+
+                i2c29mux1: i2c@1 {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    reg = <1>;
+                };
+
+                i2c29mux2: i2c@2 {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    reg = <2>;
+                };
+
+                i2c29mux3: i2c@3 {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    reg = <3>;
+                };
+            };
         };
 
         imux30: i2c@2 {
@@ -569,6 +629,31 @@
             #address-cells = <1>;
             #size-cells = <0>;
             reg = <1>;
+            pca9555@21 {
+                compatible = "nxp,pca9555";
+                reg = <0x21>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                #address-cells = <1>;
+                #size-cells = <0>;
+                gpio-line-names =
+                    "SEC_RST_CX_0_L-O",
+                    "SEC_RST_CX_1_L-O",
+                    "SEC_CX0_SSD0_PRSNT_L-I",
+                    "SEC_CX1_SSD1_PRSNT_L-I",
+                    "SEC_CX_BOOT_CMPLT_CX0-I",
+                    "SEC_CX_BOOT_CMPLT_CX1-I",
+                    "SEC_CX_TWARN_CX0_L-I",
+                    "SEC_CX_TWARN_CX1_L-I",
+                    "SEC_CX_OVT_SHDN_CX0-I",
+                    "SEC_CX_OVT_SHDN_CX1-I",
+                    "SEC_FNP_L_CX0-O",
+                    "SEC_FNP_L_CX1-O",
+                    "",
+                    "SEC_MCU_GPIO-I",
+                    "SEC_MCU_RST_N-O",
+                    "SEC_MCU_RECOVERY_N-O";
+            };
         };
 
         imux34: i2c@2 {

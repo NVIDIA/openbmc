@@ -1,7 +1,7 @@
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 SRC_URI = "git://github.com/NVIDIA/phosphor-health-monitor;protocol=https;branch=develop"
-SRCREV = "d7db451c1eaae9c5e28c986be95733e1d7dc3dee"
+SRCREV = "a3297204c4572e5d3a42b7c781de271163317cfb"
 
 SRC_URI:append = " file://bmc_health_config.json"
 SRC_URI:append = " file://process_health_config.json"

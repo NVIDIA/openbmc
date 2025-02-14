@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:${THISDIR}/csm:"
 
 SRC_URI = "git://github.com/NVIDIA/phosphor-state-manager;protocol=https;branch=develop"
-SRCREV = "49f60fb32f21afa240f9029a2801146d32931949"
+SRCREV = "6a889b1c591ca3219ada755a2cef08c10580d3c8"
 
 SRC_URI:append = " \
            file://phosphor-clear-one-time@.service \

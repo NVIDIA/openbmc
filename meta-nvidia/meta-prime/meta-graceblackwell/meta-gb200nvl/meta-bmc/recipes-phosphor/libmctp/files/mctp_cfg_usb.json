@@ -1,0 +1,17 @@
+{
+    "_comment": "This JSON file describes USB devices in a hierarchical structure, format:<busid>-<port1>.<port2>...",
+    "usb": {
+        "1-1-2-2": {
+            "eid_type" : "static",
+            "own_eid" : 8,
+            "bridge_eid" : 20,
+            "bridge_pool_start" : 21
+        },
+        "1-1-2-7-2": {
+            "eid_type" : "static",
+            "own_eid" : 9,
+            "bridge_eid" : 30,
+            "bridge_pool_start" : 31
+        }
+    }
+}

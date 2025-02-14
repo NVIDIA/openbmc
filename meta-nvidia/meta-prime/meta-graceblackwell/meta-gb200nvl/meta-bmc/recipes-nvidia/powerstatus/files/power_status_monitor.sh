@@ -171,8 +171,14 @@ while true; do
         fi
 
         # Bind WGI210AT I2C Mux
+        if [ ! -d "/sys/bus/i2c/drivers/pca954x/17-0074" ]; then
+            echo 17-0074 > /sys/bus/i2c/drivers/pca954x/bind
+        fi
         if [ ! -d "/sys/bus/i2c/drivers/pca954x/25-0070" ]; then
             echo 25-0070 > /sys/bus/i2c/drivers/pca954x/bind
+        fi
+        if [ ! -d "/sys/bus/i2c/drivers/pca954x/29-0074" ]; then
+            echo 29-0074 > /sys/bus/i2c/drivers/pca954x/bind
         fi
 
         # Create IPEX, HDD, QSFP, and 1G NIC FRU EEPROM devices
@@ -217,8 +223,14 @@ while true; do
         fi
 
         # Unbind WGI210AT I2C Mux
+        if [ -d "/sys/bus/i2c/drivers/pca954x/17-0054" ]; then
+            echo 17-0054 > /sys/bus/i2c/drivers/pca954x/unbind
+        fi
         if [ -d "/sys/bus/i2c/drivers/pca954x/25-0070" ]; then
             echo 25-0070 > /sys/bus/i2c/drivers/pca954x/unbind
+        fi
+        if [ -d "/sys/bus/i2c/drivers/pca954x/29-0054" ]; then
+            echo 29-0054 > /sys/bus/i2c/drivers/pca954x/unbind
         fi
 
         # Remove IPEX, HDD, QSFP, and 1G NIC FRU EEPROM devices

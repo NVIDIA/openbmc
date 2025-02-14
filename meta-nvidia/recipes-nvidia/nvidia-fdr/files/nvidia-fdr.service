@@ -5,6 +5,8 @@ After=network.target
 
 [Service]
 Environment=PLATFORMS_PATH=/tmp/nvidia-fdr/platforms
+LogRateLimitIntervalSec=86400s
+LogRateLimitBurst=500
 
 TimeoutStartSec=360
 ExecStartPre=/usr/bin/fdr_platforms.sh

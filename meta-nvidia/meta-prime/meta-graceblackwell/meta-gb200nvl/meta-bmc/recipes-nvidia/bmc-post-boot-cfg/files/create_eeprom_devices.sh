@@ -112,10 +112,20 @@ create_poweron_eeprom_devices(){
     if [ ! -d "/sys/bus/i2c/drivers/at24/15-0056" ]; then
         echo 24c128 0x56 > /sys/class/i2c-dev/i2c-15/device/new_device
     fi
+    # I2C-17
+    # CX8 Topology for E1S BP FRU EEPROM
+    if [ ! -d "/sys/bus/i2c/drivers/at24/17-0056" ]; then
+        echo 24c128 0x56 > /sys/class/i2c-dev/i2c-17/device/new_device
+    fi
     # I2C-21
     # OSFP Board Left
     if [ ! -d "/sys/bus/i2c/drivers/at24/21-0052" ]; then
         echo 24c128 0x52 > /sys/class/i2c-dev/i2c-21/device/new_device
+    fi
+    # I2C-29
+    # CX8 Topology for E1S BP FRU EEPROM
+    if [ ! -d "/sys/bus/i2c/drivers/at24/29-0056" ]; then
+        echo 24c128 0x56 > /sys/class/i2c-dev/i2c-29/device/new_device
     fi
     # I2C-33
     # OSFP Board Right

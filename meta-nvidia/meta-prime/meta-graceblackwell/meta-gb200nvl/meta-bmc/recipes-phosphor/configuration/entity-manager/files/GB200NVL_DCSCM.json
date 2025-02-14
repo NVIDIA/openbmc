@@ -20,8 +20,14 @@
                     },
                     {
                         "Direction": "greater than",
-                        "Name": "upper  critical",
+                        "Name": "soft shutdown",
                         "Severity": 3,
+                        "Value": 93.0
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 1,
                         "Value": 93.0
                     },
                     {
@@ -56,7 +62,7 @@
             "Name": "BMC_FRU"
         },
         "xyz.openbmc_project.Inventory.Item.Chassis": {
-            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Module"
         },
         "xyz.openbmc_project.Inventory.Decorator.Location": {
             "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"

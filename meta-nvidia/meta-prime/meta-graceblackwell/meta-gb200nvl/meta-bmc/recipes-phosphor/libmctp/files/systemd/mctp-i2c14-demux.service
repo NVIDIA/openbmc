@@ -1,7 +1,7 @@
 [Unit]
 Description=MCTP I2C 14 demultiplexer daemon
 Wants=mctp-i2c14-demux.socket
-Conflicts=obmc-power-off@0.target
+Conflicts=cpu-boot-undone.service
 Requires=cpu-boot-done.service
 After=cpu-boot-done.service
 

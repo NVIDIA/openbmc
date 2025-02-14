@@ -2,7 +2,7 @@
 Description=MCTP I2C 5 demultiplexer daemon
 Wants=mctp-i2c5-demux.socket
 After=cpu-boot-done.service
-Conflicts=obmc-power-off@0.target
+Conflicts=cpu-boot-undone.service
 ConditionPathExists=/sys/bus/i2c/devices/5-0071
 
 [Service]

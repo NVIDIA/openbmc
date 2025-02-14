@@ -168,88 +168,6 @@ _get_usb_device_number() {
     return 1
 }
 
-# HMC-FPGA-USB-01
-# Function to verify if USB device is operational
-# Arguments:
-#   $1: USB device bus-port[.port]
-# Returns:
-#   valid "yes", "no" otherwise
-is_fpga_usb_operational() {
-local usb_port_path="${1:-"1-1.4"}"
-
-device_number=$(_get_usb_device_number "$usb_port_path")
-bus_number=${usb_port_path%%-*}
-
-[ -z "$device_number" ] && device_number="device_not_found"
-output=$(_log_ lsusb -s "$bus_number:$device_number"); [ -z "$output" ] && echo "no" || echo "yes"
-}
-
-# HMC-FPGA-USB-02
-# Function to get FPGA USB Vendor ID
-# Arguments:
-#   $1: USB device bus-port[.port]
-# Returns:
-#   valid Vendor ID
-get_fpga_usb_vendor_id() {
-local usb_port_path="${1:-"1-1.4"}"
-
-device_number=$(_get_usb_device_number "$usb_port_path")
-bus_number=${usb_port_path%%-*}
-
-[ -z "$device_number" ] && device_number="device_not_found"
-id=$(_log_ lsusb -v -s "$bus_number":"$device_number" | grep idVendor | grep -o '0x[0-9a-fA-F]\+') && echo "$id"
-}
-
-# HMC-FPGA-USB-03
-# Function to get FPGA USB Product ID
-# Arguments:
-#   $1: USB device bus-port[.port]
-# Returns:
-#   valid Product ID
-get_fpga_usb_product_id() {
-local usb_port_path="${1:-"1-1.4"}"
-
-device_number=$(_get_usb_device_number "$usb_port_path")
-bus_number=${usb_port_path%%-*}
-
-[ -z "$device_number" ] && device_number="device_not_found"
-id=$(_log_ lsusb -v -s "$bus_number":"$device_number" | grep idProduct | grep -o '0x[0-9a-fA-F]\+') && echo "$id"
-}
-
-# HMC-FPGA-USB-04
-# Function to get FPGA USB Interface Class
-# Arguments:
-#   $1: USB device bus-port[.port]
-# Returns:
-#   valid Interface SubClass
-get_fpga_usb_interface_class() {
-local usb_port_path="${1:-"1-1.4"}"
-
-device_number=$(_get_usb_device_number "$usb_port_path")
-bus_number=${usb_port_path%%-*}
-
-[ -z "$device_number" ] && device_number="device_not_found"
-# if there are multiple interfaces, this func would capture the first bclass
-class=$(_log_ lsusb -v -s "$bus_number":"$device_number" | awk '/bInterfaceClass/ {print $2; exit}') && echo "$class"
-}
-
-# HMC-FPGA-USB-05
-# Function to get FPGA USB Interface SubClass
-# Arguments:
-#   $1: USB device bus-port[.port]
-# Returns:
-#   valid Interface Class
-get_fpga_usb_interface_subclass() {
-local usb_port_path="${1:-"1-1.4"}"
-
-device_number=$(_get_usb_device_number "$usb_port_path")
-bus_number=${usb_port_path%%-*}
-
-[ -z "$device_number" ] && device_number="device_not_found"
-# if there are multiple interfaces, this func would capture the first subclass
-class=$(_log_ lsusb -v -s "$bus_number":"$device_number" | awk '/bInterfaceSubClass/ {print $2; exit}') && echo "$class"
-}
-
 # Component-Level Category: HMC #
 ## HMC: Hardware Interface
 
@@ -1877,6 +1795,100 @@ then
 else
     output=$(_log_ i2ctransfer -y "$i2c_bus" w1@"$i2c_addr" 0x00 r256 | sed 's/0x//g' | egrep -o '.{1,48}') && echo "done" || echo "failed"
 fi
+}
+
+# HMC-FPGA-USB-01
+# Function to verify if USB device is operational
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid "yes", "no" otherwise
+is_fpga_usb_operational() {
+local usb_port_path="${1:-"1-1.4"}"
+
+device_number=$(_get_usb_device_number "$usb_port_path")
+bus_number=${usb_port_path%%-*}
+
+[ -z "$device_number" ] && device_number="device_not_found"
+output=$(_log_ lsusb -s "$bus_number:$device_number"); [ -z "$output" ] && echo "no" || echo "yes"
+}
+
+# HMC-FPGA-USB-02
+# Function to get FPGA USB Vendor ID
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Vendor ID
+get_fpga_usb_vendor_id() {
+local usb_port_path="${1:-"1-1.4"}"
+
+device_number=$(_get_usb_device_number "$usb_port_path")
+bus_number=${usb_port_path%%-*}
+
+[ -z "$device_number" ] && device_number="device_not_found"
+id=$(_log_ lsusb -v -s "$bus_number":"$device_number" | grep idVendor | grep -o '0x[0-9a-fA-F]\+') && echo "$id"
+}
+
+# HMC-FPGA-USB-03
+# Function to get FPGA USB Product ID
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Product ID
+get_fpga_usb_product_id() {
+local usb_port_path="${1:-"1-1.4"}"
+
+device_number=$(_get_usb_device_number "$usb_port_path")
+bus_number=${usb_port_path%%-*}
+
+[ -z "$device_number" ] && device_number="device_not_found"
+id=$(_log_ lsusb -v -s "$bus_number":"$device_number" | grep idProduct | grep -o '0x[0-9a-fA-F]\+') && echo "$id"
+}
+
+# HMC-FPGA-USB-04
+# Function to get FPGA USB Interface Class
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Interface SubClass
+get_fpga_usb_interface_class() {
+local usb_port_path="${1:-"1-1.4"}"
+
+device_number=$(_get_usb_device_number "$usb_port_path")
+bus_number=${usb_port_path%%-*}
+
+[ -z "$device_number" ] && device_number="device_not_found"
+# if there are multiple interfaces, this func would capture the first bclass
+class=$(_log_ lsusb -v -s "$bus_number":"$device_number" | awk '/bInterfaceClass/ {print $2; exit}') && echo "$class"
+}
+
+# HMC-FPGA-USB-05
+# Function to get FPGA USB Interface SubClass
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Interface Class
+get_fpga_usb_interface_subclass() {
+local usb_port_path="${1:-"1-1.4"}"
+
+device_number=$(_get_usb_device_number "$usb_port_path")
+bus_number=${usb_port_path%%-*}
+
+[ -z "$device_number" ] && device_number="device_not_found"
+# if there are multiple interfaces, this func would capture the first subclass
+class=$(_log_ lsusb -v -s "$bus_number":"$device_number" | awk '/bInterfaceSubClass/ {print $2; exit}') && echo "$class"
+}
+
+# HMC-FPGA-USB-06
+# Function to get FPGA USB Hierarchy
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid USB Port hierarchy
+get_fpga_usb_port_hierarchy() {
+local usb_port_path="${1:-"1-1.4"}"
+
+echo "${usb_port_path}"
 }
 
 ## FPGA: Transport Protocol
@@ -4202,6 +4214,7 @@ local cmd=0x0c
 eid=${fpga_bridge_eid:-12} && cmd=${cmd:-"0x0c"} && req=${req_1:-"0x90"} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x03 $cmd 0x01 "${req}" -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,19p' | awk '{print "0x"$0}' | tr '\n' ' ') && [[ $output ]] && echo "$output" || echo ""
 }
 
+# Component-Level Category: CX7 #
 ## CX7: Transport Protocol
 
 # HMC-CX7_EROT-MCTP_VDM-01
@@ -4217,6 +4230,22 @@ local cx7_erot_spi_eid="$1"
 # get MCTP EID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
 eid=${cx7_erot_spi_eid:-17} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
+}
+
+# HMC-CX7_EROT-MCTP_VDM-01
+# Function to get the enumrated MCTP EID, CX7 ERoT SPI
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid "17"
+get_cx7_erot_mctp_eid_spi_usb() {
+# default EID to 17, CX7 MCTP ERoT SPI
+local eid="${1:-17}"
+
+# get MCTP EID
+# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+## NOT WORKING
+#eid=${cx7_erot_spi_eid:-17} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
 }
 
 # HMC-CX7_EROT-MCTP_VDM-02
@@ -4886,12 +4915,11 @@ esac
 # Returns:
 #   valid revoke policy
 get_cx7_erot_key_revoke_policy_vdm() {
-local cx7_erot_spi_eid="$1"
-
 # default EID to 17, CX7 MCTP ERoT SPI
+local eid="${1:-17}"
+
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-eid=${cx7_erot_spi_eid:-17} && output=$(_log_ mctp-pcie-ctrl -s "7f 00 00 16 47 80 01 1d 01 00" -t 2 -e "${eid}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 11)
-eid=${hmc_erot_spi_eid:-14} && output=$(_log_ mctp-usb-ctrl -s "7f 00 00 16 47 80 01 1d 01 00" -t 3 -e "${eid}" -w 1-1.4 -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 11)
+output=$(_log_ mctp-pcie-ctrl -s "7f 00 00 16 47 80 01 1d 01 00" -t 2 -e "${eid}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 11)
 
 case $output in
 00) echo "not set";;
@@ -5163,6 +5191,83 @@ local slot_id="$2"
 eid=${input_eid:-17} && slot=${slot_id:-1} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
 }
 
+# Component-Level Category: CX8 #
+## CX8: Firmware Update Protocol
+
+# HMC-CX8-Version-01
+# Function to get MCU FW version from PLDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid FW version
+get_cx8_fw_version_pldm() {
+local eid="${1:-41}"
+# default EID to 41, CX8-2 IRoT I3C
+output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep 'ActiveComponentVersionString' | sed 's/.*"\(.*\)".*/\1/' | awk 'NR==1') && echo $output
+}
+
+# HMC-CX8-PLDM_T5-01
+# Function to get PLDM fw_update AP_SKU ID of CX8
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid AP_SKU ID
+get_cx8_pldm_apsku_id() {
+local eid="${1:-41}"
+# default EID to 41, CX8-2 IRoT I3C
+key=${sku_key:-APSKU} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
+}
+
+# HMC-CX8-PLDM_T5-02
+# Function to get PLDM fw_update PCI Vendor ID of CX8
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Vendor" ID
+get_cx8_pldm_pci_vendor_id() {
+local eid="${1:-41}"
+# default EID to 41, CX8-2 IRoT I3C
+key=${sku_key:-"PCI Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-CX8-PLDM_T5-03
+# Function to get PLDM fw_update PCI Deivce ID of CX8
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Device" ID
+get_cx8_pldm_pci_device_id() {
+local eid="${1:-41}"
+# default EID to 41, CX8-2 IRoT I3C
+key=${sku_key:-"PCI Device ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-CX8-PLDM_T5-04
+# Function to get PLDM fw_update PCI Subsystem Vendor ID of CX8
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem Vendor" ID
+get_cx8_pldm_pci_subsys_vendor_id() {
+local eid="${1:-41}"
+# default EID to 41, CX8-2 IRoT I3C
+key=${sku_key:-"PCI Subsystem Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-MCU-PLDM_T5-05
+# Function to get PLDM fw_update PCI Subsystem ID of CX8
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem" ID
+get_cx8_pldm_pci_subsys_id() {
+local eid="${1:-41}"
+# default EID to 41, CX8-2 IRoT I3C
+key=${sku_key:-"PCI Subsystem ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+
+# Component-Level Category: NVSWITCH #
 ## NVSWITCH: Transport Protocol
 
 # HMC-NVSWITCH-VFIO_SMBPBI-01
@@ -7354,6 +7459,9 @@ else
 fi
 }
 
+# Component-Level Category: MCU #
+## MCU: Hardware Interface
+
 # HMC-MCU-USB-01
 # Function to verify if USB device is operational
 # Arguments:
@@ -7434,6 +7542,92 @@ bus_number=${usb_port_path%%-*}
 [ -z "$device_number" ] && device_number="device_not_found"
 # if there are multiple interfaces, this func would capture the first subclass
 class=$(_log_ lsusb -v -s "$bus_number":"$device_number" | awk '/bInterfaceSubClass/ {print $2; exit}') && echo "$class"
+}
+
+# HMC-MCU-USB-06
+# Function to get MCU USB Port Hierarchy
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid USB Port hierarchy
+get_mcu_usb_port_hierarchy() {
+local usb_port_path="${1:-"1-1.1.1"}"
+
+echo "${usb_port_path}"
+}
+
+## MCU: Firmware Update Protocol
+
+# HMC-MCU-Version-01
+# Function to get MCU FW version from PLDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid FW version
+get_mcu_fw_version_pldm() {
+local eid="${1:-40}"
+# default EID to 40, CX8 MCU 1
+output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep 'ActiveComponentVersionString' | sed 's/.*"\(.*\)".*/\1/' | awk 'NR==1') && echo $output
+}
+
+# HMC-MCU-PLDM_T5-01
+# Function to get PLDM fw_update AP_SKU ID of MCU
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid AP_SKU ID
+get_mcu_pldm_apsku_id() {
+local eid="${1:-40}"
+# default EID to 40, CX8 MCU 1
+key=${sku_key:-APSKU} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
+}
+
+# HMC-MCU-PLDM_T5-02
+# Function to get PLDM fw_update PCI Vendor ID of MCU
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Vendor" ID
+get_mcu_pldm_pci_vendor_id() {
+local eid="${1:-40}"
+# default EID to 40, CX8 MCU 1
+key=${sku_key:-"PCI Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-MCU-PLDM_T5-03
+# Function to get PLDM fw_update PCI Deivce ID of MCU
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Device" ID
+get_mcu_pldm_pci_device_id() {
+local eid="${1:-40}"
+# default EID to 40, CX8 MCU 1
+key=${sku_key:-"PCI Device ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-MCU-PLDM_T5-04
+# Function to get PLDM fw_update PCI Subsystem Vendor ID of MCU
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem Vendor" ID
+get_mcu_pldm_pci_subsys_vendor_id() {
+local eid="${1:-40}"
+# default EID to 40, CX8 MCU 1
+key=${sku_key:-"PCI Subsystem Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-MCU-PLDM_T5-05
+# Function to get PLDM fw_update PCI Subsystem ID of MCU
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem" ID
+get_mcu_pldm_pci_subsys_id() {
+local eid="${1:-40}"
+# default EID to 40, CX8 MCU 1
+key=${sku_key:-"PCI Subsystem ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
 }
 
 
@@ -7608,27 +7802,6 @@ Completion Codes
 0x07 - 0x7E: RESERVED
 0x7F: ERR_BUS_ACCESS
 0x80 - 0xFF: Command specific
-COMMENT
-
-<<COMMENT
-# MCTP NSM, MCTP System Management API
-# mctp-usb-ctrl -husb
-Various command line options mentioned below
-    -v        Verbose level
-    -e        Target Endpoint Id
-    -m        Mode: (0 - Commandline mode, 1 - daemon mode, 2 - SPI test mode)
-    -t        Binding Type (0 - Resvd, 1 - I2C, 2 - PCIe, 3 - USB, 6 - SPI)
-    -b        Binding data (pvt)
-    -d        Delay in seconds (for MCTP enumeration)
-    -s        Tx data (MCTP packet payload: [Req-dgram]-[cmd-code]--)
-    -f        Absolute path to configuration json file
-    -n        Bus number for the selected interface, eg. PCIe 1, PCIe 2, I2C 3, ...
-    -i        usb own eid
-    -p        usb bridge eid
-    -x        usb bridge pool start eid
-    -w        port path of device <busid>-<port1>.<port2> eg 1-2.3
-    -c        option to remove duplicate EID entries from the routing table
-    -z        option to ignore certain EID entries from the routing table supplied as a space separated list in decimal
 COMMENT
 
 <<COMMENT

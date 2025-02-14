@@ -213,7 +213,7 @@
                         "associations": [
                             {
                                 "forward": "inventory",
-                                "reverse": "activation",
+                                "reverse": "active",
                                 "endpoint": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_0"
                             }
                         ]
@@ -275,7 +275,7 @@
                         "associations": [
                             {
                                 "forward": "inventory",
-                                "reverse": "activation",
+                                "reverse": "active",
                                 "endpoint": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_1"
                             }
                         ]
@@ -337,7 +337,7 @@
                         "associations": [
                             {
                                 "forward": "inventory",
-                                "reverse": "activation",
+                                "reverse": "active",
                                 "endpoint": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_2"
                             }
                         ]
@@ -399,7 +399,7 @@
                         "associations": [
                             {
                                 "forward": "inventory",
-                                "reverse": "activation",
+                                "reverse": "active",
                                 "endpoint": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_3"
                             }
                         ]

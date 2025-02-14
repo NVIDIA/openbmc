@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/bmcweb;protocol=https;branch=develop"
-SRCREV = "7f3a16ae3f92f8fcd27d9d3beede1326746a4dd1"
+SRCREV = "41f7a2f806509f1afc8f8667010ec3e7895e09dc"
 
 EXTRA_OEMESON += "-Dredfish-dump-log=enabled"
 EXTRA_OEMESON += "-Dredfish-new-powersubsystem-thermalsubsystem=enabled"
@@ -23,13 +23,18 @@ SRC_URI:append:hgx = " file://hgx/bmcweb-hgx.conf \
                        file://hgx/bmcweb-socket-hgx.conf"
 SRC_URI:append:hgxb = " file://hgxb/bmcweb-hgxb.conf \
                        file://hgxb/bmcweb-socket-hgxb.conf"
+SRC_URI:append:hgxb300 = " file://hgxb300/bmcweb-hgxb300.conf \
+                           file://hgxb300/bmcweb-socket-hgxb300.conf"
 FILES:${PN}:append:hgx = " ${systemd_system_unitdir}/bmcweb.service.d/bmcweb-hgx.conf \
                             ${systemd_system_unitdir}/bmcweb.socket.d/bmcweb-socket-hgx.conf"
 FILES:${PN}:append:hgxb = " ${systemd_system_unitdir}/bmcweb.service.d/bmcweb-hgxb.conf \
                             ${systemd_system_unitdir}/bmcweb.socket.d/bmcweb-socket-hgxb.conf"
+FILES:${PN}:append:hgxb300 = " ${systemd_system_unitdir}/bmcweb.service.d/bmcweb-hgxb300.conf \
+                               ${systemd_system_unitdir}/bmcweb.socket.d/bmcweb-socket-hgxb300.conf"
 
 SYSTEMD_OVERRIDE:${PN}:hgx += "bmcweb-hgx.conf:bmcweb.service.d/bmcweb-hgx.conf"
 SYSTEMD_OVERRIDE:${PN}:hgxb += "bmcweb-hgxb.conf:bmcweb.service.d/bmcweb-hgxb.conf"
+SYSTEMD_OVERRIDE:${PN}:hgxb300 += "bmcweb-hgxb.conf:bmcweb.service.d/bmcweb-hgxb300.conf"
 
 do_install:append:hgx() {
     install -d ${D}${systemd_system_unitdir}/bmcweb.service.d
@@ -43,4 +48,11 @@ do_install:append:hgxb() {
     install -m 0644 ${WORKDIR}/hgxb/bmcweb-hgxb.conf ${D}${systemd_system_unitdir}/bmcweb.service.d/
     install -d ${D}${systemd_system_unitdir}/bmcweb.socket.d
     install -m 0644 ${WORKDIR}/hgxb/bmcweb-socket-hgxb.conf ${D}${systemd_system_unitdir}/bmcweb.socket.d/
+}
+
+do_install:append:hgxb300() {
+    install -d ${D}${systemd_system_unitdir}/bmcweb.service.d
+    install -m 0644 ${WORKDIR}/hgxb300/bmcweb-hgxb300.conf ${D}${systemd_system_unitdir}/bmcweb.service.d/
+    install -d ${D}${systemd_system_unitdir}/bmcweb.socket.d
+    install -m 0644 ${WORKDIR}/hgxb300/bmcweb-socket-hgxb300.conf ${D}${systemd_system_unitdir}/bmcweb.socket.d/
 }

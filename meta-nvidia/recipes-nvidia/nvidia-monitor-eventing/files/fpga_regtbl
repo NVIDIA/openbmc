@@ -11,7 +11,13 @@
 set -o pipefail
 
 APP_NAME=fpga_regtbl
-APP_VER=0.1
+APP_VER=0.2
+
+app_tmp="/tmp/$APP_NAME"
+mkdir -p $app_tmp
+alert_cache="${app_tmp}/active_alerts"
+mkdir -p $alert_cache
+REGT_CACHE="${app_tmp}/regtbl.cache"
 
 show_help()
 {
@@ -26,6 +32,14 @@ show_help()
     echo
 }
 
+dbg() #(msg)
+{
+    [ "$FPGAREGTBL_DEBUG" == "1" ] || return 0
+
+    echo "${APP_NAME}[D]$@" >&2
+    return 0
+}
+
 err() #(msg)
 {
     echo "${APP_NAME}[E]$@" >&2
@@ -33,9 +47,20 @@ err() #(msg)
 }
 
 # Sourcing platform specific information pertaining to the FPGA
-source /usr/share/fpga_regtbl_platform.conf;rc=$?
-[ "$rc" -ne 0 ] && err "Failed to load FPGA platform config!" && exit $rc
+conf_path="
+.
+/tmp
+/usr/share
+"
 
+for conf in $conf_path; do
+    conf_file=${conf}/fpga_regtbl_platform.conf
+    [ -f "${conf_file}" ] && source "${conf_file}" && break
+done
+[ -z "$REG_LIST" ] && err "Failed to load FPGA platform config!" && exit 1
+
+################################################################################
+## Functions
 show_reg_list()
 {
     local format="%-25s%-10s%-10s%-15s%-10s%-10s"
@@ -62,118 +87,556 @@ lookup_reg() #(reg_name)
     local reg_name=$1;shift
 
     local reg
-    for reg in $REG_LIST; do
+    while read -r -a reg; do
         [ -z "$reg" ] && continue  # skip empty line.
         [ "${reg::1}" = "#" ] && continue  # skip line commented by leading '#'.
 
         local rname=${reg%%,*}
-        [ "$rname" = "$reg_name" ] || continue
-        echo "${reg//,/ }" | cut -d' ' -f2,3,4
+        [ "$rname" == "$reg_name" ] || continue
+        echo "${reg//,/ }" | cut -d' ' -f2-
         return 0
-    done
+    done <<< $REG_LIST
     return 1
 }
 
-clear_interrupt() #(reg_name, dev_id)
+dump_fpga_regtbl()
 {
-    local reg_name=$1;shift
-    local dev_id=$1;shift
+    dbg "dump_fpga_regtbl()"
+    local cur_data
+    if [ -f "$regtbl_einj" ]; then
+        # For EINJ and UT
+        cur_data=$(cat $regtbl_einj)
+    else
+        # Dump FPGA regtbl
+        local page
+        for page in $(seq 0 $(($REGTBL_PAGES-1))); do
+            local cmd="i2ctransfer -y $REGTBL_BUS w2@$REGTBL_SADDR 0x00 $page r256"
+            local s_data;s_data=$($cmd | sed 's/0x//g');rc=$?
+            [ "$rc" -ne 0 ] && err "i2c failed, rc=$rc!" && return $rc
+            cur_data="$cur_data $s_data"
+        done
+        cur_data=${cur_data:1} # remove the leading ' '
+    fi
 
+    echo $cur_data > $REGT_CACHE
+
+    echo $cur_data
+    return 0
+}
+
+dump_fpga_regtbl_ex()
+{
+    dump_fpga_regtbl | grep -Eo '.{1,48}'
+}
+
+get_regtbl()
+{
+    cat $REGT_CACHE
+}
+
+dump_all_alerts()
+{
+    dbg "dump_all_alerts()"
     local rc=0
 
+    # Dump FPGA regtbl as a byte stream
+    local cur_data;cur_data=$(dump_fpga_regtbl);rc=$?
+    [ "$rc" -ne 0 ] && err "dump_fpga_regtbl failed, rc=$rc!" && return $rc
+
+    # Loop thru all alerts to find out the asserted ones
     local reg
-    while read -r reg; do
+    for reg in $REG_LIST; do
         [ -z "$reg" ] && continue  # skip empty line.
         [ "${reg::1}" = "#" ] && continue  # skip line commented by leading '#'.
 
-        # Register name is stored in the first field
-        local cmd_reg_name=${reg%%,*}
+        reg=${reg//,/ }
+        reg=($reg)
 
-        # Get device ID in the second field
-        local cmd_dev_id=${reg#*,}
-        cmd_dev_id=${cmd_dev_id%%,*}
+        # "reg" Format,
+        #   reg_name, byte_off, byte_len, bit_mask(hex), byte_range, bit_range
+        local reg_name=${reg[0]}
+        local byte_off=${reg[1]}
+        local byte_len=${reg[2]}
+        local bit_mask=${reg[3]}
+        local bit_range=${reg[5]}
 
-        if [ "$reg_name" = "$cmd_reg_name" ] && [ "$dev_id" = "$cmd_dev_id" ]; then
-            # Clear command is in the last field
-            local clear_cmd=${reg##*,}
-            $clear_cmd >/dev/null;rc=$?
-            return $rc
-        fi
-    done <<< "$CLEAR_CMD_LIST"
+        local reg_bytes=${cur_data:$byte_off:$byte_len}
 
-    # Not all interrupts will have corresponding clear command
-    err "No interrupt clearing command found for ${reg_name} ${dev_id}!"
+        local b
+        local reg_value= # must keep '=' to init an empty string
+        for b in $reg_bytes; do # in hex, little endian
+            reg_value=${b}${reg_value}
+        done
+
+        local reg_value=$((0x$reg_value & $bit_mask))
+
+        dbg "reg($reg_name)_value[raw]: 0x$(printf "%04x" $reg_value), bit_mask: $bit_mask"
+        # Move the valid bit to 0-based for dev_id-based query
+        while [ $(($bit_mask & 1)) -eq  0 ]; do
+            bit_mask=$(($bit_mask>>1))
+            reg_value=$(($reg_value>>1))
+        done
+        dbg "reg($reg_name)_value[dev_id($dev_id)]: 0x$(printf "%04x" $reg_value)"
+
+        # Check all devices and create/remove alert file accordingly
+        dbg "Removing all existing caches for($reg_name)."
+        rm -f ${alert_cache}/${reg_name}_*
+
+        # Loop thru all dev ids supported by this alert for caching
+        local dev_id=0
+        while [ "$reg_value" -gt 0 ]; do
+            local alert_file="${alert_cache}/${reg_name}_${dev_id}"
+            if [ "$((reg_value & 1))" -ne 0 ]; then
+                err "Caching alert: $alert_file"
+                touch $alert_file
+            fi
+            dev_id=$((dev_id + 1))
+            reg_value=$((reg_value >> 1))
+        done
+    done
     return 0
 }
 
-REGT_CACHE="/tmp/regtbl.cache"
-get_reg_data() #(dev_id, byte_off, byte_len, bit_mask)
+get_dev_alert() #(reg_name, dev_id)
+{
+    local reg_name=$1;shift
+    local dev_id=$1;shift
+    dbg "get_dev_alert($reg_name, $dev_id)"
+
+    local alert_file="${alert_cache}/${reg_name}_${dev_id}"
+
+    [ -f "$alert_file" ] && echo 1 || echo 0
+
+    # rm the alert cache after reporting the alert
+    rm -f "$alert_file"
+
+    return 0
+}
+
+clear_alerts()
+{
+    # create empty dump regtbl if in EINJ mode
+    [ -f "$regtbl_einj" ] && einj_stop && einj_start && return 0
+
+    # call NSM raw cmds to clear all alerts
+    err "Clear all alerts avoiding any FPGA clear alert issues."
+    local nsm_raw="http://127.0.0.1/redfish/v1/Managers/HGX_BMC_0/Actions/Oem/NvidiaManager.NSMRawCommand"
+    curl -sS -X POST -d '{"DeviceIdentificationId": 3, "DeviceInstanceId": 0, "IsLongRunning": false, "MessageType": 4, "CommandCode": 99, "DataSizeBytes": 21, "Data": [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255]}' $nsm_raw &> /dev/null
+    curl -sS -X POST -d '{"DeviceIdentificationId": 3, "DeviceInstanceId": 0, "IsLongRunning": false, "MessageType": 4, "CommandCode": 97, "DataSizeBytes": 32, "Data": [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255]}' $nsm_raw &> /dev/null
+
+    return 0
+}
+
+get_alert_status() #(reg_name, dev_id)
+{
+    local reg_name=$1;shift
+    local dev_id=$1;shift
+    dbg "get_alert_status($reg_name, $dev_id)"
+    local rc=0
+
+    # if no any alert in cache, dump FPGA regtbl and cache alerts
+    if [ -z "$(ls -A $alert_cache)" ]; then
+        dbg "no alert caches, creating..."
+        dump_all_alerts;rc=$?
+        [ "$rc" -ne 0 ] && err "dump_all_alerts failed, rc=$rc!" && return $rc
+        clear_alerts;rc=$? # clear since all alerts cached
+        [ "$rc" -ne 0 ] && err "clear_alerts failed but continue, rc=$rc!"
+    fi
+
+    # check reg_name on target dev_id
+    local intr_state;intr_state=$(get_dev_alert "$reg_name" "$dev_id");rc=$?
+    [ "$rc" -ne 0 ] && err "get_dev_alert failed, rc=$rc!" && return $rc
+    dbg "($reg_name, $dev_id) state: $intr_state."
+    echo $intr_state
+    return 0
+}
+
+################################################################################
+## EINJ capability
+regtbl_dev="FPGA_0"
+regtbl_einj="$app_tmp/$regtbl_dev/regtbl.einj"
+regtbl_size=$((REGTBL_PAGES * REGTBL_PAGE_SIZE))
+
+einj_cap()
+{
+    echo "list_errors"
+    echo "list_devices"
+    grep -E "^einj_*()" $(which $0) | cut -d'(' -f1 2>/dev/null
+
+    return 0
+}
+
+list_errors()
+{
+    local reg
+    for reg in $REG_LIST; do
+        [ -z "$reg" ] && continue  # skip empty line.
+        [ "${reg::1}" = "#" ] && continue  # skip line commented by leading '#'.
+
+        local reg_name=${reg%%,*}
+        echo $reg_name
+    done
+    return 0
+}
+
+list_devices()
+{
+    echo "$regtbl_dev"
+}
+
+show_regtbl() #(regtbl_dummy)
+{
+    local regtbl=$1;shift
+    [ -f "$regtbl" ] || regtbl=$regtbl_einj
+    xxd -r -p "$regtbl" | xxd -g 1 -c 16
+}
+
+einj_start()
+{
+    # Create all deassert dummy FPGA regtbl
+    mkdir -p ${regtbl_einj%/*}
+    printf "00 %.0s" {1..1024} > "$regtbl_einj"
+    return 0
+}
+
+einj_stop()
+{
+    rm -rf "$regtbl_einj" &>/dev/null
+    return 0
+}
+
+einj_is_running()
+{
+    [ -f "$regtbl_einj" ]
+}
+
+einj_toggle() #(dev_id, reg)
 {
     local dev_id=$1;shift
-    local byte_off=$1;shift
-    local byte_len=$1;shift
-    local bit_mask=$1;shift
+    local reg=$1;shift
+}
+
+einj_error() #(dev_id, errors[])
+{
+    local dev_id=$1;shift
+    local errors=$*
+
+    [ "$dev_id" == "" ] && dev_id=0
 
     local rc=0
 
-    local cur_data
-    local page
-    for page in `seq 0 $(($REGTBL_PAGES-1))`; do
-        local cmd="i2ctransfer -y $REGTBL_BUS w2@$REGTBL_SADDR 0x00 $page r256"
-        local s_data;s_data=`$cmd | sed 's/0x//g'`;rc=$?
-        [ "$rc" -ne 0 ] && return $rc
-        cur_data="$cur_data $s_data"
+    # Backup regtbl.einj
+    [ -f "${regtbl_einj}.old" ] || cp -f $regtbl_einj ${regtbl_einj}.old 2>/dev/null
+
+    # Dump regtbl
+    local regtbl_data;regtbl_data=$(cat "$regtbl_einj" 2>/dev/null);rc=$?
+    if [ "$rc" -ne 0 -o -z "$regtbl_data" ]; then
+        dbg "No regtbl for einj. Creating one with all 00s."
+        regtbl_data=$(printf "00 %.0s" {1..1024})
+    fi
+    local regtbl=($regtbl_data)
+
+    # Inject target reg
+    local error
+    for error in ${errors}; do
+        [ -z "$error" ] && continue
+
+        local data_info=($(lookup_reg "$error"))
+        [ "${#data_info[@]}" -eq 0 ] && continue # No reginfo, skip
+
+        local reg_name=$error
+        local byte_off=${data_info[0]}
+        local byte_len=${data_info[1]}
+        local bit_mask=${data_info[2]}
+        local byte_range=${data_info[3]}
+        #local bit_range=${data_info[4]}
+
+        dbg "reg_name: $reg_name, byte_off: $byte_off, byte_len: $byte_len, bit_mask: $bit_mask, byte_range: $byte_range"
+
+        # skip if no such reg
+        [ -z "$byte_off" ] && continue
+
+        # calculate the possition in the regtbl byte stream
+        byte_off=$((byte_off/3)) # byte stream offset => byte offset
+        byte_len=$((byte_len/2)) # byte stream len => byte len
+
+        dbg "reg_name: $reg_name, byte_r_off: $byte_off, byte_r_len: $byte_len"
+
+        # Caller wants to inject error on a specific dev_id
+        local dev_val=1
+        # shift to the lowest bit of (bit_mask + dev_id)
+        bit_mask=$((bit_mask << dev_id))
+        local bit_count=0
+        local byte=$byte_off # start from LSB in little endian
+        while true; do
+            [ "$((bit_mask & dev_val))" -gt 0 ] && break
+            dev_val=$((dev_val << 1))
+            bit_count=$((bit_count+1))
+            if [ "$bit_count" -gt 7 ]; then
+                bit_count=0 # reset bit for next byte
+                byte=$((byte+1)) # move to next byte
+                [ $byte -ge $((byte_off+byte_len)) ] && return 1 # abnormal case
+                dev_val=1 # reset it for the next byte value
+                bit_mask=$((bit_mask/256)) # make it the next byte in bit_mask
+            fi
+        done
+
+        dev_val=$(printf "%02x" $dev_val) # in hex
+
+        dbg "reg_name: $reg_name, dev_val: $dev_val, byte: $byte"
+
+        local reg_val=${regtbl[$byte]} # in hex
+        dbg "reg_name: $reg_name, reg_val: $reg_val"
+
+        echo "Injecting: $reg_name $dev_id"
+        regtbl[$byte]=$(printf "%02x" $((0x$reg_val | 0x$dev_val))) # update the value for injection
     done
-    cur_data=${cur_data:1} # remove the leading ' '
-    echo $cur_data > $REGT_CACHE
-
-    local reg_bytes=${cur_data:$byte_off:$byte_len}
-
-    local b
-    local reg_value
-    for b in ${reg_bytes}; do
-        reg_value=${b}${reg_value}
-    done
-
-    local reg_value=$((0x$reg_value & $bit_mask))
-
-    # Account for any bit offsets in the masked reg data
-    while [ $(($bit_mask & 1)) -eq  0 ]
-    do
-        bit_mask=$(($bit_mask>>1))
-        reg_value=$(($reg_value>>1))
-    done
-
-    # Isolate the bit corresponding to the device
-    local dev_mask=$((1<<$dev_id))
-    reg_value=$(($reg_value & $dev_mask))
-
-    local intr_state
-    [ "$reg_value" -ne 0 ] && intr_state=1 || intr_state=0
-    echo $intr_state
+    echo ${regtbl[*]} > $regtbl_einj
 
     return 0
 }
 
+einj_error_all() #(dev_id)
+{
+    einj_error "$1" "all"
+    return $?
+}
+
+einj_clear() #(dev_id, errors[])
+{
+    local dev_id=$1;shift
+    local errors=$*
+
+    [ "$dev_id" == "" ] && dev_id=0
+
+    local rc=0
+
+    # Dump regtbl
+    local regtbl_data;regtbl_data=$(cat "$regtbl_einj" 2>/dev/null);rc=$?
+    if [ "$rc" -ne 0 -o -z "$regtbl_data" ]; then
+        regtbl_data=$(printf "00 %.0s" {1..1024})
+    fi
+    local regtbl=($regtbl_data)
+
+    # Inject target reg
+    local error
+    for error in ${errors}; do
+        [ -z "$error" ] && continue
+
+        local data_info=($(lookup_reg "$error"))
+        [ "${#data_info[@]}" -eq 0 ] && continue
+        local reg_name=$error
+        local byte_off=${data_info[0]}
+        local byte_len=${data_info[1]}
+        local bit_mask=${data_info[2]}
+        local byte_range=${data_info[3]}
+        #local bit_range=${data_info[4]}
+
+        dbg "reg_name: $reg_name, byte_off: $byte_off, byte_len: $byte_len, bit_mask: $bit_mask, byte_range: $byte_range"
+
+        # skip if no such reg
+        [ -z "$byte_off" ] && continue
+
+        # calculate the possition in the regtbl byte stream
+        byte_off=$((byte_off/3)) # byte stream offset => byte offset
+        byte_len=$((byte_len/2)) # byte stream len => byte len
+
+        dbg "reg_name: $reg_name, byte_r_off: $byte_off, byte_r_len: $byte_len"
+
+        # Caller wants to inject error on a specific dev_id
+        local dev_val=1
+        # shift to the lowest bit of (bit_mask + dev_id)
+        bit_mask=$((bit_mask << dev_id))
+        local bit_count=0
+        local byte=$byte_off # start from LSB in little endian
+        while true; do
+            [ "$((bit_mask & dev_val))" -gt 0 ] && break
+            dev_val=$((dev_val << 1))
+            bit_count=$((bit_count+1))
+            if [ "$bit_count" -gt 7 ]; then
+                bit_count=0 # reset bit for next byte
+                byte=$((byte+1)) # move to next byte
+                [ $byte -ge $((byte_off+byte_len)) ] && return 1 # abnormal case
+                dev_val=1 # reset it for the next byte value
+                bit_mask=$((bit_mask/256)) # make it the next byte in bit_mask
+            fi
+        done
+
+        dev_val=$(printf "%02x" $dev_val) # in hex
+
+        dbg "reg_name: $reg_name, dev_val: $dev_val, byte: $byte"
+
+        local reg_val=${regtbl[$byte]} # in hex
+        dbg "reg_name: $reg_name, reg_val: $reg_val"
+
+        echo "Clearing: $reg_name $dev_id"
+        regtbl[$byte]=$(printf "%02x" $((0x$reg_val & ~0x$dev_val))) # update the value for injection
+    done
+    echo ${regtbl[*]} > $regtbl_einj
+    return 0
+}
+
+einj_clear_all() #(dev_id)
+{
+    einj_start
+    return 0
+}
+
+
+# UT
+start_ut()
+{
+
+    local pass=0
+    local fail=0
+    local skip=0
+    ## Single EINJ Test
+    echo "## Single Injection Test ##"
+    echo "----------------------------"
+
+    einj_start
+
+    local line
+    while read -r -a line; do
+        [ -z "$line" ] && continue  # skip empty line.
+        [ "${line::1}" = "#" ] && continue  # skip line commented by leading '#'.
+
+        line=(${line//,/ })
+        local reg=${line[0]}
+        local mask=${line[3]}
+
+        local rc=0
+
+        # Clear all previous injections first
+        einj_clear_all "$regtbl_dev" >/dev/null
+
+        # Do injection
+        local dev_id=0 # hardcode to dev 0
+        einj_error "$dev_id" "$reg" >/dev/null;rc=$?
+        if [ "$rc" -ne "0" ]; then
+            echo -e "Test [$exp] injection failed, rc=$rc: \e[1;31mSKIPPED\e[0m"
+            skip=$((skip+1))
+            continue
+        fi
+
+        # Get alert status (the test target)
+        local rslt;rslt=$(get_alert_status "$reg" "$dev_id");rc=$?
+        local tcase=${reg}_${dev_id}
+
+        # Test result evaluation
+        if [ "$rc" -ne "0" ]; then
+            echo -e "Test [$tcase] get error failed, rc=$rc: \e[1;31mFAIL\e[0m"
+            fail=$((fail+1))
+            continue
+        fi
+
+        if [ "${rslt}" != "1" ]; then
+            echo -e "Test [$tcase] mismatch with [$rslt]: \e[1;31mFAIL\e[0m"
+            fail=$((fail+1))
+            continue
+        fi
+
+        echo -e "Test [$tcase] match with [$rslt]: \e[1;92mPASS\e[0m"
+        pass=$((pass+1))
+    done <<< $REG_LIST
+    echo
+
+    einj_stop
+
+    # Test summary
+    echo "==================================="
+    echo "Pass: $pass, Fail: $fail, Skip: $skip. Pass Rate: $((pass * 100 / (fail + pass + skip)))%"
+    echo "==================================="
+    return $((fail+skip))
+}
+
+start_ut_multi()
+{
+    local pass=0
+    local fail=0
+    local skip=0
+    ## Multi EINJ Test
+    echo "## Multi Injection Test ##"
+    echo "----------------------------"
+
+    local multi_cases="
+0 NVSW_OVERT_INT
+1 GPU_PRSNT_INT
+6 HSC_ALERT_0_7_INT
+0 NVSW_IBC_PG_INT
+1 NVSW_IBC_PG_INT
+0 NVSW_VDD1V8_PG_INT
+1 NVSW_DVDD_PG_INT
+0 NVSW_DVDD_PG_INT
+1 NVSW_HVDD_PG_INT
+0 NVSW_HVDD_PG_INT
+0 NVSW_VDD_PG_INT
+1 NVSW_VDD_PG_INT
+"
+    einj_start
+
+    local line
+    while read -r -a line; do
+        [ -z "$line" ] && continue
+        [ "${line::1}" = "#" ] && continue
+
+        local dev_id=${line[0]}
+        local error_id=${line[1]}
+
+        einj_error "$dev_id" "$error_id"
+    done <<< $multi_cases
+
+    while read -r -a line; do
+        [ -z "$line" ] && continue
+        [ "${line::1}" = "#" ] && continue
+
+        local dev_id=${line[0]}
+        local error_id=${line[1]}
+        
+        local rslt;rslt=$(get_alert_status "$error_id" "$dev_id");rc=$?
+        local tcase=${error_id}_${dev_id}
+        # Test result evaluation
+        if [ "$rc" -ne "0" ]; then
+            echo -e "Test [$tcase] get error failed, rc=$rc: \e[1;31mFAIL\e[0m"
+            fail=$((fail+1))
+            continue
+        fi
+
+        if [ "${rslt}" != "1" ]; then
+            echo -e "Test [$tcase] mismatch with [$rslt]: \e[1;31mFAIL\e[0m"
+            fail=$((fail+1))
+            continue
+        fi
+
+        echo -e "Test [$tcase] match with [$rslt]: \e[1;92mPASS\e[0m"
+        pass=$((pass+1))
+    done <<< $multi_cases
+
+    einj_stop
+    # Test summary
+    echo "==================================="
+    echo "Pass: $pass, Fail: $fail, Skip: $skip. Pass Rate: $((pass * 100 / (fail + pass + skip)))%"
+    echo "==================================="
+
+    return $((fail+skip))
+}
+
 ## MAIN ##
+[ "$*" == "--help" ] && show_help && exit 1
+
 [ "$*" = "show_reg_list" ] && show_reg_list && exit 0
+
+[ $# -ne 0 ] && if grep "^$1()" $(which $0) &> /dev/null; then func=$1;shift;$func "$@";exit $?; fi
 
 [ "$#" != "2" ] && show_help && exit 1
 
 reg_name=$1;shift
 dev_id=$1;shift
 
-rc=0
-data_info=`lookup_reg "$reg_name"`;rc=$?
-[ "$rc" -ne 0 ] && err "$reg_name not supported!" && exit $rc
-intr_state=`get_reg_data "$dev_id" $data_info`;rc=$?
-[ "$rc" -ne 0 ] && err "$reg_name read failed!" && exit $rc
-
-if [ "$intr_state" -eq 1 ]; then
-    clear_interrupt "$reg_name" "$dev_id";rc=$?
-    [ "$rc" -ne 0 ] && err "$reg_name $dev_id interrupt clear failed!"
-fi
+# check reg_name on target dev_id
+intr_state=$(get_alert_status "$reg_name" "$dev_id");rc=$?
+[ "$rc" -ne 0 ] && err "get status of $reg_name on $dev_id failed, rc=$rc!" && exit $rc
 
 echo $intr_state
-
 exit 0
+

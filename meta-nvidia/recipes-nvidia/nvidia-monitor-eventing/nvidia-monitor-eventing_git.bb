@@ -16,6 +16,7 @@ DEPENDS += "sdbusplus ${PYTHON_PN}-sdbus++-native"
 DEPENDS += "sdeventplus"
 DEPENDS += "phosphor-logging"
 DEPENDS += "nvidia-tal"
+RDEPENDS:${PN} += "curl"
 
 EXTRA_OEMESON += "-Dtests=disabled"
 

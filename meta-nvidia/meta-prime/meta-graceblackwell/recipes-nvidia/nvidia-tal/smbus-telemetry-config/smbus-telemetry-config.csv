@@ -42,7 +42,6 @@ offset,length,data_format,dbus_objectpath,dbus_interface,dbus_property,stale_off
 0xE6,4,SMBPBI_POWER,/xyz/openbmc_project/sensors/power/HGX_GPU_6_DRAM_0_Power_0,xyz.openbmc_project.Sensor.Value,Value,0xEE,6
 0xEA,4,SMBPBI_POWER,/xyz/openbmc_project/sensors/power/HGX_GPU_7_DRAM_0_Power_0,xyz.openbmc_project.Sensor.Value,Value,0xEE,7
 0xF0,4,RAW_TEMP,/xyz/openbmc_project/sensors/temperature/HGX_BMC_0_Temp_0,xyz.openbmc_project.Sensor.Value,Value,NA,NA
-0xF8,4,SMBPBI_POWER,/xyz/openbmc_project/sensors/power/HGX_Chassis_0_TotalHSC_Power_0,xyz.openbmc_project.Sensor.Value,Value,0xFC,0
 0x120,4,SMBPBI_TEMP,/xyz/openbmc_project/sensors/temperature/HGX_GPU_0_TEMP_0,xyz.openbmc_project.Sensor.Value,Value,0x100,0
 0x124,4,SMBPBI_TEMP,/xyz/openbmc_project/sensors/temperature/HGX_GPU_1_TEMP_0,xyz.openbmc_project.Sensor.Value,Value,0x100,1
 0x128,4,SMBPBI_TEMP,/xyz/openbmc_project/sensors/temperature/HGX_GPU_2_TEMP_0,xyz.openbmc_project.Sensor.Value,Value,0x100,2

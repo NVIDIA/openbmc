@@ -217,17 +217,12 @@
         },
         {
             "match":{
-               "Interface":"xyz.openbmc_project.Inventory.Decorator.I2CDevice",
+               "Interface":"xyz.openbmc_project.MCTP.Endpoint",
                "Properties":[
                   {
-                     "Name":"Address",
+                     "Name":"EID",
                      "Type":"u",
-                     "Value":50
-                  },
-                  {
-                     "Name":"Bus",
-                     "Type":"u",
-                     "Value":16
+                     "Value":22
                   }
                ]
             },
@@ -263,17 +258,12 @@
          },
          {
             "match":{
-               "Interface":"xyz.openbmc_project.Inventory.Decorator.I2CDevice",
+               "Interface":"xyz.openbmc_project.MCTP.Endpoint",
                "Properties":[
                   {
-                     "Name":"Address",
+                     "Name":"EID",
                      "Type":"u",
-                     "Value":50
-                  },
-                  {
-                     "Name":"Bus",
-                     "Type":"u",
-                     "Value":18
+                     "Value":24
                   }
                ]
             },
@@ -309,17 +299,12 @@
          },
          {
             "match":{
-               "Interface":"xyz.openbmc_project.Inventory.Decorator.I2CDevice",
+               "Interface":"xyz.openbmc_project.MCTP.Endpoint",
                "Properties":[
                   {
-                     "Name":"Address",
+                     "Name":"EID",
                      "Type":"u",
-                     "Value":50
-                  },
-                  {
-                     "Name":"Bus",
-                     "Type":"u",
-                     "Value":28
+                     "Value":32
                   }
                ]
             },
@@ -355,17 +340,12 @@
          },
          {
             "match":{
-               "Interface":"xyz.openbmc_project.Inventory.Decorator.I2CDevice",
+               "Interface":"xyz.openbmc_project.MCTP.Endpoint",
                "Properties":[
                   {
-                     "Name":"Address",
+                     "Name":"EID",
                      "Type":"u",
-                     "Value":50
-                  },
-                  {
-                     "Name":"Bus",
-                     "Type":"u",
-                     "Value":30
+                     "Value":34
                   }
                ]
             },
@@ -401,12 +381,12 @@
          },
          {
             "match": {
-                "Interface":"xyz.openbmc_project.Common.UUID",
+                "Interface":"xyz.openbmc_project.MCTP.Endpoint",
                 "Properties":[
                     {
-                        "Name":"UUID",
-                        "Type":"s",
-                        "Value":"6c72b577-4404-9152-a8ee-4e6651be5eae"
+                        "Name":"EID",
+                        "Type":"u",
+                        "Value":20
                     }
                 ]
             },
@@ -427,6 +407,36 @@
             "component_info":{
                "MCU_0":68282
             }
+         },
+        {
+            "match": {
+                "Interface":"xyz.openbmc_project.MCTP.Endpoint",
+                "Properties":[
+                    {
+                        "Name":"EID",
+                        "Type":"u",
+                        "Value":30
+                    }
+                ]
+            },
+            "firmware_inventory":{
+               "create":{
+                  "MCU_1":{
+                     "component_id":65282,
+                     "associations":[
+                        {
+                           "forward":"inventory",
+                           "reverse":"activation",
+                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/MCU_1"
+                        }
+                     ]
+                  }
+               }
+            },
+            "component_info":{
+               "MCU_1":68282
+            }
          }
+
     ]
 }

@@ -28,7 +28,7 @@ CXXFLAGS += " -DCFG_FILE_PATH=\\"${GPUOOB_CFG_PATH}\\" -DWITH_DSO_HANDLE -DTOTAL
 # You could change the passphase to empty by 'ssh-keygen -p -f ~/.ssh/<your_gitlab_id_file>'
 # This issue will be solved when we upstream all codes to github.
 SRC_URI += "git://github.com/NVIDIA/nvidia-gpuoob;protocol=https;branch=develop"
-SRCREV = "5a376fb3fbcacc94fdbfd22d3aff9512d4eb683d"
+SRCREV = "7b26728801a881a6535198b648075c5a860f292c"
 S = "${WORKDIR}/git"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"

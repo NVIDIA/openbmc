@@ -28,8 +28,15 @@
                     },
                     {
                         "Direction": "greater than",
-                        "Name": "upper critical",
+                        "Name": "soft shutdown",
                         "Severity": 3,
+                        "Value": 107.0,
+                        "Label": "temp1"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 1,
                         "Value": 107.0,
                         "Label": "temp1"
                     },
@@ -49,8 +56,15 @@
                     },
                     {
                         "Direction": "greater than",
-                        "Name": "upper critical",
+                        "Name": "soft shutdown",
                         "Severity": 3,
+                        "Value": 107.0,
+                        "Label": "temp2"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 1,
                         "Value": 107.0,
                         "Label": "temp2"
                     },
@@ -84,8 +98,15 @@
                     },
                     {
                         "Direction": "greater than",
-                        "Name": "upper critical",
+                        "Name": "soft shutdown",
                         "Severity": 3,
+                        "Value": 107.0,
+                        "Label": "temp1"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 1,
                         "Value": 107.0,
                         "Label": "temp1"
                     },
@@ -105,8 +126,15 @@
                     },
                     {
                         "Direction": "greater than",
-                        "Name": "upper critical",
+                        "Name": "soft shutdown",
                         "Severity": 3,
+                        "Value": 107.0,
+                        "Label": "temp2"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 1,
                         "Value": 107.0,
                         "Label": "temp2"
                     },
@@ -146,8 +174,15 @@
                     },
                     {
                         "Direction": "greater than",
-                        "Name": "upper critical",
+                        "Name": "soft shutdown",
                         "Severity": 3,
+                        "Value": 107.0,
+                        "Label": "temp1"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 1,
                         "Value": 107.0,
                         "Label": "temp1"
                     },
@@ -187,8 +222,15 @@
                     },
                     {
                         "Direction": "greater than",
-                        "Name": "upper critical",
+                        "Name": "soft shutdown",
                         "Severity": 3,
+                        "Value": 107.0,
+                        "Label": "temp1"
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 1,
                         "Value": 107.0,
                         "Label": "temp1"
                     },
@@ -214,8 +256,14 @@
                     },
                     {
                         "Direction": "greater than",
-                        "Name": "upper critical",
+                        "Name": "soft shutdown",
                         "Severity": 3,
+                        "Value": 83.0
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 1,
                         "Value": 83.0
                     },
                     {

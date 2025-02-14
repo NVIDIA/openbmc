@@ -944,7 +944,7 @@
     {
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
-      "error_id": "GPU_OCP_DEVICE_STATUS",
+      "error_id": "GPU_OCP_DEVICE_STATUS:DEVICEERROR",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
@@ -961,11 +961,11 @@
         "executable": "ocp_recovery_status_parser",
         "arguments": "GPU_[0-3]",
         "check": {
-          "not_equal": ""
+          "equal": "Device Error"
         }
       },
-      "severity": "Warning",
-      "resolution": "Check OCP Secure Firmware Recovery specification for troubleshooting. https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
+      "severity": "Critical",
+      "resolution": "Start recovery flow with the recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide). If failed persistently, collecting all IRoT dumps and isolate the server for RMA evaluation.",
       "debounce": {
         "type": "",
         "duration": ""
@@ -978,15 +978,9 @@
         "message_args": {
           "patterns": [
             "GPU_[0-3] Firmware",
-            "{OCPStatus}"
+            "Device Error"
           ],
-          "parameters": [
-            {
-              "type": "CMDLINE",
-              "executable": "ocp_recovery_status_parser",
-              "arguments": "GPU_[0-3]"
-            }
-          ]
+          "parameters": []
         }
       },
       "telemetries": [
@@ -1000,7 +994,847 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU IROT OCP Device status report. For the possible status codes reported please see the enumeration in the accompying change log document.",
+      "description": "GPU OCP_DEVICE_STATUS",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU OCP Device Status",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_GHSWE",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "ocp_recovery_status_parser",
+        "arguments": "GPU_[0-3]",
+        "check": {
+          "equal": "Recovery Mode - Generic hardware soft error"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Start recovery flow with the recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide).",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Firmware",
+            "Recovery Mode - Generic hardware soft error"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "OCP Recovery Device Status",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+          "interface": "com.nvidia.RoT.BootStatus",
+          "property": "BootStatus"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU OCP_DEVICE_STATUS",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU OCP Device Status",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_STF",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "ocp_recovery_status_parser",
+        "arguments": "GPU_[0-3]",
+        "check": {
+          "equal": "Recovery Mode - Self-test failure"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Start recovery flow with the recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide).",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Firmware",
+            "Recovery Mode - Self-test failure"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "OCP Recovery Device Status",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+          "interface": "com.nvidia.RoT.BootStatus",
+          "property": "BootStatus"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU OCP_DEVICE_STATUS",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU OCP Device Status",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_MCKM",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "ocp_recovery_status_parser",
+        "arguments": "GPU_[0-3]",
+        "check": {
+          "equal": "Recovery Mode - Missing/corrupt key manifest"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Start recovery flow with the recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide).",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Firmware",
+            "Recovery Mode - Missing/corrupt key manifest"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "OCP Recovery Device Status",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+          "interface": "com.nvidia.RoT.BootStatus",
+          "property": "BootStatus"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU OCP_DEVICE_STATUS",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU OCP Device Status",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_AF_KM",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "ocp_recovery_status_parser",
+        "arguments": "GPU_[0-3]",
+        "check": {
+          "equal": "Recovery Mode - Authentication Failure on key manifest"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Start recovery flow with the recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide).",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Firmware",
+            "Recovery Mode - Authentication Failure on key manifest"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "OCP Recovery Device Status",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+          "interface": "com.nvidia.RoT.BootStatus",
+          "property": "BootStatus"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU OCP_DEVICE_STATUS",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU OCP Device Status",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_ARF_KM",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "ocp_recovery_status_parser",
+        "arguments": "GPU_[0-3]",
+        "check": {
+          "equal": "Recovery Mode - Anti-rollback failure on key manifest"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Start recovery flow with the recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide).",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Firmware",
+            "Recovery Mode - Anti-rollback failure on key manifest"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "OCP Recovery Device Status",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+          "interface": "com.nvidia.RoT.BootStatus",
+          "property": "BootStatus"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU OCP_DEVICE_STATUS",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU OCP Device Status",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_MCBL",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "ocp_recovery_status_parser",
+        "arguments": "GPU_[0-3]",
+        "check": {
+          "equal": "Recovery Mode - Missing/corrupt boot loader (1st mutable code) firmware image"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Start recovery flow with the recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide).",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Firmware",
+            "Recovery Mode - Missing/corrupt boot loader (1st mutable code) firmware image"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "OCP Recovery Device Status",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+          "interface": "com.nvidia.RoT.BootStatus",
+          "property": "BootStatus"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU OCP_DEVICE_STATUS",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU OCP Device Status",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_AF_BL",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "ocp_recovery_status_parser",
+        "arguments": "GPU_[0-3]",
+        "check": {
+          "equal": "Recovery Mode - Authentication failure on boot loader (1st mutable code) firmware image"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Start recovery flow with the recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide).",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Firmware",
+            "Recovery Mode - Authentication failure on boot loader (1st mutable code) firmware image"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "OCP Recovery Device Status",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+          "interface": "com.nvidia.RoT.BootStatus",
+          "property": "BootStatus"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU OCP_DEVICE_STATUS",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU OCP Device Status",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_ARF_BL",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "ocp_recovery_status_parser",
+        "arguments": "GPU_[0-3]",
+        "check": {
+          "equal": "Recovery Mode - Anti-rollback failure boot loader (1st mutable code) firmware image"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Start recovery flow with the recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide).",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Firmware",
+            "Recovery Mode - Anti-rollback failure boot loader (1st mutable code) firmware image"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "OCP Recovery Device Status",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+          "interface": "com.nvidia.RoT.BootStatus",
+          "property": "BootStatus"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU OCP_DEVICE_STATUS",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU OCP Device Status",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_MCRF",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "ocp_recovery_status_parser",
+        "arguments": "GPU_[0-3]",
+        "check": {
+          "equal": "Recovery Mode - Missing/corrupt recovery firmware"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Start recovery flow with the correct recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide).",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Firmware",
+            "Recovery Mode - Missing/corrupt recovery firmware"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "OCP Recovery Device Status",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+          "interface": "com.nvidia.RoT.BootStatus",
+          "property": "BootStatus"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU OCP_DEVICE_STATUS",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU OCP Device Status",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_AF_RF",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "ocp_recovery_status_parser",
+        "arguments": "GPU_[0-3]",
+        "check": {
+          "equal": "Recovery Mode - Authentication Failure recovery firmware"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Start recovery flow with the correct recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide).",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Firmware",
+            "Recovery Mode - Authentication Failure recovery firmware"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "OCP Recovery Device Status",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+          "interface": "com.nvidia.RoT.BootStatus",
+          "property": "BootStatus"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU OCP_DEVICE_STATUS",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU OCP Device Status",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_ARF_RF",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "ocp_recovery_status_parser",
+        "arguments": "GPU_[0-3]",
+        "check": {
+          "equal": "Recovery Mode - Anti-rollback Failure on recovery firmware"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Start recovery flow with the correct recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide).",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Firmware",
+            "Recovery Mode - Anti-rollback Failure on recovery firmware"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "OCP Recovery Device Status",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+          "interface": "com.nvidia.RoT.BootStatus",
+          "property": "BootStatus"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU OCP_DEVICE_STATUS",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU OCP Device Status",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_FR",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "ocp_recovery_status_parser",
+        "arguments": "GPU_[0-3]",
+        "check": {
+          "equal": "Recovery Mode - Forced Recovery"
+        }
+      },
+      "severity": "Warning",
+      "resolution": "Start recovery flow with the recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide).",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Firmware",
+            "Recovery Mode - Forced Recovery"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "OCP Recovery Device Status",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+          "interface": "com.nvidia.RoT.BootStatus",
+          "property": "BootStatus"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU OCP_DEVICE_STATUS",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU OCP Device Status",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_OCP_DEVICE_STATUS:BOOTFAILURE_CMCD",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "ocp_recovery_status_parser",
+        "arguments": "GPU_[0-3]",
+        "check": {
+          "equal": "Boot Failure - Corrupted/missing critical data"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Start recovery flow with the recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide).",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Firmware",
+            "Boot Failure - Corrupted/missing critical data"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "OCP Recovery Device Status",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+          "interface": "com.nvidia.RoT.BootStatus",
+          "property": "BootStatus"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU OCP_DEVICE_STATUS",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU OCP Device Status",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_OCP_DEVICE_STATUS:BOOTFAILURE_MCMM",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "ocp_recovery_status_parser",
+        "arguments": "GPU_[0-3]",
+        "check": {
+          "equal": "Boot Failure - Missing/corrupt main/management firmware image"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Start recovery flow with the recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide).",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Firmware",
+            "Boot Failure - Missing/corrupt main/management firmware image"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "OCP Recovery Device Status",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+          "interface": "com.nvidia.RoT.BootStatus",
+          "property": "BootStatus"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU OCP_DEVICE_STATUS",
+      "log_namespace": "GPU_[0-3]"
+    },
+    {
+      "event": "GPU OCP Device Status",
+      "device_type": "GPU_[0-3]",
+      "error_id": "GPU_OCP_DEVICE_STATUS:FATALERROR",
+      "managed": "yes",
+      "rollup_device": "GPU_[0-3]",
+      "category": [
+        "firmware_status"
+      ],
+      "event_trigger": {
+        "type": "DBUS",
+        "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+        "interface": "com.nvidia.RoT.BootStatus",
+        "property": "BootStatus"
+      },
+      "accessor": {
+        "type": "CMDLINE",
+        "executable": "ocp_recovery_status_parser",
+        "arguments": "GPU_[0-3]",
+        "check": {
+          "equal": "Fatal Error"
+        }
+      },
+      "severity": "Critical",
+      "resolution": "Start recovery flow with the recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide). If failed persistently, collecting all IRoT dumps and isolate the server for RMA evaluation.",
+      "debounce": {
+        "type": "",
+        "duration": ""
+      },
+      "trigger_count": 1,
+      "event_counter_reset": {},
+      "redfish": {
+        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
+        "origin_of_condition": "/redfish/v1/Chassis/HGX_GPU_[0-3]",
+        "message_args": {
+          "patterns": [
+            "GPU_[0-3] Firmware",
+            "Fatal Error"
+          ],
+          "parameters": []
+        }
+      },
+      "telemetries": [
+        {
+          "name": "OCP Recovery Device Status",
+          "type": "DBUS",
+          "object": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_GPU_[0-3]",
+          "interface": "com.nvidia.RoT.BootStatus",
+          "property": "BootStatus"
+        }
+      ],
+      "action": "",
+      "value_as_count": false,
+      "description": "GPU OCP_DEVICE_STATUS",
       "log_namespace": "GPU_[0-3]"
     },
     {

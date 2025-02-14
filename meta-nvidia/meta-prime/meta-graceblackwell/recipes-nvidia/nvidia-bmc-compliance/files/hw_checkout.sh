@@ -59,7 +59,7 @@ create_rot_name_eid_mapping_table() {
 
         # Find the EID according to the UUID
         eid=$(echo "${EID_UUID_MAPPING}" | grep $uuid |
-            awk '/|/ {print $1}' | tr -d '|')
+            awk '/|/ {print $2}' | tr -d '|')
         if [ -z "$eid" ]; then
             echo "Error: UUID not found for $rot_name. Skipping $rot_name" >&2
             continue

@@ -1,7 +1,7 @@
 # Use NVIDIA gitlab Phosphor Debug Collector
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 SRC_URI = "git://github.com/NVIDIA/phosphor-debug-collector;protocol=https;branch=develop"
-SRCREV = "d23972d9c956cb2f694a680a04ec9d4d84f3500d"
+SRCREV = "4b53c3280b30809de2b80aa0d9faaab3a1b02097"
 
 SRC_URI += "file://create-dump-dbus.service"
 
@@ -19,6 +19,8 @@ EXTRA_OEMESON += "-DBMC_DUMP_MIN_SPACE_REQD=4096"
 PACKAGECONFIG[jffs-workaround] = "-Djffs-workaround=disabled"
 
 SRC_URI:append = " file://cper_dump.sh "
+SRC_URI:append = " file://dump.watchdog.conf "
+SRC_URI:append = " file://coredump.watchdog.conf "
 
 FILES:${PN}-manager +=  " \
     ${bindir}/phosphor-dump-manager \
@@ -36,9 +38,19 @@ FILES:${PN}-monitor += " \
 S = "${WORKDIR}/git"
 SRC_URI += "file://coretemp.conf"
 
+FILES:${PN}-manager += " ${systemd_system_unitdir}/xyz.openbmc_project.Dump.Manager.service.d/dump.watchdog.conf"
+FILES:${PN}-manager += " ${systemd_system_unitdir}/obmc-dump-monitor.service.d/coredump.watchdog.conf"
+
+SYSTEMD_OVERRIDE:${PN}-manager += "dump.watchdog.conf:xyz.openbmc_project.Dump.Manager.service.d/dump.watchdog.conf"
+SYSTEMD_OVERRIDE:${PN}-manager += "coredump.watchdog.conf:obmc-dump-monitor.service.d/coredump.watchdog.conf"
+
 do_install:append() {
     install -d ${D}${exec_prefix}/lib/tmpfiles.d
     install -m 644 ${WORKDIR}/coretemp.conf ${D}${exec_prefix}/lib/tmpfiles.d/
     install -m 755 -d ${D}/usr/local/bin/nvidia
     ln -s -r ${D}${bindir}/create-dump-dbus ${D}/usr/local/bin/nvidia/create-dump-dbus
+    install -d ${D}${systemd_system_unitdir}/xyz.openbmc_project.Dump.Manager.service.d
+    install -d ${D}${systemd_system_unitdir}/obmc-dump-monitor.service.d
+    install -m 644 ${WORKDIR}/dump.watchdog.conf ${D}${systemd_system_unitdir}/xyz.openbmc_project.Dump.Manager.service.d/
+    install -m 644 ${WORKDIR}/coredump.watchdog.conf ${D}${systemd_system_unitdir}/obmc-dump-monitor.service.d/
 }
