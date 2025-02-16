@@ -1,0 +1,21 @@
+[Unit]
+Description=Power On Host
+Requires=bmc-boot-complete.service
+After=bmc-boot-complete.service
+# TODO: Enable blocking DOT by adding Requires and After for disabledot service
+Wants=obmc-power-start-pre@%i.target
+After=obmc-power-start-pre@%i.target
+Wants=obmc-power-start@%i.target
+Before=obmc-power-start@%i.target
+Conflicts=obmc-chassis-poweroff@%i.target
+
+[Service]
+RemainAfterExit=yes
+Type=oneshot
+ExecStart=/usr/bin/env powerctrl.sh power_on
+ExecStartPost=/bin/bash -c 'if [ "$(systemctl is-enabled nvidia-cpld.service)" = "enabled" ] && ! systemctl is-active --quiet nvidia-cpld.service; then /usr/bin/systemctl start nvidia-cpld.service; fi'
+SyslogIdentifier=powerctrl
+StartLimitBurst=0
+
+[Install]
+RequiredBy=obmc-chassis-poweron@%i.target obmc-host-startmin@%i.target

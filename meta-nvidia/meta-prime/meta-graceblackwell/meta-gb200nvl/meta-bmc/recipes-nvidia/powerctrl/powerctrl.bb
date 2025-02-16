@@ -28,10 +28,15 @@ SRC_URI = " \
 SRC_URI:append:gb200nvl-bmc-ut3 = " file://gb200nvl-bmc-ut3/powerctrl_hooks.sh \
                                   "
 
+SRC_URI:append:gb200nvl-bmc-dgx = " file://${MACHINE}/powerctrl.sh \
+                                    file://${MACHINE}/host-poweron@.service \
+                                  "
+
 POWER_CONTROL_SCRIPT = "powerctrl.sh"
 POWER_CONTROL_SCRIPT_HOOKS = "powerctrl_hooks.sh"
 STANDBY_POWER_CONTROL_SCRIPT = "stbypowerctrl.sh"
 POWER_CONTROL_SCRIPT:e4830-gh-bmc = "powerctrl-e4830-gh-bmc.sh"
+POWER_CONTROL_SCRIPT:gb200nvl-bmc-dgx = "${MACHINE}/powerctrl.sh"
 
 PWRON_SERVICE = "host-poweron@.service"
 PWRON_TGTFMT = "host-poweron@{0}.service"
@@ -108,3 +113,6 @@ do_install() {
     install -m 0755 ${S}/${STANDBY_POWER_CONTROL_SCRIPT} ${D}/${bindir}/stbypowerctrl.sh
 }
 
+do_install:append:gb200nvl-bmc-dgx() {
+    install -m 0644 ${WORKDIR}/gb200nvl-bmc-dgx/${PWRON_SERVICE} ${D}/${systemd_system_unitdir}/
+}
