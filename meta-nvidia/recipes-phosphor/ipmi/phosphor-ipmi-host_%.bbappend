@@ -3,7 +3,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI += " git://github.com/NVIDIA/phosphor-host-ipmid;protocol=https;branch=develop;name=override;"
 SRCREV_FORMAT = "override"
 
-SRCREV_override = "225df37ce6e0d803f1d3a592e52f6994854f7bcc"
+SRCREV_override = "c5060766c06daf613c06a3651187cb23902b49e2"
 
 FILES:${PN}:append = " /usr/local/include/phosphor-ipmi-host/sensorhandler.hpp"
 FILES:${PN}:append = " /usr/local/include/phosphor-ipmi-host/selutility.hpp"
