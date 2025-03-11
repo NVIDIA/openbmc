@@ -3,7 +3,7 @@
 # Inherit Logging
 source /etc/default/nvidia_event_logging.sh
 
-fan_prefix=/sys/devices/platform/ahb/ahb:apb/ahb:apb:bus@1e78a000/1e78a380.i2c-bus/i2c-6/
+fan_prefix=/sys/class/i2c-dev/i2c-6/device/
 
 all_fans=(
 ${fan_prefix}6-0020/hwmon/**/pwm1

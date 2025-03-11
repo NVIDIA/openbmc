@@ -1,0 +1,6 @@
+/xyz/openbmc_project/Software/Settings/ServiceIdentification:
+    - Interface: xyz.openbmc_project.Inventory.Decorator.AssetTag
+      Properties:
+          AssetTag:
+             Default: '""'
+

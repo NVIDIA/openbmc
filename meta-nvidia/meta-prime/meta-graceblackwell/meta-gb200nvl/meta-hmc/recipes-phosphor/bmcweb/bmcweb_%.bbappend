@@ -65,7 +65,7 @@ EXTRA_OEMESON:append = " -Dmanual-boot-mode-support=enabled "
 EXTRA_OEMESON:append = " -Dshmem-platform-metrics=enabled "
 
 # Assign the OEMDiagnosticDataType for System Dump
-EXTRA_OEMESON:append = " -Doem-diagnostic-allowable-type='FPGA,ROT,FirmwareAttributes,HardwareCheckout'"
+EXTRA_OEMESON:append = " -Doem-diagnostic-allowable-type='FPGA,ROT,FirmwareAttributes,HardwareCheckout,NetIR'"
 
 # Enable SW EINJ Redfish API
 EXTRA_OEMESON:append = " -Dredfish-sw-einj=enabled"

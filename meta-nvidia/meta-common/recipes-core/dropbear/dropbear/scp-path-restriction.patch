@@ -1,0 +1,48 @@
+Upstream-Status: Pending
+---
+diff --git a/scp.c b/scp.c
+index 72e04f8..77614b6 100644
+--- a/scp.c
++++ b/scp.c
+@@ -603,8 +603,8 @@ source(int argc, char **argv)
+ 	BUF *bp;
+ 	off_t i, amt, statbytes;
+ 	size_t result;
+-	int fd = -1, haderr, indx;
+-	char *last, *name, buf[2048];
++	int fd = -1, haderr, indx, pathallowed;
++	char *last, *name, *abspath, buf[2048];
+ 	int len;
+ 
+ 	for (indx = 0; indx < argc; ++indx) {
+@@ -618,6 +618,16 @@ source(int argc, char **argv)
+ 			    name);
+ 			goto next;
+ 		}
++		abspath = realpath(name, NULL);
++		if (abspath == NULL)
++			goto syserr;
++		pathallowed = 0;
++		if (strstr(abspath, "/tmp/") == abspath)
++			pathallowed = 1;
++		if (pathallowed == 0) {
++			run_err("%s: Permission denied", name);
++			goto next;
++		}
+ 		if ((fd = open(name, O_RDONLY, 0)) < 0)
+ 			goto syserr;
+ 		if (fstat(fd, &stb) < 0) {
+@@ -665,7 +675,12 @@ syserr:			run_err("%s: %s", name, strerror(errno));
+ 		if (response() < 0)
+ 			goto next;
+ 		if ((bp = allocbuf(&buffer, fd, 2048)) == NULL) {
+-next:			if (fd != -1) {
++next:
++			if (abspath != NULL) {
++				free(abspath);
++				abspath = NULL;
++			}
++			if (fd != -1) {
+ 				(void) close(fd);
+ 				fd = -1;
+ 			}

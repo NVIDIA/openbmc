@@ -444,9 +444,9 @@ fi
 #
 disable_dot=`systemctl is-active xyz.openbmc_project.disabledot`
 if [ $1 == "power_on" ] && [ $disable_dot != "active" ]; then
-    echo "disable-dot was not activated successfully."
-    # TODO: Exit 1 to actually prevent host power-on. Only drop journal log for now.
-    # exit 1
+    echo "power_on cannot run because disable-dot has not activated successfully"
+    phosphor_log "power_on cannot run because disable_dot has not activated successfully" $sevErr
+    exit 1
 fi
 
 $*

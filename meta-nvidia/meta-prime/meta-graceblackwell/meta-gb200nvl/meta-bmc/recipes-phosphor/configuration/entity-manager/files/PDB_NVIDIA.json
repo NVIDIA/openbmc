@@ -23,56 +23,56 @@
                         "Direction": "greater than",
                         "Name": "upper non recoverable",
                         "Severity": 4,
-                        "Value": 110.0,
+                        "Value": 115.0,
                         "Label": "temp1"
                     },
                     {
                         "Direction": "greater than",
                         "Name": "soft shutdown",
                         "Severity": 3,
-                        "Value": 107.0,
+                        "Value": 113.0,
                         "Label": "temp1"
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper critical",
                         "Severity": 1,
-                        "Value": 107.0,
+                        "Value": 113.0,
                         "Label": "temp1"
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper non critical",
                         "Severity": 0,
-                        "Value": 105.0,
+                        "Value": 110.0,
                         "Label": "temp1"
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper non recoverable",
                         "Severity": 4,
-                        "Value": 110.0,
+                        "Value": 115.0,
                         "Label": "temp2"
                     },
                     {
                         "Direction": "greater than",
                         "Name": "soft shutdown",
                         "Severity": 3,
-                        "Value": 107.0,
+                        "Value": 113.0,
                         "Label": "temp2"
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper critical",
                         "Severity": 1,
-                        "Value": 107.0,
+                        "Value": 113.0,
                         "Label": "temp2"
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper non critical",
                         "Severity": 0,
-                        "Value": 105.0,
+                        "Value": 110.0,
                         "Label": "temp2"
                     }
                 ]
@@ -93,56 +93,56 @@
                         "Direction": "greater than",
                         "Name": "upper non recoverable",
                         "Severity": 4,
-                        "Value": 110.0,
+                        "Value": 115.0,
                         "Label": "temp1"
                     },
                     {
                         "Direction": "greater than",
                         "Name": "soft shutdown",
                         "Severity": 3,
-                        "Value": 107.0,
+                        "Value": 113.0,
                         "Label": "temp1"
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper critical",
                         "Severity": 1,
-                        "Value": 107.0,
+                        "Value": 113.0,
                         "Label": "temp1"
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper non critical",
                         "Severity": 0,
-                        "Value": 105.0,
+                        "Value": 110.0,
                         "Label": "temp1"
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper non recoverable",
                         "Severity": 4,
-                        "Value": 110.0,
+                        "Value": 115.0,
                         "Label": "temp2"
                     },
                     {
                         "Direction": "greater than",
                         "Name": "soft shutdown",
                         "Severity": 3,
-                        "Value": 107.0,
+                        "Value": 113.0,
                         "Label": "temp2"
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper critical",
                         "Severity": 1,
-                        "Value": 107.0,
+                        "Value": 113.0,
                         "Label": "temp2"
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper non critical",
                         "Severity": 0,
-                        "Value": 105.0,
+                        "Value": 110.0,
                         "Label": "temp2"
                     }
                 ]

@@ -114,6 +114,8 @@ while true; do
     pin_val=`get_gpio "$pwrsts_pin"`
     echo $pin_val > $RUN_POWER_PG_FILE
 
+    prev_power_pg_val=$pin_val
+
     if [ "$pin_val" == "1" ]; then
 
         # Create chassis-on file
@@ -162,8 +164,15 @@ while true; do
 
     fi
 
-    # Wait for next transition
-    gpiomon --num-event=1 `gpiofind "$pwrsts_pin"`
+    # the pin may have transitioned since it was last checked, so compare prev with current values
+    # to determine if we should wait for an edge or continue and update
+    cur_power_pg_val=`get_gpio "$pwrsts_pin"`
+    if [ $cur_power_pg_val -eq $prev_power_pg_val ]; then
+        # Wait for next transition
+        gpiomon --num-event=1 `gpiofind "$pwrsts_pin"`
+    else
+        echo "RUN_POWER_PG-I state changed to $cur_power_pg_val during transition. Updating."
+    fi
     on_edge=1
 
 done

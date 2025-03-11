@@ -79,7 +79,7 @@
                 "AuxNames": ["Port_1"]
             }
         ],
-        "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME",
+        "Name": "Riser_Slot$PCIE_LABEL_BlueField_3_Card",
         "Type": "Board",
         "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Chassis_0",
         "Probe": "xyz.openbmc_project.FruDevice({'BUS': 14, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': 'BlueField-3.*'})",
@@ -107,18 +107,18 @@
                 [
                     "assembly",
                     "parent_chassis",
-                    "/xyz/openbmc_project/inventory/system/pcie/Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Board_FRU_Assembly0"
+                    "/xyz/openbmc_project/inventory/system/pcie/Slot$PCIE_LABEL_BlueField_3_Card_Board_FRU_Assembly0"
                 ],
                 [
                     "assembly",
                     "parent_chassis",
-                    "/xyz/openbmc_project/inventory/system/pcie/Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Product_FRU_Assembly1"
+                    "/xyz/openbmc_project/inventory/system/pcie/Slot$PCIE_LABEL_BlueField_3_Card_Product_FRU_Assembly1"
                 ]
             ]
         }
     },
     {
-        "Name": "Slot$PCIE_LABEL $DEVICE_DBUS_NAME Board FRU Assembly0",
+        "Name": "Slot$PCIE_LABEL BlueField_3_Card Board FRU Assembly0",
         "Probe": "xyz.openbmc_project.FruDevice({'BUS': 14, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': 'BlueField-3.*'})",
         "Type": "pcie",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
@@ -137,7 +137,7 @@
         }
     },
     {
-        "Name": "Slot$PCIE_LABEL $DEVICE_DBUS_NAME Product FRU Assembly1",
+        "Name": "Slot$PCIE_LABEL BlueField_3_Card Product FRU Assembly1",
         "Probe": "xyz.openbmc_project.FruDevice({'BUS': 14, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': 'BlueField-3.*'})",
         "Type": "pcie",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
@@ -237,7 +237,7 @@
                 "AuxNames": ["Port_1"]
             }
         ],
-        "Name": "Riser_Slot$PCIE_LABEL_$DEVICE_DBUS_NAME",
+        "Name": "Riser_Slot$PCIE_LABEL_BlueField_3_Card",
         "Type": "Board",
         "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Chassis_0",
         "Probe": "xyz.openbmc_project.FruDevice({'BUS': 15, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': 'BlueField-3.*'})",
@@ -265,18 +265,18 @@
                 [
                     "assembly",
                     "parent_chassis",
-                    "/xyz/openbmc_project/inventory/system/pcie/Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Board_FRU_Assembly0"
+                    "/xyz/openbmc_project/inventory/system/pcie/BlueField_3_Card_Board_FRU_Assembly0"
                 ],
                 [
                     "assembly",
                     "parent_chassis",
-                    "/xyz/openbmc_project/inventory/system/pcie/Slot$PCIE_LABEL_$DEVICE_DBUS_NAME_Product_FRU_Assembly1"
+                    "/xyz/openbmc_project/inventory/system/pcie/BlueField_3_Card_Product_FRU_Assembly1"
                 ]
             ]
         }
     },
     {
-        "Name": "Slot$PCIE_LABEL $DEVICE_DBUS_NAME Board FRU Assembly0",
+        "Name": "Slot$PCIE_LABEL BlueField_3_Card Board FRU Assembly0",
         "Probe": "xyz.openbmc_project.FruDevice({'BUS': 15, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': 'BlueField-3.*'})",
         "Type": "pcie",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
@@ -295,7 +295,7 @@
         }
     },
     {
-        "Name": "Slot$PCIE_LABEL $DEVICE_DBUS_NAME Product FRU Assembly1",
+        "Name": "Slot$PCIE_LABEL BlueField_3_Card Product FRU Assembly1",
         "Probe": "xyz.openbmc_project.FruDevice({'BUS': 15, 'ADDRESS': 80, 'BOARD_PRODUCT_NAME': 'BlueField-3.*'})",
         "Type": "pcie",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {

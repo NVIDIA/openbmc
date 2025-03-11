@@ -1,0 +1,13 @@
+[Unit]
+Description=NVIDIA HMC Write Protect Service
+Requires=hmc-boot-complete.service
+After=hmc-boot-complete.service
+PartOf=global-wp-on.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'hmc-fru-wp.sh on'
+SyslogIdentifier=hmc-fru-write-protect-on
+
+[Install]
+WantedBy=global-wp-on.target

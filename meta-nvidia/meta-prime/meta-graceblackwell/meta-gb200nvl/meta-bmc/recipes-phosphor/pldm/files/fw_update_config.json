@@ -144,9 +144,14 @@
                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/IRoT_BF3_0",
                  "associations": [
                     {
+                       "forward": "parent_chassis",
+                       "reverse": "all_chassis",
+                       "endpoint": "/xyz/openbmc_project/inventory/system/board/Riser_Slot1_BlueField_3_Card"
+                    },
+                    {
                        "forward": "inventory",
                        "reverse": "associated_ROT",
-                       "endpoint": "/xyz/openbmc_project/inventory/system/chassis/IRoT_BF3_0"
+                       "endpoint": "/xyz/openbmc_project/inventory/system/board/Riser_Slot1_BlueField_3_Card"
                     }
                  ]
               }
@@ -189,12 +194,17 @@
                "create": {
                   "object_path": "/xyz/openbmc_project/inventory/system/chassis/IRoT_BF3_1",
                   "associations": [
-                     {
-                        "forward": "inventory",
-                        "reverse": "associated_ROT",
-                        "endpoint": "/xyz/openbmc_project/inventory/system/chassis/IRoT_BF3_1"
-                     }
-                  ]
+                    {
+                       "forward": "parent_chassis",
+                       "reverse": "all_chassis",
+                       "endpoint": "/xyz/openbmc_project/inventory/system/board/Riser_Slot2_BlueField_3_Card"
+                    },
+                    {
+                       "forward": "inventory",
+                       "reverse": "associated_ROT",
+                       "endpoint": "/xyz/openbmc_project/inventory/system/board/Riser_Slot2_BlueField_3_Card"
+                    }
+                 ]
                }
            },
            "firmware_inventory":{
@@ -222,38 +232,38 @@
                   {
                      "Name":"EID",
                      "Type":"u",
-                     "Value":22
+                     "Value":21
                   }
                ]
             },
             "device_inventory": {
                "create": {
-                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/CX7_0",
+                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/CX8_0",
                   "associations": [
                     {
                         "forward": "inventory",
                         "reverse": "associated_ROT",
-                        "endpoint": "/xyz/openbmc_project/inventory/system/chassis/CX7_0"
+                        "endpoint": "/xyz/openbmc_project/inventory/system/chassis/CX8_0"
                     }
                   ]
                }
             },
             "firmware_inventory":{
                "create":{
-                  "CX7_0":{
+                  "CX8_0":{
                      "component_id":1,
                      "associations":[
                         {
                            "forward":"inventory",
                            "reverse":"activation",
-                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/CX7_0"
+                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/CX8_0"
                         }
                      ]
                   }
                }
             },
             "component_info":{
-               "CX7_0":1
+               "CX8_0":1
             }
          },
          {
@@ -263,38 +273,38 @@
                   {
                      "Name":"EID",
                      "Type":"u",
-                     "Value":24
+                     "Value":23
                   }
                ]
             },
             "device_inventory": {
                "create": {
-                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/CX7_1",
+                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/CX8_1",
                   "associations": [
                     {
                         "forward": "inventory",
                         "reverse": "associated_ROT",
-                        "endpoint": "/xyz/openbmc_project/inventory/system/chassis/CX7_1"
+                        "endpoint": "/xyz/openbmc_project/inventory/system/chassis/CX8_1"
                     }
                   ]
                }
             },
             "firmware_inventory":{
                "create":{
-                  "CX7_1":{
+                  "CX8_1":{
                      "component_id":1,
                      "associations":[
                         {
                            "forward":"inventory",
                            "reverse":"activation",
-                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/CX7_1"
+                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/CX8_1"
                         }
                      ]
                   }
                }
             },
             "component_info":{
-               "CX7_1":1
+               "CX8_1":1
             }
          },
          {
@@ -304,38 +314,38 @@
                   {
                      "Name":"EID",
                      "Type":"u",
-                     "Value":32
+                     "Value":31
                   }
                ]
             },
             "device_inventory": {
                "create": {
-                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/CX7_2",
+                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/CX8_2",
                   "associations": [
                     {
                         "forward": "inventory",
                         "reverse": "associated_ROT",
-                        "endpoint": "/xyz/openbmc_project/inventory/system/chassis/CX7_2"
+                        "endpoint": "/xyz/openbmc_project/inventory/system/chassis/CX8_2"
                     }
                   ]
                }
             },
             "firmware_inventory":{
                "create":{
-                  "CX7_2":{
+                  "CX8_2":{
                      "component_id":1,
                      "associations":[
                         {
                            "forward":"inventory",
                            "reverse":"activation",
-                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/CX7_2"
+                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/CX8_2"
                         }
                      ]
                   }
                }
             },
             "component_info":{
-               "CX7_2":1
+               "CX8_2":1
             }
          },
          {
@@ -345,38 +355,38 @@
                   {
                      "Name":"EID",
                      "Type":"u",
-                     "Value":34
+                     "Value":33
                   }
                ]
             },
             "device_inventory": {
                "create": {
-                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/CX7_3",
+                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/CX8_3",
                   "associations": [
                     {
                         "forward": "inventory",
                         "reverse": "associated_ROT",
-                        "endpoint": "/xyz/openbmc_project/inventory/system/chassis/CX7_3"
+                        "endpoint": "/xyz/openbmc_project/inventory/system/chassis/CX8_3"
                     }
                   ]
                }
             },
             "firmware_inventory":{
                "create":{
-                  "CX7_3":{
+                  "CX8_3":{
                      "component_id":1,
                      "associations":[
                         {
                            "forward":"inventory",
                            "reverse":"activation",
-                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/CX7_3"
+                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/CX8_3"
                         }
                      ]
                   }
                }
             },
             "component_info":{
-               "CX7_3":1
+               "CX8_3":1
             }
          },
          {

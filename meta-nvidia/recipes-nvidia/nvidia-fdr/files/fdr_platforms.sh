@@ -26,21 +26,13 @@ clean_tmp_directory() {
 
 # Step 2: Check /etc/nvidia-fdr/platforms for files
 check_and_extract_single_file() {
-    # Check if the platform directory exists and contains files
     if [ -d "$PLATFORM_DIR" ]; then
-        files=("$PLATFORM_DIR"/*)  # Store all files in an array
-        file_count=${#files[@]}   # Get the count of files
+        files=("$PLATFORM_DIR"/*)
+        file_count=${#files[@]}
 
         if [ "$file_count" -eq 1 ]; then
-            log_to_journal "Only one platform file found in /etc/nvidia-fdr/platforms."
-            # Extract the single file without checking GPU count
-            tar --strip-components=1 -xf "${files[0]}" -C "$TMP_DIR/"
-            if [ $? -eq 0 ]; then
-                log_to_journal "Extracted ${files[0]} to /tmp/nvidia-fdr/platforms."
-            else
-                log_to_journal "Failed to extract ${files[0]}."
-                exit 1
-            fi
+            log_to_journal "Only one platform file found. Extracting: ${files[0]}"
+            tar --strip-components=1 -xf "${files[0]}" -C "$TMP_DIR/" || { log_to_journal "Failed to extract ${files[0]}."; exit 1; }
             exit 0  # Exit as we don't need further steps
         elif [ "$file_count" -gt 1 ]; then
             log_to_journal "Multiple platform files found in /etc/nvidia-fdr/platforms."
@@ -54,48 +46,103 @@ check_and_extract_single_file() {
     fi
 }
 
-# Step 3: Determine platform and GPU count
-get_gpu_count() {
-    output=$(busctl get-property xyz.openbmc_project.FruDevice /xyz/openbmc_project/FruDevice/PG548 xyz.openbmc_project.FruDevice PRODUCT_PRODUCT_NAME 2>/dev/null)
-
-    if [ $? -ne 0 ]; then
-        log_to_journal "NO FRU found"
-        exit 1
+# Step 3: Get obj-path for FRU FDR config.
+get_fdr_obj_path() {
+    obj_path=$(dbus-send --system --print-reply \
+        --dest=xyz.openbmc_project.ObjectMapper \
+        /xyz/openbmc_project/object_mapper \
+        xyz.openbmc_project.ObjectMapper.GetSubTreePaths \
+        string:"/" int32:0 array:string:"xyz.openbmc_project.Configuration.FDRConfig" \
+        | grep "string" | head -n 1 | awk '{print $2}' | tr -d '"')
+    
+    if [ -z "$obj_path" ]; then
+        log_to_journal "WARNING: No valid FDR_config object path found. Using default YAML."
+        echo ""
+        return
     fi
-
-    log_to_journal "Platform query output: $output"
-
-    gpu_count=$(echo "$output" | grep "GPU" | sed 's/.*[^0-9]\([0-9]\)GPU.*/\1/')
-    if [ -z "$gpu_count" ]; then
-        log_to_journal "Failed to determine GPU count from the output."
-        exit 1
-    fi
-
-    log_to_journal "Detected $gpu_count GPU(s)."
-    echo "$gpu_count"
+    
+    log_to_journal "Selected object path: $obj_path"
+    echo "$obj_path"
 }
 
-# Step 4: Select and extract the correct tar file
+# Get default YAML file from platform directory
+get_default_yaml() {
+    # Look for *_def.yaml first
+    default_file=$(find "$PLATFORM_DIR" -maxdepth 1 -type f -name "*_def.yaml" | head -n 1)
+
+    if [ -n "$default_file" ]; then
+        log_to_journal "Found default YAML file: $(basename "$default_file")"
+        echo "$(basename "$default_file")"
+        return
+    fi
+
+    # If no *_def.yaml found, find any .yaml file
+    smallest_file=$(find "$PLATFORM_DIR" -maxdepth 1 -type f -name "*.yaml" | head -n 1)
+
+    if [ -n "$smallest_file" ]; then
+        log_to_journal "No *_def.yaml found, using first available YAML file: $(basename "$smallest_file")"
+        echo "$(basename "$smallest_file")"
+        return
+    fi
+
+    # If still no file, log error and exit
+    log_to_journal "ERROR: No YAML files found in $PLATFORM_DIR"
+    exit 1
+}
+
+
+# Step 4: Get the YAML file name
+get_yaml_filename() {
+    obj_path="$1"
+
+    if [ -z "$obj_path" ]; then
+        default_yaml=$(get_default_yaml)
+        log_to_journal "Using default YAML file: $default_yaml"
+        echo "$default_yaml"
+        return
+    fi
+
+    output=$(busctl get-property xyz.openbmc_project.EntityManager "$obj_path" xyz.openbmc_project.Configuration.FDRConfig Model 2>/dev/null)
+
+    if [ $? -ne 0 ] || [ -z "$output" ]; then
+        default_yaml=$(get_default_yaml)
+        log_to_journal "ERROR: Failed to get YAML filename. Using default YAML: $default_yaml"
+        echo "$default_yaml"
+        return
+    fi
+
+    yaml_file=$(echo "$output" | awk -F'"' '{print $2}')
+
+    # Check if yaml_file exists in PLATFORM_DIR
+    found_file=$(find "$PLATFORM_DIR" -maxdepth 1 -type f -name "*${yaml_file}*" | head -n 1)
+    
+    if [ -z "$found_file" ]; then
+        log_to_journal "WARNING: No file containing '$yaml_file' found in $PLATFORM_DIR. Using default YAML."
+        default_yaml=$(get_default_yaml)
+        echo "$default_yaml"
+        return
+    fi
+    
+    # Get the actual filename from found path
+    yaml_file=$(basename "$found_file")
+    log_to_journal "Found matching YAML file: $yaml_file"
+    echo "$yaml_file"
+}
+
+# Step 5: Extract YAML file
 select_and_extract_file() {
-    gpu_count="$1"
-    file=$(ls "$PLATFORM_DIR"/*"${gpu_count}GPU"* 2>/dev/null | head -n 1)
+    yaml_file="$1"
+    file=$(find "$PLATFORM_DIR" -maxdepth 1 -type f -name "$yaml_file" | head -n 1)
 
     if [ -z "$file" ]; then
-        log_to_journal "No matching platform file for $gpu_count GPU(s)."
+        log_to_journal "ERROR: No matching platform file found for $yaml_file."
         exit 1
     fi
 
-    tar --strip-components=1 -xf "$file" -C "$TMP_DIR/"
-    if [ $? -eq 0 ]; then
-        log_to_journal "Extracted $file to /tmp/nvidia-fdr/platforms."
-        log_to_journal "GPU count: $gpu_count"
-    else
-        log_to_journal "Failed to extract $file."
-        exit 1
-    fi
+    tar --strip-components=1 -xf "$file" -C "$TMP_DIR/" && log_to_journal "SUCCESS: Extracted $file to $TMP_DIR." || { log_to_journal "ERROR: Failed to extract $file."; exit 1; }
 }
 
-# Step 5: Wait for HMC Ready
+# Step 6: Wait for HMC Ready
 check_hmcready() {
     CMD="busctl get-property xyz.openbmc_project.State.ConfigurableStateManager /xyz/openbmc_project/state/configurableStateManager/Manager xyz.openbmc_project.State.FeatureReady State"
     DESIRED_OUTPUT='s "xyz.openbmc_project.State.FeatureReady.States.Enabled"'
@@ -105,38 +152,30 @@ check_hmcready() {
 
     while true; do
         OUTPUT=$(eval "$CMD")
-        echo "Command output: $OUTPUT"
-        echo "Comparing: '$OUTPUT' vs '$DESIRED_OUTPUT'"
 
         if [[ "$OUTPUT" == "$DESIRED_OUTPUT" ]]; then
-            echo "Desired state reached: $OUTPUT"
+            log_to_journal "HMC Ready: $OUTPUT"
             return 0
         fi
 
-        CURRENT_TIME=$(date +%s)
-        ELAPSED_TIME=$((CURRENT_TIME - START_TIME))
-        echo "Elapsed time: $ELAPSED_TIME seconds"
+        ELAPSED_TIME=$(( $(date +%s) - START_TIME ))
 
         if [[ $ELAPSED_TIME -ge $MAX_DURATION ]]; then
-            echo "Timeout reached after $MAX_DURATION seconds. Desired state not achieved."
-	    echo "Current state $OUTPUT"
+            log_to_journal "Timeout reached ($MAX_DURATION sec). Current state: $OUTPUT"
             return 0
         fi
 
-        echo "Sleeping for $INTERVAL seconds..."
         sleep $INTERVAL
     done
 }
 
-
-# Main script execution
 main() {
-    clean_tmp_directory              # Step 1: Prepare the temporary directory
-    check_and_extract_single_file    # Step 2: Handle single file case or continue
-    gpu_count=$(get_gpu_count)       # Step 3: Determine GPU count
-    select_and_extract_file "$gpu_count"  # Step 4: Extract based on GPU count
-    check_hmcready                   # Step 4: Wait till hmcReady
+    clean_tmp_directory                                 # Step 1: Prepare the temporary directory
+    check_and_extract_single_file                       # Step 2: Handle single file case or continue
+    obj_path=$(get_fdr_obj_path)                        # Step 3: Get obj-path for FRU FDR config
+    yaml_file=$(get_yaml_filename "$obj_path")          # Step 4: Get the YAML file name
+    select_and_extract_file "$yaml_file"                # Step 5: Extract YAML file
+    check_hmcready                                      # Step 6: Wait till HMC Ready
 }
 
 main
-

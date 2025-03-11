@@ -11,6 +11,7 @@ LOW=0
 # NOTE: Get GPIO line names from nvidia-gb200nvl-hmc-core.dtsi
 FPGA_RST_NAME="FPGA_RST_L-O"
 FPGA_READY_NAME="FPGA0_READY-I"
+FPGA1_READY_NAME="FPGA1_READY-I"
 HMC_GLOBAL_WP_NAME="HMC_GLOBAL_WP-I"
 
 # Inherit gpio_pins

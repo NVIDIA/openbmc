@@ -13,7 +13,7 @@ set -o pipefail
 APP_NAME=fpga_regtbl
 APP_VER=0.2
 
-app_tmp="/tmp/$APP_NAME"
+app_tmp="/tmp/${APP_NAME}_cache"
 mkdir -p $app_tmp
 alert_cache="${app_tmp}/active_alerts"
 mkdir -p $alert_cache

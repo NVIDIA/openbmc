@@ -1,4 +1,4 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI = "git://github.com/NVIDIA/dbus-sensors;protocol=https;branch=develop"
-SRCREV = "c6af31ba2ad6fe194e1bad633dcbb2d697604b80"
+SRCREV = "c01fcaa5f724a200607cbcadd8952de0b4b028dc"

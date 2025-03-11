@@ -451,25 +451,25 @@
                         "Direction": "greater than",
                         "Name": "upper non recoverable",
                         "Severity": 4,
-                        "Value": 85
+                        "Value": 82
                     },
                     {
                         "Direction": "greater than",
                         "Name": "soft shutdown",
                         "Severity": 3,
-                        "Value": 83
+                        "Value": 80
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper critical",
                         "Severity": 1,
-                        "Value": 83
+                        "Value": 80
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper non critical",
                         "Severity": 0,
-                        "Value": 80
+                        "Value": 77.5
                     }
                 ],
                 "Type": "NVME1000"

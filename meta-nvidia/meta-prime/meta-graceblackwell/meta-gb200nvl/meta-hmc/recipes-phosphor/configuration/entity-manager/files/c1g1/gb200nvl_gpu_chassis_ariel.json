@@ -46,7 +46,7 @@
         },
         "Asset": {
           "Type": "NSM_Asset",
-          "Name": "GPU Board Assembly",
+          "Name": "GPU_0 Board Assembly",
           "Vendor": "NVIDIA"
         },
         "Health": {
@@ -70,7 +70,7 @@
         },
         "Asset": {
           "Type": "NSM_Asset",
-          "Name": "GPU Device Assembly",
+          "Name": "GPU_0 Device Assembly",
           "Vendor": "NVIDIA"
         },
         "Health": {
@@ -209,17 +209,17 @@
           {
             "Name": "UpperFatal",
             "Dynamic": false,
-            "Value": 110.0
+            "Value": 105.0
           },
           {
             "Name": "UpperCritical",
             "Dynamic": false,
-            "Value": 107.0
+            "Value": 103.0
           },
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 105.0
+            "Value": 100.0
           }
         ],
         "UUID": "STATIC:0:0",
@@ -446,7 +446,8 @@
         "Name": "GPU_0 ProcessorModule",
         "Type": "NSM_ModulePowerControl",
         "Priority": false,
-        "UUID": "STATIC:0:0"
+        "UUID": "STATIC:0:0",
+        "Index": 0
       },
       {
         "Name": "GPU_0 Processor",
@@ -740,7 +741,7 @@
         "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
         "Severity": "Critical",
         "LoggingNamespace": "HGX_GPU 0 Threshold",
-        "Resolution": "Regarding Port Error documentation and further actions please refer to (TBD)",
+        "Resolution": "Follow Debug and RAS Guide for NVIDIA Data Center Products (NVOnline: 1109712) for further actions.",
         "MessageArgs": [
           "HGX_GPU 0",
           "No Error"
@@ -820,7 +821,7 @@
         },
         "Asset": {
           "Type": "NSM_Asset",
-          "Name": "GPU Board Assembly",
+          "Name": "GPU_1 Board Assembly",
           "Vendor": "NVIDIA"
         },
         "Health": {
@@ -844,7 +845,7 @@
         },
         "Asset": {
           "Type": "NSM_Asset",
-          "Name": "GPU Device Assembly",
+          "Name": "GPU_1 Device Assembly",
           "Vendor": "NVIDIA"
         },
         "Health": {
@@ -983,17 +984,17 @@
           {
             "Name": "UpperFatal",
             "Dynamic": false,
-            "Value": 110.0
+            "Value": 105.0
           },
           {
             "Name": "UpperCritical",
             "Dynamic": false,
-            "Value": 107.0
+            "Value": 103.0
           },
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 105.0
+            "Value": 100.0
           }
         ],
         "UUID": "STATIC:0:1",
@@ -1219,7 +1220,8 @@
         "Name": "GPU_1 ProcessorModule",
         "Type": "NSM_ModulePowerControl",
         "Priority": false,
-        "UUID": "STATIC:0:1"
+        "UUID": "STATIC:0:1",
+        "Index": 0
       },
       {
         "Name": "GPU_1 Processor",
@@ -1513,7 +1515,7 @@
         "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
         "Severity": "Critical",
         "LoggingNamespace": "HGX_GPU 1 Threshold",
-        "Resolution": "Regarding Port Error documentation and further actions please refer to (TBD)",
+        "Resolution": "Follow Debug and RAS Guide for NVIDIA Data Center Products (NVOnline: 1109712) for further actions.",
         "MessageArgs": [
           "HGX_GPU 1",
           "No Error"

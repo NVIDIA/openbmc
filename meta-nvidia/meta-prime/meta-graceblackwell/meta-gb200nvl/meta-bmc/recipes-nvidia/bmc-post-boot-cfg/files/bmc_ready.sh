@@ -358,7 +358,7 @@ bind_hsc()
 }
 
 
-#######################################
+######################################
 # Print BMC Boot Banner over UART/serial
 #
 # ARGUMENTS:
@@ -507,6 +507,37 @@ bind_gpio_expanders()
     return 0
 }
 
+######################################
+# enable signature checking on hmc
+#
+# ARGUMENTS:
+#   None
+# RETURN:
+#   None
+enable_hmc_cpld_pex_signature_checking()
+{
+    local timeout=20
+    local counter=0
+
+    while [[ $counter -lt $timeout ]]; do
+        result=$(i2ctransfer -y 2 w1@0x4f 00 r1 | awk '{printf "%02x\n", $1}')
+
+        if [[ "$result" == "00" ]]; then
+            i2cset -f -y 1 0x45 0x00 0xd0
+            break
+        fi
+
+        ((counter++))
+
+        sleep 1
+    done
+
+    if [[ $counter -eq $timeout ]]; then
+        echo "Timeout reached. Did not set the signature checking on the hmc"
+    fi
+}
+
+
 ########### MAIN ############
 
 echo "Host BMC Post-boot Configuration"
@@ -525,7 +556,7 @@ fi
 
 # Initialize GPIO out state
 # Before STBY power is on and HMC is not ready
-gpival=$(gpioget `gpiofind "HMC_READY-I"`)
+gpival=$(gpioget `gpiofind "STBY_POWER_PG-I"`)
 if [[ $gpival -eq 0 ]]; then
     bmc_set_initial_gpio_out
 fi
@@ -682,6 +713,8 @@ if [[ $rc -ne 0 ]]; then
 fi
 
 phosphor_log "bmc_ready.sh completed" $sevNot
+
+enable_hmc_cpld_pex_signature_checking
 
 #
 # Exit without error to prevent systemd from restarting it

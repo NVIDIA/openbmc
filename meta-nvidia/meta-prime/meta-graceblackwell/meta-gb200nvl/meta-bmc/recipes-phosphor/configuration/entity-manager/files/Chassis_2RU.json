@@ -170,6 +170,7 @@
                 "Bus": 6,
                 "Index": 4,
                 "Name": "Chassis_0_FAN_1_FRONT",
+                "MaxReading": 37400,
                 "PowerState": "On",
                 "Thresholds": [
                     {
@@ -190,6 +191,7 @@
                 "Bus": 6,
                 "Index": 5,
                 "Name": "Chassis_0_FAN_1_REAR",
+                "MaxReading": 37400,
                 "PowerState": "On",
                 "Thresholds": [
                     {
@@ -210,6 +212,7 @@
                 "Bus": 6,
                 "Index": 10,
                 "Name": "Chassis_0_FAN_2_FRONT",
+                "MaxReading": 37400,
                 "PowerState": "On",
                 "Thresholds": [
                     {
@@ -230,6 +233,7 @@
                 "Bus": 6,
                 "Index": 11,
                 "Name": "Chassis_0_FAN_2_REAR",
+                "MaxReading": 37400,
                 "PowerState": "On",
                 "Thresholds": [
                     {
@@ -250,6 +254,7 @@
                 "Bus": 6,
                 "Index": 0,
                 "Name": "Chassis_0_FAN_3_FRONT",
+                "MaxReading": 37400,
                 "PowerState": "On",
                 "Thresholds": [
                     {
@@ -270,6 +275,7 @@
                 "Bus": 6,
                 "Index": 1,
                 "Name": "Chassis_0_FAN_3_REAR",
+                "MaxReading": 37400,
                 "PowerState": "On",
                 "Thresholds": [
                     {
@@ -290,6 +296,7 @@
                 "Bus": 6,
                 "Index": 4,
                 "Name": "Chassis_0_FAN_4_FRONT",
+                "MaxReading": 37400,
                 "PowerState": "On",
                 "Thresholds": [
                     {
@@ -310,6 +317,7 @@
                 "Bus": 6,
                 "Index": 5,
                 "Name": "Chassis_0_FAN_4_REAR",
+                "MaxReading": 37400,
                 "PowerState": "On",
                 "Thresholds": [
                     {
@@ -330,6 +338,7 @@
                 "Bus": 6,
                 "Index": 10,
                 "Name": "Chassis_0_FAN_5_FRONT",
+                "MaxReading": 37400,
                 "PowerState": "On",
                 "Thresholds": [
                     {
@@ -350,6 +359,7 @@
                 "Bus": 6,
                 "Index": 11,
                 "Name": "Chassis_0_FAN_5_REAR",
+                "MaxReading": 37400,
                 "PowerState": "On",
                 "Thresholds": [
                     {
@@ -370,6 +380,7 @@
                 "Bus": 6,
                 "Index": 0,
                 "Name": "Chassis_0_FAN_6_FRONT",
+                "MaxReading": 37400,
                 "PowerState": "On",
                 "Thresholds": [
                     {
@@ -390,6 +401,7 @@
                 "Bus": 6,
                 "Index": 1,
                 "Name": "Chassis_0_FAN_6_REAR",
+                "MaxReading": 37400,
                 "PowerState": "On",
                 "Thresholds": [
                     {
@@ -683,7 +695,7 @@
                 "Outputs": [],
                 "PCoefficient": -0.15,
                 "PositiveHysteresis": 0.0,
-                "SetPoint": 75.0,
+                "SetPoint": 55.0,
                 "SlewNeg": -1.0,
                 "SlewPos": 0.0,
                 "Type": "Pid",
@@ -708,7 +720,7 @@
                 "Outputs": [],
                 "PCoefficient": -0.15,
                 "PositiveHysteresis": 0.0,
-                "SetPoint": 65.0,
+                "SetPoint": 55.0,
                 "SlewNeg": -1.0,
                 "SlewPos": 0.0,
                 "Type": "Pid",
@@ -1528,6 +1540,7 @@
         "xyz.openbmc_project.Inventory.Item.Chassis": {
             "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Shelf"
         },
+        "xyz.openbmc_project.Inventory.Item.System": {},
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Manufacturer": "NVIDIA",
             "Model": "GB200 NVL",

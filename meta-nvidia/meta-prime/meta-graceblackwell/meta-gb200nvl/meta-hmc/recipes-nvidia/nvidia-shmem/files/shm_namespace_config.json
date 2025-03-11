@@ -62,7 +62,13 @@
                 "ueCount",
                 "RowRemappingFailureState",
                 "ceRowRemappingCount",
-                "ueRowRemappingCount"
+                "ueRowRemappingCount",
+                "CapacityUtilizationPercent",
+                "MaxRemappingAvailablityBankCount",
+                "HighRemappingAvailablityBankCount",
+                "PartialRemappingAvailablityBankCount",
+                "LowRemappingAvailablityBankCount",
+                "NoRemappingAvailablityBankCount"
             ]
         },
         {
@@ -73,7 +79,6 @@
                 "ueCount",
                 "OperatingSpeed",
                 "Utilization",
-                "State",
                 "L0ToRecoveryCount",
                 "LanesInUse",
                 "MaxLanes",
@@ -92,7 +97,18 @@
                 "PCIeTXBytes",
                 "PowerLimitThrottleDuration",
                 "ThermalLimitThrottleDuration",
-                "ThrottleReason"
+                "ThrottleReason",
+                "SMUtilization",
+		"PowerSmoothingEnabled",
+                "ImmediateRampDownEnabled",
+                "LifeTimeRemaining",
+                "TMPFloorPercent",
+                "RampDownHysteresis",
+                "RampDownRate",
+                "RampUpRate",
+		"AllowFLRPersistentConfig",
+		"AllowOneShotConfig",
+		"AllowPersistentConfig"
             ]
         },
         {
@@ -142,20 +158,30 @@
             "ObjectpathKeywords": "accelerator/Ports",
             "PropertyList": [
                 "CurrentSpeed",
-                "DataCRCCount",
-                "FlitCRCCount",
                 "RXBytes",
                 "RXNoProtocolBytes",
-                "RecoveryCount",
-                "ReplayErrorsCount",
                 "RuntimeError",
                 "TXBytes",
                 "TXNoProtocolBytes",
                 "TrainingError",
-                "MaxSpeed",
                 "TXWidth",
                 "RXWidth",
-                "LinkStatus"
+                "RXErrors",
+                "RXPkts",
+                "TXPkts",
+                "TXDiscardPkts",
+                "MalformedPkts",
+                "VL15DroppedPkts",
+                "VL15TXPkts",
+                "VL15TXData",
+                "MTUDiscard",
+                "LinkErrorRecoveryCounter",
+                "LinkDownCount",
+                "RXRemotePhysicalErrorPkts",
+                "RXSwitchRelayErrorPkts",
+                "QP1DroppedPkts",
+                "BitErrorRate",
+                "TXWait"
             ]
         },
         {
@@ -193,7 +219,7 @@
             "Namespace": "CpuProcessorMetrics",
             "ObjectpathKeywords": "sensors/counter",
             "PropertyList": [
-                "MemoryPageRetirementCount"
+                "Value"
             ]
         },
         {

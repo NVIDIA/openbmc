@@ -5,7 +5,8 @@ SRC_URI += " file://sol-default.override.yml \
              file://uuid-interface.override.yml \
              file://system-guid.sh \
              file://boot-flags.override.yml \
-             file://chassis-capabilities.override.yml"
+             file://chassis-capabilities.override.yml \
+             file://software_settings.override.yml"
 
 RDEPENDS:${PN} = "bash"
 SYSTEMD_SERVICE:${PN} = "system-guid.service"

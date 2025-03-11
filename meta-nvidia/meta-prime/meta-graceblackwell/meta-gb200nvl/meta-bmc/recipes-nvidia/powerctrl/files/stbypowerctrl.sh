@@ -178,17 +178,14 @@ aux_cycle()
     #
     # Run Power Off
     #
-    echo "Turning Run Power Off using obmcutil poweroff"
-    obmcutil poweroff
-
-    echo "Waiting 30 seconds for services to cleanly shut down"
-    sleep 30
+    echo "Turning Run Power Off"
+    /usr/bin/powerctrl.sh grace_off
 
     # Ensure Run Power is Off
     local val=`get_run_power_pg`
     if [ "$val" == "1" ]; then
         echo "Graceful power off failed. Will use hard power off"
-        obmcutil chassisoff
+        /usr/bin/powerctrl.sh power_off
         echo "Waiting 30 seconds for services to cleanly shut down"
         sleep 30
         val=`get_run_power_pg`

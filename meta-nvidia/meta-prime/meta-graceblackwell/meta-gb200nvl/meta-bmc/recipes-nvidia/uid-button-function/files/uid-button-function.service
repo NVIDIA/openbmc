@@ -1,0 +1,12 @@
+[Unit]
+After=bmc-boot-complete.service
+Requires=bmc-boot-complete.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/uid-button-function 
+SyslogIdentifier=uid-button-function
+
+
+[Install]
+WantedBy=multi-user.target

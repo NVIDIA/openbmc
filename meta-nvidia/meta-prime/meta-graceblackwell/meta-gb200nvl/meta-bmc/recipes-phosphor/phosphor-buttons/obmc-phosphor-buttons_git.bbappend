@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/phosphor-buttons;protocol=https;branch=develop"
-SRCREV = "e3f440ff5541501528ddffb0ce5970adcb391031"
+SRCREV = "89df433bb57cc84b76c933006683ce6040d82067"
 SRC_URI += "file://gpio_defs.json"
 
 inherit meson pkgconfig systemd

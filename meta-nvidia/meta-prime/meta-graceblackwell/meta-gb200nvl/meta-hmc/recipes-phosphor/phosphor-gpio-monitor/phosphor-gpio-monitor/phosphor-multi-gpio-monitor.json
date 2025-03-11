@@ -15,8 +15,8 @@
                 "LineName": "HMC_GLOBAL_WP-I",
                 "EventMon": "BOTH",
                 "Targets": {
-                        "FALLING": ["hmc-fru-write-protect@off.service"],
-                        "RISING": ["hmc-fru-write-protect@on.service"]
+                        "FALLING": ["global-wp-off.target"],
+                        "RISING": ["global-wp-on.target"]
                 },
                 "Continue": true,
                 "ExecuteAtStart": true

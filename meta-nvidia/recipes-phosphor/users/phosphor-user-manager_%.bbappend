@@ -1,10 +1,19 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/phosphor-user-manager;protocol=https;branch=develop"
 SRC_URI += "file://upgrade_hostconsole_group.sh"
-SRCREV = "8e318d195a9eedd35a357c3253aac5e73070791d"
+SRCREV = "2a5de75b559198686d4413c0f671722987cea153"
 
 DEPENDS += "libpwquality"
 DEPENDS += "libpam"
+
+SRC_URI:append = " file://phosphor-user-manager-dropbearkey.conf"
+FILES:${PN}:append = " ${systemd_system_unitdir}/xyz.openbmc_project.User.Manager.service.d/phosphor-user-manager-dropbearkey.conf"
+
+SYSTEMD_OVERRIDE:${PN} += "phosphor-user-manager-dropbearkey.conf:xyz.openbmc_project.User.Manager.service.d/phosphor-user-manager-dropbearkey.conf"
+do_install:append() {
+    install -d ${D}${systemd_system_unitdir}/xyz.openbmc_project.User.Manager.service.d
+    install -m 0644 ${WORKDIR}/phosphor-user-manager-dropbearkey.conf ${D}${systemd_system_unitdir}/xyz.openbmc_project.User.Manager.service.d/
+}
 
 def get_oeconf(d, filename, policy_var, search_key):
     import re
@@ -40,3 +49,7 @@ def get_oeconf(d, filename, policy_var, search_key):
 EXTRA_OEMESON += "${@get_oeconf(d, 'pwquality.conf', 'MIN_PASSWORD_LENGTH', 'minlen')}"
 EXTRA_OEMESON += "${@get_oeconf(d, 'faillock.conf', 'ACCOUNT_UNLOCK_TIMEOUT', 'unlock_time')}"
 EXTRA_OEMESON += "${@get_oeconf(d, 'faillock.conf', 'MAX_FAILED_LOGIN_ATTEMPTS', 'deny')}"
+
+PASSWORD_POLICY_UPDATE_ADOPTION_TYPE = "${@bb.utils.contains('DISTRO_FEATURES', 'password-policy-update-universal', 'universal', \
+    "${@bb.utils.contains('DISTRO_FEATURES', 'password-policy-update-conditional', 'conditional', 'default', d)}", d)}"
+EXTRA_OEMESON += "-DPOLICY_UPDATE_ADOPTION_TYPE=${PASSWORD_POLICY_UPDATE_ADOPTION_TYPE}"

@@ -700,7 +700,7 @@
         "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
         "Severity": "Critical",
         "LoggingNamespace": "HGX_GPU 0 Threshold",
-        "Resolution": "Regarding Port Error documentation and further actions please refer to (TBD)",
+        "Resolution": "Follow Debug and RAS Guide for NVIDIA Data Center Products (NVOnline: 1109712) for further actions.",
         "MessageArgs": [
           "HGX_GPU 0",
           "No Error"

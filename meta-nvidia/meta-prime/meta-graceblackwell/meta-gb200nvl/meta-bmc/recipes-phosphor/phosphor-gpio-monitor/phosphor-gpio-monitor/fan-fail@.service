@@ -1,7 +1,5 @@
 [Unit]
-Description=Fault service
-
-Wants=obmc-chassis-hard-poweroff@0.target
+Description=Fan fail gpio service
 
 [Service]
 Type=oneshot

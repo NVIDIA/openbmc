@@ -27,7 +27,7 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " \
                                     phosphor-settings-manager \
                                     nvidia-tal \
                                     i2c-dump-server \
-                                    hmc-fru-write-protect \
+                                    hmc-write-protect \
                                     nvidia-hmc-fru-check \
                                   "
 

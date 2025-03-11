@@ -444,9 +444,9 @@
             #address-cells = <1>;
             #size-cells = <0>;
             reg = <1>;
-            pca9555@21 {
+            pca9555@20 {
                 compatible = "nxp,pca9555";
-                reg = <0x21>;
+                reg = <0x20>;
                 gpio-controller;
                 #gpio-cells = <2>;
                 #address-cells = <1>;

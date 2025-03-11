@@ -1,7 +1,7 @@
 #!/bin/bash
 
 src_fw_cfg_file="$1"
-dst_fw_cfg_file="/usr/share/pldm/fw_update_config.json"
+dst_fw_cfg_file="/etc/pldm/fw_update_config.json"
 
 # Check if the command line argument is not empty
 if [ -z "$src_fw_cfg_file" ]; then

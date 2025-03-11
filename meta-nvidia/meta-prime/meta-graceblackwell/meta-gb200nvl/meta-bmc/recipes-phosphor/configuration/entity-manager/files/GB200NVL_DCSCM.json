@@ -43,7 +43,7 @@
                         "Value": 5
                     }
                 ],
-                "Type": "TMP75"
+                "Type": "TMP75C"
             }
         ],
         "Name": "BMC_0",
@@ -54,7 +54,8 @@
             "Manufacturer": "$BOARD_MANUFACTURER",
             "Model": "GB200 NVL",
             "PartNumber": "$BOARD_PART_NUMBER",
-            "SerialNumber": "$BOARD_SERIAL_NUMBER"
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+	    "SKU": ""
         },
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
             "Bus": "$bus",

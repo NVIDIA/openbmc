@@ -27,9 +27,17 @@ if { [ -n "$1" ] && [ "$1" -eq 1 ]; } || [ ! -e "$FILE_PATH" ]; then
     fi
 fi
 
+#unbind mtd driver since it is no longer needed
+echo "1e630000.spi" > /sys/bus/platform/drivers/spi-aspeed-smc/unbind
+sleep 1
+
+#bind spi raw driver to talk to the chip registers
+echo "1e630000.spiraw" > /sys/bus/platform/drivers/fmc_spi/bind
+sleep 1
+set-spi-wp -d /dev/spidev2.0 -a assert
+
 gpioset `gpiofind "BRDG_MUX_SEL_IOX"`=1
 gpioset `gpiofind "MUX_SEL_FPGA_BRDG_1V8"`=0
-echo "1e630000.spi" > /sys/bus/platform/drivers/spi-aspeed-smc/unbind
 
 #execute below only if it is fw update which will
 #have 3 parameters and the first one is equal to 1

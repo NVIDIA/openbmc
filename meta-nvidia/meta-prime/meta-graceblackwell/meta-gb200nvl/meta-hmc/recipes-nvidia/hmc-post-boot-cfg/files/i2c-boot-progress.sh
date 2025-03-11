@@ -23,6 +23,7 @@ rwfs_full=false
 rwfs_full_counter=0
 script_start=$(date +%M)
 log_partition=/dev/mmcblk0p3
+signature_enable_file=/var/check_signature
 
 BMC_IP=172.31.13.241
 HMC_IP=172.31.13.251
@@ -367,6 +368,11 @@ function monitor()
         create_reboot_event_log "Factory Reset triggered by external command over I2C" 
         reboot        
         ;;    
+    d0)
+        echo "Signature checking requested"
+        touch $signature_enable_file
+        ;;
+
     esac    
 
     # Reset the command byte
@@ -587,7 +593,7 @@ i2c_slave_create
 update_swversion
 check_fs_recovery
 populate_i2c_slave_telemetry_app_ver
-
+rm $signature_enable_file
 while true; do
     update_usb_status
     update_service_status_all
