@@ -3,4 +3,7 @@
       Properties:
           PowerRestorePolicy:
               Default: RestorePolicy::Policy::Restore
+          PowerRestoreDelay:
+              Default: 0
+
 

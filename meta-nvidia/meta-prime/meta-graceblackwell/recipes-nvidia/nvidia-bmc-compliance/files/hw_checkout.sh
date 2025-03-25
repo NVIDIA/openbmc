@@ -74,11 +74,14 @@ create_rot_name_eid_mapping_table() {
 HMC_EROT_NAME="HGX_ERoT_BMC_0"
 HMC_FRU_BUS="3"
 HMC_FRU_ADDR="0x57"
+HMC_MCTP_USB_DBUS="xyz.openbmc_project.MCTP.Control.USB1_1_2"
+HMC_MCTP_SPI_DBUS="xyz.openbmc_project.MCTP.Control.SPI0"
+HMC_SPI_EID="0"
 
 ## FPGA part
-FPGA_EROT_NAME=("HGX_ERoT_FPGA_0" "HGX_ERoT_FPGA_1")
-FPGA_PLDM_EROT_NAME=("HGX_FW_ERoT_FPGA_0" "HGX_FW_ERoT_FPGA_0")
-FPGA_BUS_NUM=("1" "2")
+FPGA_EROT_NAME=("HGX_ERoT_FPGA_0")
+FPGA_PLDM_EROT_NAME=("HGX_FW_ERoT_FPGA_0")
+FPGA_BUS_NUM=("1")
 FPGA_REG_INT="0x0b"
 FPGA_FWV_N_BYTES="1"
 FPGA_FW_MJR_STR="0x04"
@@ -91,16 +94,28 @@ CPU_SW_IDS=("HGX_FW_CPU_0" "HGX_FW_CPU_1")
 GPU_IROT_NAME=("HGX_IRoT_GPU_0" "HGX_IRoT_GPU_1" "HGX_IRoT_GPU_2" "HGX_IRoT_GPU_3")
 GPU_SW_IDS=("HGX_FW_GPU_0" "HGX_FW_GPU_1" "HGX_FW_GPU_2" "HGX_FW_GPU_3")
 
+## USB part
+MCU_SXM7_MCTP_DBUS_PORT=("1_1_1_1" "1_1_1_2" "1_1_1_3" "1_1_1_4")
+MCU_SXM7_USB_PORT=("1-1.1.1" "1-1.1.2" "1-1.1.3" "1-1.1.4")
+
+## EID part
+FPGA_EROT_MCTP_EIDS=("13")
+HMC_EROT_MCTP_EIDS=("14")
+CPU_EROT_MCTP_EIDS=("15" "16")
+GPU_IROT_MCTP_EIDS=("20" "21" "22" "23")
+MCU_SXM7_MCTP_EIDS=("30" "31" "32" "33")
+MCU_SXM7_GPU_MCTP_EIDS=("38" "40" "42" "44")
+
 ## Others
 BMC_USB_IP="172.31.13.241"
-MCTP_USB_BUS="xyz.openbmc_project.MCTP.Control.USB"
 # End of GB200-NVL specific variable
 
 # Run various checks using the checker script
 
 # HMC
 checkout_hmc() {
-    local hmc_eid=${ROT_NAME_EID_TABLE[${HMC_EROT_NAME}]}
+    # local hmc_eid=${ROT_NAME_EID_TABLE[${HMC_EROT_NAME}]}
+    local hmc_eid=${HMC_EROT_MCTP_EIDS[0]}
 
     ## HW-Interface
     check="run_hw_check_structure"
@@ -135,11 +150,11 @@ checkout_hmc() {
     # HMC-HMC-Service-07
     run_checker is_hmc_mctp_spi_demux_service_active
     # HMC-HMC-DBUS-01
-    run_checker get_hmc_dbus_mctp_vdm_tree_eids "$MCTP_USB_BUS"
+    run_checker get_hmc_dbus_mctp_vdm_tree_eids "$HMC_MCTP_USB_DBUS"
     # HMC-HMC-DBUS-11
-    run_checker get_hmc_dbus_mctp_spi_tree_eids
+    run_checker get_hmc_dbus_mctp_spi_tree_eids "$HMC_MCTP_SPI_DBUS"
     # HMC-HMC_EROT-DBUS-12
-    run_checker get_hmc_dbus_mctp_spi_spi_uuid
+    run_checker get_hmc_dbus_mctp_spi_spi_uuid "$HMC_SPI_EID" "$HMC_MCTP_SPI_DBUS"
     ## Base-Protocol
     check="run_hw_check_structure"
     output="## HMC Base Protocol ##"
@@ -247,7 +262,8 @@ checkout_fpga() {
 
     # Iterate over both FPGAs
     for ((i = 0; i < ${#FPGA_EROT_NAME[@]}; i++)); do
-        fpga_eid=${ROT_NAME_EID_TABLE[${FPGA_EROT_NAME[$i]}]}
+        # fpga_eid=${ROT_NAME_EID_TABLE[${FPGA_EROT_NAME[$i]}]}
+        fpga_eid=${FPGA_EROT_MCTP_EIDS[$i]}
 
         ## Transport-Protocol
         check="run_hw_check_structure"
@@ -257,7 +273,7 @@ checkout_fpga() {
         # HMC-FPGA-MCTP_VDM-01
         run_checker is_fpga_vdm_operational "${fpga_eid}"
         # HMC-FPGA-MCTP_VDM-02
-        run_checker get_hmc_mctp_eids_tree "$MCTP_USB_BUS"
+        run_checker get_hmc_mctp_eids_tree "$HMC_MCTP_USB_DBUS"
         # HMC-FPGA_EROT-Key-04
         run_checker get_fpga_erot_ec_key_revoke_state_vdm "${fpga_eid}"
         # HMC-FPGA_EROT-Key-06
@@ -305,7 +321,7 @@ checkout_fpga() {
         # HMC-FPGA_EROT-PLDM_T5-02
         run_checker get_fpga_erot_pldm_version_string "${fpga_eid}"
         # HMC-FPGA_EROT-DBUS-04
-        run_checker get_hmc_dbus_pldm_fpga_erot_uuid "${FPGA_PLDM_EROT_NAME[$i]}"
+        run_checker get_hmc_dbus_pldm_fpga_erot_uuid "${FPGA_EROT_NAME[$i]}" # check FPGA_PLDM_EROT_NAME
         # HMC-FPGA_EROT-DBUS-06
         run_checker get_hmc_dbus_pldm_fpga_erot_version "${FPGA_PLDM_EROT_NAME[$i]}"
 
@@ -333,7 +349,8 @@ checkout_gpu() {
 
     # Loop through all devices
     for ((i = 0; i < ${#GPU_IROT_NAME[@]}; i++)); do
-        gpu_eid=${ROT_NAME_EID_TABLE[${GPU_IROT_NAME[$i]}]}
+        # gpu_eid=${ROT_NAME_EID_TABLE[${GPU_IROT_NAME[$i]}]}
+        gpu_eid=${GPU_IROT_MCTP_EIDS[$i]}
 
         check="run_device_check_structure"
         output="# GPU Device $((i + 1)) #"
@@ -366,7 +383,8 @@ checkout_cpu() {
 
     # Loop through all devices
     for ((i = 0; i < ${#CPU_EROT_NAME[@]}; i++)); do
-        cpu_eid=${ROT_NAME_EID_TABLE[${CPU_EROT_NAME[$i]}]}
+        # cpu_eid=${ROT_NAME_EID_TABLE[${CPU_EROT_NAME[$i]}]}
+        cpu_eid=${CPU_EROT_MCTP_EIDS[$i]}
 
         check="run_device_check_structure"
         output="# CPU Device $((i + 1)) #"
@@ -387,7 +405,9 @@ checkout_cpu() {
 
 # Firmware
 checkout_firmware() {
-    local hmc_eid=${ROT_NAME_EID_TABLE[${HMC_EROT_NAME}]}
+    # local hmc_eid=${ROT_NAME_EID_TABLE[${HMC_EROT_NAME}]}
+    local hmc_eid=${HMC_EROT_MCTP_EIDS[0]}
+
     ## HMC
     check="run_firmware_check_structure"
     output="## HMC Firmware Attributes ##"
@@ -436,7 +456,9 @@ checkout_firmware() {
     ## FPGA
     # Loop through all devices
     for ((i = 0; i < ${#FPGA_EROT_NAME[@]}; i++)); do
-        fpga_eid=${ROT_NAME_EID_TABLE[${FPGA_EROT_NAME[$i]}]}
+        # fpga_eid=${ROT_NAME_EID_TABLE[${FPGA_EROT_NAME[$i]}]}
+        fpga_eid=${FPGA_EROT_MCTP_EIDS[$i]}
+        
         check="run_firmware_check_structure"
         output="## FPGA$((i + 1)) Firmware Attributes ##"
         echo -e "$check\e[47G>>>Output>>>  $output"
@@ -477,7 +499,9 @@ checkout_firmware() {
     ## GPU
     # Loop through all devices
     for ((i = 0; i < ${#GPU_IROT_NAME[@]}; i++)); do
-        gpu_eid=${ROT_NAME_EID_TABLE[${GPU_IROT_NAME[$i]}]}
+        # gpu_eid=${ROT_NAME_EID_TABLE[${GPU_IROT_NAME[$i]}]}
+        gpu_eid=${GPU_IROT_MCTP_EIDS[$i]}
+
         check="run_device_check_structure"
         output="# GPU Device $((i + 1)) #"
         echo -e "$check\e[47G>>>Output>>>  $output"
@@ -500,7 +524,9 @@ checkout_firmware() {
     ## CPU
     # Loop through all devices
     for ((i = 0; i < ${#CPU_EROT_NAME[@]}; i++)); do
-        cpu_eid=${ROT_NAME_EID_TABLE[${CPU_EROT_NAME[$i]}]}
+        # cpu_eid=${ROT_NAME_EID_TABLE[${CPU_EROT_NAME[$i]}]}
+        cpu_eid=${CPU_EROT_MCTP_EIDS[$i]}
+
         check="run_device_check_structure"
         output="# CPU Device $((i + 1)) #"
         echo -e "$check\e[47G>>>Output>>>  $output"

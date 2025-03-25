@@ -18,7 +18,7 @@
             "Producers": [
                 "nsmd"
             ],
-            "SizeInBytes": 460800
+            "SizeInBytes": 870400
         },
         "ProcessorResetMetrics": {
             "Producers": [

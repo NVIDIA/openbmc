@@ -1,6 +1,12 @@
 [
   {
-    "Exposes": [],
+    "Exposes": [
+      {
+        "Model":"gb200nvl_hmc_1GPU",
+        "Name": "FlightDataRecorder",
+        "Type": "NvidiaFlightDataRecorder"
+       }
+    ],
     "Name": "NSM_DEV_ARIEL_GPU_0",
     "Probe": "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?1GPU Board PC'})",
     "Type": "NSM_Configs",
@@ -12,7 +18,13 @@
     }
   },
   {
-    "Exposes": [],
+    "Exposes": [
+      {
+        "Model":"gb200nvl_hmc_1GPU",
+        "Name": "FlightDataRecorder",
+        "Type": "NvidiaFlightDataRecorder"
+       }
+    ],
     "Name": "NSM_DEV_ARIEL_GPU_1",
     "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?1GPU Board PC'})",
     "Type": "NSM_Configs",

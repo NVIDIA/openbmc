@@ -1,0 +1,14 @@
+[Unit]
+Description=NVIDIA FPGA USB Status Monitor Service
+Wants=nvidia-fpga-ready-init.service
+After=nvidia-fpga-ready-init.service
+StartLimitIntervalSec=1
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/env fpga_usb_status_monitor.sh
+
+SyslogIdentifier=nvidia-fpga-usb-monitor
+
+[Install]
+WantedBy=multi-user.target

@@ -1146,7 +1146,8 @@
         "MessageType": 0,
         "UUID": "STATIC:0:1",
         "SubscribedEventIDs": [
-          1
+          1,
+          2
         ],
         "AcknowledgementEventIds": []
       },
@@ -1932,7 +1933,8 @@
         "MessageType": 0,
         "UUID": "STATIC:0:2",
         "SubscribedEventIDs": [
-          1
+          1,
+          2
         ],
         "AcknowledgementEventIds": []
       },
@@ -2718,7 +2720,8 @@
         "MessageType": 0,
         "UUID": "STATIC:0:3",
         "SubscribedEventIDs": [
-          1
+          1,
+          2
         ],
         "AcknowledgementEventIds": []
       },

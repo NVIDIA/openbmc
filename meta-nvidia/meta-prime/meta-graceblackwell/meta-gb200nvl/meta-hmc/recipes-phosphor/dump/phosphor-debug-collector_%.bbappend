@@ -43,7 +43,7 @@ EXTRA_OEMESON += "-DSYSTEM_DUMP_OBJPATH=/xyz/openbmc_project/dump/system"
 EXTRA_OEMESON += "-DSYSTEM_DUMP_OBJ_ENTRY=/xyz/openbmc_project/dump/system/entry"
 
 # ADD NetIR debug dumps supporting tool
-EXTRA_OEMESON += "-Dnsm-net-dump-tool=enabled"
+EXTRA_OEMESON += "-Dnsm-dump-tool=enabled"
 
 # ADD FDR service
 EXTRA_OEMESON += "-Dfdr-dump-extension=enabled"
@@ -62,7 +62,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}:"
 
 FILES:${PN}-manager +=  "${bindir}/fw_atts_dump.sh"
 FILES:${PN}-manager +=  "${bindir}/hw_checkout_dump.sh"
-FILES:${PN}-manager +=  "${bindir}/nsm-net-dump-tool"
+FILES:${PN}-manager +=  "${bindir}/nsm-dump-tool"
 
 do_install:append() {
     install -m 755 ${WORKDIR}/fw_atts_dump.sh ${D}${bindir}/

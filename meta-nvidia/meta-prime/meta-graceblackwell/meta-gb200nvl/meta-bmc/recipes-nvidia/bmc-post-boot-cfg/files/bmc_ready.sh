@@ -80,6 +80,24 @@ bmc_set_pdb_vr()
 {
     i2cset -y 6 0x60 0xEB 0x0796 w
     i2cset -y 6 0x61 0xEB 0x0796 w
+    # These changes enable DC loadline on 50V-12V VR on PDB, 
+    # which reduces PDB input peak current and prevents
+    # from shutdown at ~5kHz load pattern, based on the tests 
+    # on 2x NVL36 racks.
+    i2ctransfer -f -y 6 w3@0x60 0x21 0x92 0x09;
+    i2ctransfer -f -y 6 w3@0x60 0x28 0x2C 0x00;
+    i2ctransfer -f -y 6 w3@0x60 0xE0 0x12 0x15;
+    i2ctransfer -f -y 6 w3@0x60 0xC7 0x2C 0xEA;
+    i2ctransfer -f -y 6 w3@0x60 0xC5 0x03 0x0c;
+    i2ctransfer -f -y 6 w3@0x60 0xC7 0x2E 0xEA;
+    i2ctransfer -f -y 6 w3@0x60 0xC5 0x28 0xA0;
+    i2ctransfer -f -y 6 w3@0x61 0x21 0x92 0x09;
+    i2ctransfer -f -y 6 w3@0x61 0x28 0x2C 0x00;
+    i2ctransfer -f -y 6 w3@0x61 0xE0 0x12 0x15;
+    i2ctransfer -f -y 6 w3@0x61 0xC7 0x2C 0xEA;
+    i2ctransfer -f -y 6 w3@0x61 0xC5 0x03 0x0c;
+    i2ctransfer -f -y 6 w3@0x61 0xC7 0x2E 0xEA;
+    i2ctransfer -f -y 6 w3@0x61 0xC5 0x28 0xA0;
 }
 
 #######################################
@@ -556,7 +574,7 @@ fi
 
 # Initialize GPIO out state
 # Before STBY power is on and HMC is not ready
-gpival=$(gpioget `gpiofind "STBY_POWER_PG-I"`)
+gpival=$(get_stby_power_pg)
 if [[ $gpival -eq 0 ]]; then
     bmc_set_initial_gpio_out
 fi

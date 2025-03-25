@@ -1,7 +1,7 @@
 [Unit]
 Description=Nvidia FW Status service
-Requires=xyz.openbmc_project.EntityManager
-After=xyz.openbmc_project.EntityManager
+Requires=xyz.openbmc_project.EntityManager.service
+After=xyz.openbmc_project.EntityManager.service
 
 [Service]
 Type=dbus

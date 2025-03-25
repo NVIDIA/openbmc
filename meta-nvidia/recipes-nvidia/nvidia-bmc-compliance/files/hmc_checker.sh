@@ -84,6 +84,21 @@ _crc8 ()
     echo $crc
 }
 
+# HMC-SMA-Security Helper to get active firmware slot and raw data
+_get_sma_nsm_active_firmware_slot() {
+    local sma_eid="$1"
+    local active_key_set_data_byte=15    
+    # default EID to 40 SMA-CX8-24_Bridge
+    # the 'nsmtool' outputs to journal log
+    eid=${sma_eid:-40} && raw_output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x01 0x05 0x0a 0x00 0x02 0xff 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    if [[ $raw_output ]]; then
+        slot=$(echo "$raw_output" | awk '{print $'$active_key_set_data_byte'}')
+        echo "$slot $raw_output"
+    else
+        echo ""
+    fi
+}
+
 _ec_send_message() {
 local i2c_bus="${1:-0}"
 local i2c_addr="${2:-0x73}"
@@ -543,11 +558,11 @@ name=${dbus_name:-'xyz.openbmc_project.MCTP.Control.SPI'} && output=$(_log_ busc
 # HMC-HMC-DBUS-12
 # Function to get MCTP DBus VDM tree EIDs via USB
 # Arguments:
-#   $1: MCTP dbus service name
+#   $1: USB port (e.g. "1_1_1")
 # Returns:
 #   flattened list of the MCTP VDM tree EIDs
 get_hmc_dbus_mctp_vdm_tree_eids_usb() {
-local dbus_name=$(_get_mctp_dbus_conn "${1:-"xyz.openbmc_project.MCTP.Control.USB1_1_4"}")
+local dbus_name=$(_get_mctp_dbus_conn "xyz.openbmc_project.MCTP.Control.USB${1:-"1_1_4"}")
 output=$(_log_ busctl tree "$dbus_name" | grep -o '/0/[0-9]\+$' | sed 's/\/0\///') && echo $output
 }
 
@@ -609,6 +624,67 @@ local hmc_erot_i2c_eid="$1"
 # get MCTP UUID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
 eid=${hmc_erot_i2c_eid:-18} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
+}
+
+# HMC-HMC_EROT-MCTP_VDM-05
+# Function to get the enumrated MCTP EID, HMC ERoT SPI via USB
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid "14"
+get_hmc_erot_mctp_eid_spi_usb() {
+# default EID to 14, HMC MCTP ERoT SPI
+local eid="${1:-14}"
+local usb_port_path="${2:-"1-1.4"}"
+
+# get MCTP EID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+output=$(_log_ mctp-usb-ctrl -s "00 80 02" -b "00" -t 3 -e "${eid}" -w "${usb_port_path}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$output
+}
+
+# HMC-HMC_EROT-MCTP_VDM-06
+# Function to get the enumrated MCTP EID, HMC ERoT I2C via USB
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid "18"
+get_hmc_erot_mctp_eid_i2c_usb() {
+local eid="${1:-18}"
+local usb_port_path="${2:-"1-1.4"}"
+# default EID to 18, Umbriel HMC MCTP ERoT I2C
+# get MCTP EID
+# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid_rt=$(_log_ mctp-usb-ctrl -s "00 80 02" -b "00"  -t 3 -e "${eid}" -w "${usb_port_path}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
+}
+
+# HMC-HMC_EROT-MCTP_VDM-07
+# Function to get the MCTP UUID for HMC ERoT SPI via USB
+# Arguments:
+#   $1: MCTP EID to verify the UUID to get from
+# Returns:
+#   valid UUID according to FPGA IAS
+get_hmc_erot_mctp_uuid_spi_usb() {
+local eid="${1:-14}"
+local usb_port_path="${2:-"1-1.4"}"
+# default EID to 14, HMC MCTP ERoT SPI
+# get MCTP UUID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+uuid_rt=$(_log_ mctp-usb-ctrl -s "00 80 03" -b "00"  -t 3 -e "${eid}" -w "${usb_port_path}" i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
+}
+
+# HMC-HMC_EROT-MCTP_VDM-08
+# Function to get the MCTP UUID for HMC ERoT I2C via USB
+# Arguments:
+#   $1: MCTP EID to verify the UUID to get from
+# Returns:
+#   valid UUID according to FPGA IAS
+get_hmc_erot_mctp_uuid_i2c_usb() {
+local eid="${1:-18}"
+local usb_port_path="${2:-"1-1.4"}"
+# default EID to 18, HMC MCTP ERoT I2C
+# get MCTP UUID
+# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+uuid_rt=$(_log_ mctp-usb-ctrl -s "00 80 03"-b "00"  -t 3  -e "${eid}" -w "${usb_port_path}" -i 9  -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
 }
 
 # HMC-HMC_EROT-MCTP_SPI-01
@@ -1560,6 +1636,17 @@ local spdm_id="$1"
 id=${spdm_id:-'HGX_ERoT_BMC_0'} && output=$(_log_ busctl get-property xyz.openbmc_project.SPDM /xyz/openbmc_project/SPDM/"$id" xyz.openbmc_project.SPDM.Responder Certificate | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $output
 }
 
+# HMC-HMC_EROT-SPDM-07
+# Function to get SPDM Version through spdmtool
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid SPDM Version
+get_hmc_erot_spdm_version_spdmtool() {
+local eid="$1"
+eid=${eid:-14} && output=$(_log_ spdmtool -e ${eid} get-version) && echo $output
+}
+
 # HMC-HMC_EROT-SPDM-12
 # Function to get SPDM NVDA Certificate count using spdmtool
 # Arguments:
@@ -1751,7 +1838,7 @@ is_fpga_gpio_fpga_ready_set() {
     sleep 1
     output=$(_log_ gpioget `gpiofind "$fpga_ready"`); [ "$output" = "1" ] && echo "yes" || echo "no"
     sleep 1
-    systemctl start nvidia-fpga-ready-monitor.service >/dev/null 2>&1
+    systemctl start nvidia-fpga-ready-monitor.service >/dev/null 2>&1get_mcu_usb_port_hierarchy
 }
 
 # HMC-FPGA-I2C-01
@@ -2212,6 +2299,93 @@ local cmd=0x01
 # default EID to 12, FPGA MCTP Bridge EID
 # the 'nsmtool' outputs to journal log
 eid=${fpga_bridge_eid:-12} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
+}
+
+# HMC-SMA-Security-03
+# Function to get ActiveKeySet from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID 
+# Returns:
+#   valid ActiveKeySet - Key Set Size (1 Byte)
+get_sma_nsm_active_key_set_nsmtool() {
+    local sma_eid="$1"
+    local active_key_set_data_byte=18
+    # Get both slot count and raw data
+    read slot_count raw_data <<< $(_get_sma_nsm_active_firmware_slot "${sma_eid}")
+    # echo "active_key_set_data_byte: $active_key_set_data_byte"
+    # Use the raw_data directly instead of querying nsmtool again
+    [[ $raw_data ]] && echo "$raw_data" | awk '{print $'$active_key_set_data_byte'}' || echo ""
+}
+
+# HMC-SMA-Security-09
+# Function to get BuildType from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID 
+# Returns:
+#   valid  (BuildType) (0 Development, 1 Release) - Build Type Size (1 Byte)
+get_sma_nsm_build_type_nsmtool() {
+    local sma_eid="$1"
+    # Get both slot count and raw data
+    read slot_count raw_data <<< $(_get_sma_nsm_active_firmware_slot "${sma_eid}")
+    # Calculate build type data byte position
+    local build_type_data_byte=$((38 + ((slot_count * 47) + 30)))
+    # echo "build_type_data_byte: $build_type_data_byte"
+    # Use the raw_data directly instead of querying nsmtool again
+    if [[ $raw_data ]]; then
+        build_type=$(echo "$raw_data" | awk '{print $'$build_type_data_byte'}')
+        case "$build_type" in
+            "00") echo "development" ;;
+            "01") echo "release" ;;
+            *) echo "unknown" ;;
+        esac
+    else
+        echo ""
+    fi
+}
+
+# HMC-SMA-Security-10
+# Function to get SigningType from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID 
+# Returns:
+#   valid  (SigningType) (0 Debug, 1 Production, 2 External, 3 DOT) - Signing Type Size (1 Byte)
+get_sma_nsm_signing_type_nsmtool() {
+    local sma_eid="$1"
+    # Get both slot count and raw data
+    read slot_count raw_data <<< $(_get_sma_nsm_active_firmware_slot "${sma_eid}")
+    # Calculate signing type data byte position
+    local signing_type_data_byte=$((38 + ((slot_count * 47) + 33)))
+    # echo "signing_type_data_byte: $signing_type_data_byte"
+    # Use the raw_data directly instead of querying nsmtool again
+    if [[ $raw_data ]]; then
+        signing_type=$(echo "$raw_data" | awk '{print $'$signing_type_data_byte'}')
+        case "$signing_type" in
+            "00") echo "debug" ;;
+            "01") echo "production" ;;
+            "02") echo "external" ;;
+            "03") echo "dot" ;;
+            *) echo "unknown" ;;
+        esac
+    else
+        echo ""
+    fi
+}
+
+# HMC-SMA-Security-14
+# Function to get SigningKeyIndex from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid  (SigningKeyIndex)  (Index key used to sign fw) - Key Index Size (2 Bytes)
+get_sma_nsm_signing_key_index_nsmtool() {
+    local sma_eid="$1"
+    # Get both slot count and raw data
+    read slot_count raw_data <<< $(_get_sma_nsm_active_firmware_slot "${sma_eid}")
+    # Calculate signing key index data byte position
+    local signing_key_index_data_byte=$((38 + ((slot_count * 47) + 46)))
+    # echo "signing_key_index_data_byte: $signing_key_index_data_byte"
+    # Use the raw_data directly instead of querying nsmtool again
+    [[ $raw_data ]] && echo "$raw_data" | awk '{print $'$signing_key_index_data_byte', $'$((signing_key_index_data_byte + 1))'}' || echo ""
 }
 
 ## FPGA: Firmware Update Protocol
@@ -3098,6 +3272,36 @@ local gpu_irot_i3c_eid="$1"
 # get MCTP UUID
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
 eid=${gpu_irot_i3c_eid:-32} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
+}
+
+# HMC-GPU_IROT-MCTP_VDM-03
+# Function to get the enumrated MCTP EID, GPU IRoT I3C USB
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid EID
+get_gpu_irot_mctp_eid_i3c_usb() {
+local eid="${1:-61}"
+local usb_port_path="${2:-"1-1.2.1"}"
+# default EID to 32, GPU #5 IRoT
+# get MCTP EID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid_rt=$(_log_ mctp-usb-ctrl -s "00 80 02" -b "00"  -t 3 -e "${eid}" -w "${usb_port_path}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
+}
+
+# HMC-GPU_IROT-MCTP_VDM-04
+# Function to get the MCTP UUID for GPU IRoT I3C USB
+# Arguments:
+#   $1: MCTP EID to verify the UUID to get from
+# Returns:
+#   valid UUID according to FPGA IAS
+get_gpu_irot_mctp_uuid_i3c_usb() {
+local eid="${1:-61}"
+local usb_port_path="${2:-"1-1.2.1"}"
+# default EID to 32, GPU #5 IRoT
+# get MCTP UUID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+uuid_rt=$(_log_ mctp-usb-ctrl -s "00 80 03" -b "00" -t 3 -e "${eid}" -w "${usb_port_path}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
 }
 
 # HMC-GPU_EROT-MCTP_VDM-02
@@ -4232,21 +4436,6 @@ local cx7_erot_spi_eid="$1"
 eid=${cx7_erot_spi_eid:-17} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
 }
 
-# HMC-CX7_EROT-MCTP_VDM-01
-# Function to get the enumrated MCTP EID, CX7 ERoT SPI
-# Arguments:
-#   $1: MCTP EID to verify the EID to get from
-# Returns:
-#   valid "17"
-get_cx7_erot_mctp_eid_spi_usb() {
-# default EID to 17, CX7 MCTP ERoT SPI
-local eid="${1:-17}"
-
-# get MCTP EID
-# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
-## NOT WORKING
-#eid=${cx7_erot_spi_eid:-17} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
-}
 
 # HMC-CX7_EROT-MCTP_VDM-02
 # Function to get the enumrated MCTP EID, CX7 ERoT I2C
@@ -4292,6 +4481,71 @@ local cx7_erot_i2c_eid="$1"
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
 eid=${cx7_erot_i2c_eid:-21} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
 }
+
+# HMC-CX7_EROT-MCTP_VDM-05
+# Function to get the enumrated MCTP EID, CX7 ERoT SPI USB
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid "17"
+get_cx7_erot_mctp_eid_spi_usb() {
+# default EID to 17, CX7 MCTP ERoT SPI
+local eid="${1:-17}"
+local usb_port="${2:-1-1.4}"
+# get MCTP EID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid_rt=$(_log_ mctp-usb-ctrl -s "00 80 02" -b "00" -t 3 -e "${eid}" -w "${usb_port}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
+}
+
+# HMC-CX7_EROT-MCTP_VDM-06
+# Function to get the enumrated MCTP EID, CX7 ERoT I2C USB
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid "21"
+get_cx7_erot_mctp_eid_i2c_usb() {
+local eid="${1:-21}"
+local usb_port="${2:-1-1.4}"
+
+# default EID to 21, Umbriel CX7 MCTP ERoT I2C USB
+# get MCTP EID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid_rt=$(_log_ mctp-usb-ctrl -s "00 80 02" -b "00" -t 3 -e "${eid}" -w "${usb_port}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
+}
+
+
+# HMC-CX7_EROT-MCTP_VDM-07
+# Function to get the MCTP UUID for CX7 ERoT SPI USB
+# Arguments:
+#   $1: MCTP EID to verify the UUID to get from
+# Returns:
+#   valid UUID according to FPGA IAS
+get_cx7_erot_mctp_uuid_spi_usb() {
+local eid="${1:-17}"
+local usb_port="${2:-1-1.4}"
+
+# default EID to 17, CX7 MCTP ERoT SPI USB
+# get MCTP UUID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+uuid_rt=$(_log_ mctp-usb-ctrl -s "00 80 03" -b "00" -t 3 -e "${eid}" -w "${usb_port}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
+}
+
+# HMC-CX7_EROT-MCTP_VDM-08
+# Function to get the MCTP UUID for CX7 ERoT I2C USB
+# Arguments:
+#   $1: MCTP EID to verify the UUID to get from
+# Returns:
+#   valid UUID according to FPGA IAS
+get_cx7_erot_mctp_uuid_i2c_usb() {
+local eid="${1:-21}"
+local usb_port="${2:-1-1.4}"
+
+# default EID to 21, CX7 MCTP ERoT I2C USB
+# get MCTP UUID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+uuid_rt=$(_log_ mctp-usb-ctrl -s "00 80 03" -b "00" -t 3 -e "${eid}" -w "${usb_port}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
+}
+
 
 ## CX7: Base Protocol
 
@@ -4453,6 +4707,24 @@ local cmd=0x01
 # the 'nsmtool' outputs to journal log
 eid=${gpu_eid:-24} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
 }
+
+
+# HMC-CX7-NSM_T0-05
+# Function to verify NSM Get Supported Message Types via MCTP VDM USB
+# Arguments:
+#   $1: MCTP EID to verify the NSM
+# Returns:
+#   valid "0x3b", fault otherwise
+get_cx7_mctp_vdm_nsm_supported_message_types_usb() {
+local eid="${1:-24}"
+local usb_port="${2:-1-1.4}"
+local cmd=01
+
+# default EID to 24, CX7 MCTP EID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+output=$(_log_ mctp-usb-ctrl -s "7e 10 de 80 89 00 $cmd 00" -b "00" -t 3 -e "${eid}" -w "${usb_port}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f13) && echo "$output"
+}
+
 
 ## CX7: Firmware Update Protocol
 
@@ -5195,7 +5467,7 @@ eid=${input_eid:-17} && slot=${slot_id:-1} && count=$(_log_ spdmtool -e ${eid} g
 ## CX8: Firmware Update Protocol
 
 # HMC-CX8-Version-01
-# Function to get MCU FW version from PLDM
+# Function to get SMA FW version from PLDM
 # Arguments:
 #   $1: MCTP EID
 # Returns:
@@ -5254,7 +5526,7 @@ local eid="${1:-41}"
 key=${sku_key:-"PCI Subsystem Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
 }
 
-# HMC-MCU-PLDM_T5-05
+# HMC-SMA-PLDM_T5-05
 # Function to get PLDM fw_update PCI Subsystem ID of CX8
 # Arguments:
 #   $1: MCTP EID
@@ -5356,6 +5628,71 @@ local nvswitch_erot_i2c_eid="$1"
 # the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
 eid=${nvswitch_erot_i2c_eid:-19} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
 }
+
+# HMC-NVSWITCH_EROT-MCTP_VDM-05
+# Function to get the enumrated MCTP EID, NVSWITCH ERoT SPI USB
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid EID
+get_nvswitch_erot_mctp_eid_spi_usb() {
+local eid="${1:-15}"
+local usb_port="${2:-1-1.4}"
+
+# default EID to 15, NVSWITCH #1 MCTP ERoT SPI USB
+# get MCTP EID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid_rt=$(_log_ mctp-usb-ctrl -s "00 80 02" -b "00" -t 3 -e "${eid}" -w "${usb_port}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
+}
+
+# HMC-NVSWITCH_EROT-MCTP_VDM-06
+# Function to get the enumrated MCTP EID, NVSWITCH ERoT I2C USB
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid EID
+get_nvswitch_erot_mctp_eid_i2c_usb() {
+local eid="${1:-19}"
+local usb_port="${2:-1-1.4}"
+
+# default EID to 19, NVSWITCH #1 MCTP ERoT I2C USB
+# get MCTP EID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid_rt=$(_log_ mctp-usb-ctrl -s "00 80 02" -b "00" -t 3 -e "${eid}" -w "${usb_port}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
+}
+
+# HMC-NVSWITCH_EROT-MCTP_VDM-07
+# Function to get the MCTP UUID for NVSWITCH ERoT SPI
+# Arguments:
+#   $1: MCTP EID to verify the UUID to get from
+# Returns:
+#   valid UUID according to FPGA IAS
+get_nvswitch_erot_mctp_uuid_spi_usb() {
+local eid="${1:-15}"
+local usb_port="${2:-1-1.4}"
+
+# default EID to 15, NVSWITCH #1 MCTP ERoT SPI USB
+# get MCTP UUID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+uuid_rt=$(_log_ mctp-usb-ctrl -s "00 80 03" -b "00" -t 3 -e "${eid}" -w "${usb_port}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
+}
+
+# HMC-NVSWITCH_EROT-MCTP_VDM-08
+# Function to get the MCTP UUID for NVSWITCH ERoT I2C USB
+# Arguments:
+#   $1: MCTP EID to verify the UUID to get from
+# Returns:
+#   valid UUID according to FPGA IAS
+get_nvswitch_erot_mctp_uuid_i2c_usb() {
+local eid="${1:-19}"
+local usb_port="${2:-1-1.4}"
+
+# default EID to 19, NVSWITCH #1 MCTP ERoT I2C
+# get MCTP UUID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+uuid_rt=$(_log_ mctp-usb-ctrl -s "00 80 03" -b "00" -t 3 -e "${eid}" -w "${usb_port}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
+}
+
 
 # HMC-NVSWITCH_EROT-DBUS-13
 # Function to get NVSWITCH ERoT-SPI MCTP UUID via MCTP over VDM through DBus
@@ -7459,16 +7796,16 @@ else
 fi
 }
 
-# Component-Level Category: MCU #
-## MCU: Hardware Interface
+# Component-Level Category: SMA #
+## SMA: Hardware Interface
 
-# HMC-MCU-USB-01
+# HMC-SMA-USB-01
 # Function to verify if USB device is operational
 # Arguments:
 #   $1: USB device bus-port[.port]
 # Returns:
 #   valid "yes", "no" otherwise
-is_mcu_usb_operational() {
+is_sma_usb_operational() {
 local usb_port_path="${1:-"1-1.1.1"}"
 
 device_number=$(_get_usb_device_number "$usb_port_path")
@@ -7478,13 +7815,13 @@ bus_number=${usb_port_path%%-*}
 output=$(_log_ lsusb -s "$bus_number:$device_number"); [ -z "$output" ] && echo "no" || echo "yes"
 }
 
-# HMC-MCU-USB-02
-# Function to get MCU USB Vendor ID
+# HMC-SMA-USB-02
+# Function to get SMA USB Vendor ID
 # Arguments:
 #   $1: USB device bus-port[.port]
 # Returns:
 #   valid Vendor ID
-get_mcu_usb_vendor_id() {
+get_sma_usb_vendor_id() {
 local usb_port_path="${1:-"1-1.1.1"}"
 
 device_number=$(_get_usb_device_number "$usb_port_path")
@@ -7494,13 +7831,13 @@ bus_number=${usb_port_path%%-*}
 id=$(_log_ lsusb -v -s "$bus_number":"$device_number" | grep idVendor | grep -o '0x[0-9a-fA-F]\+') && echo "$id"
 }
 
-# HMC-MCU-USB-03
-# Function to get MCU USB Product ID
+# HMC-SMA-USB-03
+# Function to get SMA USB Product ID
 # Arguments:
 #   $1: USB device bus-port[.port]
 # Returns:
 #   valid Product ID
-get_mcu_usb_product_id() {
+get_sma_usb_product_id() {
 local usb_port_path="${1:-"1-1.1.1"}"
 
 device_number=$(_get_usb_device_number "$usb_port_path")
@@ -7510,13 +7847,13 @@ bus_number=${usb_port_path%%-*}
 id=$(_log_ lsusb -v -s "$bus_number":"$device_number" | grep idProduct | grep -o '0x[0-9a-fA-F]\+') && echo "$id"
 }
 
-# HMC-MCU-USB-04
-# Function to get MCU USB Interface Class
+# HMC-SMA-USB-04
+# Function to get SMA USB Interface Class
 # Arguments:
 #   $1: USB device bus-port[.port]
 # Returns:
 #   valid Interface SubClass
-get_mcu_usb_interface_class() {
+get_sma_usb_interface_class() {
 local usb_port_path="${1:-"1-1.1.1"}"
 
 device_number=$(_get_usb_device_number "$usb_port_path")
@@ -7527,13 +7864,13 @@ bus_number=${usb_port_path%%-*}
 class=$(_log_ lsusb -v -s "$bus_number":"$device_number" | awk '/bInterfaceClass/ {print $2; exit}') && echo "$class"
 }
 
-# HMC-MCU-USB-05
-# Function to get MCU USB Interface SubClass
+# HMC-SMA-USB-05
+# Function to get SMA USB Interface SubClass
 # Arguments:
 #   $1: USB device bus-port[.port]
 # Returns:
 #   valid Interface Class
-get_mcu_usb_interface_subclass() {
+get_sma_usb_interface_subclass() {
 local usb_port_path="${1:-"1-1.1.1"}"
 
 device_number=$(_get_usb_device_number "$usb_port_path")
@@ -7544,89 +7881,99 @@ bus_number=${usb_port_path%%-*}
 class=$(_log_ lsusb -v -s "$bus_number":"$device_number" | awk '/bInterfaceSubClass/ {print $2; exit}') && echo "$class"
 }
 
-# HMC-MCU-USB-06
-# Function to get MCU USB Port Hierarchy
+# HMC-SMA-USB-06
+# Function to get SMA USB Port Hierarchy
 # Arguments:
 #   $1: USB device bus-port[.port]
 # Returns:
 #   valid USB Port hierarchy
-get_mcu_usb_port_hierarchy() {
+get_sma_usb_port_hierarchy() {
 local usb_port_path="${1:-"1-1.1.1"}"
 
 echo "${usb_port_path}"
 }
+# HMC-SMA-USB-07
+# Function to get SMA USB MCTP VDM Tree EIDs
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid MCTP VDM Tree EIDs
+get_sma_dbus_mctp_vdm_tree_eids_usb() {
+local dbus_name=$(_get_mctp_dbus_conn "xyz.openbmc_project.MCTP.Control.USB${1:-"1_1_4"}")
+output=$(_log_ busctl tree "$dbus_name" | grep -o '/0/[0-9]\+$' | sed 's/\/0\///') && echo $output
+}
 
-## MCU: Firmware Update Protocol
+## SMA: Firmware Update Protocol
 
-# HMC-MCU-Version-01
-# Function to get MCU FW version from PLDM
+# HMC-SMA-Version-01
+# Function to get SMA FW version from PLDM
 # Arguments:
 #   $1: MCTP EID
 # Returns:
 #   valid FW version
-get_mcu_fw_version_pldm() {
+get_sma_fw_version_pldm() {
 local eid="${1:-40}"
-# default EID to 40, CX8 MCU 1
+# default EID to 40, CX8 SMA 1
 output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep 'ActiveComponentVersionString' | sed 's/.*"\(.*\)".*/\1/' | awk 'NR==1') && echo $output
 }
 
-# HMC-MCU-PLDM_T5-01
-# Function to get PLDM fw_update AP_SKU ID of MCU
+# HMC-SMA-PLDM_T5-01
+# Function to get PLDM fw_update AP_SKU ID of SMA
 # Arguments:
 #   $1: MCTP EID
 # Returns:
 #   valid AP_SKU ID
-get_mcu_pldm_apsku_id() {
+get_sma_pldm_apsku_id() {
 local eid="${1:-40}"
-# default EID to 40, CX8 MCU 1
+# default EID to 40, CX8 SMA 1
 key=${sku_key:-APSKU} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
 }
 
-# HMC-MCU-PLDM_T5-02
-# Function to get PLDM fw_update PCI Vendor ID of MCU
+# HMC-SMA-PLDM_T5-02
+# Function to get PLDM fw_update PCI Vendor ID of SMA
 # Arguments:
 #   $1: MCTP EID
 # Returns:
 #   valid "PCI Vendor" ID
-get_mcu_pldm_pci_vendor_id() {
+get_sma_pldm_pci_vendor_id() {
 local eid="${1:-40}"
-# default EID to 40, CX8 MCU 1
+# default EID to 40, CX8 SMA 1
 key=${sku_key:-"PCI Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
 }
 
-# HMC-MCU-PLDM_T5-03
-# Function to get PLDM fw_update PCI Deivce ID of MCU
+# HMC-SMA-PLDM_T5-03
+# Function to get PLDM fw_update PCI Deivce ID of SMA
 # Arguments:
 #   $1: MCTP EID
 # Returns:
 #   valid "PCI Device" ID
-get_mcu_pldm_pci_device_id() {
+get_sma_pldm_pci_device_id() {
 local eid="${1:-40}"
-# default EID to 40, CX8 MCU 1
+# default EID to 40, CX8 SMA 1
 key=${sku_key:-"PCI Device ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
 }
 
-# HMC-MCU-PLDM_T5-04
-# Function to get PLDM fw_update PCI Subsystem Vendor ID of MCU
+# HMC-SMA-PLDM_T5-04
+# Function to get PLDM fw_update PCI Subsystem Vendor ID of SMA
 # Arguments:
 #   $1: MCTP EID
 # Returns:
 #   valid "PCI Subsystem Vendor" ID
-get_mcu_pldm_pci_subsys_vendor_id() {
+get_sma_pldm_pci_subsys_vendor_id() {
 local eid="${1:-40}"
-# default EID to 40, CX8 MCU 1
+# default EID to 40, CX8 SMA 1
 key=${sku_key:-"PCI Subsystem Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
 }
 
-# HMC-MCU-PLDM_T5-05
-# Function to get PLDM fw_update PCI Subsystem ID of MCU
+# HMC-SMA-PLDM_T5-05
+# Function to get PLDM fw_update PCI Subsystem ID of SMA
 # Arguments:
 #   $1: MCTP EID
 # Returns:
 #   valid "PCI Subsystem" ID
-get_mcu_pldm_pci_subsys_id() {
+get_sma_pldm_pci_subsys_id() {
 local eid="${1:-40}"
-# default EID to 40, CX8 MCU 1
+# default EID to 40, CX8 SMA 1
 key=${sku_key:-"PCI Subsystem ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
 }
 
@@ -7802,6 +8149,39 @@ Completion Codes
 0x07 - 0x7E: RESERVED
 0x7F: ERR_BUS_ACCESS
 0x80 - 0xFF: Command specific
+COMMENT
+
+<<COMMENT
+# MCTP NSM, MCTP System Management API
+# mctp-usb-ctrl -husb
+Various command line options mentioned below
+    -v        Verbose level
+    -e        Target Endpoint Id
+    -m        Mode: (0 - Commandline mode, 1 - daemon mode, 2 - SPI test mode)
+    -t        Binding Type (0 - Resvd, 1 - I2C, 2 - PCIe, 3 - USB, 6 - SPI)
+    -b        Binding data (pvt)
+    -d        Delay in seconds (for MCTP enumeration)
+    -s        Tx data (MCTP packet payload: [Req-dgram]-[cmd-code]--)
+    -f        Absolute path to configuration json file
+    -n        Bus number for the selected interface, eg. PCIe 1, PCIe 2, I2C 3, ...
+    -i        usb own eid
+    -p        usb bridge eid
+    -x        usb bridge pool start eid
+    -w        port path of device <busid>-<port1>.<port2> eg 1-2.3
+    -c        option to remove duplicate EID entries from the routing table
+    -z        option to ignore certain EID entries from the routing table supplied as a space separated list in decimal
+
+    Example: Send VDM Query Revocation Policy(0x1d) command to HMC ERoT to Get Key Revoke Policy over USB
+    mctp-usb-ctrl -s "7f 00 00 16 47 80 01 1d 01 00" -t 3 -e 14 -w 1-1.4 -i 9 -v 1
+    - mctp_req_msg > 00 00 16 47 80 01 1D 01 00
+      IC/Msg Type: 0x7f (IANA VDM), Message Type: 00 00 16 47 (0x1647 - NVIDIA)
+      RQ/D/RSV/INSTANCE: 80, NVIDIA Message Type: 01
+      NVIDIA CMD Code: 1D, MVIDIA Message Version: 01, NVIDIA Message Payload: 00
+    - mctp_resp_msg > 7F 00 00 16 47 00 01 1D 01 00 00
+      IC/Msg Type: 0x7f (IANA VDM), Message Type: 00 00 16 47 (0x1647 - NVIDIA)
+      RQ/D/RSV/INSTANCE: 00, NVIDIA Message Type: 01
+      NVIDIA CMD Code: 1D, MVIDIA Message Version: 01
+      NVIDIA Message Completion Code: 00, NVIDIA Message Body: 00
 COMMENT
 
 <<COMMENT

@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/webui-vue;protocol=https;branch=develop \
            "
-SRCREV = "d67e6eaf7f47bb3c47e663bda8b299c12ea8d0df"
+SRCREV = "d617820167a7f8da2102b23b55206b539b5edeb3"
 
 EXTRA_OENPM = "-- --mode nvidia-gb"

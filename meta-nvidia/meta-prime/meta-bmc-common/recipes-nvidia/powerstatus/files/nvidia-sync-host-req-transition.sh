@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # Only trigger the Discover System State once at just BMC boots for power restore
-if [ `systemctl is-active phosphor-discover-system-state@0.service` != "active" ]; then
+is_service_active=`systemctl is-failed phosphor-discover-system-state@0.service`
+if [ "$is_service_active" != "active" ] && [ "$is_service_active" != "activating" ]; then
     systemctl start phosphor-discover-system-state@0.service
 fi
 

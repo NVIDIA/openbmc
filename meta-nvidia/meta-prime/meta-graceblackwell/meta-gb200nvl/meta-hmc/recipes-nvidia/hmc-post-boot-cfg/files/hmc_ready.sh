@@ -195,6 +195,12 @@ hmc_ready_sequence()
         exit 1
     fi
 
+    # Sync HMC FRU EEPROM to the file
+    /usr/bin/hmc_fru_checker.sh
+    if [ $? -ne 0 ]; then
+        echo "[ERROR] Unable to read HMC FRU"
+    fi
+
     # Module Temp Sensor Setting.
     #set_module_temp_sensor_threshold.sh
     echo "[WARNING] GPU Temp thresholds need to be set"

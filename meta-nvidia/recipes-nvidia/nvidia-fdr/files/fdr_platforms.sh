@@ -52,7 +52,7 @@ get_fdr_obj_path() {
         --dest=xyz.openbmc_project.ObjectMapper \
         /xyz/openbmc_project/object_mapper \
         xyz.openbmc_project.ObjectMapper.GetSubTreePaths \
-        string:"/" int32:0 array:string:"xyz.openbmc_project.Configuration.FDRConfig" \
+        string:"/" int32:0 array:string:"xyz.openbmc_project.Configuration.NvidiaFlightDataRecorder" \
         | grep "string" | head -n 1 | awk '{print $2}' | tr -d '"')
     
     if [ -z "$obj_path" ]; then
@@ -102,7 +102,7 @@ get_yaml_filename() {
         return
     fi
 
-    output=$(busctl get-property xyz.openbmc_project.EntityManager "$obj_path" xyz.openbmc_project.Configuration.FDRConfig Model 2>/dev/null)
+    output=$(busctl get-property xyz.openbmc_project.EntityManager "$obj_path" xyz.openbmc_project.Configuration.NvidiaFlightDataRecorder Model 2>/dev/null)
 
     if [ $? -ne 0 ] || [ -z "$output" ]; then
         default_yaml=$(get_default_yaml)

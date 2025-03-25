@@ -1,27 +1,61 @@
 [
 	{
-        "Name": "PowerShelf",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'PRODUCT_PRODUCT_NAME': '.?GB200-NVL PowerShelf.?', 'CHASSIS_PART_NUMBER': ''})",
-        "Type": "Chassis",
-        "xyz.openbmc_project.Inventory.Item.Chassis": {
-            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Rack"
-        },
-        "xyz.openbmc_project.Inventory.Decorator.Asset": {
-            "Manufacturer": "NVIDIA",
-            "Model": "GB200 NVL",
-            "PartNumber": "$BOARD_PART_NUMBER",
-            "SerialNumber": "$BOARD_SERIAL_NUMBER",
-            "ChassisType": "$CHASSIS_TYPE",
-            "ChassisPartNumber": "$CHASSIS_PART_NUMBER",
-            "ChassisSerial": "$CHASSIS_SERIAL_NUMBER"
-        },
-        "xyz.openbmc_project.Inventory.Decorator.AssetTag": {
-            "AssetTag": "$PRODUCT_ASSET_TAG"
-        },
-        "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
-            "Bus": "$bus",
-            "Address": "$address",
-            "Name": "PowerShelf"
-        }
+		"Name": "PowerShelf_0",
+		"Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'PRODUCT_PRODUCT_NAME': 'GB200NVL', 'CHASSIS_PART_NUMBER': '123-45678-0000'})",
+		"Type": "Chassis",
+		"xyz.openbmc_project.Inventory.Item.Chassis": {
+			"Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Rack"
+		},
+		"xyz.openbmc_project.Inventory.Decorator.Asset": {
+			"Manufacturer": "NVIDIA",
+			"Model": "GB200 NVL",
+			"PartNumber": "$BOARD_PART_NUMBER",
+			"SerialNumber": "$BOARD_SERIAL_NUMBER",
+			"ChassisType": "$CHASSIS_TYPE",
+			"ChassisPartNumber": "$CHASSIS_PART_NUMBER",
+			"ChassisSerial": "$CHASSIS_SERIAL_NUMBER"
+		},
+		"xyz.openbmc_project.Inventory.Decorator.AssetTag": {
+			"AssetTag": "$PRODUCT_ASSET_TAG"
+		},
+		"xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+			"Bus": "$bus",
+			"Address": "$address",
+			"Name": "PowerShelf_0"
+		},
+		"Exposes": [
+			{
+				"Name": "TotalRackPower_power",
+				"Type": "PMC_Sensor",
+				"SensorType": "power",
+                "PhysicalContext": "PowerSupply",
+                "Implementation": "Synthesized",
+                "Associations": [
+                    {
+                        "Forward": "chassis",
+                        "Backward": "all_sensors",
+                        "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/PowerShelf_0"
+                    }
+                ],
+				"SensorId": 0,
+				"Priority": true
+			},
+			{
+				"Name": "ISense_power",
+				"Type": "PMC_Sensor",
+				"SensorType": "power",
+                "PhysicalContext": "PowerSupply",
+                "Implementation": "Synthesized",
+                "Associations": [
+                    {
+                        "Forward": "chassis",
+                        "Backward": "all_sensors",
+                        "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/PowerShelf_0"
+                    }
+                ],
+				"SensorId": 1,
+				"Priority": true
+			}
+		]
 	}
 ]

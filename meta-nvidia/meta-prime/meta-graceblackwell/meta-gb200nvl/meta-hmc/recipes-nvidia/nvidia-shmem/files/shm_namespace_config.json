@@ -181,7 +181,14 @@
                 "RXSwitchRelayErrorPkts",
                 "QP1DroppedPkts",
                 "BitErrorRate",
-                "TXWait"
+                "TXWait",
+                "EffectiveError",
+                "LinkDownReasonCode",
+                "EffectiveBER",
+                "SymbolErrors",
+                "TotalRawBER",
+                "IntentionalLinkDownCount",
+                "UnintentionalLinkDownCount"
             ]
         },
         {
