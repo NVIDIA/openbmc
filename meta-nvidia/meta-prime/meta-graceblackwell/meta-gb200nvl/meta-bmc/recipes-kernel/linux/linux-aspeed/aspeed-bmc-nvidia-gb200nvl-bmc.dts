@@ -149,7 +149,7 @@
         compatible = "jedec,spi-nor";
         label = "bmc";
         spi-max-frequency = <50000000>;
-#include "aspeed/aspeed-bmc-nvidia-gh-flash-layout-64.dtsi"
+#include "aspeed-bmc-nvidia-gh-flash-layout-64.dtsi"
     };
 };
 

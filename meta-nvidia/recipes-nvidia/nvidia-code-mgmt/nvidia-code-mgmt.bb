@@ -26,6 +26,7 @@ DEPENDS = " \
          libmctp \
          fmt \
          libgpiod \
+         libusb1 \
          "
 DEPENDS += "${PYTHON_PN}-sdbus++-native"
 EXTRA_OEMESON += "-DMOCK_UTILS=false"

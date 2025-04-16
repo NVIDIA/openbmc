@@ -16,6 +16,7 @@ DEPENDS = " \
     yaml-cpp \
     nlohmann-json \
     sdbusplus \
+    phosphor-logging \
     systemd \
 "
 

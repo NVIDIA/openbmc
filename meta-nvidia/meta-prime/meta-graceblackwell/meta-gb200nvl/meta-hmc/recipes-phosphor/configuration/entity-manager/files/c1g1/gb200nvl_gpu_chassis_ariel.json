@@ -207,19 +207,9 @@
         ],
         "ThermalParameters": [
           {
-            "Name": "UpperFatal",
-            "Dynamic": false,
-            "Value": 105.0
-          },
-          {
-            "Name": "UpperCritical",
-            "Dynamic": false,
-            "Value": 103.0
-          },
-          {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 100.0
+            "Value": 105.0
           }
         ],
         "UUID": "STATIC:0:0",
@@ -982,19 +972,9 @@
         ],
         "ThermalParameters": [
           {
-            "Name": "UpperFatal",
-            "Dynamic": false,
-            "Value": 105.0
-          },
-          {
-            "Name": "UpperCritical",
-            "Dynamic": false,
-            "Value": 103.0
-          },
-          {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 100.0
+            "Value": 105.0
           }
         ],
         "UUID": "STATIC:0:1",

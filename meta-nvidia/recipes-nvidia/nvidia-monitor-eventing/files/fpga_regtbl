@@ -215,16 +215,23 @@ get_dev_alert() #(reg_name, dev_id)
 
 clear_alerts()
 {
+    local max_attempts=3
+    local attempt=1
+
     # create empty dump regtbl if in EINJ mode
     [ -f "$regtbl_einj" ] && einj_stop && einj_start && return 0
 
-    # call NSM raw cmds to clear all alerts
     err "Clear all alerts avoiding any FPGA clear alert issues."
-    local nsm_raw="http://127.0.0.1/redfish/v1/Managers/HGX_BMC_0/Actions/Oem/NvidiaManager.NSMRawCommand"
-    curl -sS -X POST -d '{"DeviceIdentificationId": 3, "DeviceInstanceId": 0, "IsLongRunning": false, "MessageType": 4, "CommandCode": 99, "DataSizeBytes": 21, "Data": [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255]}' $nsm_raw &> /dev/null
-    curl -sS -X POST -d '{"DeviceIdentificationId": 3, "DeviceInstanceId": 0, "IsLongRunning": false, "MessageType": 4, "CommandCode": 97, "DataSizeBytes": 32, "Data": [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255]}' $nsm_raw &> /dev/null
+    while [ $attempt -le $max_attempts ]; do
+        clear_all_alerts >/dev/null && return 0
 
-    return 0
+        err "Attempt $attempt failed, retrying..."
+        attempt=$((attempt + 1))
+        [ $attempt -le $max_attempts ] && sleep 1
+    done
+
+    err "Clear alerts failed after $max_attempts attempts"
+    return 1
 }
 
 get_alert_status() #(reg_name, dev_id)
@@ -239,10 +246,12 @@ get_alert_status() #(reg_name, dev_id)
         dbg "no alert caches, creating..."
         dump_all_alerts;rc=$?
         [ "$rc" -ne 0 ] && err "dump_all_alerts failed, rc=$rc!" && return $rc
-        clear_alerts;rc=$? # clear since all alerts cached
-        [ "$rc" -ne 0 ] && err "clear_alerts failed but continue, rc=$rc!"
+        if [ -n "$(ls -A $alert_cache)" ]; then
+            # clear alerts only when there are active alerts
+            clear_alerts;rc=$? # clear since all alerts cached
+            [ "$rc" -ne 0 ] && err "clear_alerts failed but continue, rc=$rc!"
+        fi
     fi
-
     # check reg_name on target dev_id
     local intr_state;intr_state=$(get_dev_alert "$reg_name" "$dev_id");rc=$?
     [ "$rc" -ne 0 ] && err "get_dev_alert failed, rc=$rc!" && return $rc

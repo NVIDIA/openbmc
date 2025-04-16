@@ -13,16 +13,19 @@ run_query() {
     local RXDATA=""
     local TXDATA=""
     local ERRORCODE=00
+    local TIMEOUT=3
     VER=${1}
     EID=${2}
     if [[ "${VER}" == "1" ]]; then
         COMMAND="debug_token_query"
     elif [[ "${VER}" == "2" ]]; then
         COMMAND="debug_token_query_v2"
+    elif [[ "${VER}" == "3" ]]; then
+        COMMAND="debug_token_query_v3"
     else
        return
     fi
-    OUTPUT=$(mctp-vdm-util -c ${COMMAND} -t ${EID})
+    OUTPUT=$(/usr/bin/mctp-vdm-util -o ${TIMEOUT} -c ${COMMAND} -t ${EID})
     RX=$(echo "${OUTPUT}" | grep "RX: ")
     TX=$(echo "${OUTPUT}" | grep "TX: ")
     if ! [[ -z "${TX}" ]]; then
@@ -54,10 +57,11 @@ for EID in "$@"; do
         echo "Argument ${EID} is not a number, ignoring." >&2
         continue
     fi
-    run_query 2 ${EID}
-    RC=$?
-    # in case of an error, try query version 1
-    if [[ ${RC} != 0 ]]; then
-        run_query 1 ${EID}
-    fi
+    for VER in 3 2 1; do
+        run_query ${VER} ${EID}
+        RC=$?
+        if [[ ${RC} == 0 ]]; then
+            break
+        fi
+    done
 done

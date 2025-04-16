@@ -138,7 +138,13 @@ check_fpga_ready_and_erot_auth() {
 hmc_ready_sequence()
 {
     discover_modules
-    
+
+    # Sync HMC FRU EEPROM to the file
+    /usr/bin/hmc_fru_checker.sh
+    if [ $? -ne 0 ]; then
+        echo "[ERROR] Unable to read HMC FRU"
+    fi
+
     #Primary FPGA
     execute_fpga_power_sequence
     rc=$?
@@ -193,12 +199,6 @@ hmc_ready_sequence()
     if [[ $rc -ne 0 ]]; then
         echo "[ERROR] HMC booted in ROFS, Read-Only mode"
         exit 1
-    fi
-
-    # Sync HMC FRU EEPROM to the file
-    /usr/bin/hmc_fru_checker.sh
-    if [ $? -ne 0 ]; then
-        echo "[ERROR] Unable to read HMC FRU"
     fi
 
     # Module Temp Sensor Setting.

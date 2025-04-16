@@ -62,3 +62,13 @@ NVIDIA_ADMIN_ACCOUNT_PARAMS = "\
   "
 
 EXTRA_USERS_PARAMS:pn-obmc-phosphor-image += "${@bb.utils.contains('DISTRO_FEATURES', 'nvidia-admin-account', " ${NVIDIA_ADMIN_ACCOUNT_PARAMS}", '', d)}"
+
+# Refer to the EAS SPEC to check the actual password
+# The password is '0penBmc'
+NVIDIA_OBMCHOST_ACCOUNT_PARAMS = "\
+  useradd --groups redfish,web,ipmi,hostconsole,ssh-users -s /bin/sh obmchost; \
+  usermod -p '\$1\$UGMqyqdG\$FZiylVFmRRfl9Z0Ue8G7e/' obmchost; \
+  passwd-expire obmchost; \
+  "
+
+EXTRA_USERS_PARAMS:pn-obmc-phosphor-image += "${@bb.utils.contains('DISTRO_FEATURES', 'nvidia-secure-shell', " ${NVIDIA_OBMCHOST_ACCOUNT_PARAMS}", '', d)}"

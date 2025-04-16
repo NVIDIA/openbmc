@@ -3,6 +3,7 @@ bmc_dump_path="/var/lib/logging/dumps/bmc"
 
 SRC_URI:append = " file://fw_atts_dump.sh \
                    file://hw_checkout_dump.sh \
+                   file://device_mctp_eid_c1g1.csv \
                 "
 
 EXTRA_OEMESON += "-Dfaultlog-dump-extension=enabled"
@@ -63,9 +64,11 @@ FILESEXTRAPATHS:prepend := "${THISDIR}:"
 FILES:${PN}-manager +=  "${bindir}/fw_atts_dump.sh"
 FILES:${PN}-manager +=  "${bindir}/hw_checkout_dump.sh"
 FILES:${PN}-manager +=  "${bindir}/nsm-dump-tool"
+FILES:${PN}-manager +=  "${datadir}/device_mctp_eid_c1g1.csv"
 
 do_install:append() {
     install -m 755 ${WORKDIR}/fw_atts_dump.sh ${D}${bindir}/
     install -m 755 ${WORKDIR}/hw_checkout_dump.sh ${D}${bindir}/
+    install -m 644 ${WORKDIR}/device_mctp_eid_c1g1.csv ${D}${datadir}/
 }
 

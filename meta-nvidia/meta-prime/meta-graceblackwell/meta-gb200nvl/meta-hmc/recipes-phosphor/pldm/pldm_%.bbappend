@@ -3,6 +3,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 inherit systemd
 
 EXTRA_OEMESON:append = " -Dnvlink-c2c-fabric-object=disabled "
+EXTRA_OEMESON:append = " -Denable-in-kernel-mctp=enabled "
 
 SRC_URI:append = " file://fw_update_config_c1g1.json \
                    file://fw_update_config_c1g2.json \

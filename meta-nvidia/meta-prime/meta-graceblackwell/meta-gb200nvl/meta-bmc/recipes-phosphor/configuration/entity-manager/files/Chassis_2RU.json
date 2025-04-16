@@ -1535,7 +1535,7 @@
             }
         ],
         "Name": "Chassis_0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '.?675-24975-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-(24975-(0[034]00|2000)|24059-1000).*'})",
         "Type": "Chassis",
         "xyz.openbmc_project.Inventory.Item.Chassis": {
             "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Shelf"
@@ -1589,7 +1589,7 @@
     },
     {
         "Name": "PDB Chassis FRU Assembly0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'CHASSIS_PART_NUMBER': '.?675-24975-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'CHASSIS_PART_NUMBER': '675-(24975-(0[034]00|2000)|24059-1000).*'})",
         "Type": "Assembly",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Model": "GB200 NVL",
@@ -1606,7 +1606,7 @@
     },
     {
         "Name": "PDB Board FRU Assembly1",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'CHASSIS_PART_NUMBER': '.?675-24975-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'CHASSIS_PART_NUMBER': '675-(24975-(0[034]00|2000)|24059-1000).*'})",
         "Type": "Assembly",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Model": "$BOARD_PRODUCT_NAME",
@@ -1624,7 +1624,7 @@
     },
     {
         "Name": "PDB Product FRU Assembly2",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'CHASSIS_PART_NUMBER': '.?675-24975-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'CHASSIS_PART_NUMBER': '675-(24975-(0[034]00|2000)|24059-1000).*'})",
         "Type": "Assembly",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Model": "$PRODUCT_PRODUCT_NAME",

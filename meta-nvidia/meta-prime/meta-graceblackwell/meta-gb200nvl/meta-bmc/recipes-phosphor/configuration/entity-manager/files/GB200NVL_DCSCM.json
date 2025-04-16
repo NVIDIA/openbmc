@@ -62,6 +62,7 @@
             "Address": "$address",
             "Name": "BMC_FRU"
         },
+	"xyz.openbmc_project.Inventory.Item.ManagementService": {},
         "xyz.openbmc_project.Inventory.Item.Chassis": {
             "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Module"
         },
@@ -87,6 +88,11 @@
                     "all_chassis",
                     "parent_chassis",
                     "/xyz/openbmc_project/inventory/system/chassis/ERoT_BMC_0"
+                ],
+                [
+                    "all_managers",
+                    "chassis",
+                    "/xyz/openbmc_project/inventory/system/bmc/BMC_0"
                 ]
             ]
         }

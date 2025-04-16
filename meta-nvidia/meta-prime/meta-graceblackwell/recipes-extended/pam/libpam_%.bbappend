@@ -24,7 +24,10 @@ FAILLOCK_ROOT_UNLOCK_TIME = "${@bb.utils.contains('BUILD_TYPE', 'prod', '${FAILL
 # Override the faillock.conf content based on the build type
 do_install:append() {
     install -d ${D}${sysconfdir}/security
-    cat << EOF > ${D}${sysconfdir}/security/faillock.conf
+    install -d ${TOPDIR}/password-policy
+
+    # overwrite the faillock.conf in both locations
+    cat << EOF | tee ${D}${sysconfdir}/security/faillock.conf ${TOPDIR}/password-policy/faillock.conf > /dev/null
 even_deny_root
 deny=${FAILLOCK_DENY}
 unlock_time=${FAILLOCK_UNLOCK_TIME}

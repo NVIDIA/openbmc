@@ -20,6 +20,8 @@ RDEPENDS:${PN} += "curl"
 
 EXTRA_OEMESON += "-Dtests=disabled"
 
+SVC_NAME = "nvidia-monitor-eventing"
+
 # Using NVIDIA Gitlab URI for OpenBMC for now, please make sure your Gitlab key doesn't have a passphase.
 # You could change the passphase to empty by 'ssh-keygen -p -f ~/.ssh/<your_gitlab_id_file>'
 # This issue will be solved when we upstream all codes to github.
@@ -29,18 +31,19 @@ S = "${WORKDIR}/git"
 
 FILES:${PN}:append = " ${bindir}/monitor-eventingd"
 FILES:${PN}:append = " ${libdir}/libeventing${SOLIBS}"
-FILES:${PN}:append = " ${systemd_system_unitdir}/nvidia-monitor-eventing.service"
+FILES:${PN}:append = " ${systemd_system_unitdir}/${SVC_NAME}.service"
+FILES:${PN}:append = " ${systemd_system_unitdir}/${SVC_NAME}.service.d/*.conf"
 FILES:${PN}:append = " ${datadir}/mon_evt/*.json"
 FILES:${PN}:append = " ${datadir}/*.conf"
 FILES:${PN}:append = " ${datadir}/*.csv"
 
 SYSTEMD_PACKAGES = "${PN}"
-SYSTEMD_SERVICE:${PN} = "nvidia-monitor-eventing.service"
+SYSTEMD_SERVICE:${PN} = "${SVC_NAME}.service"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI += " \
-    file://nvidia-monitor-eventing.service \
+    file://${SVC_NAME}.service \
     file://mctp-vdm-util-wrapper \
     file://fpga_regtbl \
     "

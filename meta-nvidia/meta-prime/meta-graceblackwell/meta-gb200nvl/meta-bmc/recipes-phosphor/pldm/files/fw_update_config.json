@@ -402,20 +402,20 @@
             },
             "firmware_inventory":{
                "create":{
-                  "MCU_0":{
+                  "SMA_0":{
                      "component_id":65282,
                      "associations":[
                         {
                            "forward":"inventory",
                            "reverse":"activation",
-                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/MCU_0"
+                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/SMA_0"
                         }
                      ]
                   }
                }
             },
             "component_info":{
-               "MCU_0":68282
+               "SMA_0":68282
             }
          },
         {
@@ -431,20 +431,20 @@
             },
             "firmware_inventory":{
                "create":{
-                  "MCU_1":{
+                  "SMA_1":{
                      "component_id":65282,
                      "associations":[
                         {
                            "forward":"inventory",
                            "reverse":"activation",
-                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/MCU_1"
+                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/SMA_1"
                         }
                      ]
                   }
                }
             },
             "component_info":{
-               "MCU_1":68282
+               "SMA_1":68282
             }
          }
 

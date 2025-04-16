@@ -15,28 +15,21 @@
                         "Direction": "greater than",
                         "Name": "upper non recoverable",
                         "Severity": 4,
-                        "Value": 100.0,
-                        "Index": 2
-                    },
-                    {
-                        "Direction": "greater than",
-                        "Name": "soft shutdown",
-                        "Severity": 3,
-                        "Value": 98.0,
+                        "Value": 115.0,
                         "Index": 2
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper critical",
                         "Severity": 1,
-                        "Value": 98.0,
+                        "Value": 96.0,
                         "Index": 2
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper non critical",
                         "Severity": 0,
-                        "Value": 95.0,
+                        "Value": 91.0,
                         "Index": 2
                     }
                 ],
@@ -173,28 +166,21 @@
                         "Direction": "greater than",
                         "Name": "upper non recoverable",
                         "Severity": 4,
-                        "Value": 100.0,
-                        "Index": 2
-                    },
-                    {
-                        "Direction": "greater than",
-                        "Name": "soft shutdown",
-                        "Severity": 3,
-                        "Value": 98.0,
+                        "Value": 115.0,
                         "Index": 2
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper critical",
                         "Severity": 1,
-                        "Value": 98.0,
+                        "Value": 96.0,
                         "Index": 2
                     },
                     {
                         "Direction": "greater than",
                         "Name": "upper non critical",
                         "Severity": 0,
-                        "Value": 95.0,
+                        "Value": 91.0,
                         "Index": 2
                     }
                 ],

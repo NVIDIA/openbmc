@@ -45,7 +45,7 @@ fi
 # If FruDevice has data, wait 3s to make sure all frus are ready
 sleep 3
 
-cpu_info_board_list="P4975\|P5859\|PG548"
+cpu_info_board_list="PDB\|P5859"
 
 # Initialize CPU count and targets based on product name
 while read -r line; do
@@ -54,7 +54,6 @@ while read -r line; do
         case "$product_name" in
             *Bianca*) cpu_count=2 ;;
             *Ariel*) cpu_count=2 ;;
-            *"Super Ariel"*) cpu_count=4 ;;
             *) cpu_count=1 ;;
         esac
 
@@ -129,7 +128,7 @@ check_all_cpu_boot_post_code
 for i in "${!found_targets[@]}"; do
     if [ "${found_targets[$i]}" == "false" ]; then
         msg="CPU Socket $i,Boot Failure"
-        resolution="Ensure the CPU socket is connected and seated. Replace the defective CPU socket if necessary."
+        resolution="Power cycle the system. If problem persists, reflash the SBIOS firmware."
         originofcondition="/redfish/v1/Chassis/HGX_CPU_$i"
         busctl call xyz.openbmc_project.Logging /xyz/openbmc_project/logging xyz.openbmc_project.Logging.Create Create ssa{ss} \
             ResourceEvent.1.0.ResourceErrorsDetected xyz.openbmc_project.Logging.Entry.Level.Error 4 \

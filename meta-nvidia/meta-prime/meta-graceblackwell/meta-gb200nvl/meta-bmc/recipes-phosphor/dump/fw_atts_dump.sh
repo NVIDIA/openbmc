@@ -11,7 +11,7 @@ ARG_FWATTS_DUMP_PATH=''
 
 CFG_CHECKOUT_TOOL_PATH="/usr/bin/hw_checkout.sh"
 CFG_CHECKOUT_TOOL_LOG="hmc_checker.log"
-
+CFG_CHECKOUT_TOOL_LOG_RENAME="bmc_checker.log"
 
 function help()
 {
@@ -40,7 +40,10 @@ function dump_fwatts()
         $CMD_RUN > $TMP_DIR_PATH/console.log
     fi
 
-    cp $TMP_DIR/$CFG_CHECKOUT_TOOL_LOG $TMP_DIR_PATH
+    sed -i "s/## HMC Firmware Attributes ##/## BMC Firmware Attributes ##/g" $TMP_DIR_PATH/console.log
+    sed -i "s/HMC UTC Time/BMC UTC Time/g" $TMP_DIR/$CFG_CHECKOUT_TOOL_LOG
+
+    cp $TMP_DIR/$CFG_CHECKOUT_TOOL_LOG $TMP_DIR_PATH/$CFG_CHECKOUT_TOOL_LOG_RENAME
 
     if [ $? -ne 0 ]; then
         echo "Firmware attributes dump failed"

@@ -32,17 +32,17 @@ function wait_for_hmc_ping()
 {
     local delay_secs=5
     trycnt=1
-    max_retries=120
+    max_retries=18
     while true; do
         # Ping HMC
-        ping -c 5 $HMC_IP > /dev/null
+        ping -c 5 -W 1 $HMC_IP > /dev/null
         rc=$?
         if [[ $rc -eq 0 ]]; then
-            echo "[INFO] HMC is responding to ping"
+            # HMC is responding to ping
             return 0
         fi
 
-        # If HMC does not respond, log an error and exit with return code
+        # If HMC does not respond after 180 secounds, log an error and exit with return code
         if [ $trycnt -ge $max_retries ]; then
             echo "[ERROR] HMC not responding to ping"
             return 1
@@ -77,6 +77,18 @@ function rebind_usb_driver()
     fi
 }
 
+function recover_usb_connection() {
+    rebind_usb_driver
+    wait_for_hmc_ping
+    local ping_rc=$?
+    if [[ $ping_rc -eq 0 ]]; then
+        echo "[INFO] BMC/HMC USB Connection restored"
+    else
+        echo "[ERROR] Failed to restore BMC/HMC USB Connection"
+    fi
+    return $ping_rc
+}
+
 ############################### main ##########################################
 while true; do
 
@@ -84,14 +96,13 @@ while true; do
     rc=$?
     if [[ $rc -ne 0 ]]; then
         # USB connection is down, attempt to recover
-        rebind_usb_driver
-        wait_for_hmc_ping
-        ping_rc=$?
-        if [[ $ping_rc -eq 0 ]]; then
-            echo "[INFO] BMC/HMC USB Connection restored"
-        else
-            echo "[ERROR] Failed to restore BMC/HMC USB Connection"
-        fi
+        recover_usb_connection
+    fi
+    wait_for_hmc_ping
+    ping_rc=$?
+    if [[ $ping_rc -ne 0 ]]; then
+        # Cannot ping HMC, attempt to recover
+        recover_usb_connection
     fi
     sleep $loop_delay
 done

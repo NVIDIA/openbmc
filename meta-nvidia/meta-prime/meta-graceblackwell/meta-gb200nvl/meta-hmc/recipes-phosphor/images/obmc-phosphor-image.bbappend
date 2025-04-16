@@ -29,6 +29,8 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " \
                                     i2c-dump-server \
                                     hmc-write-protect \
                                     nvidia-hmc-fru-check \
+                                    mctp \
+                                    tcpdump \
                                   "
 
 OBMC_IMAGE_EXTRA_INSTALL:append = "curl mctp-mockep"

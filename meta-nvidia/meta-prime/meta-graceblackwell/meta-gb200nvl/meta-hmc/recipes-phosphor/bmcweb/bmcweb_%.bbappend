@@ -80,9 +80,12 @@ SRC_URI:append = " file://fw_uuid_mapping.json"
 
 SRC_URI:append = " file://rot_chassis_properties_allowlist.json"
 
+SRC_URI:append = " file://mrd_ProcessorPortMetrics.json"
+
 FILES:${PN}:append = " \
     ${datadir}/${PN}/fw_uuid_mapping.json \
     ${datadir}/${PN}/rot_chassis_properties_allowlist.json \
+    ${datadir}/${PN}/mrd_ProcessorPortMetrics.json \
     ${systemd_system_unitdir}/bmcweb.service.d/bmcweb-gb200nvl-hmc.conf \
     ${systemd_system_unitdir}/bmcweb.socket.d/bmcweb-socket-gb200nvl-hmc.conf \
 "
@@ -91,6 +94,7 @@ do_install:append() {
     install -d ${D}${datadir}/${PN}/
     install -m 0644 ${WORKDIR}/fw_uuid_mapping.json ${D}${datadir}/${PN}/
     install -m 0644 ${WORKDIR}/rot_chassis_properties_allowlist.json ${D}${datadir}/${PN}/
+    install -m 0644 ${WORKDIR}/mrd_ProcessorPortMetrics.json ${D}${datadir}/${PN}/
 
     install -d ${D}${systemd_system_unitdir}/bmcweb.service.d
     install -m 0644 ${WORKDIR}/bmcweb-gb200nvl-hmc.conf ${D}${systemd_system_unitdir}/bmcweb.service.d/

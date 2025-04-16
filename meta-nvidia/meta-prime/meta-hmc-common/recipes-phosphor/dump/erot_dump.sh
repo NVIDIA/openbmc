@@ -9,7 +9,6 @@ OUTPUT_ARCHIVE_PATH=""
 ARG_DUMP_ID="00000000"
 ARG_DUMP_PATH=""
 
-DUMP_CFG_INPUT_FILE="/usr/share/device_mctp_eid.csv"
 GLACIER_LOG_FILE="/var/mctp-vdm-output.bin"
 CMS_LOG_FILE="/var/cms2_log.bin"
 
@@ -109,8 +108,30 @@ function get_properties() {
     echo "$name,$i2c_address,$i2c_bus"
 }
 
+# Function to return the dump config input file
+function get_dump_cfg_input_file()
+{
+    local cfg_file="/usr/share/device_mctp_eid.csv"  # default
+
+    # Get the list of objects under the FruDevice
+    local object_paths=$(busctl tree xyz.openbmc_project.FruDevice | grep -o '/xyz/openbmc_project/FruDevice/[^ ]*')
+
+    # Iterate over each object and check the property
+    for object_path in $object_paths; do
+        local value=$(busctl get-property xyz.openbmc_project.FruDevice $object_path xyz.openbmc_project.FruDevice PRODUCT_PRODUCT_NAME 2>/dev/null | cut -d '"' -f 2)
+        # Check if it's c1g1
+        if [[ "$value" == *1CPU* && "$value" == *1GPU* ]]; then
+            cfg_file="/usr/share/device_mctp_eid_c1g1.csv"
+            break
+        fi
+    done
+
+    echo -n "$cfg_file"
+}
+
 function main()
 {
+    DUMP_CFG_INPUT_FILE="$(get_dump_cfg_input_file)"
     DEVICENAME_EID_LIST=`cat "$DUMP_CFG_INPUT_FILE"`
 
     for device_eid in $DEVICENAME_EID_LIST

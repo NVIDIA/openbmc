@@ -51,7 +51,6 @@ while true; do
             echo "[INFO] HMC-FPGA USB Connection restored"
             # Start mctp-usb-ctrl service to re-enable MCTP over USB
             systemctl stop mctp-usb-ctrl.service
-            systemctl restart mctp-usb-demux.service
             sleep 2
             systemctl start mctp-usb-ctrl.service
             down=0

@@ -169,8 +169,6 @@ function update_service_status_all()
     # Additional Service Status in extended register 
     service_status=0x00
     service_status=$(update_service_status 'xyz.openbmc_project.Dump.Manager' "$service_status" 0)
-    service_status=$(update_service_status 'mctp-usb-demux' "$service_status" 1)
-    service_status=$(update_service_status 'mctp-spi0-demux' "$service_status" 2)
     data_array[14]=$service_status
 }
 

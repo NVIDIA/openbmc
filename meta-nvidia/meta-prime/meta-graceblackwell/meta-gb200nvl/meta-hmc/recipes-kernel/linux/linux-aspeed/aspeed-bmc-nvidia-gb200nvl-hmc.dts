@@ -67,14 +67,17 @@
         compatible = "jedec,spi-nor";
         label = "bmc";
         spi-max-frequency = <50000000>;
-#include "aspeed/aspeed-bmc-nvidia-gh-flash-layout-64.dtsi"
+#include "aspeed-bmc-nvidia-gh-flash-layout-64.dtsi"
     };
 };
 
 &fmcraw {
     status = "okay";
     spidev@0 {
-        compatible = "hgx,glacier";
+        compatible = "mctp-spi";
+        alert-gpio = <&gpio0 ASPEED_GPIO(R, 1) GPIO_ACTIVE_HIGH>;
+        interrupt-parent = <&gpio0>;
+        interrupts = <&gpio0 ASPEED_GPIO(R, 1) GPIO_ACTIVE_HIGH>;
         status = "okay";
     };
 };

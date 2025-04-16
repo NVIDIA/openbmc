@@ -8,33 +8,15 @@
         "OffsetValue": 25,
         "SensorType": "Temperature",
         "Name": "HGX_GPU_0_DRAM_0_Temp_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": -128,
         "MaxValue": 127,
         "Thresholds": [
           {
             "Direction": "greater than",
-            "Name": "upper non recoverable",
-            "Severity": 4,
-            "Value": 105.0
-          },
-          {
-            "Direction": "greater than",
-            "Name": "soft shutdown",
-            "Severity": 3,
-            "Value": 103.0
-          },
-          {
-            "Direction": "greater than",
-            "Name": "upper critical",
-            "Severity": 1,
-            "Value": 103.0
-          },
-          {
-            "Direction": "greater than",
             "Name": "upper non critical",
             "Severity": 0,
-            "Value": 100.0
+            "Value": 105.0
           }
         ],
         "ValueType": "Raw",
@@ -47,33 +29,15 @@
         "OffsetValue": 29,
         "SensorType": "Temperature",
         "Name": "HGX_GPU_1_DRAM_0_Temp_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": -128,
         "MaxValue": 127,
         "Thresholds": [
           {
             "Direction": "greater than",
-            "Name": "upper non recoverable",
-            "Severity": 4,
-            "Value": 105.0
-          },
-          {
-            "Direction": "greater than",
-            "Name": "soft shutdown",
-            "Severity": 3,
-            "Value": 103.0
-          },
-          {
-            "Direction": "greater than",
-            "Name": "upper critical",
-            "Severity": 1,
-            "Value": 103.0
-          },
-          {
-            "Direction": "greater than",
             "Name": "upper non critical",
             "Severity": 0,
-            "Value": 100.0
+            "Value": 105.0
           }
         ],
         "ValueType": "Raw",
@@ -86,7 +50,7 @@
         "OffsetValue": 75,
         "SensorType": "Power",
         "Name": "HGX_GPU_0_Power_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0,
         "MaxValue": 1023,
         "ValueType": "Raw",
@@ -99,7 +63,7 @@
         "OffsetValue": 79,
         "SensorType": "Power",
         "Name": "HGX_GPU_1_Power_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0,
         "MaxValue": 1023,
         "ValueType": "Raw",
@@ -112,7 +76,7 @@
         "OffsetValue": 108,
         "SensorType": "Temperature",
         "Name": "HGX_GPU_0_Temp_1",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": -128,
         "MaxValue": 127,
         "Thresholds": [
@@ -151,7 +115,7 @@
         "OffsetValue": 112,
         "SensorType": "Temperature",
         "Name": "HGX_GPU_1_Temp_1",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": -128,
         "MaxValue": 127,
         "Thresholds": [
@@ -190,7 +154,7 @@
         "OffsetValue": 141,
         "SensorType": "Energy",
         "Name": "HGX_GPU_0_Energy_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0,
         "MaxValue": 4.29497e+09,
         "ValueType": "Raw",
@@ -203,7 +167,7 @@
         "OffsetValue": 149,
         "SensorType": "Energy",
         "Name": "HGX_GPU_1_Energy_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0,
         "MaxValue": 4.29497e+09,
         "ValueType": "Raw",
@@ -216,7 +180,7 @@
         "OffsetValue": 206,
         "SensorType": "Power",
         "Name": "HGX_GPU_0_DRAM_0_Power_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0,
         "MaxValue": 1023,
         "ValueType": "Raw",
@@ -229,7 +193,7 @@
         "OffsetValue": 210,
         "SensorType": "Power",
         "Name": "HGX_GPU_1_DRAM_0_Power_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0,
         "MaxValue": 1023,
         "ValueType": "Raw",
@@ -242,7 +206,7 @@
         "OffsetValue": 240,
         "SensorType": "Temperature",
         "Name": "HGX_HMC_0_Temp_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": -128,
         "MaxValue": 127,
         "Thresholds": [
@@ -287,7 +251,7 @@
         "OffsetValue": 288,
         "SensorType": "Temperature",
         "Name": "HGX_GPU_0_Temp_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": -128,
         "MaxValue": 127,
         "Thresholds": [
@@ -308,7 +272,7 @@
         "OffsetValue": 292,
         "SensorType": "Temperature",
         "Name": "HGX_GPU_1_Temp_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": -128,
         "MaxValue": 127,
         "Thresholds": [
@@ -330,7 +294,7 @@
         "SensorType": "Energy",
         "Name": "M0_CPU_Engy0",
         "Name1": "ProcessorModule_0_CPU_0_Energy_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0,
         "MaxValue": 100000,
         "ValueType": "PLDM",
@@ -344,7 +308,7 @@
         "SensorType": "Power",
         "Name": "M0_CPU_Power0",
         "Name1": "ProcessorModule_0_CPU_0_Power_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0,
         "MaxValue": 500,
         "ValueType": "PLDM",
@@ -358,7 +322,7 @@
         "SensorType": "Power",
         "Name": "M0_VregCpuPower0",
         "Name1": "ProcessorModule_0_Vreg_0_CpuPower_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0,
         "MaxValue": 100,
         "ValueType": "PLDM",
@@ -372,7 +336,7 @@
         "SensorType": "Power",
         "Name": "M0_VregSocPower0",
         "Name1": "ProcessorModule_0_Vreg_0_SocPower_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0.01,
         "MaxValue": 10,
         "ValueType": "PLDM",
@@ -386,7 +350,7 @@
         "SensorType": "Temperature",
         "Name": "M0_CPUTempAvg0",
         "Name1": "ProcessorModule_0_CPU_0_TempAvg_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": -127,
         "MaxValue": 127,
         "ValueType": "PLDM",
@@ -400,7 +364,7 @@
         "SensorType": "Temperature",
         "Name": "M0_CPUTempLim0",
         "Name1": "ProcessorModule_0_CPU_0_TempLimit_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": -127,
         "MaxValue": 127,
         "Thresholds": [
@@ -440,7 +404,7 @@
         "SensorType": "Voltage",
         "Name": "M0_VregCpuVol0",
         "Name1": "ProcessorModule_0_Vreg_0_CpuVoltage_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0,
         "MaxValue": 100,
         "ValueType": "PLDM",
@@ -454,7 +418,7 @@
         "SensorType": "Voltage",
         "Name": "M0_VregSocVol0",
         "Name1": "ProcessorModule_0_Vreg_0_SocVoltage_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0,
         "MaxValue": 100,
         "ValueType": "PLDM",
@@ -468,7 +432,7 @@
         "SensorType": "Energy",
         "Name": "M1_CPU_Engy0",
         "Name1": "ProcessorModule_1_CPU_0_Energy_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0,
         "MaxValue": 100000,
         "ValueType": "PLDM",
@@ -482,7 +446,7 @@
         "SensorType": "Power",
         "Name": "M1_CPU_Power0",
         "Name1": "ProcessorModule_1_CPU_0_Power_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0,
         "MaxValue": 500,
         "ValueType": "PLDM",
@@ -496,7 +460,7 @@
         "SensorType": "Power",
         "Name": "M1_VregCpuPower0",
         "Name1": "ProcessorModule_1_Vreg_0_CpuPower_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0,
         "MaxValue": 100,
         "ValueType": "PLDM",
@@ -510,7 +474,7 @@
         "SensorType": "Power",
         "Name": "M1_VregSocPower0",
         "Name1": "ProcessorModule_1_Vreg_0_SocPower_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0.01,
         "MaxValue": 10,
         "ValueType": "PLDM",
@@ -524,7 +488,7 @@
         "SensorType": "Temperature",
         "Name": "M1_CPUTempAvg0",
         "Name1": "ProcessorModule_1_CPU_0_TempAvg_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": -127,
         "MaxValue": 127,
         "ValueType": "PLDM",
@@ -538,7 +502,7 @@
         "SensorType": "Temperature",
         "Name": "M1_CPUTempLim0",
         "Name1": "ProcessorModule_1_CPU_0_TempLimit_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": -127,
         "MaxValue": 127,
         "Thresholds": [
@@ -578,7 +542,7 @@
         "SensorType": "Voltage",
         "Name": "M1_VregCpuVol0",
         "Name1": "ProcessorModule_1_Vreg_0_CpuVoltage_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0,
         "MaxValue": 100,
         "ValueType": "PLDM",
@@ -592,7 +556,7 @@
         "SensorType": "Voltage",
         "Name": "M1_VregSocVol0",
         "Name1": "ProcessorModule_1_Vreg_0_SocVoltage_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": 0,
         "MaxValue": 100,
         "ValueType": "PLDM",
@@ -606,7 +570,7 @@
         "SensorType": "Temperature",
         "Name": "M0_InletTemp0",
         "Name1": "ProcessorModule_0_Inlet_Temp_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": -128,
         "MaxValue": 127,
         "Thresholds": [
@@ -646,7 +610,7 @@
         "SensorType": "Temperature",
         "Name": "M0_InletTemp1",
         "Name1": "ProcessorModule_0_Inlet_Temp_1",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": -128,
         "MaxValue": 127,
         "Thresholds": [
@@ -686,7 +650,7 @@
         "SensorType": "Temperature",
         "Name": "M0_ExhaustTemp0",
         "Name1": "ProcessorModule_0_Exhaust_Temp_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": -128,
         "MaxValue": 127,
         "Thresholds": [
@@ -726,7 +690,7 @@
         "SensorType": "Temperature",
         "Name": "M1_InletTemp0",
         "Name1": "ProcessorModule_1_Inlet_Temp_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": -128,
         "MaxValue": 127,
         "Thresholds": [
@@ -766,7 +730,7 @@
         "SensorType": "Temperature",
         "Name": "M1_InletTemp1",
         "Name1": "ProcessorModule_1_Inlet_Temp_1",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": -128,
         "MaxValue": 127,
         "Thresholds": [
@@ -806,7 +770,7 @@
         "SensorType": "Temperature",
         "Name": "M1_ExhaustTemp0",
         "Name1": "ProcessorModule_1_Exhaust_Temp_0",
-        "PollRate": 0.5,
+        "PollRate": 1,
         "MinValue": -128,
         "MaxValue": 127,
         "Thresholds": [
@@ -847,7 +811,7 @@
       }
     ],
     "Name": "HMC_0",
-    "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?1GPU Board PC'})",
+    "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB[2-3]00 1CPU: ?1GPU Board PC'})",
     "Type": "BMC"
   }
 ]
