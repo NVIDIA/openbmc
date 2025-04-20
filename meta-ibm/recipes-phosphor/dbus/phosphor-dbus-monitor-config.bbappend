@@ -1,0 +1,6 @@
+PHOSPHOR_DBUS_MONITOR_CONFIGS:append:ibm-ac-server = " fan-policy"
+PHOSPHOR_DBUS_MONITOR_CONFIGS:append:ibm-ac-server = " thermal-policy"
+PHOSPHOR_DBUS_MONITOR_CONFIGS:append:ibm-ac-server = " power-supply-policy"
+PHOSPHOR_DBUS_MONITOR_CONFIGS:append:ibm-ac-server = " events-policy"
+PHOSPHOR_DBUS_MONITOR_CONFIGS:append:ibm-ac-server = " snmp-policy"
+PHOSPHOR_DBUS_MONITOR_CONFIGS:append:p10bmc = " snmp-policy"

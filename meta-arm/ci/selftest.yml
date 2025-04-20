@@ -1,0 +1,7 @@
+header:
+  version: 14
+
+local_conf_header:
+  setup: |
+    BB_LOGCONFIG = ""
+    SANITY_TESTED_DISTROS = ""

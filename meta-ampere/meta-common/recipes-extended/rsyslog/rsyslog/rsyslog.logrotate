@@ -1,0 +1,67 @@
+# /etc/logrotate.d/rsyslog - Ported from Debian
+
+# Keep up to four 64k files for ipmi_sel (256k total)
+/var/log/ipmi_sel
+{
+    rotate 3
+    size 64k
+    missingok
+    postrotate
+        systemctl reload rsyslog 2> /dev/null || true
+    endscript
+}
+# Keep up to four 64k files for redfish (256k total)
+/var/log/redfish
+{
+    rotate 3
+    size 64k
+    missingok
+    postrotate
+        systemctl reload rsyslog 2> /dev/null || true
+    endscript
+}
+# Keep up to 2 256k files for cpu console logs
+/var/log/obmc-console-cpu.log
+{
+    copytruncate
+    rotate 1
+    size 256k
+    missingok
+    postrotate
+        systemctl reload rsyslog 2> /dev/null || true
+    endscript
+}
+# Keep up to 2 64k files for atf console logs
+/var/log/obmc-console-atf.log
+{
+    copytruncate
+    rotate 1
+    size 64k
+    missingok
+    postrotate
+        systemctl reload rsyslog 2> /dev/null || true
+    endscript
+}
+# Keep up to 2 64k files for secpro and mpro console logs
+/var/log/obmc-console-*pro*.log
+{
+    copytruncate
+    rotate 1
+    size 64k
+    missingok
+    postrotate
+        systemctl reload rsyslog 2> /dev/null || true
+    endscript
+}
+
+# Keep up to 2 64k files for Mt.Jade's scp console logs
+/var/log/obmc-console-scp*.log
+{
+    copytruncate
+    rotate 1
+    size 64k
+    missingok
+    postrotate
+        systemctl reload rsyslog 2> /dev/null || true
+    endscript
+}

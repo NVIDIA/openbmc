@@ -1,0 +1,1 @@
+ERR_INFO_CAP = "256"

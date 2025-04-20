@@ -1,0 +1,6 @@
+[Unit]
+Description=Ampere Computing LLC Overtemp event handling
+
+[Service]
+Restart=no
+ExecStart=/usr/sbin/ampere_overtemp.sh %i

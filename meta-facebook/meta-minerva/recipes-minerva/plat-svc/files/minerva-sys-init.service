@@ -1,0 +1,11 @@
+[Unit]
+Description=Minerva Early System Init
+Before=phosphor-multi-gpio-monitor.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/minerva-early-sys-init
+SyslogIdentifier=Minerva Early Init
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=Phosphor SNMP conf Manager
+
+[Service]
+ExecStart=/usr/bin/env phosphor-network-snmpconf
+SyslogIdentifier=phosphor-network-snmpconf
+Restart=always
+Type=dbus
+BusName=xyz.openbmc_project.Network.SNMP
+
+[Install]
+WantedBy=multi-user.target
