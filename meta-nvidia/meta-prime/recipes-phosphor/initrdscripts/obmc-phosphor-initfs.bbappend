@@ -27,7 +27,7 @@ FILES:${PN} += " /reserved-list"
 do_install:append() {
     if ${@bb.utils.contains('DISTRO_FEATURES', 'erotless-bmc', 'true', 'false', d)}; then
         bbwarn "erotless-bmc enabled. Modifying obmc-init.sh"
-        sed -i '/echo "1e620000.spi" > \/sys\/bus\/platform\/drivers\/spi-aspeed-smc\/unbind/d' ${S}/obmc-init.sh
-        sed -i '/echo "unbind aspeed spi flash driver"/d' ${S}/obmc-init.sh
+        sed -i '/echo "1e620000.spi" > \/sys\/bus\/platform\/drivers\/spi-aspeed-smc\/unbind/d' ${D}/init
+        sed -i '/echo "unbind aspeed spi flash driver"/d' ${D}/init
     fi
 }

@@ -93,6 +93,10 @@ SYSTEMD_SERVICE:${PN}:append = " fpga0-erot-recovery.target"
 SYSTEMD_SERVICE:${PN}:append = " fpga1-erot-recovery.target"
 SYSTEMD_SERVICE:${PN}:append = " hmc-recovery.target"
 
+SYSTEMD_SERVICE:${PN}:remove = "${@bb.utils.contains('DISTRO_FEATURES', 'erotless-bmc', ' mctp-spi0-ctrl.service ', '', d)}"
+SYSTEMD_SERVICE:${PN}:remove = "${@bb.utils.contains('DISTRO_FEATURES', 'erotless-bmc', ' mctp-spi0-demux.service ', '', d)}"
+SYSTEMD_SERVICE:${PN}:remove = "${@bb.utils.contains('DISTRO_FEATURES', 'erotless-bmc', ' mctp-spi0-demux.socket ', '', d)}"
+
 FILES:${PN} += "\
                    ${nonarch_base_libdir}/udev/rules.d/mctp-usb.rules \
 "
@@ -128,9 +132,13 @@ do_install:append() {
     install -m 0644 ${WORKDIR}/systemd/mctp-i2c15-ctrl.service  ${D}${nonarch_base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/systemd/mctp-i2c15-demux.service ${D}${nonarch_base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/systemd/mctp-i2c15-demux.socket  ${D}${nonarch_base_libdir}/systemd/system/
-    install -m 0644 ${WORKDIR}/systemd/mctp-spi0-ctrl.service  ${D}${nonarch_base_libdir}/systemd/system/
-    install -m 0644 ${WORKDIR}/systemd/mctp-spi0-demux.service ${D}${nonarch_base_libdir}/systemd/system/
-    install -m 0644 ${WORKDIR}/systemd/mctp-spi0-demux.socket  ${D}${nonarch_base_libdir}/systemd/system/
+
+    if ${@bb.utils.contains('DISTRO_FEATURES', 'erotless-bmc', 'false', 'true', d)}; then
+        install -m 0644 ${WORKDIR}/systemd/mctp-spi0-ctrl.service  ${D}${nonarch_base_libdir}/systemd/system/
+        install -m 0644 ${WORKDIR}/systemd/mctp-spi0-demux.service ${D}${nonarch_base_libdir}/systemd/system/
+        install -m 0644 ${WORKDIR}/systemd/mctp-spi0-demux.socket  ${D}${nonarch_base_libdir}/systemd/system/
+    fi
+
     install -m 0644 ${WORKDIR}/systemd/mctp-spi2-ctrl.service  ${D}${nonarch_base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/systemd/mctp-spi2-demux.service ${D}${nonarch_base_libdir}/systemd/system/
 
@@ -156,19 +164,6 @@ do_install:append() {
     install -m 0644 ${WORKDIR}/systemd/mctp-usb-ctrl@.service ${D}${nonarch_base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/systemd/mctp-usb-demux@.socket ${D}${nonarch_base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/systemd/mctp-usb-demux@.service ${D}${nonarch_base_libdir}/systemd/system/
-}
-
-SYSTEMD_SERVICE:${PN}:remove = "${@bb.utils.contains('DISTRO_FEATURES', 'erotless-bmc', ' mctp-spi-ctrl.service ', '', d)}"
-SYSTEMD_SERVICE:${PN}:remove = "${@bb.utils.contains('DISTRO_FEATURES', 'erotless-bmc', ' mctp-spi-demux.service ', '', d)}"
-SYSTEMD_SERVICE:${PN}:remove = "${@bb.utils.contains('DISTRO_FEATURES', 'erotless-bmc', ' mctp-spi-demux.socket ', '', d)}"
-
-do_install:append() {
-    if ${@bb.utils.contains('DISTRO_FEATURES', 'erotless-bmc', 'true', 'false', d)}; then
-		bbwarn "!!!USING EROTLESS UPDATE FOR THE BMC!!!"
-        rm -f ${D}${nonarch_base_libdir}/systemd/system/mctp-spi-ctrl.service
-        rm -f ${D}${nonarch_base_libdir}/systemd/system/mctp-spi-demux.service
-        rm -f ${D}${nonarch_base_libdir}/systemd/system/mctp-spi-demux.socket
-    fi
 }
 
 python do_generate_udev_rules() {

@@ -39,10 +39,10 @@
         }
       },
       {
-	      "Name": "HGX_Module_0_SPI",
-	      "Type": "NSM_SPI",
-	      "UUID": "STATIC:3:0",
-	      "InventoryObjPath": "/xyz/openbmc_project/inventory/system/"
+        "Name": "HGX_Module_0_SPI",
+        "Type": "NSM_SPI",
+        "UUID": "STATIC:3:0",
+        "InventoryObjPath": "/xyz/openbmc_project/inventory/system/"
       },
       {
         "ChassisName": "HGX_Chassis_0",
@@ -301,6 +301,12 @@
             "AbsolutePath": "/xyz/openbmc_project/software"
           }
         ]
+      },
+      {
+        "Name": "NVLinkLed",
+        "Type": "NSM_ChassisLED",
+        "UUID": "STATIC:3:0",
+        "InventoryObjPath": "/xyz/openbmc_project/inventory/system/chassis/HGX_FPGA_0"
       }
     ],
     "Probe": [
@@ -543,6 +549,12 @@
             "AbsolutePath": "/xyz/openbmc_project/software"
           }
         ]
+      },
+      {
+        "Name": "NVLinkLed",
+        "Type": "NSM_ChassisLED",
+        "UUID": "STATIC:3:1",
+        "InventoryObjPath": "/xyz/openbmc_project/inventory/system/chassis/HGX_FPGA_1"
       }
     ],
     "Probe": [

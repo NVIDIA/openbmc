@@ -29,7 +29,7 @@ EXTRA_OECONF += "--enable-sensor-prefix"
 # You could change the passphase to empty by 'ssh-keygen -p -f ~/.ssh/<your_gitlab_id_file>'
 # This issue will be solved when we upstream all codes to github.
 SRC_URI = "git://github.com/NVIDIA/nvidia-gpu-manager;protocol=https;branch=develop"
-SRCREV = "d9acf700bab9a291b4f78d64421cbe5818426741"
+SRCREV = "04b932d5807e87a06690655aa2b8b9059bee8b1e"
 S = "${WORKDIR}/git"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"

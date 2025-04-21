@@ -13,7 +13,7 @@ SRC_URI = "git://github.com/NVIDIA/nvidia-fdr;protocol=https;branch=develop"
 
 # Modify these as desired
 #PV = "1.0+git${SRCPV}"
-SRCREV = "5c36d1a0cd23331a5ce3aba218a881c9c7ef0119"
+SRCREV = "cfde369d4596b2ac0742e5400b7f27e296d3b170"
 
 S = "${WORKDIR}/git"
 

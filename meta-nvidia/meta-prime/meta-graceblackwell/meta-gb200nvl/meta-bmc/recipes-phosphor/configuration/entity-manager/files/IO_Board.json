@@ -2,74 +2,6 @@
     {
         "Exposes": [
             {
-                "Address": "0x1f",
-                "Bus": 16,
-                "Name": "IO_Board_0_CX7_0_Local_Temp_0",
-                "Name1": "IO_Board_0_CX7_0_Temp_0",
-                "Labels": [
-                    "temp2"
-                ],
-                "PowerState": "On",
-                "Thresholds": [
-                    {
-                        "Index": 2,
-                        "Direction": "greater than",
-                        "Name": "upper non recoverable",
-                        "Severity": 4,
-                        "Value": 115.0
-                    },
-                    {
-                        "Index": 2,
-                        "Direction": "greater than",
-                        "Name": "upper critical",
-                        "Severity": 1,
-                        "Value": 105.0
-                    },
-                    {
-                        "Index":2,
-                        "Direction": "greater than",
-                        "Name": "upper non critical",
-                        "Severity": 0,
-                        "Value": 100.0
-                    }
-                ],
-                "Type": "TMP421"
-            },
-            {
-                "Address": "0x1f",
-                "Bus": 18,
-                "Name": "IO_Board_0_CX7_1_Local_Temp_0",
-                "Name1": "IO_Board_0_CX7_1_Temp_0",
-                "Labels": [
-                    "temp2"
-                ],
-                "PowerState": "On",
-                "Thresholds": [
-                    {
-                        "Index": 2,
-                        "Direction": "greater than",
-                        "Name": "upper non recoverable",
-                        "Severity": 4,
-                        "Value": 115.0
-                    },
-                    {
-                        "Index": 2,
-                        "Direction": "greater than",
-                        "Name": "upper critical",
-                        "Severity": 1,
-                        "Value": 105.0
-                    },
-                    {
-                        "Index": 2,
-                        "Direction": "greater than",
-                        "Name": "upper non critical",
-                        "Severity": 0,
-                        "Value": 100.0
-                    }
-                ],
-                "Type": "TMP421"
-            },
-            {
                 "Name": "IO_Board_0_CX7_0",
                 "Type": "I2CDeviceAssociation",
                 "Bus": 16,
@@ -232,6 +164,11 @@
                     "parent_device",
                     "all_states",
                     "/xyz/openbmc_project/inventory/system/board/IO_Board_0"
+                ],
+                [
+                    "all_states",
+                    "parent_device",
+                    "/xyz/openbmc_project/state/PLDM_Sensor_4_101/IO_Board_0_CX7_0_Port_0_State"
                 ]
             ]
         },
@@ -263,6 +200,11 @@
                     "parent_device",
                     "all_states",
                     "/xyz/openbmc_project/inventory/system/board/IO_Board_0"
+                ],
+                [
+                    "all_states",
+                    "parent_device",
+                    "/xyz/openbmc_project/state/PLDM_Sensor_4_102/IO_Board_0_CX7_1_Port_0_State"
                 ]
             ]
         },
@@ -270,74 +212,6 @@
     },
     {
         "Exposes": [
-            {
-                "Address": "0x1f",
-                "Bus": 28,
-                "Name": "IO_Board_1_CX7_0_Local_Temp_0",
-                "Name1": "IO_Board_1_CX7_0_Temp_0",
-                "Labels": [
-                    "temp2"
-                ],
-                "PowerState": "On",
-                "Thresholds": [
-                    {
-                        "Index": 2,
-                        "Direction": "greater than",
-                        "Name": "upper non recoverable",
-                        "Severity": 4,
-                        "Value": 115.0
-                    },
-                    {
-                        "Index": 2,
-                        "Direction": "greater than",
-                        "Name": "upper critical",
-                        "Severity": 1,
-                        "Value": 105.0
-                    },
-                    {
-                        "Index": 2,
-                        "Direction": "greater than",
-                        "Name": "upper non critical",
-                        "Severity": 0,
-                        "Value": 100.0
-                    }
-                ],
-                "Type": "TMP421"
-            },
-            {
-                "Address": "0x1f",
-                "Bus": 30,
-                "Name": "IO_Board_1_CX7_1_Local_Temp_0",
-                "Name1": "IO_Board_1_CX7_1_Temp_0",
-                "Labels": [
-                    "temp2"
-                ],
-                "PowerState": "On",
-                "Thresholds": [
-                    {
-                        "Index": 2,
-                        "Direction": "greater than",
-                        "Name": "upper non recoverable",
-                        "Severity": 4,
-                        "Value": 115.0
-                    },
-                    {
-                        "Index": 2,
-                        "Direction": "greater than",
-                        "Name": "upper critical",
-                        "Severity": 1,
-                        "Value": 105.0
-                    },
-                    {
-                        "Index": 2,
-                        "Direction": "greater than",
-                        "Name": "upper non critical",
-                        "Severity": 0,
-                        "Value": 100.0
-                    }
-                ],
-                "Type": "TMP421"
-            },
             {
                 "Name": "IO_Board_1_CX7_0",
                 "Type": "I2CDeviceAssociation",
@@ -501,6 +375,11 @@
                     "parent_device",
                     "all_states",
                     "/xyz/openbmc_project/inventory/system/board/IO_Board_1"
+                ],
+                [
+                    "all_states",
+                    "parent_device",
+                    "/xyz/openbmc_project/state/PLDM_Sensor_4_103/IO_Board_1_CX7_0_Port_0_State"
                 ]
             ]
         },
@@ -532,6 +411,11 @@
                     "parent_device",
                     "all_states",
                     "/xyz/openbmc_project/inventory/system/board/IO_Board_1"
+                ],
+                [
+                    "all_states",
+                    "parent_device",
+                    "/xyz/openbmc_project/state/PLDM_Sensor_4_104/IO_Board_1_CX7_1_Port_0_State"
                 ]
             ]
         },

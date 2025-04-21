@@ -106,6 +106,16 @@
                     "assembly",
                     "parent_chassis",
                     "/xyz/openbmc_project/inventory/system/pcie/Slot$PCIE_LABEL_BlueField_3_Card_Product_FRU_Assembly1"
+                ],
+                [
+                    "all_states",
+                    "parent_device",
+                    "/xyz/openbmc_project/state/PLDM_Sensor_4_105/Port_0"
+                ],
+                [
+                    "all_states",
+                    "parent_device",
+                    "/xyz/openbmc_project/state/PLDM_Sensor_5_105/Port_1"
                 ]
             ]
         }
@@ -251,12 +261,22 @@
                 [
                     "assembly",
                     "parent_chassis",
-                    "/xyz/openbmc_project/inventory/system/pcie/BlueField_3_Card_Board_FRU_Assembly0"
+                    "/xyz/openbmc_project/inventory/system/pcie/Slot$PCIE_LABEL_BlueField_3_Card_Board_FRU_Assembly0"
                 ],
                 [
                     "assembly",
                     "parent_chassis",
-                    "/xyz/openbmc_project/inventory/system/pcie/BlueField_3_Card_Product_FRU_Assembly1"
+                    "/xyz/openbmc_project/inventory/system/pcie/Slot$PCIE_LABEL_BlueField_3_Card_Product_FRU_Assembly1"
+                ],
+                [
+                    "all_states",
+                    "parent_device",
+                    "/xyz/openbmc_project/state/PLDM_Sensor_4_106/Port_0"
+                ],
+                [
+                    "all_states",
+                    "parent_device",
+                    "/xyz/openbmc_project/state/PLDM_Sensor_5_106/Port_1"
                 ]
             ]
         }
