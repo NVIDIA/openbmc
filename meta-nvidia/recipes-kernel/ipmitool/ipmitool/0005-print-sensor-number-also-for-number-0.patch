@@ -1,0 +1,25 @@
+From 4c91fef968536810fa7072b1464cf4169d5a38f4 Mon Sep 17 00:00:00 2001
+From: Adi Fogel <afogel@nvidia.com>
+Date: Sun, 23 Apr 2023 08:11:46 +0000
+Subject: [PATCH] print sensor number also for number 0 FIxes nvbug
+ https://redmine.mellanox.com/issues/3442047
+
+Signed-off-by: Adi Fogel <afogel@nvidia.com>
+---
+ lib/ipmi_sel.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/lib/ipmi_sel.c b/lib/ipmi_sel.c
+index 31c0eea..803f5f1 100644
+--- a/lib/ipmi_sel.c
++++ b/lib/ipmi_sel.c
+@@ -1897,8 +1897,7 @@ ipmi_sel_print_std_entry(struct ipmi_intf * intf, struct sel_event_record * evt)
+ 	} else {
+ 		printf("%s", ipmi_get_sensor_type(intf,
+ 				evt->sel_type.standard_type.sensor_type));
+-		if (evt->sel_type.standard_type.sensor_num != 0)
+-			printf(" #0x%02x", evt->sel_type.standard_type.sensor_num);
++		printf(" #0x%02x", evt->sel_type.standard_type.sensor_num);
+ 	}
+ 
+ 	if (csv_output)

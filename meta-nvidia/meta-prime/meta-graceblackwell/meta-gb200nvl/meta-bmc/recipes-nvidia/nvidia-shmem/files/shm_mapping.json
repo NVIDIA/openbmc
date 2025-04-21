@@ -1,0 +1,17 @@
+{
+    "Namespaces": {
+        "PlatformEnvironmentMetrics": {
+            "Producers": [
+                "nsmd",
+                "pldmd",
+                "hwmontemp",
+                "psusensor",
+                "nvmesensor",
+                "leakdetectsensor",
+                "fansensor",
+                "synthesizedsensor"
+            ],
+            "SizeInBytes": 131072
+        }
+    }
+}

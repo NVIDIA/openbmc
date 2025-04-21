@@ -1,0 +1,108 @@
+#!/bin/bash
+
+# Copyright (c) 2024, NVIDIA CORPORATION.  All rights reserved.
+#
+#  NVIDIA CORPORATION and its licensors retain all intellectual property
+#  and proprietary rights in and to this software, related documentation
+#  and any modifications thereto.  Any use, reproduction, disclosure or
+#  distribution of this software and related documentation without an express
+#  license agreement from NVIDIA CORPORATION is strictly prohibited.
+
+APP_NAME="check_backenderror"
+APP_VER="0.1"
+
+# '#' at the first byte will disable the line
+BACKENDERROR_LIST="
+OK_Error,0x0301,ERR_I2C_CONTROLLER_FSM_TIMEOUT
+OK_Error,0x0302,ERR_I2C_BUS_TIMEOUT
+#OK_Error,0x0303,ERR_I2C_PEC_MISMATCH
+Critical_Error,0x0304,ERR_I2C_NACK_FROM_DEV
+Critical_Error,0x03FF,ERR_HSPR_EXE_TIMEOUT
+"
+
+SMBPBI_COMMAND_LIST="
+GPU_0,Passthrough,0
+GPU_1,Passthrough,1
+"
+
+show_help()
+{
+    echo "A wrapper for Checking Device BackendError, ver=${APP_VER}."
+    echo "<usage>"
+    echo "  ${APP_NAME} <error_severity> <device_name>"
+    echo
+}
+
+get_backenderror() # (error_severity, device_name)
+{
+    local err_sev=$1;shift
+    local dev_name=$1;shift
+
+    [ -z "$err_sev" ] && return 102
+    [ -z "$dev_name" ] && return 103
+
+    # Check for OOB PERST Assert for Retimer
+    local errCode=0
+    local perst; perst=`perst_check_wrapper`
+    errCode=$?
+    [ "$errCode" -ne 0 ] && return $errCode
+    if [ "$perst" -eq 0 ]; then
+        echo "No Error"
+        return 0
+    fi
+
+    local smbpbi_found=0
+    for s in ${SMBPBI_COMMAND_LIST}; do
+        [ -z "$s" ] && continue
+        [ "${s::1}" = "#" ] && continue
+        local dev=${s%%,*}
+        [ "$dev_name" != "$dev" ] && continue
+        local tmp=${s#*,}
+        local method=${tmp%,*}
+        local dev_index=${tmp#*,}
+        smbpbi_found=1
+        break
+    done
+    if [ $smbpbi_found -ne 1 ]; then
+        >&2 echo "no matching SMBPBI command found for device $dev_name"
+        return 104
+    fi
+
+    # Example:
+    # $ method=PassthroughNvswitch;dev_index=3;busctl call xyz.openbmc_project.GpuMgr /xyz/openbmc_project/GpuMgr xyz.openbmc_project.GpuMgr.Server ${method} iyyyau ${dev_index} 0x1 0x00 0x00 2 0x00000000 0x00000000
+    # fencing with HMC: '(iau) 0 4 0 520093697 872415233 0'
+    # fencing with HostBMC: '(iau) 774 0'
+    # Device in SBR: '(iau) 772 0'
+    local cmd="busctl call xyz.openbmc_project.GpuMgr /xyz/openbmc_project/GpuMgr xyz.openbmc_project.GpuMgr.Server ${method} iyyyau ${dev_index} 0x1 0x00 0x00 2 0x00000000 0x00000000"
+    local rc=0
+    local resp;resp=`$cmd`;rc=$?
+    [ "$rc" -ne 0 ] && return $rc
+
+    local resp_nums;resp_nums=${resp#* }
+    local errcode;errcode=${resp_nums%% *}
+
+    for bee in ${BACKENDERROR_LIST}; do
+        [ -z "$bee" ] && continue
+        [ "${bee::1}" = "#" ] && continue
+        local sev=${bee%%,*}
+        [ "$err_sev" != "$sev" ] && continue
+        local tmp=${bee#*,}
+        local ec=${tmp%,*} # error code in hex
+        ec=$((ec)) # error code in decimal
+        [ "$errcode" != "$ec" ] && continue
+        echo ${tmp#*,}
+        return 0
+    done
+
+    echo "No Error"
+    return 0
+}
+
+## MAIN
+if [ "$#" -ne 2 ]; then
+    show_help
+    exit 101
+fi
+
+get_backenderror "$@"
+exit $?

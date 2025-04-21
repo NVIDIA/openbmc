@@ -1,0 +1,13 @@
+[Unit]
+Description=NVIDIA NVME CPLD MUX Remove
+After=obmc-power-off@0.target
+Requires=obmc-power-off@0.target
+StartLimitIntervalSec=10
+
+[Service]
+StartLimitBurst=3
+ExecStart=/usr/bin/nvme_cpld_remove.sh
+SyslogIdentifier=nvme-cpld
+
+[Install]
+WantedBy=obmc-power-off@0.target

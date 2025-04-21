@@ -1,0 +1,12 @@
+[Unit]
+Description=AML memory watcher service
+
+Wants=hmc-boot-complete.service
+After=hmc-boot-complete.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/aml-memory-watcher
+
+[Install]
+WantedBy=multi-user.target

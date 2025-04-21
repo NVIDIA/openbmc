@@ -1,0 +1,187 @@
+{
+    "name": "evb",
+    "version": "A3",
+    "data_region": {
+        "ecc_region": true,
+        "rsa_key_order": "big",
+	"user_data": [
+            {
+                "types": "bin",
+                "file": "user_area.bin",
+                "offset": "0x1100"
+            }
+        ],
+	"key": [
+            {
+                "types": "rsa_pub_oem",
+                "key_pem": "oem_dss_4096_pub_0.pem",
+                "offset": "0x40",
+                "number_id": 0
+            },
+            {
+                "types": "rsa_pub_oem",
+                "key_pem": "oem_dss_4096_pub_1.pem",
+                "offset": "0x240",
+                "number_id": 1
+            },
+            {
+                "types": "rsa_pub_oem",
+                "key_pem": "oem_dss_4096_pub_2.pem",
+                "offset": "0x440",
+                "number_id": 2
+            },
+            {
+                "types": "rsa_pub_oem",
+                "key_pem": "oem_dss_4096_pub_3.pem",
+                "offset": "0x640",
+                "number_id": 3
+            },
+            {
+                "types": "rsa_pub_oem",
+                "key_pem": "oem_dss_4096_pub_4.pem",
+                "offset": "0x840",
+                "number_id": 4
+            },
+            {
+                "types": "rsa_pub_oem",
+                "key_pem": "oem_dss_4096_pub_5.pem",
+                "offset": "0xa40",
+                "number_id": 5
+            },
+            {
+                "types": "rsa_pub_oem",
+                "key_pem": "oem_dss_4096_pub_6.pem",
+                "offset": "0xc40",
+                "number_id": 6
+            },
+            {
+                "types": "rsa_pub_oem",
+                "key_pem": "oem_dss_4096_pub_7.pem",
+                "offset": "0xe40",
+                "number_id": 7
+            },
+            {
+                "types": "aes_oem",
+                "key_bin": "aes_key.bin",
+                "offset": "0x1040"
+            },
+            {
+                "types": "aes_vault",
+                "key_bin": "aes_vault.bin",
+                "key_bin2": "aes_vault2.bin",
+                "offset": "0x1060"
+            }
+        ]
+    },
+    "config_region": {
+        "Disable OTP Memory BIST Mode": true,
+        "Enable Secure Boot": true,
+        "User region ECC enable": false,
+        "Secure Region ECC enable": true,
+        "Disable low security key": true,
+        "Ignore Secure Boot hardware strap": true,
+        "Secure Boot Mode": "Mode_2",
+        "Disable Uart Message of ROM code": false,
+        "Secure crypto RSA length": "RSA4096",
+        "Hash mode": "SHA384",
+        "Disable patch code": true,
+        "Disable Boot from Uart": false,
+        "Secure Region size": "0x22",
+        "Write Protect: Secure Region": true,
+        "Write Protect: User region": false,
+        "Write Protect: Configure region": true,
+        "Write Protect: OTP strap region": true,
+        "Copy Boot Image to Internal SRAM": true,
+        "Enable image encryption": false,
+        "Disable Flash Patch Code": true,
+        "Enable write Protect of OTP key retire bits": false,
+        "Disable Auto Boot from UART or VUART": false,
+        "OTP memory lock enable": false,
+
+        "Vender ID": "0x0",
+        "Key Revision": "0x0",
+
+        "Secure boot header offset": "0x0",
+        "Boot From UART Port Selection": "UART5",
+        "Disable Auto Boot from UART": false,
+        "Disable Auto Boot from VUART2 over PCIE": true,
+        "Disable Auto Boot from VUART2 over LPC": true,
+        "Disable ROM code based programming control": false,
+        "Rollback prevention shift bit number": "0x0",
+        "Extra Data Write Protection Region Size": "0xC",
+        "Erase signature data after secure boot check": false,
+        "Erase RSA public key after secure boot check": false,
+
+        "User define data: random number low": "0x0",
+
+        "User define data: random number high": "0x0",
+
+        "SCU0C8[14:0] auto setting value": "0x0",
+        "Enable write protection for SCU0C8 and SCU0D8": true,
+        "SCU0D8[14:0] auto setting value": "0x0",
+        "Enable chip security setting": false,
+
+        "Patch code location": "0x0",
+        "Patch code size": "0x0"
+    },
+    "otp_strap": {
+        "Disable ARM JTAG debug": {
+            "value": true,
+            "otp_protect": true,
+            "ignore": false
+        },
+        "Disable ARM JTAG trust world debug": {
+            "value": true,
+            "otp_protect": true,
+            "ignore": false
+        },
+        "Disable debug 0": {
+            "value": false,
+            "otp_protect": true,
+            "ignore": false
+        },
+        "Disable debug 1": {
+            "value": false,
+            "otp_protect": true,
+            "ignore": false
+        },
+        "OTPSTRAP[14] Reserved": {
+            "value": false,
+            "otp_protect": false,
+            "ignore": true
+        },
+        "OTPSTRAP[3D] Reserved": {
+            "value": false,
+            "otp_protect": false,
+            "ignore": true
+        },
+        "OTPSTRAP[3F] Reserved": {
+            "value": false,
+            "otp_protect": false,
+            "ignore": true
+        },
+        "OTPSTRAP[1E-1D] Reserved": {
+            "value": false,
+            "otp_protect": false,
+            "ignore": true
+        }
+    },
+    "scu_protect": {
+        "Reserved0": {
+            "protect": true,
+            "ignore": false
+        },
+        "OTPSTRAP[14] Reserved": {
+            "protect": true,
+            "ignore": false
+        },
+        "OTPSTRAP[3D] Reserved": {
+            "protect": true,
+            "ignore": false
+        },
+        "OTPSTRAP[3F] Reserved": {
+            "protect": true,
+            "ignore": false
+        }
+    }
+}

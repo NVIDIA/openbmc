@@ -1,0 +1,107 @@
+From 051177b15f446a7bc554cc25811524872ab6aa14 Mon Sep 17 00:00:00 2001
+From: Ed Tanous <etanous@nvidia.com>
+Date: Tue, 30 Jul 2024 17:16:52 -0700
+Subject: [PATCH] Set drive strengths to 600Mv
+
+Oberon has problems with networking.  Fix them.
+
+Signed-off-by: Ed Tanous <etanous@nvidia.com>
+
+Add changes from do_patch
+---
+ drivers/net/aspeed_mdio.c | 72 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
+
+diff --git a/drivers/net/aspeed_mdio.c b/drivers/net/aspeed_mdio.c
+index 6c46f47da6..3900cb8b55 100644
+--- a/drivers/net/aspeed_mdio.c
++++ b/drivers/net/aspeed_mdio.c
+@@ -175,6 +175,76 @@ extern int aspeed_mdio_write(struct mii_dev *bus, int phy_addr, int dev_addr,
+ 	return -1;
+ }
+ 
++#define PMI_BASE	0x1e650000
++#undef MDIO0_BASE
++#undef MDIO1_BASE
++#define MDIO0_BASE	(PMI_BASE + 0x00)
++#define MDIO1_BASE	(PMI_BASE + 0x08)
++#define MDIO2_BASE	(PMI_BASE + 0x10)
++#define MDIO3_BASE	(PMI_BASE + 0x18)
++
++static void __maybe_unused wait_for_mdio0_clear(void)
++{
++	unsigned int attempts = 0;
++	while(readl(MDIO0_BASE) & 0x80000000){
++		if (attempts == 1000){
++			printf("MDIO 0 failed to ACK change\n");
++			break;
++		}
++		mdelay(1);
++		attempts++;
++	}
++}
++
++static void __maybe_unused wait_for_mdio3_clear(void)
++{
++	unsigned int attempts = 0;
++	while(readl(MDIO3_BASE) & 0x80000000){
++		if (attempts == 1000){
++			printf("MDIO 3 failed to ACK change\n");
++			break;
++		}
++		mdelay(1);
++		attempts++;
++	}
++}
++
++static void __maybe_unused oberon_mii_init(void)
++{
++	printf("Setting 600mV drive strength for MDIO0 I1\n");
++	// Set the MII to 600Mv drive strength
++	// Set up MDIO0
++	// BMC local PHY (mdio0)
++
++	writel(0x941F0A43, MDIO0_BASE); // Set page to 0xa43 for indirect reg access
++	wait_for_mdio0_clear();
++	writel(0x941BDCD0, MDIO0_BASE); // Indirect access to page 0xdcd, reg 0x10
++	wait_for_mdio0_clear();
++	writel(0x941C1096, MDIO0_BASE); // Write lower 16 bits of SGMII TX amplitude
++	wait_for_mdio0_clear();
++	writel(0x941BDCD2, MDIO0_BASE); // Increment page 0xdcd, reg 0x12
++	wait_for_mdio0_clear();
++	writel(0x941CB490, MDIO0_BASE); // Write upper 16 bits of SGMII TX amplitude
++	wait_for_mdio0_clear();
++	writel(0x941F0000, MDIO0_BASE); // reset page register to 0x00
++
++	printf("Setting 600mV drive strength for MDIO3 I1\n");
++
++	// FIO board PHY (mdio3)
++	writel(0x941F0A43, MDIO3_BASE); // Set page to 0xa43 for indirect reg access
++	wait_for_mdio3_clear();
++	writel(0x941BDCD0, MDIO3_BASE); // Indirect access to page 0xdcd, reg 0x10
++	wait_for_mdio3_clear();
++	writel(0x941C1096, MDIO3_BASE); // Write lower 16 bits of SGMII TX amplitude
++	wait_for_mdio3_clear();
++	writel(0x941BDCD2, MDIO3_BASE); // Increment page 0xdcd, reg 0x12
++	wait_for_mdio3_clear();
++	writel(0x941CB490, MDIO3_BASE); // Write upper 16 bits of SGMII TX amplitude
++	wait_for_mdio3_clear();
++	writel(0x941F0000, MDIO3_BASE); // reset page register to 0x00
++}
++
++
+ static int aspeed_mdio_probe(struct udevice *dev)
+ {
+ //	struct mii_dev *bus = (struct mii_dev *)dev_get_uclass_platdata(dev);
+@@ -193,6 +263,8 @@ static int aspeed_mdio_probe(struct udevice *dev)
+ 	reset_assert(&reset_ctl);
+ 	reset_deassert(&reset_ctl);
+ 
++	oberon_mii_init();
++
+ 	return 0;
+ }
+ 
+-- 
+2.34.1
+

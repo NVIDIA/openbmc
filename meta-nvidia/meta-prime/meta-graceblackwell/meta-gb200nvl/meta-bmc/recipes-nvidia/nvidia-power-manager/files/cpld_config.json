@@ -1,0 +1,100 @@
+{
+    "CPLD": [
+        {
+            "Name" : "FW_CPLD_0",
+            "Index" : "0",
+            "Bus" : "14",
+            "Address" : "0x40",
+            "Arbitration" : "0",
+            "CpldRegBus" : "14",
+            "CpldRegAddress" : "0x40",
+            "CpldRawBus" : "14",
+            "RawLattice": true,
+            "ImageSelect": 2,
+            "ImageOffset": 4096,
+            "Model" : "BP",
+            "Manufacturer" : "Lattice",
+            "PowerOnDevice" : true,
+            "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded",
+            "DeviceId": [
+              "01",
+              "2b",
+              "c0",
+              "43"
+            ],
+            "CPLDDeviceNo" : 0
+        },
+        {
+            "Name" : "FW_CPLD_1",
+            "Index" : "1",
+            "Bus" : "15",
+            "Address" : "0x40",
+            "Arbitration" : "0",
+            "CpldRegBus" : "15",
+            "CpldRegAddress" : "0x40",
+            "CpldRawBus" : "15",
+            "RawLattice": true,
+            "ImageSelect": 2,
+            "ImageOffset": 4096,
+            "Model" : "BP",
+            "Manufacturer" : "Lattice",
+            "PowerOnDevice" : true,
+            "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded",
+            "DeviceId": [
+              "01",
+              "2b",
+              "c0",
+              "43"
+            ],
+            "CPLDDeviceNo" : 1
+        },
+        {
+            "Name" : "FW_CPLD_2",
+            "Index" : "2",
+            "Bus" : "14",
+            "Address" : "0x44",
+            "Arbitration" : "0",
+            "CpldRegBus" : "14",
+            "CpldRegAddress" : "0x44",
+            "CpldRawBus" : "14",
+            "RawLattice": true,
+            "ImageSelect": 2,
+            "ImageOffset": 4096,
+            "Model" : "IPEX",
+            "Manufacturer" : "Lattice",
+            "PowerOnDevice" : true,
+            "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded",
+            "DeviceId": [
+              "01",
+              "2b",
+              "c0",
+              "43"
+            ],
+            "CPLDDeviceNo" : 2
+        },
+        {
+            "Name" : "FW_CPLD_3",
+            "Index" : "3",
+            "Bus" : "15",
+            "Address" : "0x44",
+            "Arbitration" : "0",
+            "CpldRegBus" : "15",
+            "CpldRegAddress" : "0x44",
+            "CpldRawBus" : "15",
+            "RawLattice": true,
+            "ImageSelect": 2,
+            "ImageOffset": 4096,
+            "Model" : "IPEX",
+            "Manufacturer" : "Lattice",
+            "PowerOnDevice" : true,
+            "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded",
+            "DeviceId": [
+              "01",
+              "2b",
+              "c0",
+              "43"
+            ],
+            "CPLDDeviceNo" : 3
+        }
+    ]
+}

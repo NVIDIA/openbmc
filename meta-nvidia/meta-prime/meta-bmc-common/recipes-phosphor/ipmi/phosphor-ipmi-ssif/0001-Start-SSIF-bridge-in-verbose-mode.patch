@@ -1,0 +1,24 @@
+From a8669f1ab0d360016efbef55e7dcd95be54687fd Mon Sep 17 00:00:00 2001
+From: Mike Garrett <mikeg@nvidia.com>
+Date: Wed, 2 Aug 2023 13:03:46 -0700
+Subject: [PATCH] Start SSIF bridge in verbose mode
+
+Start SSIF bridge in verbose model to capture IPMI commands
+and timing
+---
+ ssifbridge.service | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ssifbridge.service b/ssifbridge.service
+index 055e0ab..867f4c8 100644
+--- a/ssifbridge.service
++++ b/ssifbridge.service
+@@ -9,7 +9,7 @@ Restart=always
+ RestartSec=10
+ TimeoutStartSec=60
+ TimeoutStopSec=60
+-ExecStart=/usr/bin/ssifbridged
++ExecStart=/usr/bin/ssifbridged --verbose=true
+ SyslogIdentifier=ssifbridged
+ 
+ [Install]

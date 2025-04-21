@@ -1,0 +1,24 @@
+From 74c48ca8512e1114adcb54228854372e47626504 Mon Sep 17 00:00:00 2001
+From: Joey Rainville <jrainville@nvidia.com>
+Date: Tue, 15 Aug 2023 17:23:25 +0000
+Subject: [PATCH] Remove 5s sleep during GpuOob shutdown because it is causing
+ hangs that fire WDT2
+
+---
+ src/gpu_device.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/gpu_device.cpp b/src/gpu_device.cpp
+index e10bd78..5eb6c87 100644
+--- a/src/gpu_device.cpp
++++ b/src/gpu_device.cpp
+@@ -2370,7 +2370,8 @@ int GPUManager::stop()
+         }
+         log_dbg("All threads stopped.\n");
+         // Give some time for threads to exit and cleanup
+-        std::this_thread::sleep_for(std::chrono::seconds(5));
++        //std::this_thread::sleep_for(std::chrono::seconds(5));
++        std::cerr << "Skipping 5 second sleep in GPUManager::stop" << std::endl;
+         int count = 0;
+         for (auto& timer : snapshotTimer)
+         {

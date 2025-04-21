@@ -1,0 +1,1 @@
+SUBSYSTEM=="net", SUBSYSTEMS=="usb", KERNEL=="eth2", ATTR{broadcast}=="ff:ff:ff:ff:ff:ff", ATTR{mtu}=="1500", NAME="ut3usb0"

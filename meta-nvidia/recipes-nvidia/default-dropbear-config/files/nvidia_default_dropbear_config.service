@@ -1,0 +1,10 @@
+[Unit]
+Description=Copies default dropbear config from initramfs to file system during boot up
+
+[Service]
+Type=oneshot
+ExecStart=/bin/cp /run/initramfs/ro/etc/default/dropbear /etc/default
+ExecStart=/bin/cp /run/initramfs/ro/etc/shells /etc/shells
+
+[Install]
+WantedBy=multi-user.target

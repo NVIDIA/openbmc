@@ -1,0 +1,12 @@
+[Match]
+Name=hmcusb0
+
+[Network]
+DHCP=false
+LinkLocalAddressing=false
+IPv6AcceptRA=false
+
+[Address]
+# static IP
+# 172.31.13.241 netmask 255.255.255.0
+Address=172.31.13.241/24

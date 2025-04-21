@@ -1,0 +1,21 @@
+[Unit]
+Description=MCTP Nvidia System Management Daemon
+After=mctp-usb-ctrl.service
+After=xyz.openbmc_project.EntityManager.service
+After=xyz.openbmc_project.FruDevice.service
+
+[Service]
+Restart=always
+Type=dbus
+# Delay to ensure the service dependencies are ready
+ExecStartPre=/usr/bin/sleep 20
+
+# Use mapper wait to ensure the required object path is available
+ExecStartPre=mapper wait /xyz/openbmc_project/inventory/system/nsm_configs/Mapping/GPUMapping
+
+ExecStart=/usr/bin/env nsmd
+SyslogIdentifier=nsmd
+BusName=xyz.openbmc_project.NSM
+
+[Install]
+WantedBy=multi-user.target

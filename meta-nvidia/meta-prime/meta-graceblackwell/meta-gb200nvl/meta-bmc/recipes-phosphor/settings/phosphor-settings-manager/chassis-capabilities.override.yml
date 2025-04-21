@@ -1,0 +1,23 @@
+/xyz/openbmc_project/Control/ChassisCapabilities:
+    - Interface: xyz.openbmc_project.Control.ChassisCapabilities
+      Properties:
+          CapabilitiesFlags:
+              Default: 0
+          ChassisIntrusionEnabled:
+              Default: 0
+          ChassisFrontPanelLockoutEnabled:
+              Default: 0
+          ChassisNMIEnabled:
+              Default: 0
+          ChassisPowerInterlockEnabled:
+              Default: 0
+          BridgeDeviceAddress:
+              Default: 0x20
+          FRUDeviceAddress:
+              Default: 0x20
+          SDRDeviceAddress:
+              Default: 0x20
+          SELDeviceAddress:
+              Default: 0x20
+          SMDeviceAddress:
+              Default: 0x20

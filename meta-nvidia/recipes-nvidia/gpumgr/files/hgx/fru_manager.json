@@ -1,0 +1,27 @@
+{
+    "FRU":
+    [
+        {
+            "Name" : "BaseBoard",
+            "I2cBus": "3",
+            "I2cAddress": "53",
+            "WritableArea":
+            [
+                {
+                    "Area": "CHASSIS_PART_NUMBER",
+                    "PostProperty": "baseboard.inventory.chassisPartNumber"
+                },
+                {
+                    "Area": "CHASSIS_SERIAL_NUMBER",
+                    "PostProperty": "baseboard.inventory.chassisSerialNumber"
+                }
+            ],
+            "Association":
+            [
+                "associated_chassis",
+                "associated_fru",
+                "/xyz/openbmc_project/inventory/system/chassis/HGX_Chassis_0"
+            ]
+        }
+    ]
+}

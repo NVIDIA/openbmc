@@ -1,0 +1,37 @@
+#!/bin/bash
+
+## TODO: <placeholder> will be rewritten with fpga regtbl way.
+
+# Copyright (c) 2024, NVIDIA CORPORATION.  All rights reserved.
+#
+#  NVIDIA CORPORATION and its licensors retain all intellectual property
+#  and proprietary rights in and to this software, related documentation
+#  and any modifications thereto.  Any use, reproduction, disclosure or
+#  distribution of this software and related documentation without an express
+#  license agreement from NVIDIA CORPORATION is strictly prohibited.
+
+APP_NAME="sysvr-deviceid-wrapper"
+APP_VER="0.1"
+
+VOLTAGE_LIST="
+1V8:sysvr1v8.power.abnormalPowerChange
+3V3:sysvr3v3.power.abnormalPowerChange
+"
+
+show_help()
+{
+    echo "A wrapper for SYS_VRs to work around DeviceID"
+    echo "limitations for DeviceCoreAPI accessors, ver=${APP_VER}."
+    echo "<usage>"
+    echo "  ${APP_NAME} [--dry-run] <voltage>"
+    echo
+}
+
+## MAIN
+if [ "$#" -ne 1 ]; then
+    show_help
+    exit 2
+fi
+
+main "$@"
+exit $?

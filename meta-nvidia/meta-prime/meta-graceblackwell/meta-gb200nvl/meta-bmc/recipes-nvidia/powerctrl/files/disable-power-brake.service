@@ -1,0 +1,15 @@
+
+[Unit]
+Description=Disable power brake service
+Requires=bmc-boot-complete.service
+After=bmc-boot-complete.service
+Before=power-brake-disabled.target
+
+[Service]
+RemainAfterExit=yes
+Type=oneshot
+ExecStart=/usr/bin/env powerctrl.sh disable_power_brake
+SyslogIdentifier=powerctrl
+
+[Install]
+RequiredBy=power-brake-disabled.target

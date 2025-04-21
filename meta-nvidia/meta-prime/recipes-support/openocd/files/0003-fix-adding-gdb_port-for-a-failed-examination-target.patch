@@ -1,0 +1,30 @@
+From 3ef45ebc5947aa4b86e0753859e867fb462948c6 Mon Sep 17 00:00:00 2001
+From: Curtis Chuang <shengchihc@nvidia.com>
+Date: Thu, 13 Jun 2024 01:10:44 -0700
+Subject: [PATCH] fix adding gdb_port for a failed examination target
+
+In LegoCG1, core0 got failed of the examination but set a gdb target.
+which causes the connection drop if gdb tries to connect.
+
+Signed-off-by: Curtis Chuang <shengchihc@nvidia.com>
+---
+ src/target/target.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/target/target.c b/src/target/target.c
+index 47abd2823..0360a4d0c 100644
+--- a/src/target/target.c
++++ b/src/target/target.c
+@@ -1467,7 +1467,8 @@ bool target_supports_gdb_connection(struct target *target)
+ 	 * exclude all the targets that don't provide get_gdb_reg_list
+ 	 * or that have explicit gdb_max_connection == 0
+ 	 */
+-	return !!target->type->get_gdb_reg_list && !!target->gdb_max_connections;
++	int retval = target_examine_one(target);
++	return (retval == ERROR_OK) && !!target->type->get_gdb_reg_list && !!target->gdb_max_connections;
+ }
+ 
+ int target_step(struct target *target,
+-- 
+2.34.1
+

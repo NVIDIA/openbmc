@@ -1,0 +1,11 @@
+[Unit]
+Description=NVIDIA HMC Write Protect Service
+PartOf=global-wp-on.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'busctl set-property com.Nvidia.Software.MTD.Updater.pciechip /xyz/openbmc_project/software/other/HGX_PCIeSwitchConfig_0 xyz.openbmc_project.Software.Settings WriteProtected b true'
+SyslogIdentifier=pcie-chip-write-protect-on
+
+[Install]
+WantedBy=global-wp-on.target

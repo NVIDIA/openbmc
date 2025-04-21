@@ -1,0 +1,5 @@
+RDEPENDS:${PN}-system:append = " dbus-sensors"
+RDEPENDS:${PN}-system:append = " clear-once"
+RDEPENDS:${PN}-system:append = " phosphor-time-manager"
+RDEPENDS:${PN}-system:append = " bmc-reset-check"
+RDEPENDS:${PN}-system:append = " phosphor-state-manager-csm"

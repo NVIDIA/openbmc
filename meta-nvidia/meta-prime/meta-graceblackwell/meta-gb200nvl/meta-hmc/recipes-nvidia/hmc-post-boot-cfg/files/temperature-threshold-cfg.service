@@ -1,0 +1,16 @@
+[Unit]
+Description=Temperature threshold config
+After=nvidia-fpga-ready.target
+After=mctp-usb-ctrl.service
+
+[Service]
+Restart=on-failure
+Type=simple
+ExecStartPre=/bin/bash -c 'sleep 5; if [ `systemctl is-active mctp-usb-ctrl` == "active" ]; then exit 0; else exit 1; fi'
+ExecStart=/usr/bin/set_module_temp_sensor_threshold.sh
+SyslogIdentifier=temperature_threshold_cfg
+StartLimitBurst=5
+
+[Install]
+WantedBy=nvidia-fpga-ready.target
+

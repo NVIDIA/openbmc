@@ -1,0 +1,8 @@
+{
+    "Inventory": "HGX_PCIeSwitchConfig_0",
+    "Path": "/var/pciechip/file.bin",
+    "Offset": "0xb8",
+    "VersionSize": 4,
+    "Authentication": true
+}
+

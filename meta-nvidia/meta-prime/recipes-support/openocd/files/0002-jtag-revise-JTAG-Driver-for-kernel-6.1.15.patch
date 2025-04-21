@@ -1,0 +1,172 @@
+From ea1c5a924c4aed07e6ddeed9115a9f55b51298f1 Mon Sep 17 00:00:00 2001
+From: Curtis Chuang <shengchihc@nvidia.com>
+Date: Mon, 6 May 2024 09:11:22 -0700
+Subject: [PATCH] jtag: revise JTAG Driver for kernel 6.1.15
+
+Signed-off-by: Curtis Chuang <shengchihc@nvidia.com>
+---
+ src/helper/uapi_linux_jtag.h   | 22 ++++++++++++++++++++--
+ src/jtag/drivers/jtag_driver.c | 22 +++++++++++++++++-----
+ 2 files changed, 37 insertions(+), 7 deletions(-)
+
+diff --git a/src/helper/uapi_linux_jtag.h b/src/helper/uapi_linux_jtag.h
+index 8e048492f..5cdbda127 100644
+--- a/src/helper/uapi_linux_jtag.h
++++ b/src/helper/uapi_linux_jtag.h
+@@ -89,7 +89,8 @@ enum jtag_endstate {
+ 	JTAG_STATE_EXIT1IR,
+ 	JTAG_STATE_PAUSEIR,
+ 	JTAG_STATE_EXIT2IR,
+-	JTAG_STATE_UPDATEIR
++	JTAG_STATE_UPDATEIR,
++	JTAG_STATE_CURRENT
+ };
+ 
+ /**
+@@ -140,6 +141,7 @@ enum jtag_xfer_direction {
+  */
+ struct jtag_end_tap_state {
+ 	__u8	reset;
++	__u8    from;
+ 	__u8	endstate;
+ 	__u8	tck;
+ };
+@@ -158,8 +160,9 @@ struct jtag_end_tap_state {
+ struct jtag_xfer {
+ 	__u8	type;
+ 	__u8	direction;
++	__u8    from;
+ 	__u8	endstate;
+-	__u8	padding;
++	__u32	padding;
+ 	__u32	length;
+ 	__u64	tdio;
+ };
+@@ -195,6 +198,20 @@ struct jtag_mode {
+ 	__u32	mode;
+ };
+ 
++/**
++ * struct bitbang_packet - jtag bitbang array packet:
++ *
++ * @data:   JTAG Bitbang struct array pointer(input/output)
++ * @length: array size (input)
++ *
++ * Structure provide interface to JTAG device for JTAG bitbang bundle execution
++ */
++struct bitbang_packet {
++	struct tck_bitbang *data;
++	__u32   length;
++} __attribute__((__packed__));
++
++
+ /* ioctl interface */
+ #define __JTAG_IOCTL_MAGIC	0xb2
+ 
+@@ -205,5 +222,6 @@ struct jtag_mode {
+ #define JTAG_GIOCSTATUS _IOWR(__JTAG_IOCTL_MAGIC, 4, enum jtag_endstate)
+ #define JTAG_SIOCMODE	_IOW(__JTAG_IOCTL_MAGIC, 5, unsigned int)
+ #define JTAG_IOCBITBANG	_IOW(__JTAG_IOCTL_MAGIC, 6, unsigned int)
++#define JTAG_SIOCTRST  _IOW(__JTAG_IOCTL_MAGIC, 7, unsigned int)
+ 
+ #endif /* __UAPI_LINUX_JTAG_H */
+diff --git a/src/jtag/drivers/jtag_driver.c b/src/jtag/drivers/jtag_driver.c
+index fe78d7924..2312e15b9 100644
+--- a/src/jtag/drivers/jtag_driver.c
++++ b/src/jtag/drivers/jtag_driver.c
+@@ -251,6 +251,8 @@ static int jtag_driver_execute_scan(struct scan_command *scan)
+ 	xfer.length = (__u32)num_bits;
+ 	xfer.tdio = (__u64)(uintptr_t)data_buf;
+ 	xfer.endstate = state_conversion(scan->end_state);
++	xfer.from = state_conversion(tap_get_state());
++	xfer.padding = 0;
+ 
+ 	ret_errno = ioctl(jtag_fd, JTAG_IOCXFER, &xfer);
+ 	if (ret_errno < 0) {
+@@ -275,6 +277,7 @@ static int jtag_driver_execute_scan(struct scan_command *scan)
+ static int jtag_driver_execute_runtest(int num_cycles, tap_state_t state)
+ {
+ 	struct tck_bitbang bitbang;
++	struct bitbang_packet bb_packet;
+ 	int i;
+ 	int ret = ERROR_OK;
+ 	int ret_errno;
+@@ -289,8 +292,11 @@ static int jtag_driver_execute_runtest(int num_cycles, tap_state_t state)
+ 	bitbang.tdi = (__u8)0; /* write: host to device */
+ 	bitbang.tdo = (__u8)0; /* read: device to host */
+ 
++	bb_packet.length = 1;
++	bb_packet.data = &bitbang;
++
+ 	for (i = 0; i < num_cycles && ret == ERROR_OK; i++) {
+-		ret_errno = ioctl(jtag_fd, JTAG_IOCBITBANG, &bitbang);
++		ret_errno = ioctl(jtag_fd, JTAG_IOCBITBANG, &bb_packet);
+ 		if (ret_errno < 0) {
+ 			LOG_ERROR("JTAG DRIVER ERROR: couldn't execute runtest");
+ 			ret = ERROR_FAIL;
+@@ -343,6 +349,7 @@ static int jtag_driver_reset(int trst, int srst)
+ 			end_state.reset = JTAG_FORCE_RESET;
+ 			end_state.endstate = JTAG_STATE_TLRESET;
+ 			end_state.tck = 0;
++			end_state.from = JTAG_STATE_CURRENT;
+ 			ret_errno = ioctl(jtag_fd, JTAG_SIOCSTATE, &end_state);
+ 			if (ret_errno < 0) {
+ 				LOG_ERROR("JTAG DRIVER ERROR: couldn't reset JTAG state machine");
+@@ -378,6 +385,8 @@ static int jtag_driver_reset(int trst, int srst)
+ 				xfer.length = (__u32)1;          /* Only a single bit is needed */
+ 				xfer.tdio = (__u64)(uintptr_t)(&data_buf);  /* Location to store read result */
+ 				xfer.endstate = JTAG_STATE_TLRESET;
++				xfer.from = state_conversion(tap_get_state());
++				xfer.padding = 0;
+ 
+ 				ret_errno = ioctl(jtag_fd, JTAG_IOCXFER, &xfer);
+ 				if (ret_errno < 0) {
+@@ -413,6 +422,7 @@ static int jtag_driver_execute_sleep(struct sleep_command *sleep)
+ static int jtag_driver_execute_tms(struct tms_command *tms)
+ {
+ 	struct tck_bitbang bitbang;
++	struct bitbang_packet bb_packet;
+ 	int ret = ERROR_OK;
+ 	int ret_errno;
+ 	unsigned index, this_len, i, j;
+@@ -431,7 +441,9 @@ static int jtag_driver_execute_tms(struct tms_command *tms)
+ 		this_len = tms_num_bits > 8 ? 8 : tms_num_bits;
+ 		for (i = 0; i < this_len && ret == ERROR_OK; i++) {
+ 			bitbang.tms = (__u8)((tms_bits >> i) & 0x1);
+-			ret_errno = ioctl(jtag_fd, JTAG_IOCBITBANG, &bitbang);
++			bb_packet.length = 1;
++			bb_packet.data = &bitbang;
++			ret_errno = ioctl(jtag_fd, JTAG_IOCBITBANG, &bb_packet);
+ 			if (ret_errno < 0) {
+ 				LOG_ERROR("JTAG DRIVER ERROR: execute_tms failed");
+ 				ret = ERROR_FAIL;
+@@ -453,7 +465,7 @@ static int jtag_driver_execute_queue(void)
+ 	struct jtag_command *cmd;
+ 	int ret = ERROR_OK;
+ 
+-	for (cmd = jtag_command_queue; ret == ERROR_OK && cmd != NULL;
++	for (cmd = jtag_command_queue; ret == ERROR_OK && cmd;
+ 	   cmd = cmd->next) {
+ 		switch (cmd->type) {
+ 		case JTAG_SCAN:
+@@ -495,7 +507,7 @@ static int jtag_driver_init(void)
+ {
+ 	struct jtag_mode jmode;
+ 	int ret = ERROR_OK;
+-	int ret_errno;
++	int ret_errno = 0;
+ 	char buf[32];
+ 
+ 	snprintf(buf, sizeof(buf), "/dev/jtag%u", jtag_instance);
+@@ -509,7 +521,7 @@ static int jtag_driver_init(void)
+ 
+ 	jmode.feature = JTAG_CONTROL_MODE;
+ 	jmode.mode = JTAG_MASTER_MODE;   /* JTAG_MASTER_MODE or JTAG_SLAVE_MODE */
+-	ret_errno = ioctl(jtag_fd, JTAG_SIOCMODE, &jmode);
++	//ret_errno = ioctl(jtag_fd, JTAG_SIOCMODE, &jmode);
+ 	if (ret_errno < 0) {
+ 		LOG_ERROR("JTAG DRIVER ERROR: unable to set JTAG_CONTROL_MODE");
+ 		ret = ERROR_FAIL;
+-- 
+2.34.1
+

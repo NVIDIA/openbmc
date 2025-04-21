@@ -1,0 +1,8 @@
+{
+   "powerState": {
+        "objectName": "/xyz/openbmc_project/state/chassis0",
+        "interfaceName": "xyz.openbmc_project.State.Chassis",
+        "propertyName": "CurrentPowerState"
+    },
+    "powerCappingSavePath":"/etc/powerCap.bin"
+}

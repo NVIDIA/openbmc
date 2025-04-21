@@ -1,0 +1,5 @@
+/xyz/openbmc_project/mode/settings:
+    - Interface: xyz.openbmc_project.Control.Mode
+      Properties:
+          ISTMode:
+             Default: Mode::StateOfISTMode::Disabled

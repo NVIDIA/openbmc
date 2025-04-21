@@ -1,0 +1,103 @@
+From fe5460af38cb08f1eeda24f6dab395aadd917351 Mon Sep 17 00:00:00 2001
+From: Shakeeb Pasha <spasha@nvidia.com>
+Date: Tue, 22 Sep 2020 13:28:58 +0530
+Subject: [PATCH] Add mellanox product id name mapping
+
+---
+ include/ipmitool/ipmi.h | 11 ++++++-----
+ lib/ipmi_strings.c      | 19 +++++++++++++------
+ 2 files changed, 19 insertions(+), 11 deletions(-)
+
+diff --git a/include/ipmitool/ipmi.h b/include/ipmitool/ipmi.h
+index 7555596..2c4e375 100644
+--- a/include/ipmitool/ipmi.h
++++ b/include/ipmitool/ipmi.h
+@@ -1,21 +1,21 @@
+ /*
+  * Copyright (c) 2003 Sun Microsystems, Inc.  All Rights Reserved.
+- * 
++ *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+  * are met:
+- * 
++ *
+  * Redistribution of source code must retain the above copyright
+  * notice, this list of conditions and the following disclaimer.
+- * 
++ *
+  * Redistribution in binary form must reproduce the above copyright
+  * notice, this list of conditions and the following disclaimer in the
+  * documentation and/or other materials provided with the distribution.
+- * 
++ *
+  * Neither the name of Sun Microsystems, Inc. or the names of
+  * contributors may be used to endorse or promote products derived
+  * from this software without specific prior written permission.
+- * 
++ *
+  * This software is provided "AS IS," without a warranty of any kind.
+  * ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
+  * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
+@@ -303,6 +303,7 @@ typedef enum IPMI_OEM {
+      IPMI_OEM_VITA       = 33196,
+      IPMI_OEM_SUPERMICRO_47488 = 47488,
+      IPMI_OEM_YADRO      = 49769,
++     IPMI_OEM_MELLANOX   = 33049,
+ } IPMI_OEM;
+ 
+ extern const struct valstr completion_code_vals[];
+diff --git a/lib/ipmi_strings.c b/lib/ipmi_strings.c
+index c8fc2d0..625b8f2 100644
+--- a/lib/ipmi_strings.c
++++ b/lib/ipmi_strings.c
+@@ -1,21 +1,21 @@
+ /*
+  * Copyright (c) 2003 Sun Microsystems, Inc.  All Rights Reserved.
+- * 
++ *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+  * are met:
+- * 
++ *
+  * Redistribution of source code must retain the above copyright
+  * notice, this list of conditions and the following disclaimer.
+- * 
++ *
+  * Redistribution in binary form must reproduce the above copyright
+  * notice, this list of conditions and the following disclaimer in the
+  * documentation and/or other materials provided with the distribution.
+- * 
++ *
+  * Neither the name of Sun Microsystems, Inc. or the names of
+  * contributors may be used to endorse or promote products derived
+  * from this software without specific prior written permission.
+- * 
++ *
+  * This software is provided "AS IS," without a warranty of any kind.
+  * ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
+  * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
+@@ -82,6 +82,13 @@ const struct oemvalstr ipmi_oem_product_info[] = {
+    /* For ipmitool debugging */
+    { IPMI_OEM_DEBUG, 0x1234, "Great Debuggable BMC" },
+ 
++   /* Mellanox MCs */
++   { IPMI_OEM_MELLANOX, 0x02, "Bluefield2 BMC" },
++   { IPMI_OEM_MELLANOX, 0x03, "Bluefield2 ARM" },
++   { IPMI_OEM_MELLANOX, 0x04, "Bluefield3 BMC" },
++   { IPMI_OEM_MELLANOX, 0x05, "Bluefield3 ARM" },
++   { IPMI_OEM_MELLANOX, 0x06, "Spectre AMC" },
++
+    /* Intel stuff, thanks to Tim Bell */
+    { IPMI_OEM_INTEL, 0x000C, "TSRLT2" },
+    { IPMI_OEM_INTEL, 0x001B, "TIGPR2U" },
+@@ -1684,7 +1691,7 @@ oem_info_init_from_list(oem_valstr_list_t *oemlist, size_t count)
+ 
+ 	/* Add tail entries from the end */
+ 	while (count-- < SIZE_MAX && tail_entries--) {
+-		((struct valstr *)ipmi_oem_info)[count] = 
++		((struct valstr *)ipmi_oem_info)[count] =
+ 			ipmi_oem_info_tail[tail_entries];
+ 
+ 		lprintf(oemlist_debug, "  [%6zu] %8d | %s", count,

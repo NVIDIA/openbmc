@@ -1,0 +1,19 @@
+{
+    // Service order matters, be cautious while changing service order
+    "disable-services": [
+        "spdmd.service",
+        "pldmd.service",
+        "nvidia-gpu-oob-recovery.service",
+        "nvidia-fpga-ready-monitor.service",
+        "nvidia-gpu-manager.service",
+        "xyz.openbmc_project.hwmontempsensor.service",
+        "nvidia-fru-manager.service",
+        "xyz.openbmc_project.EntityManager.service",
+        "nvidia-pcm",
+        "nvidia-monitor-eventing-memory-watcher.service",
+        "nvidia-monitor-eventing.service",
+        "xyz.openbmc_project.Dump.Manager.service",
+        "obmc-dump-monitor.service",
+        "ramoops-monitor.service"
+    ]
+}

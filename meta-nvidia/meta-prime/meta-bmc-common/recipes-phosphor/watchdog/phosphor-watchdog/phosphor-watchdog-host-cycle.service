@@ -1,0 +1,10 @@
+[Unit]
+Description=Power Cycle Host Server
+#Requires=host-gpio.service
+#After=host-gpio.service
+
+[Service]
+Type=oneshot
+ExecStart=busctl set-property xyz.openbmc_project.State.Host /xyz/openbmc_project/state/host0 xyz.openbmc_project.State.Host RequestedHostTransition s xyz.openbmc_project.State.Host.Transition.Reboot
+ExecStart=busctl set-property xyz.openbmc_project.State.Host /xyz/openbmc_project/state/host0 xyz.openbmc_project.State.Host RestartCause s xyz.openbmc_project.State.Host.RestartCause.WatchdogTimer
+SyslogIdentifier=phosphor-watchdog

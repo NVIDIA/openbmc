@@ -1,0 +1,14 @@
+[Unit]
+Description=NVIDIA Monitor Eventing Service
+After=xyz.openbmc_project.Logging.service gpio-status-handler.service xyz.openbmc_project.ObjectMapper.service pldmd.service
+
+[Service]
+Type=dbus
+SyslogIdentifier=monitor-eventing
+ExecStart=/usr/bin/env monitor-eventingd -d /usr/share/mon_evt/dat.json -e /usr/share/mon_evt/event_info.json
+Restart=always
+TimeoutStartSec=480
+BusName=xyz.openbmc_project.MON_EVT
+
+[Install]
+WantedBy=multi-user.target

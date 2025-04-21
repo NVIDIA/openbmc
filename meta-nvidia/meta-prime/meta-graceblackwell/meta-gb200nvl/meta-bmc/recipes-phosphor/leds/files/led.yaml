@@ -1,0 +1,23 @@
+bmc_booted:
+    power_led:
+        Action: 'Blink'
+        DutyOn: 50
+        Period: 1000
+        Priority: 'On'
+post_active:
+    power_led:
+       Action: 'Blink'
+       DutyOn: 50
+       Period: 250
+       Priority: 'On'
+powered_on:
+    power_led:
+       Action: 'On'
+       Priority: 'On'
+power_on:
+enclosure_identify:
+    uid_led:
+        Action: 'Blink'
+        DutyOn: 50
+        Period: 1000
+        Priority: 'On'

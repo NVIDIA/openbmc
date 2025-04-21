@@ -1,0 +1,12 @@
+[
+	{
+		"Name": "CPU-Boot-Done",
+		"LineName": "CPU_BOOT_DONE-I",
+		"EventMon": "BOTH",
+		"Targets": {
+			"FALLING": ["cpu-boot-undone.service"],
+			"RISING": ["cpu-boot-done.service"]
+		},
+		"Continue": true
+	}
+]

@@ -1,0 +1,5 @@
+/com/nvidia/debug_token/erase_policy:
+    - Interface: com.nvidia.DebugToken.ErasePolicy
+      Properties:
+          Policy:
+            Default: ErasePolicy::PolicyTypes::Automatic

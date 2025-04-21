@@ -1,0 +1,5 @@
+/xyz/openbmc_project/Common/UUID:
+    - Interface: xyz.openbmc_project.Common.UUID
+      Properties:
+              UUID:
+                Default: '""'

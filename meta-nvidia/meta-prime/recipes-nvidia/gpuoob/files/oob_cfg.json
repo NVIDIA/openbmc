@@ -1,0 +1,15 @@
+{
+    "version": 1.0,
+    "refresh_intervals": {
+         "BUCKET_1": 180,
+         "BUCKET_2": 30000,
+         "BUCKET_3": 60000
+    },
+    "maximum_retrial_count": {
+         "BUCKET_1": 3,
+         "BUCKET_2": 2,
+         "BUCKET_3": 2
+    },
+    "get_timeout_interval": 3000,
+    "set_timeout_interval": 20000
+}

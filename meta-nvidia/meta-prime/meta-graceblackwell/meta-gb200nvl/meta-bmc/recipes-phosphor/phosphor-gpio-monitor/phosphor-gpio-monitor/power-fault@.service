@@ -1,0 +1,6 @@
+[Unit]
+Description=Fault service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/env error_log.sh fault %I

@@ -1,0 +1,6 @@
+[Unit]
+Description=CPU boot undone service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'cpu-boot-handler.sh boot-undone'

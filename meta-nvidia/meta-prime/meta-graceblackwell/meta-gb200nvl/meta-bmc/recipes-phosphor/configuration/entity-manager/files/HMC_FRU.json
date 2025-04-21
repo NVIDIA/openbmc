@@ -1,0 +1,21 @@
+[
+  {
+    "Exposes": [
+      {
+        "Bus": "0x02",
+        "Address": "0x57",
+        "Name": "HMC_FRU",
+        "Type": "EEPROM_24C02"
+      }
+    ],
+    "Name": "HMC_FRU",
+    "Probe": "TRUE",
+    "Type": "FRU_EEPROM",
+    "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Baseboard_0",
+    "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+      "Bus": "0x02",
+      "Address": "0x57",
+      "Name": "HMC_FRU"
+    }
+  }
+]

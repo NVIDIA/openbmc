@@ -1,0 +1,6 @@
+[Unit]
+Description=Fan fail gpio service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/env error_log.sh fan-fail %I

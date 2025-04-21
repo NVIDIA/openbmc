@@ -1,0 +1,5 @@
+[Unit]
+Description=Power brake is currently enabled
+After=
+Conflicts=power-brake-disabled.target
+RefuseManualStop=yes

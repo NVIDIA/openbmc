@@ -1,0 +1,16 @@
+[Unit]
+Description=NVIDIA Shutdown OK Monitor Service
+Requires=bmc-boot-complete.service
+After=mapper-wait@-xyz-openbmc_project-state-chassis0.service
+After=bmc-boot-complete.service
+StartLimitIntervalSec=1
+
+[Service]
+Restart=always
+Type=simple
+ExecStart=/usr/bin/env shutdown_ok_monitor.sh
+ExecStop=/usr/bin/env rm /run/bmc-state/SHDN_OK
+SyslogIdentifier=shutdown_ok_mon
+
+[Install]
+WantedBy=multi-user.target

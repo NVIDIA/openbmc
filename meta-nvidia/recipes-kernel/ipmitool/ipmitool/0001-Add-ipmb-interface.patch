@@ -1,0 +1,339 @@
+From b5136dec98993268cbe2f1255cf61f2b8c694caf Mon Sep 17 00:00:00 2001
+From: Shakeeb Pasha <spasha@nvidia.com>
+Date: Fri, 18 Sep 2020 00:38:18 +0530
+Subject: [PATCH] Add ipmb interface
+
+Addition of a new interface "ipmb" which supports
+OpenBMC ipmbbridge dbus interface
+usage:
+ipmitool -I ipmb mc info
+---
+ configure.ac                 |  10 +-
+ src/plugins/Makefile.am      |   4 +-
+ src/plugins/ipmb/Makefile.am |  10 ++
+ src/plugins/ipmb/ipmb.c      | 194 +++++++++++++++++++++++++++++++++++
+ src/plugins/ipmi_intf.c      |  12 ++-
+ 5 files changed, 222 insertions(+), 8 deletions(-)
+ create mode 100644 src/plugins/ipmb/Makefile.am
+ create mode 100644 src/plugins/ipmb/ipmb.c
+
+diff --git a/configure.ac b/configure.ac
+index 1dd2742..efdf8cd 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -89,7 +89,8 @@ dnl
+ 
+ xenable_all_options=yes
+ xenable_intf_bmc=no
+-xenable_intf_dbus=no
++xenable_intf_dbus=yes
++xenable_intf_ipmb=no
+ xenable_intf_dummy=no
+ xenable_intf_imb=yes
+ xenable_intf_lipmi=yes
+@@ -612,6 +613,11 @@ if test "x$xenable_intf_dbus" = "xyes"; then
+ 	IPMITOOL_INTF_LIB="$IPMITOOL_INTF_LIB dbus/libintf_dbus.la"
+ fi
+ 
++dnl enable IPMI ipmb interface
++AC_SUBST(INTF_IPMB, [ipmb])
++AC_SUBST(INTF_IPMB_LIB, [libintf_ipmb.la])
++IPMITOOL_INTF_LIB="$IPMITOOL_INTF_LIB ipmb/libintf_ipmb.la"
++
+ dnl enable Dummy interface for testing
+ AC_ARG_ENABLE([intf-dummy],
+ 	[AC_HELP_STRING([--enable-intf-dummy],
+@@ -758,6 +764,7 @@ AC_CONFIG_FILES([Makefile
+ 		src/plugins/imb/Makefile
+ 		src/plugins/bmc/Makefile
+ 		src/plugins/dbus/Makefile
++		src/plugins/ipmb/Makefile
+ 		src/plugins/usb/Makefile
+ 		src/plugins/lipmi/Makefile
+ 		src/plugins/serial/Makefile
+@@ -778,6 +785,7 @@ AC_MSG_RESULT([  free    : $xenable_intf_free])
+ AC_MSG_RESULT([  imb     : $xenable_intf_imb])
+ AC_MSG_RESULT([  bmc     : $xenable_intf_bmc])
+ AC_MSG_RESULT([  dbus    : $xenable_intf_dbus])
++AC_MSG_RESULT([  ipmb    : $xenable_intf_ipmb])
+ AC_MSG_RESULT([  usb     : $xenable_intf_usb])
+ AC_MSG_RESULT([  lipmi   : $xenable_intf_lipmi])
+ AC_MSG_RESULT([  serial  : $xenable_intf_serial])
+diff --git a/src/plugins/Makefile.am b/src/plugins/Makefile.am
+index 14acbcf..5f446b0 100644
+--- a/src/plugins/Makefile.am
++++ b/src/plugins/Makefile.am
+@@ -32,8 +32,8 @@ MAINTAINERCLEANFILES		= Makefile.in
+ 
+ AM_CPPFLAGS			= -I$(top_srcdir)/include
+ 
+-SUBDIRS				= @INTF_LAN@ @INTF_LANPLUS@ @INTF_OPEN@ @INTF_LIPMI@ @INTF_IMB@ @INTF_BMC@ @INTF_FREE@ @INTF_SERIAL@ @INTF_DUMMY@ @INTF_USB@ @INTF_DBUS@
+-DIST_SUBDIRS			= lan lanplus open lipmi imb bmc free serial dummy usb dbus
++SUBDIRS				= @INTF_LAN@ @INTF_LANPLUS@ @INTF_OPEN@ @INTF_LIPMI@ @INTF_IMB@ @INTF_BMC@ @INTF_FREE@ @INTF_SERIAL@ @INTF_DUMMY@ @INTF_USB@ @INTF_DBUS@ @INTF_IPMB@
++DIST_SUBDIRS			= lan lanplus open lipmi imb bmc free serial dummy usb dbus ipmb
+ 
+ noinst_LTLIBRARIES		= libintf.la
+ libintf_la_SOURCES		= ipmi_intf.c
+diff --git a/src/plugins/ipmb/Makefile.am b/src/plugins/ipmb/Makefile.am
+new file mode 100644
+index 0000000..714a4f9
+--- /dev/null
++++ b/src/plugins/ipmb/Makefile.am
+@@ -0,0 +1,10 @@
++MAINTAINERCLEANFILES	= Makefile.in
++
++AM_CPPFLAGS		= -I$(top_srcdir)/include
++
++EXTRA_LTLIBRARIES	= libintf_ipmb.la
++noinst_LTLIBRARIES	= @INTF_IPMB_LIB@
++libintf_ipmb_la_LDFLAGS	= -lsystemd
++libintf_ipmb_la_LIBADD	= $(top_builddir)/lib/libipmitool.la
++libintf_ipmb_la_SOURCES	= ipmb.c
++
+diff --git a/src/plugins/ipmb/ipmb.c b/src/plugins/ipmb/ipmb.c
+new file mode 100644
+index 0000000..9d2a0ec
+--- /dev/null
++++ b/src/plugins/ipmb/ipmb.c
+@@ -0,0 +1,194 @@
++#include <sys/file.h>
++#include <sys/stat.h>
++#include <sys/types.h>
++#include <fcntl.h>
++#include <errno.h>
++#include <unistd.h>
++#include <stdbool.h>
++
++#include <systemd/sd-bus.h>
++
++#include <ipmitool/log.h>
++#include <ipmitool/ipmi.h>
++#include <ipmitool/ipmi_intf.h>
++
++static sd_bus *bus;
++
++static
++struct ipmi_rs *
++ipmi_ipmb_sendrecv(struct ipmi_intf *intf,
++                   struct ipmi_rq *req)
++{
++	static const char *destination = "xyz.openbmc_project.Ipmi.Channel.Ipmb";
++	static const char *object_path = "/xyz/openbmc_project/Ipmi/Channel/Ipmb";
++	static const char *interface = "org.openbmc.Ipmb";
++	static const char *method_name = "sendRequest";
++	static const char SD_BUS_TYPE_4_BYTES[] = {
++		SD_BUS_TYPE_BYTE, SD_BUS_TYPE_BYTE, SD_BUS_TYPE_BYTE, SD_BUS_TYPE_BYTE, 0
++	};
++	static const char SD_BUS_TYPE_5_BYTES[] = {
++		SD_BUS_TYPE_INT32, SD_BUS_TYPE_BYTE, SD_BUS_TYPE_BYTE,
++		SD_BUS_TYPE_BYTE, SD_BUS_TYPE_BYTE, 0
++	};
++	static const char SD_BUS_TYPE_IPMI_RESPONSE[] = {
++		SD_BUS_TYPE_INT32, SD_BUS_TYPE_BYTE, SD_BUS_TYPE_BYTE,
++		SD_BUS_TYPE_BYTE, SD_BUS_TYPE_BYTE,
++		SD_BUS_TYPE_ARRAY, SD_BUS_TYPE_BYTE, 0
++	};
++
++	sd_bus_message *request = NULL;
++	int rc;
++    int ipmb_rc;
++	sd_bus_error error = SD_BUS_ERROR_NULL;
++	sd_bus_message* reply = NULL;
++	uint8_t recv_netfn;
++	uint8_t recv_lun;
++	uint8_t recv_cmd;
++	uint8_t recv_cc;
++	const void *data;
++	size_t data_len;
++	static struct ipmi_rs rsp;
++	struct ipmi_rs *ipmi_response = NULL;
++
++	if (!intf->opened || !bus)
++	{
++		goto out_no_free;
++	}
++
++	rsp.ccode = IPMI_CC_UNSPECIFIED_ERROR;
++	rsp.data_len = 0;
++	memset(rsp.data, 0, sizeof(rsp.data));
++
++	/* The D-Bus org.openbmc.Ipmb.sendRequest interface
++	 * looks like this:
++	 *
++	 * Request:
++     *   byte: channel
++	 *   byte: net function
++	 *   byte: lun
++	 *   byte: command
++	 *   byte array: data (possibly zero length)
++	 * Response:
++     *   int32: ret code
++	 *   byte: net function
++	 *   byte: lun
++	 *   byte: command
++	 *   byte: completion code
++	 *   byte array: response data (possibly zero length)
++	 */
++	rc = sd_bus_message_new_method_call(bus, &request, destination,
++	                                    object_path, interface,
++					    method_name);
++	if (rc < 0) {
++		lprintf(LOG_ERR, "%s: failed to create message: %s\n",
++		        __func__, strerror(-rc));
++		goto out_no_free;
++	}
++	/* pack the header: netfn, lun, cmd */
++	rc = sd_bus_message_append(request, SD_BUS_TYPE_4_BYTES, 0, req->msg.netfn,
++	                           req->msg.lun, req->msg.cmd);
++	if (rc < 0) {
++		lprintf(LOG_ERR, "%s: failed to append parameters\n", __func__);
++		goto out_free_request;
++	}
++	/* pack the variable length data */
++	rc = sd_bus_message_append_array(request, SD_BUS_TYPE_BYTE,
++	                                 req->msg.data, req->msg.data_len);
++	if (rc < 0) {
++		lprintf(LOG_ERR, "%s: failed to append body\n", __func__);
++		goto out_free_request;
++	}
++
++	rc = sd_bus_call(bus, request, 0, &error, &reply);
++	if (rc < 0) {
++		lprintf(LOG_ERR, "%s: failed to send dbus message (%s)\n",
++		        __func__, error.message);
++		goto out_free_request;
++	}
++
++	/* unpack the response; check that it has the expected types */
++	rc = sd_bus_message_enter_container(reply, SD_BUS_TYPE_STRUCT,
++	                                    SD_BUS_TYPE_IPMI_RESPONSE);
++	if (rc < 0) {
++		lprintf(LOG_ERR, "%s: failed to parse reply\n", __func__);
++		goto out_free_reply;
++	}
++	/* read the header: CC netfn lun cmd */
++	rc = sd_bus_message_read(reply, SD_BUS_TYPE_5_BYTES, &ipmb_rc, &recv_netfn,
++	                         &recv_lun, &recv_cmd, &recv_cc);
++	if ((rc < 0) || (ipmb_rc != 0)) {
++		lprintf(LOG_ERR, "%s: failed to read reply\n", __func__);
++		goto out_free_reply;
++	}
++	/* read the variable length data */
++	rc = sd_bus_message_read_array(reply, SD_BUS_TYPE_BYTE,
++	                               &data, &data_len);
++	if (rc < 0) {
++		lprintf(LOG_ERR, "%s: failed to read reply data\n", __func__);
++		goto out_free_reply;
++	}
++	rc = sd_bus_message_exit_container(reply);
++	if (rc < 0) {
++		lprintf(LOG_ERR, "%s: final unpack of message failed\n",
++		        __func__);
++		goto out_free_reply;
++	}
++
++	if (data_len > sizeof(rsp.data)) {
++		lprintf(LOG_ERR, "%s: data too long!\n", __func__);
++		goto out_free_reply;
++	}
++
++	/* At this point, all the parts are available for a response
++	 * other than unspecified error. */
++	rsp.ccode = recv_cc;
++	rsp.data_len = data_len;
++	memcpy(rsp.data, data, data_len);
++	ipmi_response = &rsp;
++
++out_free_reply:
++	/* message unref will free resources owned by the message */
++	sd_bus_message_unref(reply);
++out_free_request:
++	sd_bus_message_unref(request);
++out_no_free:
++	return ipmi_response;
++}
++
++static
++int
++ipmi_ipmb_setup(struct ipmi_intf *intf)
++{
++	int rc;
++
++	rc = sd_bus_default_system(&bus);
++	if (rc < 0) {
++		lprintf(LOG_ERR, "Can't connect to session bus: %s\n",
++		        strerror(-rc));
++		return -1;
++	}
++	intf->opened = 1;
++
++	return 0;
++}
++
++static
++void
++ipmi_ipmb_close(struct ipmi_intf *intf)
++{
++	if (intf->opened)
++	{
++		sd_bus_close(bus);
++	}
++	intf->opened = 0;
++}
++
++struct ipmi_intf ipmi_ipmb_intf = {
++	.name = "ipmb",
++	.desc = "OpenBMC IPMB D-Bus interface",
++	.setup = ipmi_ipmb_setup,
++	.close = ipmi_ipmb_close,
++	.sendrecv = ipmi_ipmb_sendrecv,
++};
++
++
+diff --git a/src/plugins/ipmi_intf.c b/src/plugins/ipmi_intf.c
+index e424a64..71527ef 100644
+--- a/src/plugins/ipmi_intf.c
++++ b/src/plugins/ipmi_intf.c
+@@ -1,21 +1,21 @@
+ /*
+  * Copyright (c) 2003 Sun Microsystems, Inc.  All Rights Reserved.
+- * 
++ *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+  * are met:
+- * 
++ *
+  * Redistribution of source code must retain the above copyright
+  * notice, this list of conditions and the following disclaimer.
+- * 
++ *
+  * Redistribution in binary form must reproduce the above copyright
+  * notice, this list of conditions and the following disclaimer in the
+  * documentation and/or other materials provided with the distribution.
+- * 
++ *
+  * Neither the name of Sun Microsystems, Inc. or the names of
+  * contributors may be used to endorse or promote products derived
+  * from this software without specific prior written permission.
+- * 
++ *
+  * This software is provided "AS IS," without a warranty of any kind.
+  * ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
+  * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
+@@ -88,6 +88,7 @@ extern struct ipmi_intf ipmi_usb_intf;
+ #endif
+ #ifdef IPMI_INTF_DBUS
+ extern struct ipmi_intf ipmi_dbus_intf;
++extern struct ipmi_intf ipmi_ipmb_intf;
+ #endif
+ 
+ struct ipmi_intf * ipmi_intf_table[] = {
+@@ -124,6 +125,7 @@ struct ipmi_intf * ipmi_intf_table[] = {
+ #endif
+ #ifdef IPMI_INTF_DBUS
+ 	&ipmi_dbus_intf,
++    &ipmi_ipmb_intf,
+ #endif
+ 	NULL
+ };

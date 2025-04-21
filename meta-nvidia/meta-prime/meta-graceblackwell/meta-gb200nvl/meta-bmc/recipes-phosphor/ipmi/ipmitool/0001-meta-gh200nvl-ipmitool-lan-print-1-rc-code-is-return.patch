@@ -1,0 +1,66 @@
+From c050054c3c48e9d9c328d5258ddf69b45148e6f7 Mon Sep 17 00:00:00 2001
+From: leonhuang <leonhuang@nvidia.com>
+Date: Thu, 29 Aug 2024 20:31:40 -0700
+Subject: [PATCH] [meta-gh200nvl] ipmitool lan print 1 rc code is returning as
+ 1
+
+Description:
+ipmitool lan print 1 rc code is returning as 1
+
+Change List:
+Return rc, instead of NULL.
+
+Tested:
+ssh root@10.137.159.234
+X11 forwarding request failed on channel 0
+root@gb200nvl-bmc:~# ipmitool lan print 01
+Set in Progress         : Set Complete
+Auth Type Support       :
+Auth Type Enable        : Callback :
+                        : User     :
+                        : Operator :
+                        : Admin    :
+                        : OEM      :
+IP Address Source       : DHCP Address
+IP Address              : 10.137.159.234
+Subnet Mask             : 255.255.254.0
+MAC Address             : 3c:6d:66:05:54:77
+Default Gateway IP      : 10.137.158.1
+Default Gateway MAC     : 00:00:00:00:00:00
+802.1q VLAN ID          : Disabled
+RMCP+ Cipher Suites     : 17
+Cipher Suite Priv Max   : aaaaaaaaaaaaaaa
+                        :     X=Cipher Suite Unused
+                        :     c=CALLBACK
+                        :     u=USER
+                        :     o=OPERATOR
+                        :     a=ADMIN
+                        :     O=OEM
+Bad Password Threshold  : Not Available
+
+Reference code:
+https://codeberg.org/IPMITool/ipmitool/commit/137aeb64cbb493d61d6945cac156aba5f0510780
+
+Fixes NVbug https://nvbugspro.nvidia.com/bug/4822558
+
+Signed-off-by: leonhuang@nvidia.com
+---
+ lib/ipmi_lanp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/ipmi_lanp.c b/lib/ipmi_lanp.c
+index fe0046f..26e7365 100644
+--- a/lib/ipmi_lanp.c
++++ b/lib/ipmi_lanp.c
+@@ -245,7 +245,7 @@ get_lan_param_select(struct ipmi_intf *intf, uint8_t chan, int param, int select
+ 			specific_val2str(rsp->ccode,
+ 			                 get_lan_cc_vals,
+ 			                 completion_code_vals));
+-		return NULL;
++		return rc;
+ 	}
+ 
+ 	p->data = rsp->data + 1;
+-- 
+2.34.1
+

@@ -1,0 +1,470 @@
+#!/usr/bin/env bash
+
+# Copyright (c) 2024, NVIDIA CORPORATION.  All rights reserved.
+#
+#  NVIDIA CORPORATION and its licensors retain all intellectual property
+#  and proprietary rights in and to this software, related documentation
+#  and any modifications thereto.  Any use, reproduction, disclosure or
+#  distribution of this software and related documentation without an express
+#  license agreement from NVIDIA CORPORATION is strictly prohibited.
+
+# Simple wrapper to 'mctp-vdm-util-wrapper' to map 'device name' to 'device id'
+# and prettier cmd support.
+
+set -o pipefail
+
+APP_NAME="mctp-vdm-util-wrapper"
+APP_VER="0.2"
+
+# Platform dependent profile.
+# Use Case 1:
+# In OpenBMC recipe, replace DEVICENAME_EID_LIST with device_mctp_eid.csv
+# content.
+#
+# Use Case 2:
+# From cmdline, define DEV_EID_PROFILE=<path of device_mctp_eid.csv> before
+# calling this script.
+[ -z "$DEV_EID_PROFILE" ] && DEV_EID_PROFILE="device_mctp_eid.csv"
+DEVICENAME_EID_LIST=`cat "$DEV_EID_PROFILE"`
+
+[ -z "$CACHE_STALE_AGE" ] && CACHE_STALE_AGE=180
+[ -z "$MCTP_CACHE_COMMAND_TIMEOUT" ] && MCTP_CACHE_COMMAND_TIMEOUT=5
+
+DOWNLOAD_LOG_CMD="download_log"
+GLACIER_LOG_FILE="/var/mctp-vdm-output.bin"
+SELFTEST_CMD="selftest 08 00 00 00"
+AUTH_STAT_CMD="active_auth_status"
+
+MCTP_CACHE_DIR="/tmp/rot_mctp_cache"
+MCTP_CACHE_FILE_PREFIX="${MCTP_CACHE_DIR:?}/query_boot_status_"
+
+DEVNAME=""
+
+getDeviceEid() #1=device name
+{
+    local device=$1
+    local eid=-1
+
+    for device_eid in $DEVICENAME_EID_LIST
+    do
+        local name="${device_eid%%,*}"
+        ## comparing with ignorecase
+        if [ "${name,,}" = "${device,,}" ]
+        then
+            eid="${device_eid##*,}"
+            echo $eid
+            return 0
+        fi
+    done
+    return 1
+}
+
+
+# Per
+# [Glacier Firmware Design Document](https://docs.google.com/document/d/12VnlI_eX4hvsMVXzOhS4SkwLsvUHZEl5-g-OEBJhGRw/edit#heading=h.yv8pagajiaef)
+#<pretty_cmd>:<mctp-vdm-util_cmd>,[<output_bits>]
+MCTP_CMD_LIST="
+EC_TAG0_AUTH_ERROR:query_boot_status,0
+EC_TAG1_COPY_ERROR:query_boot_status,1
+EC_OTP_MISMATCH_ERROR:query_boot_status,2
+EC_SET_KEY_REVOKE:query_boot_status,3
+EC_SET_ROLLBACK_PROTECTION:query_boot_status,4
+EC_RECEIVE_AP0_BOOT_COMPLETE:query_boot_status,5
+AP0_PRIMARY_FW_AUTHENTICATION_STATUS:query_boot_status,8-11
+AP0_SECONDARY_FW_AUTHENTICATION_STATUS:query_boot_status,12-15
+AP0_RECOVERY_FW_AUTHENTICATION_STATUS:query_boot_status,16-19
+AP0_ACTIVE_SLOT:query_boot_status,20
+AP0_SPI_READ_FAILURE:query_boot_status,21
+AP0_POWER_GOOD:query_boot_status,22
+AP0_RESET_ON_HOLD:query_boot_status,23
+AP0_SPI_ACCESS_VIOLCATION_OPCODE:query_boot_status,24
+AP0_SPI_ACCESS_VIOLATION_RANGE:query_boot_status,25
+AP0_HEARTBEAT_TIMEOUT:query_boot_status,26
+AP0_BOOTCOMPLETE_TIMEOUT:query_boot_status,27
+${AUTH_STAT_CMD}:query_boot_status,
+"
+
+# Extended cmd list.
+#<pretty_cmd>:<output_handler>
+MCTP_CMD_EX_LIST="
+${AUTH_STAT_CMD}:get_active_auth_status
+"
+
+get_active_auth_status() #(raw_value) => <active_auth_status>
+{
+    local raw_value=$1;shift
+
+    local slot_id=$((($value >> 20) & 1)) # AP0_ACTIVE_SLOT at bit20
+    local auth_status=$((($value >> 8) & 0xF)) # Primary Auth Status at bit8-11
+    [ "$slot_id" -eq 1 ] && auth_status=$((($value >> 12) & 0xF)) # Secondary Auth Status at bit8-11
+
+    echo $auth_status
+}
+
+mctp_cmd_lookup() #(pretty_cmd) => <mctp_cmd>
+{
+    local target=$1;shift
+
+    local line
+    for line in $MCTP_CMD_LIST; do
+        [ -z "$line" ] && continue
+
+        local pretty_cmd=${line%:*}
+        [ "$pretty_cmd" = "$target" ] || continue
+        echo ${line#*:}
+        return 0
+    done
+
+    # Passthrough the unknown cmd but indicate that by rc.
+    echo $target
+    return 1
+}
+
+ext_cmd_handler() #(pretty_cmd, raw_value) => <value>
+{
+    local target=$1;shift
+    local raw_value=$1;shift
+
+    local line
+    for line in $MCTP_CMD_EX_LIST; do
+        [ -z "$line" ] && continue
+
+        local pretty_cmd=${line%:*}
+        [ "$pretty_cmd" = "$target" ] || continue
+        ${line#*:} "$raw_value"
+        return $?
+    done
+
+    # Passthrough the unknown cmd but indicate that by rc.
+    echo $target
+    return 1
+}
+
+
+## This function can be used to put any proxy before running the mct-vdm-util
+## command. It should return NOT 0 if for some reason mct-vdm-util should not
+## be invoked.
+cmd_requires_special_pre_start_handling()
+{
+    local dev_eid="$1"
+    local mctp_cmd="$2"
+    local rc=0
+    case "$mctp_cmd" in
+        "$DOWNLOAD_LOG_CMD")  ## here will be some lock file handling
+            return 0
+            ;;
+        *) return 0;; # returns without printing anything
+    esac
+    return 0
+}
+
+print_glacier_log_raw_bytes()
+{
+   local log=$1
+   hexdump -ve '/1 "0x%02x "' $log
+}
+
+# this function prints something such as 1 when it performs a specific output
+# handling, otherwise it prints nothing
+cmd_requires_special_output_handling() # $1=$dev_eid $2=mctp_cmd $3=cmd output
+{
+    local dev_eid="$1"
+    local mctp_cmd="$2"
+    local output=$3
+    local rc=0
+    case "$mctp_cmd" in
+        "$DOWNLOAD_LOG_CMD")
+            rc=1
+            LOG_OUT="/tmp/downloaded_glacier_log_${DEVNAME}.bin"
+            if [ -f "$GLACIER_LOG_FILE" ]; then
+                /bin/cp $GLACIER_LOG_FILE $LOG_OUT
+                rc=0
+            fi
+            if [ $rc -eq 0 ]; then
+                >&2 echo "parsing log $LOG_OUT, please wait..."
+                LOG=`print_glacier_log_raw_bytes $LOG_OUT`
+                ## output for selftest
+                echo "$LOG"
+            else
+                echo 1 # no /var/mctp-vdm-output.bin
+            fi
+            return 0;;
+        "$SELFTEST_CMD")
+            rc=1
+# needs different handling because:
+# 1. script 'cmd' arg is used in passthrough mode
+# 2. additional TX data isn't present in RX packet, eg.
+# root@hgx:~# mctp-vdm-util -c selftest 8 0 0 0 -t 13
+#                                       ^^^^^^^> additional tx data
+# Test command = selftest
+# teid = 13
+# TX: 47 16 00 00 80 01 08 01 08 00 00 00
+#                             ^^^^^^^^^^^> additional data in fact sent
+# RX: 47 16 00 00 00 01 08 01 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+#                 ^^>80->00   ^^^^^^^^> RX mirrors TX without additional data, then continues with read payload
+            local additional_tx_payload=${mctp_cmd#${mctp_cmd%% *} }
+            # output parsing
+            [[ $output =~ .*TX:(([ ][0-9A-Fa-f]{2})+)\ RX:(([ ][0-9A-Fa-f]{2})+) ]]
+            local tx=${BASH_REMATCH[1]}
+            local rx=${BASH_REMATCH[3]}
+            local tx_tmp=${tx/80/00}
+            tx_tmp=${tx_tmp/$additional_tx_payload/}
+            local dataInfo=${rx#$tx_tmp} # remove tx data from rx
+            local retCode=${dataInfo%% *} # extract mctp return code
+            if [ "$retCode" = "00" ]; then
+                echo "$dataInfo"
+            else
+                echo "retcode != 00 ($retCode); rx: $rx"
+            fi
+
+            return 0;;
+
+       *) return 0;; # returns without printing anything
+    esac
+    return 0
+}
+
+mctp_access() #(dev_eid, pretty_cmd) => <value>
+{
+    local dev_eid=$1;shift
+    local pretty_cmd=$1
+
+    [ -z "$dev_eid" ] && return 1
+    [ -z "$pretty_cmd" ] && return 1
+
+    local skip_bitmask=0
+    local rc=0
+    local cmd_info;cmd_info=`mctp_cmd_lookup "$pretty_cmd"`;rc=$?
+    [ "$rc" -eq 0 ] || skip_bitmask=1
+
+    local mctp_cmd=${cmd_info%,*}
+    [ -z "$mctp_cmd" ] && return 1
+
+    local bits=${cmd_info#*,}
+    [ -z "$bits" ] && skip_bitmask=1
+
+    local cmdline="mctp-vdm-util -c $mctp_cmd -t $dev_eid"
+    if [ "$DRY_RUN" -eq 1 ]; then
+        echo $cmdline
+        return 0
+    fi
+
+    ## if command should manage its return code
+    ## if not zero it will not continue
+    cmd_requires_special_pre_start_handling $dev_eid "$mctp_cmd"
+    rc=$?
+    if [ "$rc" -ne "0" ]; then
+       return $rc
+    fi
+
+
+    ## If command is query_boot_status cache the output so other commands
+    ## for the same EID (and subsequent commands) can reuse the result.
+    ## We are currently assuming that the output will not change for
+    ## the remainder of the HMC boot. There are corner cases that will
+    ## be addressed later.
+
+    if [ "$mctp_cmd" == "query_boot_status" ]
+    then
+        mkdir -p -m "0700" "$MCTP_CACHE_DIR"
+        local cachefile="${MCTP_CACHE_FILE_PREFIX}${dev_eid}"
+        # safely open a new fd to hold the cache, lock the file when modifying it
+        # create the file if it does not exist, store fd number in $cachefd
+        exec {cachefd}<>"$cachefile"
+        flock -x "$cachefd"  # lock the file by fd
+
+        local monotonic_time=`awk '{print int($i)}' /proc/uptime`
+        local file_time=0
+        local file_data;
+
+        if [ -s "/dev/fd/$cachefd" ]
+        then
+            file_data=`cat "/dev/fd/$cachefd"`
+            file_time=`echo "$file_data" | head -n 1`
+        fi
+
+        local file_rc=0
+        local age=$(( $monotonic_time - $file_time ))
+        if [ $age -gt $CACHE_STALE_AGE ] || [ $file_time -eq 0 ]
+        then
+            # cachefile is currently empty or stale, so populate it with rc and output
+            >&2 echo "cache for EID=${dev_eid} is empty or stale, refilling it"
+            local output;output=`timeout $MCTP_CACHE_COMMAND_TIMEOUT $cmdline`;rc=$?
+            printf "%s\n%s\n%s" "$monotonic_time" "$rc" "$output" > "/dev/fd/$cachefd"
+        else
+            # cachefile contains the file time, rc and output, read from there
+            # skipping time metadata (first line)
+            file_rc=`echo "$file_data" | head -n 2 | tail -n 1`
+            local output;output=`echo "$file_data" | tail -n +3`
+        fi
+        flock -u "$cachefd"  # unlock the file by fd
+
+        if [[ $file_rc -ne 0 ]]
+        then
+            return $file_rc
+        fi
+
+    else
+        if [ "$mctp_cmd" == "$SELFTEST_CMD" ]
+        then
+            local output;output=`timeout $MCTP_CACHE_COMMAND_TIMEOUT $cmdline`;rc=$?
+        else
+            local output;output=`$cmdline`;rc=$?
+        fi
+        if [ "$rc" -ne 0 ]
+        then
+            return $rc
+        fi
+    fi
+
+    output=`echo $output`
+
+    # if requires a specific output handling, it must be done and exit here
+    special_output=`cmd_requires_special_output_handling $dev_eid "$mctp_cmd" "$output"`;rc=$?
+
+    if [ "$special_output" != "" ]; then
+        echo $special_output
+        return $rc
+    fi
+
+    # output parsing
+    [[ $output =~ .*TX:(([ ][0-9A-Fa-f]{2})+)\ RX:(([ ][0-9A-Fa-f]{2})+) ]]
+    local tx=${BASH_REMATCH[1]}
+    local rx=${BASH_REMATCH[3]}
+
+    local dataInfo=${rx#${tx/80/00} } # remove tx data from rx
+    local retCode=${dataInfo%% *} # extract mctp return code
+    [ "$retCode" = "00" ] || return 1
+    local data=${dataInfo#* } # extract return data
+    local value=0x${data// /} # compose return data into hex
+
+    if [ "$skip_bitmask" -eq 1 ]; then
+        local val;val=`ext_cmd_handler "$pretty_cmd" "$value"`;rc=$?
+        [ "$rc" -eq 0 ] && value=$val
+
+        echo $(($value)) # to decimal
+        return 0
+    fi
+
+    # verify the value based on bitmask
+    local bit_min=${bits%%-*}
+    local bit_max=${bits##*-}
+
+    local bitmask
+    for((i=${bit_min};i<=${bit_max};i++)); do
+        bitmask=${bitmask}1
+    done
+    bitmask=$((2#$bitmask))
+
+    value=$(($value >> $bit_min))
+
+    echo $(($value & $bitmask))
+    return 0
+}
+
+invalidate()
+{
+    while [ $# -gt 0 ]; do
+        local DEVNAME=$1;shift
+        local rc=0
+        local device_id=`getDeviceEid ${DEVNAME}`;rc=$? # Find the right device eid for it
+        if [ $rc -ne 0 ]; then
+            >&2 echo "Error: EID of ${DEVNAME} not found, rc=$rc!"
+            exit $rc
+        fi
+
+        >&2 echo "Cache manually invalidated for DEVNAME=${DEVNAME} EID=${device_id}"
+        local cmdline="rm -f ""${MCTP_CACHE_FILE_PREFIX}${device_id}"
+        if [ "$DRY_RUN" -eq 1 ]; then
+            echo "$cmdline"
+        else
+            $cmdline
+        fi
+    done
+    return 0
+}
+
+show_help()
+{
+    echo "A wrapper of mctp-vdm-util for prettier usage and output, ver=${APP_VER}."
+    echo "<usage>"
+    echo "  ${APP_NAME} [-dry-run] <prettier_mctp_cmd> <dev_name>"
+    echo "  ${APP_NAME} [-dry-run] -invalidate <dev_name>..."
+    echo
+    echo "<options>"
+    echo "  -dry-run             - Only print mctp-vdm-util cmdline."
+    echo "  -invalidate          - Invalidate QueryBootStatus cache."
+    echo
+    echo "  prettier_mctp_cmd    - Available cmd list as below."
+    echo "  dev_name             - ERoT of the device by this. The list is at below."
+    echo
+    printf "=%.0s" {1..80};echo
+    printf "%-40s%-20s%s\n" "PrettierCmd" "MctpCmd" "Bits"
+    printf "=%.0s" {1..80};echo
+    local cmd
+    for cmd in ${MCTP_CMD_LIST}; do
+        [ -z "$cmd" ] && continue
+        local pcmd=${cmd%%:*}
+        local cmdInfo=${cmd#*:}
+        local mcmd=${cmdInfo%%,*}
+        local bits=${cmd##*,}
+
+        printf "%-40s%-20s%s\n" $pcmd $mcmd $bits
+    done
+    echo
+    printf "=%.0s" {1..80};echo
+    printf "%-20s%s\n" "DeviceName" "MctpEid"
+    printf "=%.0s" {1..80};echo
+    local dev
+    for dev in ${DEVICENAME_EID_LIST}; do
+        [ -z "$dev" ] && continue
+        local name=${dev%%,*}
+        local eid=${dev##*,}
+
+        printf "%-20s%s\n" $name $eid
+    done
+    echo
+}
+
+## MAIN
+DRY_RUN=0
+
+if [ ! -f "$DEV_EID_PROFILE" ] && [ -z "$DEVICENAME_EID_LIST" ]; then
+    >&2 echo "Error: [$DEV_EID_PROFILE] not found!"
+    exit 1
+fi
+
+## -dry-run just prints the mctp-vdm-util command line
+if [ "$1"  = "-dry-run" ]; then
+   DRY_RUN=1
+   shift
+fi
+
+if [ "$1" = "-invalidate" ]; then
+    shift
+    invalidate "$@";rc=$?
+    exit $rc
+fi
+
+if [ $# -ne 2 ]; then
+    show_help
+    exit 1
+fi
+
+PCOMMAND="$1";shift
+DEVNAME="$1"
+
+rc=0
+device_id=`getDeviceEid ${DEVNAME}`;rc=$? # Find the right device eid for it
+if [ $rc -ne 0 ]; then
+    >&2 echo "Error: EID of ${DEVNAME} not found, rc=$rc!"
+    exit $rc
+fi
+mctp_access $device_id "$PCOMMAND";rc=$?
+if [ $rc -ne 0 ]; then
+    >&2 echo "Error: MCTP cmd for ${PCOMMAND} on ${device_id} failed, rc=$rc!"
+    exit $rc
+fi
+
+exit $rc
+

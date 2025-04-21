@@ -1,0 +1,22 @@
+[Unit]
+Description=Network IPMI daemon
+Requires=phosphor-ipmi-host.service
+After=phosphor-ipmi-host.service
+Requires=phosphor-ipmi-net@%i.socket
+After=phosphor-ipmi-net@%i.socket
+Requires=bmc-boot-complete.service
+After=bmc-boot-complete.service
+
+[Service]
+ExecStartPre=/bin/sleep 30
+ExecStart=/usr/bin/netipmid -c %i
+SyslogIdentifier=netipmid-%i
+Restart=always
+RestartSec=30
+RuntimeDirectory = ipmi
+RuntimeDirectoryPreserve = yes
+StateDirectory = ipmi
+
+[Install]
+DefaultInstance=hostusb0
+WantedBy=multi-user.target

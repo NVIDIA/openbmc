@@ -1,0 +1,26 @@
+{
+  "THERM_OVERT" : {
+    "gpio_chip" : 0,
+    "gpio_pin" : 143,
+    "initial" : false,
+    "read_period_sec" : 1
+  },
+  "I2C2_ALERT" : {
+    "gpio_chip" : 0,
+    "gpio_pin" : 111,
+    "initial" : false,
+    "read_period_sec" : 0.5
+  },
+  "I2C3_ALERT" : {
+    "gpio_chip" : 0,
+    "gpio_pin" : 110,
+    "initial" : false,
+    "read_period_sec" : 0.5
+  },
+  "PS_RUN_PWR_FAULT" : {
+    "gpio_chip" : 0,
+    "gpio_pin" : 138,
+    "initial" : false,
+    "read_period_sec" : 0.5
+  }
+}

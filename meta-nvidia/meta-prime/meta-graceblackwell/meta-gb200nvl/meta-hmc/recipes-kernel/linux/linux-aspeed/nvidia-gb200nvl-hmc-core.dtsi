@@ -1,0 +1,178 @@
+// SPDX-License-Identifier: GPL-2.0+
+/dts-v1/;
+
+#include "aspeed/aspeed-g6.dtsi"
+#include <dt-bindings/gpio/aspeed-gpio.h>
+
+&gpio0 {
+    gpio-line-names =
+
+    /* gpio-line-names are the combination of <signal>-<I/O> , "" is the placeholder for the unused pins*/
+
+    /* 208 (26*8) 3.3V GPIOs */
+
+    /*A0-A7*/
+    "", "", "", "", "", "", "", "",
+
+    /*B0-B7*/
+    "", "", "", "", "", "", "", "",
+
+    /*C0-C7*/
+    "", "", "", "", "", "", "", "",
+
+    /*D0-D7*/
+    "", "", "", "",
+    "SHDN_REQ_L-I",
+    "", "", "",
+
+    /*E0-E7*/
+    "", "", "", "", "", "", "", "",
+
+    /*F0-F7*/
+    "PS_RUN_PWR_EN-I", 
+    "",  
+    "PWR_BRK_L-I", 
+    "", 
+    "BMC_READY-I",
+    "", "", "",
+
+    /*G0-G7*/
+    "", "", "", "", "", "", "", "",
+
+    /*H0-H7*/
+    "", "", "", "", "", "", "", "",
+
+    /*I0-I7*/
+    "", "", "", "", "", "", 
+    "HMC_GLOBAL_WP-I", 
+    "",
+
+    /*J0-J7*/
+    "", "", "", "", "", "", "", "",
+
+    /*K0-K7*/
+    "", "", "", "", "", "", "", "",
+
+    /*L0-L7*/
+    "", "", "", "", "", "", "", "",
+
+    /*M0-M7*/
+    "USB_HUB_RST_L-O",
+    "HMC_FRU_WP-O", 
+    "FPGA_RST_L-O", 
+    "USB2_HUB_SUSP-O",
+    "",
+    "HMC_READY-O",
+    "", "",
+
+    /*N0-N7*/
+    "NODE_LOC_ID_0-I",
+    "NODE_LOC_ID_1-I",
+    "NODE_LOC_ID_2-I",
+    "NODE_LOC_ID_3-I",
+    "NODE_LOC_ID_4-I", "",
+    "I2C3_FPGA_ALERT_L-I",
+    "I2C2_FPGA_ALERT_L-I",
+
+    /*O0-O7*/
+    "", "", "",
+    "PS_RUN_PWR_PG-I", 
+    "MOD1_B2B_CABLE_PRESENT_L-I",
+    "",
+    "RSVD_FPGA_FFU7-TBD", 
+    "",
+
+    /*P0-P7*/
+    "RSVD_FPGA_FFU4-TBD", 
+    "PS_RUN_IO0_PG-I", 
+    "", "", 
+    "", 
+    "", "", "",
+
+    /*Q0-Q7*/
+    "RSVD_FPGA_FFU5-TBD", 
+    "", 
+    "RSVD_FPGA_FFU3-TBD", 
+    "RSVD_FPGA_FFU1-TBD", 
+    "RSVD_FPGA_FFU2-TBD", 
+    "RSVD_FPGA_FFU6-TBD", 
+    "", 
+    "RSVD_FPGA_FFU0-TBD",
+
+    /*R0-R7*/
+    "PS_RUN_IO0_EN-I", 
+    "", 
+    "PS_RUN_PWR_FAULT_L-I", 
+    "FPGA0_READY-I", 
+    "", "",
+    "SHDN_FORCE_L-I",
+    "THERM_BB_OVERT_L-I",
+
+    /*S0-S7*/
+    "", "", "", "", 
+    "CPU_BOOT_DONE-I", 
+    "PS_RUN_IO1_EN-I", 
+    "",
+    "FPGA1_READY-I",
+
+    /*T0-T7*/
+    "SYS_RST_OUT_L-I", 
+    "", 
+    "L2_RST_REQ_L-I", 
+    "L0L1_RST_REQ_L-I", 
+    "THERM_BB_WARN_L-I", 
+    "NODE_LOC_ID_5-I",
+    "", "",
+
+    /*U0-U7*/
+    "", "", 
+    "SHDN_OK_L-I", 
+    "", "", "", 
+    "SYS_RST_IN_L-I", 
+    "",
+
+    /*V0-V7*/
+    "", "", "", 
+    "PS_RUN_IO1_PG-I", 
+    "", "", 
+    "MOD1_CLINK_CABLE_PRESENT_L-I", 
+    "",
+
+    /*W0-W7*/
+    "", "", "", "", "", "", "", "",
+
+    /*X0-X7*/
+    "", "", "BMC_MAX10_JTAG_SEL", "", "", "", "", "",
+
+    /*Y0-Y7*/
+    "", "", "", "", "", "", "", "",
+
+    /*Z0-Z7*/
+    "", "", "", "", "", "", "", "";
+};
+
+&gpio1 {
+    /* 36 1.8V GPIOs */
+    gpio-line-names =
+    /*AA0-AA7*/
+    "", "", "", "", "", "", "", "",
+
+    /*AB0-AB7*/
+    "", "", "", "", "", "", "", "",
+
+    /*AC0-AC7*/
+    "", "", "", "", "", "", "", "",
+
+    /*AD0-AD7*/
+    "", "", "", "", "", "", "", "",
+
+    /*AE0-AE7*/
+    "", "", "", "", "", "", "", "";
+};
+
+&pinctrl {
+    pinctrl_emmcg8_default: emmcg8_default {
+        function = "EMMC";
+        groups = "EMMCG8";
+    };
+};

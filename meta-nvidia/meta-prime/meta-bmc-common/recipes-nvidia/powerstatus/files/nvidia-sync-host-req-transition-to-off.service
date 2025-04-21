@@ -1,0 +1,16 @@
+[Unit]
+Description=NVIDIA Sync RequestedHostTransition to Off
+Wants=mapper-wait@-xyz-openbmc_project-state-host0.service
+After=mapper-wait@-xyz-openbmc_project-state-host0.service
+Requires=obmc-host-stop@0.target
+After=obmc-host-stop@0.target
+Conflicts=obmc-host-startmin@0.target
+
+[Service]
+Restart=no
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/nvidia-sync-host-req-transition.sh
+
+[Install]
+RequiredBy=obmc-chassis-hard-poweroff@0.target

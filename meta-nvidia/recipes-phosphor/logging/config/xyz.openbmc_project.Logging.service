@@ -1,0 +1,12 @@
+[Unit]
+Description=Phosphor Log Manager
+
+[Service]
+ExecStart=/usr/bin/phosphor-log-manager /etc/phosphor-logging/conf/phosphor-logging-namespace.json
+Restart=always
+Type=dbus
+BusName=xyz.openbmc_project.Logging
+TimeoutSec=900
+
+[Install]
+WantedBy=multi-user.target

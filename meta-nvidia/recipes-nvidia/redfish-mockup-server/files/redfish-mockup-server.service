@@ -1,0 +1,14 @@
+[Unit]
+Description=Redfish Mockup Server
+
+Wants=network.target
+After=network.target
+
+[Service]
+ExecStart=python /usr/bin/redfish-mockup-server/redfishMockupServer.py --host 10.0.2.15 --port 80 --dir /usr/share/mock/
+Type=simple
+Restart=always
+SyslogIdentifier=redfish-mockup-server
+
+[Install]
+WantedBy=multi-user.target

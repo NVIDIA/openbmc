@@ -1,0 +1,313 @@
+#! /usr/bin/env python3
+
+"""
+A Fault Catalog spec2code tool for device monitor & eventing support.
+"""
+
+import sys
+import argparse
+import csv, json
+import re
+import copy
+
+event_info_json = {
+    "Device": []
+}
+
+event_entry_json = {
+    "event": "",
+    "device_type": "",
+    "fault_id": "",
+    "category": [],
+    "event_trigger": {},
+    "accessor": {},
+    "recovery": {},
+    "severity": "",
+    "resolution": "",
+    "debounce": {
+        "type": "",
+        "duration": ""
+    },
+    "trigger_count": 0,
+    "event_counter_reset": {},
+    "redfish": {
+        "message_id": "",
+        "origin_of_condition": "",
+        "message_args": {
+          "patterns": [],
+          "parameters": []
+        }
+    },
+    "telemetries": [],
+    "action": "",
+    "value_as_count": False,
+    "description": ""
+}
+
+spec2code_dict = {
+"Fault ID" : "fault_id",
+"Fault Name" : "event",
+"Impacted Component" : "$json_dev_name(device_type)",
+"Description" : "description",
+"To Customer Doc?" : "",
+"To HMC Code?" : "$direct_value(yes)",
+"Blast Radius" : "",
+"System Behavior Description" : "",
+"Fault Injection Methods" : "",
+"Fault XID/SXIDs" : "",
+"Hardware/GPIO Signal" : "$fc_get_hw_signal(event_trigger)",
+"Fault Telemetry" : "",
+"Fault Condition" : "",
+"Recovery Telemetry" : "",
+"Recovery Condition" : "",
+"Recovery System State Needs" : "",
+"Self-Test (?)" : "",
+"RF Log Producer" : "",
+"RF Log Message ID" : "redfish.message_id",
+"RF Log Message Args" : "redfish.message_args.patterns",
+"MessageArgs Parameters" : "$json_acc_list_to_fc_expr(redfish.message_args.parameters)",
+"RF Log Severity" : "severity",
+"RF Log Resolution" : "resolution",
+"RF Log Origin Of Condition" : "redfish.origin_of_condition",
+"CPER GUID" : "",
+"CPER Vendor Section" : "",
+"CPER Vendor Type Value" : "",
+"Supporting Service" : "",
+"Event Name" : "event",
+"Device Type" : "device_type",
+"Layer" : "$json_arr_to_fc(category)",
+"Trigger data config" : "$json_acc_to_fc_expr(event_trigger)",
+"Trigger check" : "$json_acc_to_fc_expr(event_trigger.check)",
+"Accessor data config" : "$json_acc_to_fc_expr(accessor)",
+"Accessor check" : "$json_acc_to_fc_expr(accessor.check)",
+"Recovery data config" : "$json_acc_to_fc_expr(recovery)",
+"Recovery check" : "$json_acc_to_fc_expr(recovery.check)",
+"Leaky bucket trigger count" : "trigger_count",
+"Data value is event count" : "value_as_count",
+"Leaky bucket reset type" : "$json_acc_to_fc_expr(event_counter_reset)",
+"AdditionalData data config (possibly multiple)" : "$json_acc_list_to_fc_expr(telemetries)",
+"In-band Host OS loaded mask type" : "",
+"In-band device driver loaded mask type" : "",
+"Debounce type" : "debounce.type",
+"Debounce duration" : "debounce.duration",
+}
+
+class FaultCatalog:
+    def __init__(self, filename):
+        # csv.DictReader is a lazy dict, need to reload its content from
+        # file after each iteration. So only cache filename here for reloading.
+        self._filename = filename
+        self._csvfields = self.get_columns()
+
+    def get_columns(self):
+        with open(self._filename, 'r') as csvfile:
+            reader = csv.DictReader(csvfile)
+
+            return reader.fieldnames
+
+    def json_acc_to_fc_expr(self, accessor):
+        output = ""
+        for key in accessor:
+            if key == "check":  # TODO: this is WAR, need a common way
+                continue
+            output = output + "[ {0} | {1} ]; ".format(key, accessor[key])
+        output = output[:-2] # remove the tailing ';'
+        return output
+
+    def json_acc_list_to_fc_expr(self, accessors):
+        output = ""
+        for acc in accessors:
+            output = output + self.json_acc_to_fc_expr(acc) + " : "
+        output = output[:-3] # remove the tailing " : "
+        return output
+
+    def fc_get_hw_signal(self, accessor):
+        if accessor["type"] != "DBUS":
+            return ""
+        if accessor["interface"] != "xyz.openbmc_project.GpioStatus":
+            return ""
+        return accessor["property"]
+
+    def json_arr_to_fc(self, json):
+        return ';'.join(json)
+
+    def fc_expr_to_json_acc(self, acc, chk = ""):
+        output = dict()
+        if len(str(acc).strip()) == 0:
+            return {}
+
+        for wd in str(acc).strip().split(';'):
+            kv = wd.strip().strip("][").split('|')
+            output[kv[0].strip()] = kv[1].strip()
+        if len(str(chk)) != 0:
+            kv = str(chk).strip().strip("][").split('|')
+            output['check'] = dict()
+            output['check'][kv[0].strip()] = kv[1].strip()
+        return output
+
+    def fc_expr_to_json_acc_list(self, text):
+        output = list()
+        if len(str(text).strip()) == 0:
+            return []
+
+        for acc in str(text).strip().split(':'):
+            output.append(self.fc_expr_to_json_acc(acc))
+
+        return output
+
+    def fc_expr_to_json_list(self, text):
+        if len(str(text).strip()) == 0:
+            return []
+        output = list()
+        for wd in str(text).strip().strip('][').split(","):
+            output.append(wd.strip().strip("'"))
+        return output
+
+    def json_dev_name(self, device_type):
+        return device_type.split('/')[0]
+
+    def dot_query_json(self, json, dot_notation):
+        #print(json, dot_notation)
+        if type(json) is str:
+            return json
+        keys = dot_notation.split('.')
+        if len(keys) == 1:
+            return json[keys[0]]
+        else:
+            return self.dot_query_json(json[keys[0]], '.'.join(keys[1:]))
+
+    def to_fault_catalog(self, evt_inf_json):
+        with open(evt_inf_json, "r") as f:
+            evt_inf = json.load(f)
+            print(','.join(self._csvfields))
+            #print("=======================")
+            #print(evt_inf["Device"][0]['event'])
+
+            for dev_grp in evt_inf:
+                for evt in evt_inf[dev_grp]:
+                    row = ""
+                    for col in self._csvfields:
+                        try:
+                            val = spec2code_dict[col]
+                        except:
+                            val = ""
+
+                        cell = ""
+                        try:
+                            if len(val) == 0:
+                                cell = ""
+                            elif val[0] == '$':  # built-in function
+                                func_name = re.split('\$|\(|\)|,', val)[1]
+                                params = re.split('\$|\(|\)|,', val)[2:]
+
+                                if func_name == "json_acc_to_fc_expr":
+                                    cell = self.json_acc_to_fc_expr(self.dot_query_json(evt, params[0]))
+                                elif func_name == "json_acc_list_to_fc_expr":
+                                    cell = self.json_acc_list_to_fc_expr(self.dot_query_json(evt, params[0]))
+                                elif func_name == "fc_get_hw_signal":
+                                    cell = self.fc_get_hw_signal(self.dot_query_json(evt, params[0]))
+                                elif func_name == "json_arr_to_fc":
+                                    cell = self.json_arr_to_fc(self.dot_query_json(evt, params[0]))
+                                elif func_name == "json_dev_name":
+                                    cell = self.json_dev_name(self.dot_query_json(evt, params[0]))
+                                elif func_name == "direct_value":
+                                    cell = str(params[0]).title()
+                                else:
+                                    cell = "[E] Not support, " + func_name + "!"
+                            else:  # direct content copy
+                                cell = str(self.dot_query_json(evt, val))
+                        except:
+                            cell = ""
+
+                        if cell.find(','):
+                            cell = '"' + cell + '"'
+                        row = row + cell + ','
+                    print(row)
+
+    def to_event_info_json(self):
+        with open(self._filename, "r") as f:
+            fc = csv.DictReader(f)
+
+            ei_json = copy.deepcopy(event_info_json)
+
+            id = 0
+            for row in fc:
+                id = id + 1
+                if id == 1:
+                    continue
+
+                if row["To HMC Code?"].lower() != "yes":
+                    continue
+
+                ee = copy.deepcopy(event_entry_json)
+
+                ee["event"] = row["Impacted Component"] + " " + row["Event Name"]
+                ee["device_type"] = row["Device Type"]
+                ee["fault_id"] = row["Fault ID"]
+                ee["category"] = self.fc_expr_to_json_list(row["Layer"])
+                ee["event_trigger"] = self.fc_expr_to_json_acc(row["Trigger data config"], row["Trigger check"])
+                ee["accessor"] = self.fc_expr_to_json_acc(row["Accessor data config"], row["Accessor check"])
+                if len(str(row["Recovery data config"]).strip()) == 0:
+                    ee.pop("recovery")
+                else:
+                    ee["recovery"] = self.fc_expr_to_json_acc(row["Recovery data config"], row["Recovery check"])
+                ee["severity"] = row["RF Log Severity"]
+                ee["resolution"] = row["RF Log Resolution"]
+                ee["debounce"]["type"] = row["Debounce type"]
+                ee["debounce"]["duration"] = row["Debounce duration"]
+                ee["trigger_count"] = int(row["Leaky bucket trigger count"], 10)
+                ee["event_counter_reset"] = self.fc_expr_to_json_acc(row["Leaky bucket reset type"])
+                ee["redfish"]["message_id"] = row["RF Log Message ID"]
+                ee["redfish"]["origin_of_condition"] = row["RF Log Origin Of Condition"]
+                ee["redfish"]["message_args"]["patterns"] = self.fc_expr_to_json_list(row["RF Log Message Args"])
+                ee["redfish"]["message_args"]["parameters"] = self.fc_expr_to_json_acc_list(row["MessageArgs Parameters"])
+                ee["telemetries"] = self.fc_expr_to_json_acc_list(row["AdditionalData data config (possibly multiple)"])
+                ee["action"] = ""
+                ee["value_as_count"] = row["Data value is event count"].strip().lower() == "true"
+                ee["description"] = row["Description"]
+
+                ei_json["Device"].append(ee)
+
+            print(json.dumps(ei_json, indent = 2))
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+
+    parser.add_argument(
+        "fault_catalog",
+        metavar="fault_catalog",
+        help="Fault Catalog file in csv format.")
+
+    parser.add_argument(
+        "event_info",
+        metavar="event_info",
+        help="event_info.json file for conversion.")
+
+    parser.add_argument(
+        "conv_func", default="",
+        metavar="CONV_METHOD",
+        help="Specify how to convert the spec to code. Options:\n  get_columns\n  to_regtbl_tool\n  get_intr_list\n")
+
+    args = parser.parse_args()
+
+    csv = args.fault_catalog
+    evt_inf_json = args.event_info
+
+    fault_catalog = FaultCatalog(csv)
+
+    rc = 0
+
+    if args.conv_func == "to_fault_catalog":
+        rc = fault_catalog.to_fault_catalog(evt_inf_json)
+    elif args.conv_func == "to_event_info_json":
+        rc = fault_catalog.to_event_info_json()
+    elif args.conv_func == "get_columns":
+        rc = print(fault_catalog.get_columns())
+    else:
+        print("Wrong args: ", args.conv_func)
+        rc = 1
+
+    return rc
+
+if __name__ == "__main__":
+    main()

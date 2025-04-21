@@ -1,0 +1,15 @@
+{
+  "FwUuidMap": {
+    "/xyz/openbmc_project/software/HGX_FW_FPGA_0": "f72d6f50-5675-11ed-9b6a-0242ac120002",
+    "/xyz/openbmc_project/software/HGX_FW_BMC_0": "f72d6fa0-5675-11ed-9b6a-0242ac120002",
+    "/xyz/openbmc_project/software/HGX_FW_FPGA_1": "f72d6f51-5675-11ed-9b6a-0242ac120002",
+    "/xyz/openbmc_project/software/HGX_FW_CPU_0": "f72d6f60-5675-11ed-9b6a-0242ac120002",
+    "/xyz/openbmc_project/software/HGX_FW_CPU_1": "f72d6f61-5675-11ed-9b6a-0242ac120002",
+    "/xyz/openbmc_project/software/HGX_FW_CPU_2": "f72d6f62-5675-11ed-9b6a-0242ac120002",
+    "/xyz/openbmc_project/software/HGX_FW_CPU_3": "f72d6f63-5675-11ed-9b6a-0242ac120002",
+    "/xyz/openbmc_project/software/HGX_FW_GPU_0": "f72d6fb0-5675-11ed-9b6a-0242ac120002",
+    "/xyz/openbmc_project/software/HGX_FW_GPU_1": "f72d6fb1-5675-11ed-9b6a-0242ac120002",
+    "/xyz/openbmc_project/software/HGX_FW_GPU_2": "f72d6fb2-5675-11ed-9b6a-0242ac120002",
+    "/xyz/openbmc_project/software/HGX_FW_GPU_3": "f72d6fb3-5675-11ed-9b6a-0242ac120002"
+  }
+}

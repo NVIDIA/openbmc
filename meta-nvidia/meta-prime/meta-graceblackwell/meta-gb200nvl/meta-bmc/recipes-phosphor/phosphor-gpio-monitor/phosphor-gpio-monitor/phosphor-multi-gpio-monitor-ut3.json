@@ -1,0 +1,41 @@
+[
+	{
+		"Name": "CPU-Boot-Done",
+		"LineName": "CPU_BOOT_DONE-I",
+		"EventMon": "BOTH",
+		"Targets": {
+			"FALLING": ["cpu-boot-undone.service"],
+			"RISING": ["cpu-boot-done.service"]
+		},
+		"Continue": true,
+		"ExecuteAtStart": true
+	},
+	{
+		"Name": "PCB-Temp-Alert",
+		"LineName": "PCB_TEMP_ALERT-I",
+		"EventMon": "FALLING",
+		"Target": "overtemp@PCB_TEMP_ALERT.service",
+		"Continue": true
+	},
+	{
+		"Name": "Power-Fault",
+		"LineName": "RUN_POWER_FAULT_L-I",
+		"EventMon": "FALLING",
+		"Target": "power-fault@RUN_POWER_FAULT_L.service",
+		"Continue": true
+	},
+	{
+		"Name": "Fan-Fail",
+		"LineName": "FAN_FAIL_IN_L-I",
+		"EventMon": "FALLING",
+		"Target": "fan-fail@FAN_FAIL_IN_L.service",
+		"Continue": true
+	},
+	{
+		"Name": "FPGA-Thermal-Overtemp",
+		"LineName": "FPGA_THERM_OVERT_L-I",
+		"EventMon": "FALLING",
+		"Target": "overtemp@FPGA_THERM_OVERT_L.service",
+		"Continue": true
+	}
+]

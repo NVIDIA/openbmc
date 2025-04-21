@@ -1,0 +1,35 @@
+{
+    "version": 1.0,
+    "fpga": [
+        {
+            "id": "fpga_0",
+            "interface": {
+                "pcie": {
+                    "seg": "0",
+                    "bus": "1",
+                    "dev": "0",
+                    "func": "0"
+                }
+            },
+            "gpu": 8,
+            "nvswitch": 6,
+            "baseboard": 1,
+            "pcieretimer": 8,
+            "hsc": 10,
+            "standbyhsc": 1,
+            "outputhsc": 1,
+            "pcieswitch": 1,
+            "pciegen4sw": 4,
+            "pcbTemp": 4,
+            "inletTemp": 4,
+            "altPressureSensor": 1,
+            "nvlinkBridgeConn": 12,
+            "sysvr5v": 1,
+            "sysvr3v3": 1,
+            "sysvr1v8": 1,
+            "sysvr0v9": 1,
+            "llc_ab_mps": 1,
+            "llc_cd_mps": 1
+        }
+    ]
+}

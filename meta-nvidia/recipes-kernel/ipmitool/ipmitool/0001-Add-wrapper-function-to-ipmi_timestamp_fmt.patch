@@ -1,0 +1,122 @@
+From 262f83caf5b4e72512d5a4dd4441c30ee3aaa76a Mon Sep 17 00:00:00 2001
+From: trindenau <trindenau@nvidia.com>
+Date: Wed, 9 Aug 2023 08:15:45 +0000
+Subject: [PATCH] Add wrapper function to ipmi_timestamp_fmt Add a new static
+ variable to each timestamp function to avoid runover in printf
+
+---
+ lib/ipmi_time.c | 42 +++++++++++++++++++++++++++++++-----------
+ 1 file changed, 31 insertions(+), 11 deletions(-)
+
+diff --git a/lib/ipmi_time.c b/lib/ipmi_time.c
+index aecd656..b1980f3 100644
+--- a/lib/ipmi_time.c
++++ b/lib/ipmi_time.c
+@@ -35,6 +35,7 @@
+ #include <stdbool.h>
+ #include <stdint.h>
+ #include <stdio.h> /* snprintf */
++#include <string.h>
+ 
+ #if HAVE_CONFIG_H
+ # include <config.h>
+@@ -174,61 +175,79 @@ ipmi_timestamp_fmt(uint32_t stamp, const char *fmt)
+ 	return datebuf;
+ }
+ 
++void
++ipmi_timestamp_fmt_wrapper(uint32_t stamp, const char *fmt, char* data_buf){
++	char * tmp_ret = ipmi_timestamp_fmt(stamp, fmt);
++	strcpy(data_buf, tmp_ret);
++	return;
++}
++
+ char *
+ ipmi_timestamp_string(uint32_t stamp)
+ {
+ 	if (!ipmi_timestamp_is_valid(stamp)) {
+ 		return "Unspecified";
+ 	}
+-
++	static ipmi_datebuf_t datebuf_string;
++	
+ 	if (ipmi_timestamp_is_special(stamp)) {
+ 		if (stamp < SECONDS_A_DAY) {
+-			return ipmi_timestamp_fmt(stamp, "S+ %H:%M:%S");
++			ipmi_timestamp_fmt_wrapper(stamp, "S+ %H:%M:%S", datebuf_string);
++			return datebuf_string;
+ 		}
+ 		/*
+ 		 * IPMI_TIME_INIT_DONE is over 17 years. This should never
+ 		 * happen normally, but we'll support this anyway.
+ 		 */
+ 		else {
+-			return ipmi_timestamp_fmt(stamp, "S+ %y years %j days %H:%M:%S");
++			ipmi_timestamp_fmt_wrapper(stamp, "S+ %y years %j days %H:%M:%S", datebuf_string);
++			return datebuf_string;
+ 		}
+ 	}
+-	return ipmi_timestamp_fmt(stamp, "%c %Z");
++	ipmi_timestamp_fmt_wrapper(stamp, "%c %Z", datebuf_string);
++	return datebuf_string;
+ }
+ 
+ char *
+ ipmi_timestamp_numeric(uint32_t stamp)
+ {
++	static ipmi_datebuf_t datebuf_numeric;
+ 	if (!ipmi_timestamp_is_valid(stamp)) {
+ 		return "Unspecified";
+ 	}
+ 
+ 	if (ipmi_timestamp_is_special(stamp)) {
+ 		if (stamp < SECONDS_A_DAY) {
+-			return ipmi_timestamp_fmt(stamp, "S+ %H:%M:%S");
++			ipmi_timestamp_fmt_wrapper(stamp, "S+ %H:%M:%S", datebuf_numeric);
++			return datebuf_numeric;
+ 		}
+ 		/*
+ 		 * IPMI_TIME_INIT_DONE is over 17 years. This should never
+ 		 * happen normally, but we'll support this anyway.
+ 		 */
+ 		else {
+-			return ipmi_timestamp_fmt(stamp, "S+ %y/%j %H:%M:%S");
++			ipmi_timestamp_fmt_wrapper(stamp, "S+ %y/%j %H:%M:%S", datebuf_numeric);
++			return datebuf_numeric;
+ 		}
+ 	}
+-	return ipmi_timestamp_fmt(stamp, "%x %X %Z");
++	ipmi_timestamp_fmt_wrapper(stamp, "%x %X %Z", datebuf_numeric);
++	return datebuf_numeric;
+ }
+ 
+ char *
+ ipmi_timestamp_date(uint32_t stamp)
+ {
++	static ipmi_datebuf_t buf_date;
+ 	if (!ipmi_timestamp_is_valid(stamp)) {
+ 		return "Unspecified";
+ 	}
+ 
+ 	if (ipmi_timestamp_is_special(stamp)) {
+-		return ipmi_timestamp_fmt(stamp, "S+ %y/%j");
++		ipmi_timestamp_fmt_wrapper(stamp, "S+ %y/%j", buf_date);
++		return buf_date;
+ 	}
+-	return ipmi_timestamp_fmt(stamp, "%x");
++	ipmi_timestamp_fmt_wrapper(stamp, "%x", buf_date);
++	return buf_date;
+ }
+ 
+ char *
+@@ -237,7 +256,8 @@ ipmi_timestamp_time(uint32_t stamp)
+ 	if (!ipmi_timestamp_is_valid(stamp)) {
+ 		return "Unspecified";
+ 	}
+-
++	static ipmi_datebuf_t buf_time;
+ 	/* Format is the same for both normal and special timestamps */
+-	return ipmi_timestamp_fmt(stamp, "%X %Z");
++	ipmi_timestamp_fmt_wrapper(stamp, "%X %Z", buf_time);
++	return buf_time;
+ }

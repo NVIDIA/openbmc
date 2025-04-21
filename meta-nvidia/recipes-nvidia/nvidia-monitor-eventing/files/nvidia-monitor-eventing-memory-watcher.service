@@ -1,0 +1,12 @@
+[Unit]
+Description=Monitor Eventing Service memory watcher service
+
+Wants=hmc-boot-complete.service
+After=hmc-boot-complete.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/monitor-eventing-memory-watcher
+
+[Install]
+WantedBy=multi-user.target

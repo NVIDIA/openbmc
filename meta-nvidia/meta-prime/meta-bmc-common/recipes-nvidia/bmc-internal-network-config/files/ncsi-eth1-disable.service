@@ -1,0 +1,11 @@
+[Unit]
+Description= Disable NC-SI interface
+
+Before=network.target
+
+[Service]
+Type=oneshot
+ExecStart=ifconfig eth1 down
+
+[Install]
+WantedBy=multi-user.target

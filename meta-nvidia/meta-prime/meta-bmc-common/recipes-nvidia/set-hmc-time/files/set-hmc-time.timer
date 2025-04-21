@@ -1,0 +1,12 @@
+[Unit]
+Description=Run set-hmc-timer service every hour 
+
+[Timer]
+OnUnitActiveSec=1h
+
+#
+# Upon periodic timer activation, systemd automatically activates set-hmc-time.service
+#
+
+[Install]
+WantedBy=timers.target

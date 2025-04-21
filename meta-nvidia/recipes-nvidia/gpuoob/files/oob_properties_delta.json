@@ -1,0 +1,2384 @@
+{
+  "version": 0.1,
+  "properties": [
+    {
+      "name": "gpu.pcie.vendorId",
+      "unit": "id",
+      "category": "static",
+      "accessor": "gpu.opcode.vendorId",
+      "description": "PCIe VendorID"
+    },
+    {
+      "name": "gpu.pcie.deviceId",
+      "unit": "id",
+      "category": "static",
+      "accessor": "gpu.opcode.deviceId",
+      "description": "PCIe DeviceID"
+    },
+    {
+      "name": "gpu.pcie.subVendorId",
+      "unit": "id",
+      "category": "static",
+      "accessor": "gpu.opcode.subVendorId",
+      "description": "PCIe SubVendorID"
+    },
+    {
+      "name": "gpu.pcie.subDeviceId",
+      "unit": "id",
+      "category": "static",
+      "accessor": "gpu.opcode.subDeviceId",
+      "description": "PCIe SubDeviceID"
+    },
+    {
+      "name": "gpu.pcie.maxWidth",
+      "unit": "id",
+      "category": "static",
+      "accessor": "gpu.opcode.maxWidth",
+      "description": "PCIe Max Link Width"
+    },
+    {
+      "name": "gpu.pcie.maxSpeed",
+      "unit": "id",
+      "category": "static",
+      "accessor": "gpu.opcode.maxSpeed",
+      "description": "PCIe Max Link Speed"
+    },
+    {
+      "name": "gpu.pcie.linkStatus.page0",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.linkStatus.page0",
+      "description": "PCIe Link Status Page0"
+    },
+    {
+      "name": "gpu.pcie.linkStatus.page1",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.linkStatus.page1",
+      "description": "PCIe Link Status Page1"
+    },
+    {
+      "name": "gpu.pcie.linkStatus.page2",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.linkStatus.page2",
+      "description": "PCIe Link Status Page2"
+    },
+    {
+      "name": "gpu.device.stateFlags.page0",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.deviceStateFlags.page0",
+      "description": "Device Flags Page0"
+    },
+    {
+      "name": "gpu.inventory.boardPartNumber",
+      "unit": "string",
+      "category": "static",
+      "accessor": "gpu.opcode.boardPartNumber",
+      "description": "Board Part Number"
+    },
+    {
+      "name": "gpu.inventory.oemInformation",
+      "unit": "string",
+      "category": "static",
+      "accessor": "gpu.opcode.oemInformation",
+      "description": "OEM Information"
+    },
+    {
+      "name": "gpu.inventory.serialNumber",
+      "unit": "string",
+      "category": "static",
+      "accessor": "gpu.opcode.serialNumber",
+      "description": "Serial Number"
+    },
+    {
+      "name": "gpu.inventory.marketingName",
+      "unit": "string",
+      "category": "static",
+      "accessor": "gpu.opcode.marketingName",
+      "description": "Marketing Name"
+    },
+    {
+      "name": "gpu.inventory.gpuPartNumber",
+      "unit": "string",
+      "category": "static",
+      "accessor": "gpu.opcode.gpuPartNumber",
+      "description": "GPU Part Number"
+    },
+    {
+      "name": "gpu.inventory.memoryVendor",
+      "unit": "string",
+      "category": "static",
+      "accessor": "gpu.opcode.memoryVendor",
+      "description": "Memory Vendor"
+    },
+    {
+      "name": "gpu.inventory.memoryPartNumber",
+      "unit": "string",
+      "category": "static",
+      "accessor": "gpu.opcode.memoryPartNumber",
+      "description": "Memory Part Number"
+    },
+    {
+      "name": "gpu.inventory.buildDate",
+      "unit": "bcd",
+      "category": "static",
+      "accessor": "gpu.opcode.buildDate",
+      "description": "Build Date"
+    },
+    {
+      "name": "gpu.inventory.productHeight",
+      "unit": "mm",
+      "category": "static",
+      "accessor": "gpu.opcode.productHeight",
+      "description": "Product Height"
+    },
+    {
+      "name": "gpu.inventory.productLength",
+      "unit": "mm",
+      "category": "static",
+      "accessor": "gpu.opcode.productLength",
+      "description": "Product Length"
+    },
+    {
+      "name": "gpu.inventory.productWidth",
+      "unit": "mm",
+      "category": "static",
+      "accessor": "gpu.opcode.productWidth",
+      "description": "Product Width"
+    },
+    {
+      "name": "gpu.inventory.gpuGUID",
+      "unit": "guid",
+      "category": "static",
+      "accessor": "gpu.opcode.gpuGuid",
+      "description": "GUID"
+    },
+    {
+      "name": "gpu.inventory.capabilities",
+      "unit": "bitMask",
+      "category": "dynamic",
+      "accessor": "gpu.opcode.capabilities",
+      "description": "Capabilities"
+    },
+    {
+      "name": "gpu.thermal.temperature.primaryGPU.singlePrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "gpu.opcode.primaryGpuTemperatureSP",
+      "description": "Temperature"
+    },
+    {
+      "name": "gpu.thermal.temperature.primaryGPU.extendedPrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "gpu.opcode.primaryGpuTemperatureEP",
+      "description": "Temperature (Extended)"
+    },
+    {
+      "name": "gpu.thermal.temperature.secondaryGPU.singlePrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "gpu.opcode.secondaryGpuTemperatureSP",
+      "description": "Secondary Temperature"
+    },
+    {
+      "name": "gpu.thermal.temperature.secondaryGPU.extendedPrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "gpu.opcode.secondaryGpuTemperatureEP",
+      "description": "Secondary Temperature (Extended)"
+    },
+    {
+      "name": "gpu.thermal.temperature.sensorMonitorBoard.singlePrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "gpu.opcode.smBoardTemperatureSP",
+      "description": "Board Temperature"
+    },
+    {
+      "name": "gpu.thermal.temperature.sensorMonitorBoard.extendedPrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "gpu.opcode.smBoardTemperatureEP",
+      "description": "Board Temperature (Extended)"
+    },
+    {
+      "name": "gpu.thermal.temperature.sensorMonitorMemory.singlePrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "gpu.opcode.smMemoryTemperatureSP",
+      "description": "Memory Temperature"
+    },
+    {
+      "name": "gpu.thermal.temperature.sensorMonitorMemory.extendedPrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "gpu.opcode.smMemoryTemperatureEP",
+      "description": "Memory Temperature (Extended)"
+    },
+    {
+      "name": "gpu.thermal.temperature.maxGPUOperatingTemp",
+      "unit": "degreeC",
+      "category": "configuration",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.thermal.maxGPUOperatingTemp",
+      "description": "Max GPU Operating Temperature"
+    },
+    {
+      "name": "gpu.thermal.temperature.maxMemoryOperatingTemp",
+      "unit": "degreeC",
+      "category": "configuration",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.thermal.maxMemoryOperatingTemp",
+      "description": "Max Memory Operating Temperature"
+    },
+    {
+      "name": "gpu.thermal.temperature.slowdownTemp",
+      "unit": "degreeC",
+      "category": "configuration",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.thermal.slowdownTemp",
+      "description": "Min Slowdown Temperature"
+    },
+    {
+      "name": "gpu.thermal.temperature.shutdownTemp",
+      "unit": "degreeC",
+      "category": "configuration",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.thermal.shutdownTemp",
+      "description": "Min Shutdown Temperature"
+    },
+    {
+      "name": "gpu.voltage.GetVoltageInformation",
+      "unit": "MicroVolt",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.gpuCoreVoltage",    
+      "description": "GPU Core Voltage"
+    },
+    {
+      "name": "gpu.memory.MemoryCapacityMB",
+      "unit": "MB",
+      "category": "static",
+      "value": "81920",
+      "accessor": "gpu.static.memoryCapacityMB",
+      "description": "GPU Memory Capacity in MB"
+    },
+    {
+      "name": "gpu.power.consumption",
+      "unit": "mW",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 3,
+      "accessor": "gpu.opcode.powerConsumption",
+      "description": "Power Consumption"
+    },
+    {
+      "name": "gpu.hbm.power.consumption",
+      "unit": "mW",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.hbmPowerConsumption",    
+      "description": "HBM Power Consumption"
+  },
+    {
+      "name": "gpu.energy.consumption",
+      "unit": "J",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 3,
+      "accessor": "gpu.opcode.energyConsumption",
+      "description": "Energy Consumption"
+    },
+    {
+      "name": "gpu.firmware.version",
+      "unit": "string",
+      "category": "dynamic",
+      "refresh_interval":"BUCKET_3",
+      "priority":1,
+      "accessor": "gpu.opcode.firmwareVersion",
+      "description": "Firmware Version"
+    },
+    {
+      "name": "gpu.firmware.infoROMVersion",
+      "unit": "string",
+      "category": "dynamic",
+      "refresh_interval":"BUCKET_3",
+      "priority":1,
+      "accessor": "gpu.opcode.infoRomVersion",
+      "description": "InfoROM Version"
+    },
+    {
+      "name": "gpu.firmware.writeProtectMode",
+      "unit": "boolean",
+      "category": "firmware",
+      "refresh_interval": "BUCKET_3",
+      "accessor": "gpu.opcode.firmwareWriteProtectMode",
+      "description": "Write Protect Mode"
+    },
+    {
+      "name": "gpu.firmware.setWriteProtectMode",
+      "unit": "boolean",
+      "category": "firmware",
+      "refresh_interval": "NO_REFRESH",
+      "accessor": "gpu.opcode.setFirmwareWriteProtectMode",
+      "description": "Set Write Protect Mode"
+    },
+    {
+      "name": "gpu.power.limit.total",
+      "unit": "mW",
+      "category": "configuration",
+      "accessor": "gpu.opcode.powerLimitTotal",
+      "description": "Total Power Limit"
+    },
+    {
+      "name": "gpu.power.setLimit.total",
+      "unit": "mW",
+      "category": "configuration",
+      "refresh_interval": "NO_REFRESH",
+      "accessor": "gpu.opcode.setPowerLimitTotal",
+      "description": "Set Total Power Limit"
+    },
+    {
+      "name": "gpu.power.limit.arbitrated",
+      "unit": "mW",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.powerLimitArbitrated",
+      "description": "Arbitrated Power Limit"
+    },
+    {
+      "name": "gpu.power.limit.policy.info",
+      "unit": "mW",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_3",
+      "priority": 2,
+      "accessor": "gpu.opcode.powerLimitPolicyInfo",
+      "description": "Total Power Limit Policy"
+    },
+    {
+      "name": "gpu.powerSupply.enablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.powerSupplyStatus",
+      "description": "Power Supply Status"
+    },
+    {
+      "name": "gpu.powerSupply.setEnablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "NO_REFRESH",
+      "priority": 2,
+      "accessor": "gpu.opcode.setPowerSupplyStatus",
+      "description": "Set Power Supply Status"
+    },
+    {
+      "name": "gpu.powerSupply.board.sufficiency",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.boardPowerSupplyStatus",
+      "description": "Board Power Supply"
+    },
+    {
+      "name": "gpu.powerSupply.external.sufficiency",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.externalPowerSupplyStatus",
+      "description": "External Power Supply"
+    },
+    {
+      "name": "gpu.clock.maxCustomerBoostClockLimit",
+      "unit": "MHz",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.maxCustomerBoostClockLimit",
+      "description": "Max Customer Boost Clock Limit"
+    },
+    {
+      "name": "gpu.clock.setMaxCustomerBoostClockLimit",
+      "unit": "MHz",
+      "category": "dynamic",
+      "refresh_interval": "NO_REFRESH",
+      "priority": 2,
+      "accessor": "gpu.opcode.setMaxCustomerBoostClockLimit",
+      "description": "Set Max Customer Boost Clock Limit"
+    },
+    {
+      "name": "gpu.clock.speedLocked",
+      "unit": "MHz",
+      "category": "dynamic",
+      "refresh_interval": "NO_REFRESH",
+      "priority": 2,
+      "accessor": "gpu.opcode.clock.limits",
+      "description": "Set Speed Locked Clock Limit"
+    },
+    {
+      "name": "gpu.clock.clearSpeedLocked",
+      "unit": "MHz",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.clock.ClearLimits",
+      "description": "Clear Speed Locked Clock Limit"
+    },
+    {
+      "name": "gpu.device.MIGMode",
+      "unit": "id",
+      "category": "configuration",
+      "accessor": "gpu.opcode.MIGMode",
+      "description": "Device MIG Mode"
+    },
+    {
+      "name": "gpu.device.eccMode",
+      "unit": "hexString",
+      "refresh_interval": "NO_REFRESH",
+      "category": "dynamic",
+      "accessor": "gpu.opcode.eccMode",
+      "description": "Device ECC Mode"
+    },
+    {
+      "name": "gpu.device.RowRemappingStats.correctableErrorCounts",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.RowRemappingStats.correctableErrorCounts",
+      "description": "GPU Correctable Row Remapping Count"
+    },
+    {
+      "name": "gpu.device.RowRemappingStats.unCorrectableErrorCounts",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.RowRemappingStats.unCorrectableErrorCounts",
+      "description": "GPU UnCorrectable Row Remapping Count"
+    },
+    {
+      "name": "gpu.device.MIGCapability",
+      "unit": "id",
+      "category": "configuration",
+      "accessor": "gpu.opcode.MIGCapability",
+      "description": "Device MIG Capability"
+    },
+    {
+      "name": "gpu.clock.graphics.currentFreq",
+      "unit": "KHz",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryClockFreqInfo.currentFreq.graphicsClock",
+      "description": "Current Graphics Clock Frequency"
+    },
+    {
+      "name": "gpu.clock.graphics.minFreq",
+      "unit": "KHz",
+      "category": "configuration",
+      "accessor": "gpu.opcode.queryClockFreqInfo.minProgrammableClock.graphicsClock",
+      "description": "Min Programmable Graphics Clock Frequency"
+    },
+    {
+      "name": "nvswitch.firmware.nvlinkProtocolVersion",
+      "unit": "string",
+      "category": "static",
+      "value": "4",
+      "accessor": "nvswitch.static.nvlinkProtocolVersion",
+      "description": "NVSwitch NVLink Protocol Version"
+    },
+    {
+      "name": "gpu.clock.throttleReason",
+      "unit": "hexString",
+      "category": "dynamic",
+      "accessor": "gpu.opcode.queryClockFreqInfo.clockThottleReason",
+      "description": "GPU Clock Throttle Reason"
+    },
+    {
+      "name": "gpu.clock.graphics.maxFreq",
+      "unit": "KHz",
+      "category": "configuration",
+      "accessor": "gpu.opcode.queryClockFreqInfo.maxProgrammableClock.graphicsClock",
+      "description": "Max Programmable Clock Frequency"
+    },
+    {
+      "name": "gpu.clock.memory.currentFreq",
+      "unit": "KHz",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryClockFreqInfo.currentFreq.memoryClock",
+      "description": "Current Memory Clock Frequency"
+    },
+    {
+      "name": "gpu.clock.memory.minFreq",
+      "unit": "KHz",
+      "category": "configuration",
+      "accessor": "gpu.opcode.queryClockFreqInfo.minProgrammableClock.memoryClock",
+      "description": "Min Programmable Memory Clock Frequency"
+    },
+    {
+      "name": "gpu.clock.memory.maxFreq",
+      "unit": "KHz",
+      "category": "configuration",
+      "accessor": "gpu.opcode.queryClockFreqInfo.maxProgrammableClock.memoryClock",
+      "description": "Max Programmable Memory Clock Frequency"
+    },
+    {
+      "name": "gpu.sram.ecc.correctable",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.sram.eccStats.correctable",
+      "description": "SRAM correctable ECC errors"
+    },
+    {
+      "name": "gpu.sram.ecc.uncorrectable",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.sram.eccStats.uncorrectable",
+      "description": "SRAM uncorrectable ECC errors"
+    },
+    {
+      "name": "gpu.dram.ecc.correctable",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.dram.eccStats.correctable",
+      "description": "DRAM correctable ECC errors"
+    },
+    {
+      "name": "gpu.dram.ecc.uncorrectable",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.dram.eccStats.uncorrectable",
+      "description": "DRAM uncorrectable ECC errors"
+    },
+    {
+      "name": "gpu.device.SMMemoryUtilization",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.SMMemoryUtilization",
+      "description": "SM and Memory Utilization Percentage"
+    },
+    {
+      "name": "gpu.device.SMUtilization",
+      "unit": "percent",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.SMUtilization",
+      "description": "SM Utilization Percentage"
+    },
+    {
+      "name": "gpu.device.MemoryUtilization",
+      "unit": "percent",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.MemoryUtilization",
+      "description": "Memory Utilization Percentage"
+    },
+    {
+      "name": "gpu.nvlink.numOfNVLinks",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.numOfNVLinks",
+      "description": "Number of NVLinks"
+    },
+    {
+      "name": "gpu.nvlink.NVLinkStateV1",
+      "unit": "ArrayId",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.NVLinkStateV1",
+      "description": "Individual NVLink Status"
+    },
+    {
+      "name": "gpu.nvlink.aggregateNVLinkStateV2",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.aggregateNVLinkStateV2",
+      "description": "Aggregate NVLink Status"
+    },
+    {
+      "name": "gpu.nvlink.NVLinkStateV2",
+      "unit": "ArrayId",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.NVLinkStateV2",
+      "description": "Individual NVLink Status"
+    },
+    {
+      "name": "gpu.nvlink.aggregateNVLinkBandwidth",
+      "unit": "MBps",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.aggregateNVLinkBandwidth",
+      "description": "Aggregate NVLink Bandwidth"
+    },
+    {
+      "name": "gpu.nvlink.NVLinkBandwidth",
+      "unit": "ArrayMBps",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.NVLinkBandwidth",
+      "description": "Individual NVLink Bandwidth"
+    },
+    {
+      "name": "gpu.nvlink.aggregateRxTxNVLinkSubLinkWidth",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.aggregateRxTxNVLinkSubLinkWidth",
+      "description": "Aggregate NVLink Rx Tx Sublink Width"
+    },
+    {
+      "name": "gpu.nvlink.aggregateTxNVLinkSubLinkWidth",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.aggregateTxNVLinkSubLinkWidth",
+      "description": "Aggregate NVLink Tx Sublink Width"
+    },
+    {
+      "name": "gpu.nvlink.aggregateRxNVLinkSubLinkWidth",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.aggregateRxNVLinkSubLinkWidth",
+      "description": "Aggregate NVLink Rx Sublink Width"
+    },
+    {
+      "name": "gpu.nvlink.aggregateTxDataThroughput",
+      "unit": "KiB",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.aggregateTxDataThroughput",
+      "description": "Aggregate NVLink Tx Data Throughput"
+    },
+    {
+      "name": "gpu.nvlink.aggregateRxDataThroughput",
+      "unit": "KiB",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.aggregateRxDataThroughput",
+      "description": "Aggregate NVLink Rx Data Throughput"
+    },
+    {
+      "name": "gpu.nvlink.txDataThroughput",
+      "unit": "ArrayKiB",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.txDataThroughput",
+      "description": "NVLink Tx Data Throughput"
+    },
+    {
+      "name": "gpu.nvlink.rxDataThroughput",
+      "unit": "ArrayKiB",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.rxDataThroughput",
+      "description": "NVLink Rx Data Throughput"
+    },
+    {
+      "name": "gpu.nvlink.aggregateTxDataThroughputWithProtocol",
+      "unit": "KiB",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.aggregateTxDataThroughputWithProtocol",
+      "description": "Aggregate NVLink Tx Data Throughput WithProtocol"
+    },
+    {
+      "name": "gpu.nvlink.aggregateRxDataThroughputWithProtocol",
+      "unit": "KiB",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.aggregateRxDataThroughputWithProtocol",
+      "description": "Aggregate NVLink Rx Data Throughput WithProtocol"
+    },
+    {
+      "name": "gpu.nvlink.txDataThroughputWithProtocol",
+      "unit": "ArrayKiB",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.txDataThroughputWithProtocol",
+      "description": "NVLink Tx Data Throughput WithProtocol"
+    },
+    {
+      "name": "gpu.nvlink.rxDataThroughputWithProtocol",
+      "unit": "ArrayKiB",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.rxDataThroughputWithProtocol",
+      "description": "NVLink Rx Data Throughput WithProtocol"
+    },
+    {
+      "name": "gpu.nvlink.aggregateReplayErrCount",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.aggregateReplayErrCount",
+      "description": "Aggregate NVLink replay error count"
+    },
+    {
+      "name": "gpu.nvlink.aggregateRecoveryErrCount",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.aggregateRecoveryErrCount",
+      "description": "Aggregate NVLink recovery error count"
+    },
+    {
+      "name": "gpu.nvlink.aggregateFlitCRCErrCount",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.aggregateFlitCRCErrCount",
+      "description": "Aggregate NVLink flit CRC error count"
+    },
+    {
+      "name": "gpu.nvlink.aggregateDataCRCErrCount",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.aggregateDataCRCErrCount",
+      "description": "Aggregate NVLink data CRC error count"
+    },
+    {
+      "name": "gpu.nvlink.rxTxNVLinkSubLinkWidth",
+      "unit": "ArrayId",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.rxTxNVLinkSubLinkWidth",
+      "description": "NVLink Rx and Tx Sublink Width"
+    },
+    {
+      "name": "gpu.nvlink.replayErrCount",
+      "unit": "ArrayCounter32",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.replayErrCount",
+      "description": "Individual NVLink replay error count"
+    },
+    {
+      "name": "gpu.nvlink.recoveryErrCount",
+      "unit": "ArrayCounter32",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.recoveryErrCount",
+      "description": "Individual NVLink recovery error count"
+    },
+    {
+      "name": "gpu.nvlink.flitCRCErrCount",
+      "unit": "ArrayCounter32",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.flitCRCErrCount",
+      "description": "Individual NVLink flit CRC error count"
+    },
+    {
+      "name": "gpu.nvlink.dataCRCErrCount",
+      "unit": "ArrayCounter32",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.dataCRCErrCount",
+      "description": "Individual NVLink data CRC error count"
+    },
+    {
+      "name": "gpu.xid.event",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.xidEvent",
+      "description": "GPU Driver Event Message - xid Event"
+    },
+    {
+      "name": "fpga.inventory.capabilities",
+      "unit": "bitMask",
+      "category": "dynamic",
+      "accessor": "fpga.opcode.capabilities",
+      "description": "Capabilities"
+    },
+    {
+      "name": "gpu.pcie.fundamentalResetState",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "gpu.opcode.pcieFundamentalResetState",
+      "description": "GPU PCIeFundamental Reset State"
+    }, 
+    {
+      "name": "gpu.pcie.setFundamentalResetState",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "NO_REFRESH",
+      "priority": 2,
+      "accessor": "gpu.opcode.setPcieFundamentalResetState",
+      "description": "Set GPU PCIeFundamental Reset State"
+    },
+    {
+      "name": "baseboard.inventory.boardType",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.boardType",
+      "description": "Baseboard Type"
+    },
+    {
+      "name": "pciegen4sw.activePollingEnabled",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.gen4swActivePollingEnabled",
+      "description": "Control Active Polling of PCIe Gen4 switch devices"
+    },
+    {
+      "name": "baseboard.security.WPJumperPresence",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.WPJumperPresence",
+      "description": "Baseboard Write Protection Jumper Presence"
+    },
+    {
+      "name": "gpu.interrupt.PresenceInfo",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.gpuPresenceInterruptInfo",
+      "description": "Baseboard GPU Presence change Interrupt"
+    },
+    {
+      "name": "gpu.device.PresenceAndPowerStatus",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.gpuPresenceAndPowerStatus",
+      "description": "Baseboard GPU Presence and Power status"
+    },
+    {
+      "name": "gpu.interrupt.PWRInfo",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.gpuPWRInterruptInfo",
+      "description": "Baseboard GPU PWR_GOOD state change Interrupt"
+    },
+    {
+      "name": "gpu.interrupt.PCIeInfo",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.gpuPCIeInterruptInfo",
+      "description": "Baseboard GPU PCIe presence state change Interrupt"
+    },
+    {
+      "name": "gpu.thermal.temperature.overTemperatureInfo",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.overTemperatureInfo",
+      "description": "Baseboard GPU over temperature info"
+    },
+    {
+      "name": "nvswitch.thermal.temperature.overTemperatureInfo",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.overTemperatureInfo",
+      "description": "Baseboard NVSwitch over temperature info"
+    },
+    {
+      "name": "fpga.onboard.interruptInfo",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.onboardInterruptInfo",
+      "description": "Baseboard onboard Devices Interrupt Info"
+    },
+    {
+      "name": "baseboard.inventory.boardId",
+      "unit": "id",
+      "category": "static",
+      "accessor": "fpga.opcode.boardId",
+      "description": "Baseboard Id"
+    },
+    {
+      "name": "baseboard.inventory.boardProductName",
+      "unit": "string",
+      "category": "static",
+      "accessor": "fpga.opcode.boardProductName",
+      "description": "Baseboard Product Name"
+    },
+    {
+      "name": "baseboard.inventory.boardPartNumber",
+      "unit": "string",
+      "category": "static",
+      "accessor": "fpga.opcode.boardPartNumber",
+      "description": "Baseboard Part Number"
+    },
+    {
+      "name": "baseboard.inventory.boardSerialNumber",
+      "unit": "string",
+      "category": "static",
+      "accessor": "fpga.opcode.boardSerialNumber",
+      "description": "Baseboard Serial Number"
+    },
+    {
+      "name": "baseboard.inventory.boardManufacturer",
+      "unit": "string",
+      "category": "static",
+      "accessor": "fpga.opcode.boardManufacturer",
+      "description": "Baseboard Manufacturer"
+    },
+    {
+      "name": "baseboard.inventory.boardRevision",
+      "unit": "string",
+      "category": "static",
+      "accessor": "fpga.opcode.boardRevision",
+      "description": "Baseboard Revision"
+    },
+    {
+      "name": "baseboard.inventory.boardManufacturingDate",
+      "unit": "hexString",
+      "category": "static",
+      "accessor": "fpga.opcode.boardManufacturingDate",
+      "description": "Baseboard Manufacturing Date"
+    },
+    {
+      "name": "baseboard.inventory.productName",
+      "unit": "string",
+      "category": "static",
+      "accessor": "fpga.opcode.productName",
+      "description": "Baseboard Product Name"
+    },
+    {
+      "name": "baseboard.inventory.productPartNumber",
+      "unit": "string",
+      "category": "static",
+      "accessor": "fpga.opcode.productPartNumber",
+      "description": "Baseboard Product Part Number"
+    },
+    {
+      "name": "baseboard.inventory.productSerialNumber",
+      "unit": "string",
+      "category": "static",
+      "accessor": "fpga.opcode.productSerialNumber",
+      "description": "Baseboard Product Serial Number"
+    },
+    {
+      "name": "baseboard.inventory.productManufacturer",
+      "unit": "string",
+      "category": "static",
+      "accessor": "fpga.opcode.productManufacturer",
+      "description": "Baseboard Product Manufacturer"
+    },
+    {
+      "name": "baseboard.inventory.productVersion",
+      "unit": "string",
+      "category": "static",
+      "accessor": "fpga.opcode.productVersion",
+      "description": "Baseboard Product Version"
+    },
+    {
+      "name": "baseboard.inventory.chassisPartNumber",
+      "unit": "string",
+      "category": "static",
+      "accessor": "fpga.opcode.chassisPartNumber",
+      "description": "Baseboard Chassis Part Number"
+    },
+    {
+      "name": "baseboard.inventory.chassisSerialNumber",
+      "unit": "string",
+      "category": "static",
+      "accessor": "fpga.opcode.chassisSerialNumber",
+      "description": "Baseboard Chassis Serial Number"
+    },
+    {
+      "name": "baseboard.inventory.pexStrapConfiguration",
+      "unit": "id",
+      "category": "static",
+      "accessor": "fpga.opcode.pexStrapConfiguration",
+      "description": "Pex PCIe reset and refrence clock config"
+    },
+    {
+      "name": "nvswitch.pcie.fundamentalResetState",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.pcieFundamentalResetState",
+      "description": "NVSwitch PCIe Fundamental Reset State"
+    },
+    {
+      "name": "pcieswitch.pcie.fundamentalResetState",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.pcieFundamentalResetState",
+      "description": "PCIe Switch PCIeFundamental Reset State"
+    },
+    {
+      "name": "pcieretimer.pcie.fundamentalResetState",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.pcieFundamentalResetState",
+      "description": "PCIe Gen5 Retimers PCIe Fundamental Reset State"
+    },
+    {
+      "name": "pciegen4sw.pcie.fundamentalSysResetState",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.pcieSysResetState",
+      "description": "PCIe Gen4switch Fundamental Sys Reset State"
+    },
+    {
+      "name": "pciegen4sw.pcie.fundamentalS0ResetState",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.pcieS0ResetState",
+      "description": "PCIe Gen4switch Fundamental S0 Reset State"
+    },
+    {
+      "name": "pciegen4sw.pcie.fundamentalS1ResetState",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.pcieS1ResetState",
+      "description": "PCIe Gen4switch Fundamental S1 Reset State"
+    },
+    {
+      "name": "gpu.pcie.clockOutputEnableState",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.pcieClockOutputEnableState",
+      "description": "GPU PCIe RefClock Output Buffer Enable State"
+    },
+    {
+      "name": "pcieretimer.pcie.clockOutputEnableState",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.pcieClockOutputEnableState",
+      "description": "PCIe Reference Clock Output Buffer Enable State"
+    },
+    {
+      "name": "gpu.clock.getSpeedLocked",
+      "unit": "MHz",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.clock.getLimits",
+      "description": "Get Speed Locked Clock Limit"
+    },
+    {
+      "name": "pcieswitch.pcie.linkStatus.upPage0",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.linkStatus.page0",
+      "description": "PCIeSwicth PCIe Link Status"
+    },
+    {
+      "name": "nvswitch.pcie.linkStatus.EPPage0",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.linkStatus.page0",
+      "description": "nvswitch PCIe Link Status"
+    },
+    {
+      "name": "pcieretimer.pcie.linkStatus.upPage0",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.linkStatus.page0",
+      "description": "pcieretimer PCIe Link Status"
+    },
+    {
+      "name": "gpu.driver.version",
+      "unit": "string",
+      "category": "firmware",
+      "refresh_interval":"BUCKET_3",
+      "priority":1,
+      "accessor": "gpu.opcode.driverVersion",
+      "pages": 2,
+      "description": "Driver Version"
+    },
+    {
+      "name": "nvswitch.pcie.setFundamentalResetState",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "NO_REFRESH",
+      "accessor": "fpga.opcode.setPcieFundamentalResetState",
+      "description": "Set NVSwitch PCIe Fundamental Reset State"
+    },
+    {
+      "name": "pcieretimer.firmware.setAllWPMode",
+      "unit": "boolean",
+      "category": "firmware",
+      "refresh_interval": "NO_REFRESH",
+      "accessor": "fpga.opcode.setAllFirmwareWPMode",
+      "description": "Firmware Write Protect Mode"
+    },
+    {
+      "name": "hmc.firmware.setWPMode",
+      "unit": "boolean",
+      "category": "firmware",
+      "refresh_interval": "NO_REFRESH",
+      "accessor": "fpga.opcode.setFirmwareWPMode",
+      "description": "Firmware Write Protect Mode"
+    },
+    {
+      "name": "nvswitch.pcie.maxSpeed",
+      "unit": "id",
+      "category": "static",
+      "accessor": "nvswitch.opcode.maxSpeed",
+      "description": "NVSwitch PCIe Link Max Speed"
+    },
+    {
+      "name": "nvswitch.pcie.maxWidth",
+      "unit": "id",
+      "category": "static",
+      "accessor": "nvswitch.opcode.maxWidth",
+      "description": "NVSwitch PCIe Link Max width"
+    },
+    {
+      "name": "fpga.pcie.numOfPCIePorts",
+      "unit": "string",
+      "category": "static",
+      "value": "2",
+      "accessor": "fpga.opcode.numOfPCIePorts",
+      "description": "FPGA number of PCIe port"
+    },
+    {
+      "name": "hostBmc.pcie.linkStatus.page0",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.linkStatus.page0",
+      "description": "FPGA to Host BMC PCIe Link Status"
+    },
+    {
+      "name": "hmc.pcie.linkStatus.page0",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.linkStatus.page0",
+      "description": "FPGA to HMC PCIe Link Status"
+    },
+    {
+      "name": "nvswitch.driver.version",
+      "unit": "string",
+      "category": "firmware",
+      "refresh_interval":"BUCKET_3",
+      "priority":1,
+      "accessor": "nvswitch.opcode.driverVersion",
+      "pages": 2,
+      "description": "NVSwitch Driver Version"
+    },
+    {
+      "name": "pcieretimer.thermal.temperature.singlePrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority" : 3,
+      "accessor": "fpga.opcode.PcieretimerTemperatureSP",
+      "description": "Temperature"
+    },
+    {
+      "name": "pcieretimer.pcie.ID",
+      "unit": "hexString",
+      "category": "static",
+      "accessor": "fpga.opcode.pcieretimerId",
+      "description": "PCIeRetimer Vendor and Device Id"
+    },
+    {
+      "name": "nvswitch.pcie.clockOutputEnableState",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.pcieClockOutputEnableState",
+      "description": "PCIe Reference Clock Output Buffer Enable State"
+    },
+    {
+      "name": "gpu.nvlink.clockOutputEnableState",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.nvlinkClockOutputEnableState",
+      "description": "NVLink Reference Clock Output Buffer Enable State"
+    },
+    {
+      "name": "nvswitch.inventory.capabilities",
+      "unit": "bitMask",
+      "category": "dynamic",
+      "accessor": "nvswitch.opcode.capabilities",
+      "description": "Capabilities"
+    },
+    {
+      "name": "nvswitch.nvlink.clockOutputEnableState",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "accessor": "fpga.opcode.nvlinkClockOutputEnableState",
+      "description": "NVLink Reference Clock Output Buffer Enable State"
+    },
+    {
+      "name": "fpga.thermal.temperature.singlePrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureSP",
+      "description": "Temperature"
+    },
+    {
+      "name": "fpga.thermal.temperature.extendedPrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureEP",
+      "description": "Temperature (Extended)"
+    },
+    {
+      "name": "pcbTemp.thermal.temperature.singlePrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureSP",
+      "description": "Temperature"
+    },
+    {
+      "name": "pcbTemp.thermal.temperature.extendedPrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureEP",
+      "description": "Temperature (Extended)"
+    },
+    {
+      "name": "pcieswitch.thermal.temperature.singlePrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureSP",
+      "description": "Temperature"
+    },
+    {
+      "name": "pcieswitch.thermal.temperature.extendedPrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureEP",
+      "description": "Temperature (Extended)"
+    },
+    {
+      "name": "pciegen4sw.thermal.temperature.singlePrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureSP",
+      "description": "Temperature"
+    },
+    {
+      "name": "pciegen4sw.thermal.temperature.extendedPrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureEP",
+      "description": "Temperature (Extended)"
+    },
+    {
+      "name": "inletTemp.thermal.temperature.singlePrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureSP",
+      "description": "Temperature"
+    },
+    {
+      "name": "inletTemp.thermal.temperature.extendedPrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureEP",
+      "description": "Temperature (Extended)"
+    },
+    {
+      "name": "hsc.thermal.temperature.singlePrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureSP",
+      "description": "Temperature"
+    },
+    {
+      "name": "hsc.thermal.temperature.extendedPrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureEP",
+      "description": "Temperature (Extended)"
+    },
+    {
+      "name": "outputhsc.thermal.temperature.singlePrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureSP",
+      "description": "Temperature"
+    },
+    {
+      "name": "outputhsc.thermal.temperature.extendedPrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureEP",
+      "description": "Temperature (Extended)"
+    },
+    {
+      "name": "standbyhsc.thermal.temperature.singlePrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureSP",
+      "description": "Temperature"
+    },
+    {
+      "name": "standbyhsc.thermal.temperature.extendedPrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureEP",
+      "description": "Temperature (Extended)"
+    },
+    {
+      "name": "nvswitch.thermal.temperature.threshold.alert",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureAT",
+      "description": "Temperature Alert threshold"
+    },
+    {
+      "name": "pcbTemp.thermal.temperature.threshold.alert",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureAT",
+      "description": "Temperature Alert threshold"
+    },
+    {
+      "name": "pcieswitch.thermal.temperature.threshold.alert",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureAT",
+      "description": "Temperature Alert threshold"
+    },
+    {
+      "name": "inletTemp.thermal.temperature.threshold.alert",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureAT",
+      "description": "Temperature Alert threshold"
+    },
+    {
+      "name": "hsc.thermal.temperature.threshold.alert",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureAT",
+      "description": "Temperature Alert threshold"
+    },
+    {
+      "name": "standbyhsc.thermal.temperature.threshold.alert",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureAT",
+      "description": "Temperature Alert threshold"
+    },
+    {
+      "name": "outputhsc.thermal.temperature.threshold.alert",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureAT",
+      "description": "Temperature Alert threshold"
+    },
+    {
+      "name": "nvswitch.thermal.temperature.threshold.overt",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureOT",
+      "description": "Nvswitch Temp over threshold"
+    },
+    {
+      "name": "pcbTemp.thermal.temperature.threshold.overt",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureOT",
+      "description": "PCB Temp over threshold"
+    },
+    {
+      "name": "pcieswitch.thermal.temperature.threshold.overt",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureOT",
+      "description": "PCIe Switch Temp over threshold"
+    },
+    {
+      "name": "inletTemp.thermal.temperature.threshold.overt",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureOT",
+      "description": "Inlet Temp over threshold"
+    },
+    {
+      "name": "hsc.thermal.temperature.threshold.overt",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureOT",
+      "description": "Hsc Temp over threshold"
+    },
+    {
+      "name": "standbyhsc.thermal.temperature.threshold.overt",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureOT",
+      "description": "Standbyhsc Temp over threshold"
+    },
+    {
+      "name": "outputhsc.thermal.temperature.threshold.overt",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.temperatureOT",
+      "description": "Outputhsc Temp over threshold"
+    },
+    {
+      "name": "hsc.power.consumption",
+      "unit": "mW",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.hsc.power.consumption",
+      "description": "Get HSC# power consumption"
+    },
+    {
+      "name": "standbyhsc.power.consumption",
+      "unit": "mW",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.hsc.power.consumption",
+      "description": "Get standby HSC power consumption"
+    },
+    {
+      "name": "outputhsc.power.consumption",
+      "unit": "mW",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.hsc.power.consumption",
+      "description": "Get Output HSC power consumption"
+    },
+    {
+      "name": "fpga.totalhsc.power.consumption",
+      "unit": "mW",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "fpga.opcode.totalhsc.power.consumption",
+      "description": "Total Power Consumption of all HSCs"
+    },
+    {
+      "name": "altPressureSensor.altitude.pressure",
+      "unit": "hPa",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.altitudePressure",
+      "description": "Altitude Pressure"
+    },
+    {
+      "name": "fpga.firmware.version",
+      "unit": "string",
+      "category": "dynamic",
+      "refresh_interval":"BUCKET_3",
+      "priority":1,
+      "accessor": "fpga.opcode.firmwareVersion",
+      "description": "FPGA Image Version"
+    },
+    {
+      "name": "fpga.firmware.writeProtectModePage0",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_3",
+      "priority": 1,
+      "accessor": "fpga.opcode.firmwareWPModePage0",
+      "description": "FPGA firmware Write Protect Mode Page0"
+    },
+    {
+      "name": "fpga.firmware.writeProtectModePage1",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_3",
+      "priority": 1,
+      "accessor": "fpga.opcode.firmwareWPModePage1",
+      "description": "FPGA firmware Write Protect Mode Page1"
+    },
+    {
+      "name": "fpga.firmware.setWriteProtectMode",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "NO_REFRESH",
+      "priority": 2,
+      "accessor": "fpga.opcode.setFirmwareWPMode",
+      "description": "Set FPGA firmware Write Protect Mode"
+    },
+    {
+      "name": "pcieswitch.firmware.WPMode",
+      "unit": "boolean",
+      "category": "firmware",
+      "refresh_interval": "NO_REFRESH",
+      "accessor": "fpga.opcode.firmwareWPMode",
+      "description": "PCIe Switch EEPROM Write Protect Mode"
+    },
+    {
+      "name": "pcieswitch.firmware.version",
+      "unit": "string",
+      "category": "dynamic",
+      "refresh_interval":"BUCKET_3",
+      "priority":1,
+      "accessor": "fpga.opcode.firmwareVersion",
+      "description": "PCIe Switch EEPROM Version"
+    },
+    {
+      "name": "pcieretimer.firmware.WPMode",
+      "unit": "boolean",
+      "category": "firmware",
+      "accessor": "fpga.opcode.firmwareWPMode",
+      "description": "Firmware Write Protect Mode"
+    },
+    {
+      "name": "pcieretimer.firmware.version",
+      "unit": "string",
+      "category": "dynamic",
+      "refresh_interval":"BUCKET_3",
+      "priority":1,
+      "accessor": "fpga.opcode.firmwareVersion.page0",
+      "description": "PCIe Retimer EEPROM Version"
+    },
+    {
+      "name": "nvswitch.firmware.WPMode",
+      "unit": "boolean",
+      "category": "firmware",
+      "refresh_interval": "NO_REFRESH",
+      "accessor": "fpga.opcode.firmwareWPMode",
+      "description": "Firmware Write Protect Mode"
+    },
+    {
+      "name": "pciegen4sw.firmware.version",
+      "unit": "string",
+      "category": "dynamic",
+      "refresh_interval":"BUCKET_3",
+      "priority":1,
+      "accessor": "fpga.opcode.firmwareVersion",
+      "description": "PCIe Gen4switch EEPROM Version"
+    },
+    {
+      "name": "pciegen4sw.firmware.WPMode",
+      "unit": "boolean",
+      "category": "firmware",
+      "refresh_interval": "NO_REFRESH",
+      "accessor": "fpga.opcode.firmwareWPMode",
+      "description": "PCIe Gen4switch EEPROM Write Protect Mode"
+    },
+    {
+      "name": "pciegen4sw.firmware.SPI.WPMode",
+      "unit": "boolean",
+      "category": "firmware",
+      "accessor": "fpga.opcode.firmwareSPIWPMode",
+      "description": "PCIe Gen4switch SPI Write Protect Mode"
+    },
+    {
+      "name": "gpu.firmware.WPMode",
+      "unit": "boolean",
+      "category": "firmware",
+      "refresh_interval": "NO_REFRESH",
+      "accessor": "fpga.opcode.firmwareWPMode",
+      "description": "Firmware Write Protect Mode"
+    },
+    {
+      "name": "nvswitch.hvdd.powerSupply.enablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.nvswitch.hvddpowerSupplyStatus",
+      "description": "NVSwitch HVDD Power Supply Status"
+    },
+    {
+      "name": "nvswitch.vdd.powerSupply.enablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.nvswitch.vddpowerSupplyStatus",
+      "description": "NVSwitch VDD Power Supply Status"
+    },
+    {
+      "name": "nvswitch.dvdd.powerSupply.enablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.nvswitch.dvddpowerSupplyStatus",
+      "description": "NVSwitch DVDD Power Supply Status"
+    },
+    {
+      "name": "pcieretimer.vdd.powerSupply.enablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.vdd.powerSupplyStatus",
+      "description": "Retimer VDD Power Supply Status"
+    },
+    {
+      "name": "pcieretimer.vdda.powerSupply.enablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.vdda.powerSupplyStatus",
+      "description": "Retimer VDDA Power Supply Status"
+    },
+    {
+      "name": "pcieretimer.vdd1v8.powerSupply.enablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.vdd1v8.powerSupplyStatus",
+      "description": "PCIe Retimer VDD 1V8 Power Supply Status"
+    },
+    {
+      "name": "sysvr5v.powerSupply.enablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.sysvr5v.powerSupplyStatus",
+      "description": "SysVR 5V Power Supply Status"
+    },
+    {
+      "name": "sysvr3v3.powerSupply.enablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.sysvr3v3.powerSupplyStatus",
+      "description": "SysVR 5V Power Supply Status"
+    },
+    {
+      "name": "sysvr1v8.powerSupply.enablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.sysvr1v8.powerSupplyStatus",
+      "description": "SysVR 5V Power Supply Status"
+    },
+    {
+      "name": "sysvr0v9.powerSupply.enablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.sysvr0v9.powerSupplyStatus",
+      "description": "SysVR 5V Power Supply Status"
+    },
+    {
+      "name": "hsc.powerSupply.enablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.hsc.powerSupplyStatus",
+      "description": "HSC Power Supply Status"
+    },
+    {
+      "name": "outputhsc.powerSupply.enablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.hsc.powerSupplyStatus",
+      "description": "OutputHsc Power Supply Status"
+    },
+    {
+      "name": "pciegen4sw.vdd0v9.powerSupply.enablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.vdd0v9.powerSupplyStatus",
+      "description": "PCIe Gen4 Switch VDD 0V9 Power Supply Status"
+    },
+    {
+      "name": "pciegen4sw.vdd1v8.powerSupply.enablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.vdd1v8.powerSupplyStatus",
+      "description": "PCIe Gen4 Switch VDD 1V8 Power Supply Status"
+    },
+    {
+      "name": "llc_ab_mps.powerSupply.enablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.llcab.powerSupplyStatus",
+      "description": "LLC_AB_MPS Power Supply Status"
+    },
+    {
+      "name": "llc_cd_mps.powerSupply.enablement",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.llccd.powerSupplyStatus",
+      "description": "LLC_CD_MPS Power Supply Status"
+    },
+    {
+      "name": "nvswitch.inventory.boardPartNumber",
+      "unit": "string",
+      "category": "static",
+      "accessor": "nvswitch.opcode.boardPartNumber",
+      "description": "NVSwitch Board Part Number"
+    },
+    {
+      "name": "nvswitch.inventory.nvswitchGUID",
+      "unit": "guid",
+      "category": "static",
+      "accessor": "nvswitch.opcode.nvswitchGuid",
+      "description": "NVSwitch GUID"
+    },
+    {
+      "name": "nvswitch.inventory.serialNumber",
+      "unit": "string",
+      "category": "static",
+      "accessor": "nvswitch.opcode.serialNumber",
+      "description": "NVSwitch Serial Number"
+    },
+    {
+      "name": "nvswitch.inventory.marketingName",
+      "unit": "string",
+      "category": "static",
+      "accessor": "nvswitch.opcode.marketingName",
+      "description": "NVSwitch Marketing Name"
+    },
+    {
+      "name": "nvswitch.pcie.vendorId",
+      "unit": "id",
+      "category": "static",
+      "accessor": "nvswitch.opcode.vendorId",
+      "description": "NVSwitch PCIe VendorID"
+    },
+    {
+      "name": "nvswitch.pcie.deviceId",
+      "unit": "id",
+      "category": "static",
+      "accessor": "nvswitch.opcode.deviceId",
+      "description": "NVSwitch PCIe DeviceID"
+    },
+    {
+      "name": "nvswitch.pcie.subVendorId",
+      "unit": "id",
+      "category": "static",
+      "accessor": "nvswitch.opcode.subVendorId",
+      "description": "NVSwitch PCIe SubVendorID"
+    },
+    {
+      "name": "nvswitch.pcie.subDeviceId",
+      "unit": "id",
+      "category": "static",
+      "accessor": "nvswitch.opcode.subDeviceId",
+      "description": "NVSwitch PCIe SubDeviceID"
+    },
+    {
+      "name": "nvswitch.firmware.version",
+      "unit": "string",
+      "category": "dynamic",
+      "refresh_interval":"BUCKET_3",
+      "priority":1,
+      "accessor": "nvswitch.opcode.firmwareVersion",
+      "description": "NVSwitch Firmware Version"
+    },
+    {
+      "name": "nvswitch.firmware.infoROMVersion",
+      "unit": "string",
+      "category": "dynamic",
+      "refresh_interval":"BUCKET_3",
+      "priority":1,
+      "accessor": "nvswitch.opcode.infoRomVersion",
+      "description": "NVSwitch InfoROM Version"
+    },
+    {
+      "name": "nvswitch.thermal.temperature.singlePrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "nvswitch.opcode.temperatureSP",
+      "description": "NVSwitch Temperature"
+    },
+    {
+      "name": "nvswitch.thermal.temperature.extendedPrecision",
+      "unit": "degreeC",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_1",
+      "priority": 3,
+      "accessor": "nvswitch.opcode.temperatureEP",
+      "description": "NVSwitch Temperature (Extended)"
+    },
+    {
+      "name": "nvswitch.thermal.temperature.shutdownTemp",
+      "unit": "degreeC",
+      "category": "configuration",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.thermal.shutdownTemp",
+      "description": "NVSwitch Shutdown Temperature"
+    },
+    {
+      "name": "nvswitch.thermal.temperature.maxOperatingTemp",
+      "unit": "degreeC",
+      "category": "configuration",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.thermal.maxOperatingTemp",
+      "description": "NVSwitch Max Operating Temperature"
+    },
+    {
+      "name": "nvswitch.device.stateFlags.page0",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.deviceStateFlags.page0",
+      "description": "NVSwitch Device Flags Page0"
+    },
+    {
+      "name": "nvswitch.device.state",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.deviceState",
+      "description": "NVSwitch Device State"
+    },
+    {
+      "name": "nvswitch.device.managerState",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.deviceManagerState",
+      "description": "NVSwitch Manager State"
+    },
+    {
+      "name": "nvswitch.device.deviceDisableSource",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.deviceDisableSource",
+      "description": "NVSwitch Device Disable Source"
+    },
+    {
+      "name": "nvswitch.device.deviceDisableReason",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.deviceDisableReason",
+      "description": "NVSwitch Device Disable Reason"
+    },
+    {
+      "name": "nvswitch.firmware.writeProtectMode",
+      "unit": "boolean",
+      "category": "firmware",
+      "refresh_interval": "BUCKET_3",
+      "accessor": "nvswitch.opcode.firmwareWriteProtectMode",
+      "description": "NVSwitch Write Protect Mode"
+    },
+    {
+      "name": "nvswitch.firmware.setWriteProtectMode",
+      "unit": "boolean",
+      "category": "firmware",
+      "refresh_interval": "NO_REFRESH",
+      "accessor": "nvswitch.opcode.setFirmwareWriteProtectMode",
+      "description": "Set NVSwitch Write Protect Mode"
+    },
+    {
+      "name": "nvswitch.eccStats.correctable",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.eccStats.correctable",
+      "description": "NVSwitch Correctable ECC errors"
+    },
+    {
+      "name": "nvswitch.eccStats.uncorrectable",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.eccStats.uncorrectable",
+      "description": "NVSwitch Uncorrectable ECC errors"
+    },
+    {
+      "name": "nvswitch.nvlink.numOfNVLinks",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.numOfNVLinks",
+      "description": "NVSwitch Number of NVLinks"
+    },
+    {
+      "name": "nvswitch.nvlink.NVLinkStateV1",
+      "unit": "ArrayId",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.NVLinkStateV1",
+      "description": "NVSwitch Individual NVLink Status"
+    },
+    {
+      "name": "nvswitch.nvlink.aggregateNVLinkStateV2",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.aggregateNVLinkStateV2",
+      "description": "NVSwitch Aggregate NVLink Status"
+    },
+    {
+      "name": "nvswitch.nvlink.NVLinkStateV2",
+      "unit": "ArrayId",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.NVLinkStateV2",
+      "description": "NVSwitch Individual NVLink Status"
+    },
+    {
+      "name": "nvswitch.nvlink.aggregateNVLinkBandwidth",
+      "unit": "MBps",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.aggregateNVLinkBandwidth",
+      "description": "NVSwitch Aggregate NVLink Bandwidth"
+    },
+    {
+      "name": "nvswitch.nvlink.NVLinkBandwidth",
+      "unit": "ArrayMBps",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.NVLinkBandwidth",
+      "description": "NVSwitch Individual NVLink Bandwidth"
+    },
+    {
+      "name": "nvswitch.nvlink.replayErrCount",
+      "unit": "ArrayCounter32",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.replayErrCount",
+      "description": "NVSwitch Individual NVLink replay error count"
+    },
+    {
+      "name": "nvswitch.nvlink.recoveryErrCount",
+      "unit": "ArrayCounter32",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.recoveryErrCount",
+      "description": "NVSwitch Individual NVLink recovery error count"
+    },
+    {
+      "name": "nvswitch.nvlink.aggregateReplayErrCount",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.aggregateReplayErrCount",
+      "description": "NVSwitch Aggregate NVLink replay error count"
+    },
+    {
+      "name": "nvswitch.nvlink.aggregateRecoveryErrCount",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.aggregateRecoveryErrCount",
+      "description": "NVSwitch Aggregate NVLink recovery error count"
+    },
+    {
+      "name": "nvswitch.nvlink.aggregateFlitCRCErrCount",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.aggregateFlitCRCErrCount",
+      "description": "NVSwitch Aggregate NVLink flit CRC error count"
+    },
+    {
+      "name": "nvswitch.nvlink.aggregateDataCRCErrCount",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.aggregateDataCRCErrCount",
+      "description": "NVSwitch Aggregate NVLink data CRC error count"
+    },
+    {
+      "name": "nvswitch.nvlink.aggregateRxTxNVLinkSubLinkWidth",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.aggregateRxTxNVLinkSubLinkWidth",
+      "description": "NVSwitch Aggregate NVLink Rx Tx Sublink Width"
+    },
+    {
+      "name": "nvswitch.nvlink.RxTxNVLinkSubLinkWidth",
+      "unit": "ArrayId",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.RxTxNVLinkSubLinkWidth",
+      "description": "NVSwitch NVLink Rx and Tx Sublink Width"
+    },
+    {
+      "name": "nvswitch.nvlink.aggregateTxNVLinkSubLinkWidth",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.aggregateTxNVLinkSubLinkWidth",
+      "description": "NVSwitch Aggregate NVLink Tx Sublink Width"
+    },
+    {
+      "name": "nvswitch.nvlink.aggregateRxNVLinkSubLinkWidth",
+      "unit": "id",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.aggregateRxNVLinkSubLinkWidth",
+      "description": "NVSwitch Aggregate NVLink Rx Sublink Width"
+    },
+    {
+      "name": "nvswitch.nvlink.aggregateTxDataThroughput",
+      "unit": "KiB",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.aggregateTxDataThroughput",
+      "description": "NVSwitch Aggregate NVLink Tx Data Throughput"
+    },
+    {
+      "name": "nvswitch.nvlink.aggregateRxDataThroughput",
+      "unit": "KiB",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.aggregateRxDataThroughput",
+      "description": "NVSwitch Aggregate NVLink Rx Data Throughput"
+    },
+    {
+      "name": "nvswitch.nvlink.aggregateTxDataThroughputWithProtocol",
+      "unit": "KiB",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.aggregateTxDataThroughputWithProtocol",
+      "description": "NVSwitch Aggregate NVLink Tx Data Throughput WithProtocol"
+    },
+    {
+      "name": "nvswitch.nvlink.aggregateRxDataThroughputWithProtocol",
+      "unit": "KiB",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.aggregateRxDataThroughputWithProtocol",
+      "description": "NVSwitch Aggregate NVLink Rx Data Throughput WithProtocol"
+    },
+    {
+      "name": "nvswitch.nvlink.txDataThroughput",
+      "unit": "ArrayKiB",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.txDataThroughput",
+      "description": "NVSwitch NVLink Tx Data Throughput"
+    },
+    {
+      "name": "nvswitch.nvlink.rxDataThroughput",
+      "unit": "ArrayKiB",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.rxDataThroughput",
+      "description": "NVSwitch NVLink Rx Data Throughput"
+    },
+    {
+      "name": "nvswitch.nvlink.txDataThroughputWithProtocol",
+      "unit": "ArrayKiB",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.txDataThroughputWithProtocol",
+      "description": "NVSwitch NVLink Tx Data Throughput WithProtocol"
+    },
+    {
+      "name": "nvswitch.nvlink.rxDataThroughputWithProtocol",
+      "unit": "ArrayKiB",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.rxDataThroughputWithProtocol",
+      "description": "NVSwitch NVLink Rx Data Throughput WithProtocol"
+    },
+    {
+      "name": "nvswitch.nvlink.aggregateTrainingErrCountStatus",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.aggregateTrainingErrCountStatus",
+      "description": "NVSwitch Aggregate NVLink training error count and status"
+    },
+    {
+      "name": "nvswitch.nvlink.TrainingErrStatus",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.TrainingErrStatus",
+      "description": "NVSwitch NVLink training error count"
+    },
+    {
+      "name": "gpu.nvlink.TrainingErrStatus",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.TrainingErrStatus",
+      "description": "GPU NVLink training error status"
+    },
+    {
+      "name": "nvswitch.nvlink.aggregateRuntimeErrCountStatus",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.aggregateRuntimeErrCountStatus",
+      "description": "NVSwitch Aggregate NVLink runtime error count and status"
+    },
+    {
+      "name": "nvswitch.nvlink.RuntimeErrCountStatus",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.queryNVLinkInfo.RuntimeErrCountStatus",
+      "description": "NVSwitch NVLink runtime error count"
+    },
+    {
+      "name": "gpu.nvlink.RuntimeErrCountStatus",
+      "unit": "counter",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "gpu.opcode.queryNVLinkInfo.RuntimeErrCountStatus",
+      "description": "GPU NVLink runtime error count"
+    },
+    {
+      "name": "nvswitch.pcie.linkStatus.page0",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.linkStatus.page0",
+      "description": "NVSwitch PCIe Link Status Page0"
+    },
+    {
+      "name": "nvswitch.pcie.linkStatus.page1",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.linkStatus.page1",
+      "description": "NVSwitch PCIe Link Status Page1"
+    },
+    {
+      "name": "nvswitch.pcie.linkStatus.page2",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.linkStatus.page2",
+      "description": "NVSwitch PCIe Link Status Page2"
+    },
+    {
+      "name": "nvswitch.Sxid.event",
+      "unit": "hexString",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "nvswitch.opcode.SxidEvent",
+      "description": "NVSwitch Driver Event Message - Sxid Event"
+    },
+    {
+      "name": "nvlinkBridgeConn.device.presenceStatus",
+      "unit": "boolean",
+      "category": "dynamic",
+      "refresh_interval": "BUCKET_2",
+      "priority": 2,
+      "accessor": "fpga.opcode.nvlinkBridgeConnPresenceStatus",
+      "description": "NVLink Bridge Connector Presence Status"
+    }
+  ]
+}

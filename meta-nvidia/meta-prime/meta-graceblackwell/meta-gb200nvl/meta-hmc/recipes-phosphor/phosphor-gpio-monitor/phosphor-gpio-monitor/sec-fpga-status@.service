@@ -1,0 +1,7 @@
+[Unit]
+Description=Detect and handle faults on FPGA_%i
+
+[Service]
+ExecStart=/usr/bin/env sec_fpga_fault_detect.sh %i
+SyslogIdentifier=sec_fpga_fault_detect.sh
+Type=oneshot

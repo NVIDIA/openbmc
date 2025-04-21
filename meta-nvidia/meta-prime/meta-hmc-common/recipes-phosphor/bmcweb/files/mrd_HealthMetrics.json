@@ -1,0 +1,11 @@
+{
+   "Namespace": "HealthMetrics",
+   "MetricProperties": [
+       "/redfish/v1/Chassis/HGX_CPU_{CpuId}#/Status/Health",
+       "/redfish/v1/Chassis/HGX_CPU_{CpuId}#/Status/HealthRollup",
+       "/redfish/v1/Chassis/HGX_GPU_{GpuId}#/Status/Health",
+       "/redfish/v1/Chassis/HGX_GPU_{GpuId}#/Status/HealthRollup",
+       "/redfish/v1/Systems/HGX_Baseboard_0#/Status/Health",
+       "/redfish/v1/Systems/HGX_Baseboard_0#/Status/HealthRollup"
+    ]
+}

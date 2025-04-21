@@ -1,0 +1,14 @@
+[Unit]
+Description=NVIDIA Write Protect Service
+Requires=bmc-boot-complete.service
+After=bmc-boot-complete.service
+Conflicts=write-protecton.service
+
+[Service]
+RemainAfterExit=yes
+Type=oneshot
+ExecStart=/usr/bin/env write-protect.sh off
+SyslogIdentifier=write-protect
+
+[Install]
+WantedBy=multi-user.target

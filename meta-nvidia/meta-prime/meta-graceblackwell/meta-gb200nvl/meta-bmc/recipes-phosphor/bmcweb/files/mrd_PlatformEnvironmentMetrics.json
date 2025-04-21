@@ -1,0 +1,13 @@
+{
+    "Namespace": "PlatformEnvironmentMetrics",
+    "MetricProperties": [
+        "/redfish/v1/Chassis/BMC_0/Sensors/BMC_0_DCSCM_Temp_0",
+        "/redfish/v1/Chassis/HGX_Chassis_0/Sensors/{BSWild}",
+        "/redfish/v1/Chassis/IO_Board_{IWild}/Sensors/IO_Board_{IWild}_CX7_0_Temp_0",
+        "/redfish/v1/Chassis/IO_Board_{IWild}/Sensors/IO_Board_{IWild}_CX7_1_Temp_0",
+        "/redfish/v1/Chassis/NVME_M2_0/Sensors/NVME_M2_0_Temp_0",
+        "/redfish/v1/Chassis/PDB_0/Sensors/{PDBWild}",
+        "/redfish/v1/Chassis/Riser_Slot{BFWild}_BlueField_3_SmartNIC_Main_Card/Sensors/{BFSWild}",
+        "/redfish/v1/Chassis/StorageBackplane_{SBWild}/Sensors/StorageBackplane_{SBWild}_SSD_{SBDWild}_Temp_0"
+    ]
+}

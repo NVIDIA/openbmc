@@ -1,0 +1,9 @@
+[Unit]
+Description=MCTP SPI 0 demux Unix domain socket
+
+[Socket]
+ListenSequentialPacket=@mctp-spi0-mux
+Accept=no
+
+[Install]
+WantedBy=sockets.target

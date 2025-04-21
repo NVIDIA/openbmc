@@ -1,0 +1,1 @@
+EXTRA_OEMESON += " -Dimplement-sw-settings-intf=disabled"

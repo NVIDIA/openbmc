@@ -1,0 +1,14 @@
+[Unit]
+Description=NVIDIA OOB Active Monitoring Logging
+After=xyz.openbmc_project.Logging.service nvidia-gpu-manager.service xyz.openbmc_project.GpioStatusHandler.service xyz.openbmc_project.ObjectMapper.service pldmd.service
+
+[Service]
+Type=dbus
+SyslogIdentifier=oobamld
+ExecStart=/usr/bin/env oobamld -d /run/initramfs/ro/usr/share/oobaml/dat.json -e /run/initramfs/ro/usr/share/oobaml/event_info.json
+Restart=always
+TimeoutStartSec=480
+BusName=xyz.openbmc_project.OOBAML
+
+[Install]
+WantedBy=multi-user.target

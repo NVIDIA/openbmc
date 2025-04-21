@@ -1,0 +1,14 @@
+{
+    "gpio_definitions": [
+        {
+            "name": "POWER_BUTTON",
+            "gpio_name": "PWR_BTN_L-I",
+            "direction": "falling"
+        },
+        {
+            "name": "ID_BTN",
+            "gpio_name": "UID_BTN_N-I",
+            "direction": "falling"
+        }
+    ]
+}

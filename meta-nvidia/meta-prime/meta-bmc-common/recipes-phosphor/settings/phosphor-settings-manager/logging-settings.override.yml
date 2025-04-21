@@ -1,0 +1,5 @@
+/xyz/openbmc_project/logging/settings:
+    - Interface: xyz.openbmc_project.Logging.Settings
+      Properties:
+          SelPolicy:
+              Default: Settings::Policy::Circular

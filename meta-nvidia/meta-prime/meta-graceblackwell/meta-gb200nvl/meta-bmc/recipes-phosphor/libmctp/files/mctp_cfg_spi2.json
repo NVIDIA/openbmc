@@ -1,0 +1,15 @@
+{
+  "spi": {
+    "device_num": 2,
+    "channel_num": 0,
+    "gpio_intr": 751,
+    "heartbeat_enable": false,
+    "socket_name": "mctp-spi2-mux",
+    "endpoints": [
+        {         
+            "eid": 1,
+            "uuid": "f72d6fa0-5675-11ed-9b6a-0242ac120002"
+        }
+    ]
+  }
+}
