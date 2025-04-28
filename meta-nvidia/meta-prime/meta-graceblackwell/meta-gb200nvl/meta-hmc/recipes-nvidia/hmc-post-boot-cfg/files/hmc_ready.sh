@@ -68,40 +68,70 @@ set_hmc_ready()
 #   1 - manual boot is enabled
 check_cpu_erot_manual_boot() {
     local BUS=$1
-    
-     manual_boot_query_message="0xf 0xf 0x1 0x1 0x0 0x0 0xc8 0x7f 0x47 0x16 0x0 0x0 0x81 0x1 0x11 0x1 0x02"
-    
-    #passthrough on the fpga
+
+    # Default manual boot enabled to false
+    local manual_boot_enabled="false"
+
+    #enable direct access to the erot
     i2ctransfer -y $BUS w2@0x60 0xc0 0x01
 
-    #check if manual boot is enabled
-    arr=($manual_boot_query_message)
-    len=$((${#arr[@]}+1))
+    #query manual boot mode status
+    local cmd_output=$(i2ctransfer -y $BUS w1@0x28 0x15 r3)
 
-    #0xA4 is the 8bit address of the destination 0x52
-    #CRC is calculated for "A4 ${manual_boot_query_message}"
-    crc="0xb3"
-    i2ctransfer -y $BUS w${len}@0x28 ${manual_boot_query_message} ${crc}
+    #command status is the second byte of the command output
+    local cmd_status=$(echo $cmd_output | awk '{print $2}')
 
-    sleep 0.5
+    #check if command is supported. 0xff means command not supported
+    if [ "$cmd_status" = "0xff" ]; then
+        #fall back to pseudo MCTP mode command. Note that this mode is not well
+        #supported and have been known to cause ERoT timeouts. See NVbug
+        #5201593. Allowing this option to avoid rev-lock with ERoTs.
+        echo "[WARNING] Manual boot query command not supported, using vdm command in pseudo MCTP mode"
+        manual_boot_query_message="0xf 0xf 0x1 0x1 0x0 0x0 0xc8 0x7f 0x47 0x16 0x0 0x0 0x81 0x1 0x11 0x1 0x02"
 
-    ret=$(i2ctransfer -y $BUS w1@0x28 0x0d r20)
-    response=($ret)
-    echo "ERoT manual boot response: ${response[@]}"
+        #check if manual boot is enabled
+        arr=($manual_boot_query_message)
+        len=$((${#arr[@]}+1))
 
-    command=${response[15]}
-    completion=${response[17]}
-    status=${response[18]}
-    
-    # If command fails, do not skip authentication
-    # Wait for us to timeout
-    if [[ "${command}" -eq "0x11" && "${completion}" -eq "0x00" && "${status}" -eq "0x01" ]]; then
-        echo "Manual boot is enabled on bus $BUS, skip CPU ERoT authentication"
-        return 1
+        #0xA4 is the 8bit address of the destination 0x52
+        #CRC is calculated for "A4 ${manual_boot_query_message}"
+        crc="0xb3"
+        i2ctransfer -y $BUS w${len}@0x28 ${manual_boot_query_message} ${crc}
+
+        sleep 0.5
+
+        ret=$(i2ctransfer -y $BUS w1@0x28 0x0d r20)
+
+        response=($ret)
+        echo "ERoT manual boot response: ${response[@]}"
+
+        command=${response[15]}
+        completion=${response[17]}
+        status=${response[18]}
+        
+        # If command fails, do not skip authentication
+        # Wait for us to timeout
+        if [[ "${command}" -eq "0x11" && "${completion}" -eq "0x00" && "${status}" -eq "0x01" ]]; then
+            manual_boot_enabled="true"
+        fi
+    else
+        #Byte2 of the command output is the boot status. See Query Manual Boot
+        #command in Glacier Firmware Design Document for more details.
+        boot_status=$(echo $cmd_output | awk '{print $3}')
+        if [[ "${cmd_status}" -eq "0x00" && "${boot_status}" -eq "0x01" ]]; then
+            manual_boot_enabled="true"
+        fi
     fi
 
-    return 0
-    
+    #disable direct access to the erot after we are done
+    i2ctransfer -y $BUS w2@0x60 0xc0 0x00
+
+    if [ "${manual_boot_enabled}" = "true" ]; then
+        echo "Manual boot is enabled on bus $BUS, skip CPU ERoT authentication"
+        return 1
+    else
+        return 0
+    fi 
 }
 
 #######################################
@@ -116,21 +146,55 @@ check_cpu_erot_manual_boot() {
 check_cpu_erot_auth() {
     local BUS=$1
 
-    #passthrough on the fpga
+    #enable direct access to the erot
     i2ctransfer -y $BUS w2@0x60 0xc0 0x01
-    #send vdm command to erot
-    i2ctransfer -y $BUS w17@0x28 0xf 0xe 0x1 0x1 0x0 0x0 0xc8 0x7f 0x47 0x16 0x0 0x0 0x81 0x1 0x5 0x1 0x89
 
-    sleep 0.5
+    #query erot boot status
+    local cmd_output=$(i2ctransfer -y $BUS w1@0x28 0x14 r10)
 
-    #get the response to the vdm command
-    local output=$(i2ctransfer -y $BUS w1@0x28 0x0D r73)
+    #command status is the second byte of the command output
+    local cmd_status=$(echo $cmd_output | awk '{print $2}')
 
-    local byte25=$(echo $output | awk '{print $25}')
+    #check if command is supported. 0xff means command not supported
+    if [ "$cmd_status" = "0xff" ]; then
+        #fall back to pseudo MCTP mode command. Note that this mode is not well
+        #supported and have been known to cause ERoT timeouts. See NVbug
+        #5201593. Allowing this option to avoid rev-lock with ERoTs.
+        echo "[WARNING] Boot status query command not supported, using vdm command in pseudo MCTP mode"
+        i2ctransfer -y $BUS w17@0x28 0xf 0xe 0x1 0x1 0x0 0x0 0xc8 0x7f 0x47 0x16 0x0 0x0 0x81 0x1 0x5 0x1 0x89
 
-    local upper_nibble=$(echo $(($byte25 >> 4)))
-    local lower_nibble=$(echo $(($byte25 & 0x0F)))
-    if ([ $upper_nibble -eq 0 ] || [ $upper_nibble -eq 15 ]) || ([ $lower_nibble -eq 0 ] || [ $lower_nibble -eq 15 ]); then
+        sleep 0.5
+
+        #get the response to the vdm command
+        cmd_output=$(i2ctransfer -y $BUS w1@0x28 0x0D r73)
+
+        #Byte offset of Authentication Status in command output
+        auth_status_byte=25
+    else
+        #add sleep here to avoid checking status too frequently
+        sleep 0.5
+
+        if [ "$cmd_status" -ne "0x00" ]; then
+            echo "[WARNING] Boot status query command returned error ${cmd_status}, retrying."
+            return 0
+        fi
+
+        #Byte offset of Authentication Status in command output. See Boot
+        #Status Query command for more details.
+        auth_status_byte=9
+    fi
+
+    #disable direct access to the erot after we are done
+    i2ctransfer -y $BUS w2@0x60 0xc0 0x00
+
+    #auth status is bit 8-15 of Boot Status Code. Obtain from command output
+    auth_status=$(echo $cmd_output | awk -v byte="$auth_status_byte" '{print $byte}')
+
+    #parsing for primary and secondary firmware authentication status as defined
+    #in the Glacier Firmware Design Document
+    local sec_fw_auth_status=$(echo $(($auth_status >> 4)))
+    local pri_fw_auth_status=$(echo $(($auth_status & 0x0F)))
+    if ([ $sec_fw_auth_status -eq 0 ] || [ $sec_fw_auth_status -eq 15 ]) || ([ $pri_fw_auth_status -eq 0 ] || [ $pri_fw_auth_status -eq 15 ]); then
         return 0
     else
         return 1

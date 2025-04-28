@@ -24,6 +24,7 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " biosconfig-manager \
                                     nvidia-tal \
                                     i2c-dump-util \
                                     openocd \
+                                    io-board-detect \
                                   "
 
 OBMC_IMAGE_EXTRA_INSTALL:append = " ipmitool \

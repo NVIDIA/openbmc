@@ -50,6 +50,102 @@
             "i2c_slave_address": 50
           }
         ]
+      },
+      {
+        "bus_number": "i2c48",
+        "bus_number_smq": "i2c5",
+        "socket_name": "mctp-i2c5-mux",
+        "endpoints": [
+          {
+            "eid_type": "static",
+            "eid": 211,
+            "i2c_slave_address": 29
+          }
+        ]
+      },
+      {
+        "bus_number": "i2c49",
+        "bus_number_smq": "i2c5",
+        "socket_name": "mctp-i2c5-mux",
+        "endpoints": [
+          {
+            "eid_type": "static",
+            "eid": 212,
+            "i2c_slave_address": 29
+          }
+        ]
+      },
+      {
+        "bus_number": "i2c50",
+        "bus_number_smq": "i2c5",
+        "socket_name": "mctp-i2c5-mux",
+        "endpoints": [
+          {
+            "eid_type": "static",
+            "eid": 213,
+            "i2c_slave_address": 29
+          }
+        ]
+      },
+      {
+        "bus_number": "i2c51",
+        "bus_number_smq": "i2c5",
+        "socket_name": "mctp-i2c5-mux",
+        "endpoints": [
+          {
+            "eid_type": "static",
+            "eid": 214,
+            "i2c_slave_address": 29
+          }
+        ]
+      },
+      {
+        "bus_number": "i2c56",
+        "bus_number_smq": "i2c5",
+        "socket_name": "mctp-i2c5-mux",
+        "endpoints": [
+          {
+            "eid_type": "static",
+            "eid": 215,
+            "i2c_slave_address": 29
+          }
+        ]
+      },
+      {
+        "bus_number": "i2c57",
+        "bus_number_smq": "i2c5",
+        "socket_name": "mctp-i2c5-mux",
+        "endpoints": [
+          {
+            "eid_type": "static",
+            "eid": 216,
+            "i2c_slave_address": 29
+          }
+        ]
+      },
+      {
+        "bus_number": "i2c58",
+        "bus_number_smq": "i2c5",
+        "socket_name": "mctp-i2c5-mux",
+        "endpoints": [
+          {
+            "eid_type": "static",
+            "eid": 217,
+            "i2c_slave_address": 29
+          }
+        ]
+      },
+      {
+        "bus_number": "i2c59",
+        "bus_number_smq": "i2c5",
+        "socket_name": "mctp-i2c5-mux",
+        "endpoints": [
+          {
+            "eid_type": "static",
+            "eid": 218,
+            "i2c_slave_address": 29
+          }
+        ]
       }
     ]
   }

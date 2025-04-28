@@ -1,0 +1,11 @@
+[Unit]
+Description=IO Board Detection Service
+Before=nvidia-cpld.service com.Nvidia.CPLD_N.Starter.service pldmd.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/io-board-detect.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

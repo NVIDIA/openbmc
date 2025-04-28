@@ -787,9 +787,10 @@
                 "ILimitMax": 100.0,
                 "ILimitMin": 30.0,
                 "Inputs": [
-                    "IO_Board_0_CX7_0_Port_0_Temp"
+                    "IO_Board_0_CX7_0_Port_0_Temp",
+                    "IO_Board_0_CX8_0_Port_0_Temp"
                 ],
-                "Name": "PID_IOB_0_CX7_0_PORT_0",
+                "Name": "PID_IOB_0_CX_0_PORT_0",
                 "NegativeHysteresis": 0.0,
                 "OutLimitMax": 100.0,
                 "OutLimitMin": 30.0,
@@ -813,9 +814,10 @@
                 "ILimitMax": 100.0,
                 "ILimitMin": 30.0,
                 "Inputs": [
-                    "IO_Board_0_CX7_1_Port_0_Temp"
+                    "IO_Board_0_CX7_1_Port_0_Temp",
+                    "IO_Board_0_CX8_1_Port_0_Temp"
                 ],
-                "Name": "PID_IOB_0_CX7_1_PORT_0",
+                "Name": "PID_IOB_0_CX_1_PORT_0",
                 "NegativeHysteresis": 0.0,
                 "OutLimitMax": 100.0,
                 "OutLimitMin": 30.0,
@@ -1368,9 +1370,10 @@
                 "ILimitMax": 100.0,
                 "ILimitMin": 30.0,
                 "Inputs": [
-                    "IO_Board_1_CX7_0_Port_0_Temp"
+                    "IO_Board_1_CX7_0_Port_0_Temp",
+                    "IO_Board_1_CX8_0_Port_0_Temp"
                 ],
-                "Name": "PID_IOB_1_CX7_0_PORT_0",
+                "Name": "PID_IOB_1_CX_0_PORT_0",
                 "NegativeHysteresis": 0.0,
                 "OutLimitMax": 100.0,
                 "OutLimitMin": 30.0,
@@ -1394,9 +1397,10 @@
                 "ILimitMax": 100.0,
                 "ILimitMin": 30.0,
                 "Inputs": [
-                    "IO_Board_1_CX7_1_Port_0_Temp"
+                    "IO_Board_1_CX7_1_Port_0_Temp",
+                    "IO_Board_1_CX8_1_Port_0_Temp"
                 ],
-                "Name": "PID_IOB_1_CX7_1_PORT_0",
+                "Name": "PID_IOB_1_CX_1_PORT_0",
                 "NegativeHysteresis": 0.0,
                 "OutLimitMax": 100.0,
                 "OutLimitMin": 30.0,
@@ -1535,7 +1539,7 @@
             }
         ],
         "Name": "Chassis_0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '.?675-24975-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-24975-0000.*'})",
         "Type": "Chassis",
         "xyz.openbmc_project.Inventory.Item.Chassis": {
             "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Shelf"
@@ -1589,7 +1593,7 @@
     },
     {
         "Name": "PDB Chassis FRU Assembly0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'CHASSIS_PART_NUMBER': '.?675-24975-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'CHASSIS_PART_NUMBER': '675-24975-0000.*'})",
         "Type": "Assembly",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Model": "GB200 NVL",
@@ -1606,7 +1610,7 @@
     },
     {
         "Name": "PDB Board FRU Assembly1",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'CHASSIS_PART_NUMBER': '.?675-24975-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'CHASSIS_PART_NUMBER': '675-24975-0000.*'})",
         "Type": "Assembly",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Model": "$BOARD_PRODUCT_NAME",
@@ -1624,7 +1628,7 @@
     },
     {
         "Name": "PDB Product FRU Assembly2",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'CHASSIS_PART_NUMBER': '.?675-24975-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'CHASSIS_PART_NUMBER': '675-24975-0000.*'})",
         "Type": "Assembly",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Model": "$PRODUCT_PRODUCT_NAME",

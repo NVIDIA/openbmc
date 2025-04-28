@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/bmcweb;protocol=https;branch=Core-24.09-1_br"
-SRCREV = "d123ddf3ff043065b3315af6359f3cbeb8b56e67"
+SRCREV = "f64ec76189b62d4ee733ae9f9246825ac99b4892"
 
 EXTRA_OEMESON += "-Dredfish-dump-log=enabled"
 EXTRA_OEMESON += "-Dredfish-new-powersubsystem-thermalsubsystem=enabled"
@@ -30,6 +30,12 @@ FILES:${PN}:append:hgxb = " ${systemd_system_unitdir}/bmcweb.service.d/bmcweb-hg
 
 SYSTEMD_OVERRIDE:${PN}:hgx += "bmcweb-hgx.conf:bmcweb.service.d/bmcweb-hgx.conf"
 SYSTEMD_OVERRIDE:${PN}:hgxb += "bmcweb-hgxb.conf:bmcweb.service.d/bmcweb-hgxb.conf"
+
+DEPENDS += " \
+    phosphor-logging \
+    phosphor-dbus-interfaces \
+    sdbusplus \
+"
 
 do_install:append:hgx() {
     install -d ${D}${systemd_system_unitdir}/bmcweb.service.d

@@ -33,6 +33,7 @@ SRC_URI:append = " file://common/Grace_Bianca_Superchip.json \
                    file://c1g2/gb200nvl_processor_systems_gpu_bianca.json \
                    file://c1g2/gb200nvl_static_inventory_gpu_bianca.json \
                    file://c1g2/gb200nvl_c1g2_NSMReady.json \
+                   file://c1g2/gb300nvl_fpga_chassis_bianca.json \
                  "
 
 do_install:append() {
@@ -76,5 +77,6 @@ do_install:append() {
      install -m 0444 ${WORKDIR}/c1g2/gb200nvl_processor_systems_gpu_bianca.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/c1g2/gb200nvl_static_inventory_gpu_bianca.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/c1g2/gb200nvl_c1g2_NSMReady.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/c1g2/gb300nvl_fpga_chassis_bianca.json ${D}/usr/share/entity-manager/configurations
 
 }
