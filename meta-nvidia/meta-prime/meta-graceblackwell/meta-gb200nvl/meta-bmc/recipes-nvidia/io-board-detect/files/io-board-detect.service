@@ -1,6 +1,7 @@
 [Unit]
 Description=IO Board Detection Service
 Before=nvidia-cpld.service com.Nvidia.CPLD_N.Starter.service pldmd.service
+After=bmc-boot-complete.service
 
 [Service]
 Type=oneshot

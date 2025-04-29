@@ -44,7 +44,14 @@
                         ]
                     },
                     "HGX_FW_FPGA_0": {
-                        "component_id": 80
+                        "component_id": 80,
+                        "associations": [
+                            {
+                                "forward": "inventory",
+                                "reverse": "activation",
+                                "endpoint": "/xyz/openbmc_project/inventory/system/chassis/HGX_FPGA_0"
+                            }
+                        ]
                     }
                 },
                 "update": {
@@ -100,7 +107,14 @@
                         ]
                     },
                     "HGX_FW_FPGA_1": {
-                        "component_id": 80
+                        "component_id": 80,
+                        "associations": [
+                            {
+                                "forward": "inventory",
+                                "reverse": "activation",
+                                "endpoint": "/xyz/openbmc_project/inventory/system/chassis/HGX_FPGA_1"
+                            }
+                        ]
                     }
                 },
                 "update": {

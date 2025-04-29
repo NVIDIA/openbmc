@@ -39,12 +39,6 @@
         }
       },
       {
-        "Name": "HGX_Module_0_SPI",
-        "Type": "NSM_SPI",
-        "UUID": "STATIC:3:0",
-        "InventoryObjPath": "/xyz/openbmc_project/inventory/system/"
-      },
-      {
         "ChassisName": "HGX_Chassis_0",
         "Name": "PCIeSlots",
         "Type": "NSM_ChassisPCIeSlot",
@@ -73,6 +67,12 @@
           "Type": "NSM_Health",
           "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
         }
+      },
+      {
+	      "Name": "HGX_Module_SPI_0",
+	      "Type": "NSM_SPI",
+	      "UUID": "STATIC:3:0",
+              "InventoryObjPath": "/xyz/openbmc_project/inventory/system/HGX_ProcessorModule_0/"
       },
       {
         "Name": "HGX_ProcessorModule_0_Inlet_Temp_0",
@@ -442,6 +442,12 @@
           "Type": "NSM_Health",
           "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
         }
+      },
+      {
+	      "Name": "HGX_Module_SPI_0",
+	      "Type": "NSM_SPI",
+	      "UUID": "STATIC:3:1",
+              "InventoryObjPath": "/xyz/openbmc_project/inventory/system/HGX_ProcessorModule_1/"
       },
       {
         "Name": "HGX_ProcessorModule_1_Inlet_Temp_0",
