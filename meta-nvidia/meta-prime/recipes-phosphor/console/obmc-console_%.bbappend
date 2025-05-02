@@ -27,11 +27,6 @@ SYSTEMD_SERVICE:${PN}:append = " \
                                   ${@compose_list(d, 'CONSOLE_SERVER_SOCKET_FMT', 'OBMC_CONSOLE_TTYS')} \
                                   ${@compose_list(d, 'CONSOLE_SERVER_SERVICE_FMT', 'OBMC_CONSOLE_TTYS')} \
                                 "
-
-FILES:${PN} += " ${@bb.utils.contains('BUILD_TYPE', 'prod', "${bindir}/obmc-console-client", '', d)} \
-                 ${@bb.utils.contains('BUILD_TYPE', 'prod', "/usr/local/bin/nvidia", '', d)} \
-               "
-
 # Install ttyS0 server configuration`
 do_install:append() {
     # Remove default VUART0 config
@@ -47,11 +42,5 @@ do_install:append() {
     done
     install -m 0644 ${WORKDIR}/server.*.conf ${D}${sysconfdir}/${BPN}/
     install -m 0644 ${WORKDIR}/client.*.conf ${D}${sysconfdir}/${BPN}/
-
-    if [ "${BUILD_TYPE}" = "prod" ]; then
-        install -m 0755 -d ${D}/usr/local/bin/nvidia
-        ln -s -r ${D}${bindir}/obmc-console-client ${D}/usr/local/bin/nvidia/obmc-console-client
-    fi
-
 }
 

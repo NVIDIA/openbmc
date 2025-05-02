@@ -19,9 +19,6 @@ NVIDIA_EXTRA_USERS_PARAMS += " \
   usermod -a -G service service; \
   usermod -p '\$1\$UGMqyqdG\$FZiylVFmRRfl9Z0Ue8G7e/' service; \
   usermod -s /usr/sbin/nologin service; \
-  groupadd ssh-users; \
-  usermod -a -G ssh-users root; \
-  usermod -a -G ssh-users service; \
   "
 
 # This is recipe specific to ensure it takes effect.

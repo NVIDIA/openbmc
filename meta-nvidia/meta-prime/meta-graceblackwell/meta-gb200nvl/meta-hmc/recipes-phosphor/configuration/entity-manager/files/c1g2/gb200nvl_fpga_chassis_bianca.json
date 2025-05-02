@@ -309,42 +309,6 @@
         ]
       },
       {
-        "Name": "HGX_FW_FPGA_0",
-        "Type": "NSM_WriteProtect",
-        "UUID": "STATIC:3:0",
-        "DataIndex": 176,
-        "Associations": [
-          {
-            "Forward": "inventory",
-            "Backward": "activation",
-            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_FPGA_0"
-          },
-          {
-            "Forward": "software_version",
-            "Backward": "updateable",
-            "AbsolutePath": "/xyz/openbmc_project/software"
-          }
-        ]
-      },
-      {
-        "Name": "HGX_FW_BMC_0",
-        "Type": "NSM_WriteProtect",
-        "UUID": "STATIC:3:0",
-        "DataIndex": 176,
-        "Associations": [
-          {
-            "Forward": "inventory",
-            "Backward": "activation",
-            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_BMC_0"
-          },
-          {
-            "Forward": "software_version",
-            "Backward": "updateable",
-            "AbsolutePath": "/xyz/openbmc_project/software"
-          }
-        ]
-      },
-      {
         "Name": "HGX_ProcessorModule_0",
         "Type": "NSM_Chassis",
         "UUID": "STATIC:3:0",
@@ -622,24 +586,6 @@
             "Forward": "inventory",
             "Backward": "activation",
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_3"
-          },
-          {
-            "Forward": "software_version",
-            "Backward": "updateable",
-            "AbsolutePath": "/xyz/openbmc_project/software"
-          }
-        ]
-      },
-      {
-        "Name": "HGX_FW_FPGA_1",
-        "Type": "NSM_WriteProtect",
-        "UUID": "STATIC:3:1",
-        "DataIndex": 176,
-        "Associations": [
-          {
-            "Forward": "inventory",
-            "Backward": "activation",
-            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_FPGA_1"
           },
           {
             "Forward": "software_version",
