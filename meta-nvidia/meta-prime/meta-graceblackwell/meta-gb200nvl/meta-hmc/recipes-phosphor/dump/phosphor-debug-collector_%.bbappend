@@ -42,6 +42,8 @@ EXTRA_OEMESON += "-DSYSTEM_DUMP_MAX_LIMIT=20"
 EXTRA_OEMESON += "-DSYSTEM_DUMP_OBJPATH=/xyz/openbmc_project/dump/system"
 # The system dump entry D-Bus object path
 EXTRA_OEMESON += "-DSYSTEM_DUMP_OBJ_ENTRY=/xyz/openbmc_project/dump/system/entry"
+# Assign the OEMDiagnosticDataType for System Dump
+EXTRA_OEMESON += "-DSYSTEM_DUMP_OEM_DIAGNOSTIC_ALLOWABLE_TYPE='FPGA,ROT,FirmwareAttributes,HardwareCheckout,NetIR,GPUDeviceDiagnostics'"
 
 # ADD NetIR debug dumps supporting tool
 EXTRA_OEMESON += "-Dnsm-dump-tool=enabled"

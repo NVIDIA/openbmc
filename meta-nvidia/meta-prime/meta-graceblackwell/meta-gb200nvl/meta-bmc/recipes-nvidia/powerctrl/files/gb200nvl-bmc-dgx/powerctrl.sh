@@ -176,8 +176,6 @@ do_shutdown_force()
     #
     # Assert SHDN_FORCE_L-O to force shutdown
     #
-    echo "Asserting SHDN_REQ_L-O = 0"
-    set_gpio SHDN_REQ_L-O 0
     echo "Asserting SHDN_FORCE_L-O = 0"
     set_gpio SHDN_FORCE_L-O 0
 

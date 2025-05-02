@@ -29,7 +29,7 @@ FILES:${PN}:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'otp-provisioning
 
 S = "${WORKDIR}"
 
-inherit setuptools3
+inherit ${@bb.utils.contains('DISTRO_FEATURES', 'otp-provisioning', 'setuptools3', '', d)}
 
 # force an update when rebuilding
 do_install[nostamp] = "1"

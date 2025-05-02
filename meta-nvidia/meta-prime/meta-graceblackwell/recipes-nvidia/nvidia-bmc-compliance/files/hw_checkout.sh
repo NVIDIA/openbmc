@@ -95,16 +95,18 @@ GPU_IROT_NAME=("HGX_IRoT_GPU_0" "HGX_IRoT_GPU_1" "HGX_IRoT_GPU_2" "HGX_IRoT_GPU_
 GPU_SW_IDS=("HGX_FW_GPU_0" "HGX_FW_GPU_1" "HGX_FW_GPU_2" "HGX_FW_GPU_3")
 
 ## USB part
-MCU_SXM7_MCTP_DBUS_PORT=("1_1_1_1" "1_1_1_2" "1_1_1_3" "1_1_1_4")
-MCU_SXM7_USB_PORT=("1-1.1.1" "1-1.1.2" "1-1.1.3" "1-1.1.4")
+HMC_MCTP_USB_PORT=("1-1.2")
+HMC_MCTP_DBUS_PORT=("1_1_2")
+SXM7_MCTP_USB_PORT=("1-1.1.1" "1-1.1.2" "1-1.1.3" "1-1.1.4")
+SXM7_MCTP_DBUS_PORT=("1_1_1_1" "1_1_1_2" "1_1_1_3" "1_1_1_4")
 
 ## EID part
 FPGA_EROT_MCTP_EIDS=("13")
 HMC_EROT_MCTP_EIDS=("14")
 CPU_EROT_MCTP_EIDS=("15" "16")
 GPU_IROT_MCTP_EIDS=("20" "21" "22" "23")
-MCU_SXM7_MCTP_EIDS=("30" "31" "32" "33")
-MCU_SXM7_GPU_MCTP_EIDS=("38" "40" "42" "44")
+SMA_SXM7_MCTP_EIDS=("30" "31" "32" "33")
+GPU_MCTP_EIDS=("38" "40" "42" "44")
 
 ## Others
 BMC_USB_IP="172.31.13.241"
@@ -116,7 +118,8 @@ BMC_USB_IP="172.31.13.241"
 checkout_hmc() {
     # local hmc_eid=${ROT_NAME_EID_TABLE[${HMC_EROT_NAME}]}
     local hmc_eid=${HMC_EROT_MCTP_EIDS[0]}
-
+    local hmc_usb_port=${HMC_MCTP_USB_PORT[0]}
+    local hmc_usb_dbus_port=${HMC_MCTP_DBUS_PORT[0]}
     ## HW-Interface
     check="run_hw_check_structure"
     output="## HMC Hardware Interface ##"
@@ -153,6 +156,8 @@ checkout_hmc() {
     run_checker get_hmc_dbus_mctp_vdm_tree_eids "$HMC_MCTP_USB_DBUS"
     # HMC-HMC-DBUS-11
     run_checker get_hmc_dbus_mctp_spi_tree_eids "$HMC_MCTP_SPI_DBUS"
+    # HMC-HMC-DBUS-12
+    run_checker get_hmc_dbus_mctp_vdm_tree_eids_usb "$hmc_usb_dbus_port"
     # HMC-HMC_EROT-DBUS-12
     run_checker get_hmc_dbus_mctp_spi_spi_uuid "$HMC_SPI_EID" "$HMC_MCTP_SPI_DBUS"
     ## Base-Protocol
@@ -247,6 +252,14 @@ checkout_hmc() {
     run_checker get_hmc_erot_ap_key_revoke_state_vdm "$hmc_eid"
     # HMC-HMC_EROT-Security-01
     run_checker get_hmc_erot_background_copy_progress_state_vdm "$hmc_eid"
+    # HMC-HMC_EROT-MCTP_VDM-05'
+    run_checker get_hmc_erot_mctp_eid_spi_usb "$hmc_eid" "$hmc_usb_port"
+    # HMC-HMC_EROT-MCTP_VDM-06
+    run_checker get_hmc_erot_mctp_eid_i2c_usb "$hmc_eid" "$hmc_usb_port"
+    # HMC-HMC_EROT-MCTP_VDM-07
+    run_checker get_hmc_erot_mctp_uuid_spi_usb "$hmc_eid" "$hmc_usb_port"
+    # HMC-HMC_EROT-MCTP_VDM-08
+    run_checker get_hmc_erot_mctp_uuid_i2c_usb "$hmc_eid" "$hmc_usb_port"
 } # checkout_hmc
 
 # FPGA
@@ -350,7 +363,9 @@ checkout_gpu() {
     # Loop through all devices
     for ((i = 0; i < ${#GPU_IROT_NAME[@]}; i++)); do
         # gpu_eid=${ROT_NAME_EID_TABLE[${GPU_IROT_NAME[$i]}]}
-        gpu_eid=${GPU_IROT_MCTP_EIDS[$i]}
+        local gpu_eid=${GPU_IROT_MCTP_EIDS[$i]}
+        local gpu_usb_port=${SXM7_MCTP_USB_PORT[$i]}
+        local gpu_dbus_port=${SXM7_MCTP_DBUS_PORT[$i]}
 
         check="run_device_check_structure"
         output="# GPU Device $((i + 1)) #"
@@ -374,6 +389,16 @@ checkout_gpu() {
         run_checker get_gpu_mctp_nsmtool_t2_avil_indexed_data_sources ${gpu_eid}
         # HMC-GPU-NSM_T2-03
         run_checker get_gpu_mctp_nsmtool_t2_avil_bulk_data_sources ${gpu_eid}
+
+        ## HW-Interface
+        ## Transport-Protocol
+        check="run_hw_check_structure"
+        output="## GPU Transport Protocol ##"
+        echo -e "$check\e[47G>>>Output>>>  $output"
+        # HMC-GPU_IROT-MCTP_VDM-03
+        run_checker get_gpu_irot_mctp_eid_i3c_usb ${gpu_eid} ${gpu_usb_port}
+        # HMC-GPU_IROT-MCTP_VDM-04
+        run_checker get_gpu_irot_mctp_uuid_i3c_usb ${gpu_eid} ${gpu_usb_port}
         ## Security-Protocol
     done # for loop
 }        # checkout_gpu
@@ -570,6 +595,30 @@ checkout_firmware() {
 
 } # checkout_firmware
 
+checkout_sma() {
+
+    for ((i = 0; i < ${#SMA_SXM7_MCTP_EIDS[@]}; i++)); do
+        sma_eid=${SMA_SXM7_MCTP_EIDS[$i]}
+        sma_usb_port=${SXM7_MCTP_USB_PORT[$i]}
+        sma_dbus_port=${SXM7_MCTP_DBUS_PORT[$i]}
+
+        check="run_device_check_structure"
+        output="# SMA GPU Device $((i + 1)) #"
+        echo -e "$check\e[47G>>>Output>>>  $output"
+        # HMC-SMA-Security-03	
+        run_check "$sma_eid"
+        # HMC-SMA-Security-09	
+        run_checker get_sma_nsm_build_type_nsmtool "$sma_eid"
+        # HMC-SMA-Security-10	
+        run_checker get_sma_nsm_signing_type_nsmtool "$sma_eid"
+        # HMC-SMA-Security-14	
+        run_checker get_sma_nsm_signing_key_index_nsmtool "$sma_eid"
+        # HMC-SMA-USB-07
+        run_checker get_sma_dbus_mctp_vdm_tree_eids_usb "$sma_dbus_port"
+    done # for loop
+
+} # checkout_sma
+
 # ... [add other run_checker calls here]
 
 # Create the UUID EID table first before running the checks
@@ -583,6 +632,7 @@ if [ $# -eq 0 ]; then
     checkout_fpga
     checkout_gpu
     checkout_cpu
+    checkout_sma
 else
     # Iterate over all provided arguments
     for arg in "$@"; do
@@ -591,6 +641,7 @@ else
         fpga) checkout_fpga ;;
         gpu) checkout_gpu ;;
         cpu) checkout_cpu ;;
+        sma) checkout_sma ;;
         firmware) checkout_firmware ;;
         *) echo "Unknown argument: $arg. Skipping." ;;
         esac

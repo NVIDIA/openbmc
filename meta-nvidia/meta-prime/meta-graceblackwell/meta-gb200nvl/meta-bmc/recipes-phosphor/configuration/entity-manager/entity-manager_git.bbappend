@@ -5,6 +5,7 @@ SRC_URI:append = " file://GB200NVL_DCSCM.json \
                    file://HMC_FRU.json \
                    file://HMC_C2G2.json \
                    file://HMC_C2G4.json \
+                   file://HMC_C2G4_GB300.json \
                    file://Cable_Backplane_Cartridge.json \
                    file://PCIe_Cards.json \
                    file://i2cPcieMapping.json \
@@ -12,8 +13,10 @@ SRC_URI:append = " file://GB200NVL_DCSCM.json \
                    file://blacklist.json \
                    file://PDB_NVIDIA.json \
                    file://PDB_Quanta.json \
-                   file://NVMe_Drive.json \
-                   file://IO_Board.json \
+                   file://NVMe_Drive_CX7.json \
+                   file://NVMe_Drive_CX8.json \
+                   file://IO_Board_CX7.json \
+                   file://IO_Board_CX8.json \
                    file://FIO_Board.json \
                    file://Chassis_1RU.json \
                    file://Chassis_2RU.json \
@@ -40,14 +43,17 @@ do_install:append() {
      install -m 0444 ${WORKDIR}/HMC_FRU.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/HMC_C2G2.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/HMC_C2G4.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/HMC_C2G4_GB300.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/Cable_Backplane_Cartridge.json ${D}/usr/share/entity-manager/configurations
-     install -m 0444 ${WORKDIR}/IO_Board.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/IO_Board_CX7.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/IO_Board_CX8.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/FIO_Board.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/PCIe_Cards.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/i2cPcieMapping.json ${D}/usr/share/entity-manager/
      install -m 0444 ${WORKDIR}/PDB_NVIDIA.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/PDB_Quanta.json ${D}/usr/share/entity-manager/configurations
-     install -m 0444 ${WORKDIR}/NVMe_Drive.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/NVMe_Drive_CX7.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/NVMe_Drive_CX8.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/Chassis_1RU.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/Chassis_2RU.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/gb200nvl_gpio_recovery_configuration.json ${D}/usr/share/entity-manager/configurations

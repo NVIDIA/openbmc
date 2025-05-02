@@ -267,7 +267,7 @@
           {
             "Forward": "memory",
             "Backward": "all_sensors",
-            "AbsolutePath": "/xyz/openbmc_project/inventory/system/dimm/GPU_ 0 DRAM_0"
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/dimm/GPU 0 DRAM_0"
           }
         ],
         "UUID": "STATIC:0:0",
@@ -1032,7 +1032,7 @@
           {
             "Forward": "memory",
             "Backward": "all_sensors",
-            "AbsolutePath": "/xyz/openbmc_project/inventory/system/dimm/GPU_ 1 DRAM_0"
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/dimm/GPU 1 DRAM_0"
           }
         ],
         "UUID": "STATIC:0:1",

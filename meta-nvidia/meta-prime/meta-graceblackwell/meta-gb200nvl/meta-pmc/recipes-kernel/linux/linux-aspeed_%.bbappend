@@ -6,10 +6,8 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI:append = " file://aspeed-bmc-nvidia-gb200nvl-pmc.dts \
-                   file://nvidia-gb200nvl-pmc-core.dtsi"
+SRC_URI:append = " file://aspeed-bmc-nvidia-gb200nvl-pmc.dts "
 
 do_configure:append() {
 	cp ${WORKDIR}/aspeed-bmc-nvidia-gb200nvl-pmc.dts ${S}/arch/arm/boot/dts/
-	cp ${WORKDIR}/nvidia-gb200nvl-pmc-core.dtsi ${S}/arch/arm/boot/dts/
 }

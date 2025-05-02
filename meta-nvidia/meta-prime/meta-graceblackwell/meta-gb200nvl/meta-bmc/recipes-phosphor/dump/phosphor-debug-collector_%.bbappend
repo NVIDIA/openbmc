@@ -14,6 +14,10 @@ EXTRA_OEMESON += "-DFAULTLOG_DUMP_MAX_LIMIT=0"
 EXTRA_OEMESON += "-DFAULTLOG_DUMP_OBJPATH=/xyz/openbmc_project/dump/faultlog"
 # The system dump entry D-Bus object path
 EXTRA_OEMESON += "-DFAULTLOG_DUMP_OBJ_ENTRY=/xyz/openbmc_project/dump/faultlog/entry"
+
+# Assign the OEMDiagnosticDataType for System Dump
+EXTRA_OEMESON += "-DSYSTEM_DUMP_OEM_DIAGNOSTIC_ALLOWABLE_TYPE='FPGA,ROT,FirmwareAttributes,HardwareCheckout'"
+
 SRC_URI:append = " file://fw_atts_dump.sh \
                    file://hw_checkout_dump.sh \
                    file://device_mctp_eid.csv \

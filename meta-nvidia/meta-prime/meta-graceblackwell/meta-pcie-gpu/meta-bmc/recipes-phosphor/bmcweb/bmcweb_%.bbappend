@@ -22,9 +22,6 @@ EXTRA_OEMESON:append = " -Dnvidia-oem-openocd=enabled "
 EXTRA_OEMESON:append = " -Dvm-nbdproxy=enabled "
 EXTRA_OEMESON:append = " -Dvm-websocket=disabled "
 
-# Assign the OEMDiagnosticDataType for System Dump
-EXTRA_OEMESON:append = " -Doem-diagnostic-allowable-type='FPGA,ROT,FirmwareAttributes,HardwareCheckout'"
-
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI:append= " file://fw_uuid_mapping.json \

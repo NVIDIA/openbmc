@@ -20,7 +20,7 @@ SRC_URI = "git://github.com/NVIDIA/libmctp;protocol=https;branch=develop \
             file://mctp-mockep-demux.service \
             file://mctp-mockep-ctrl.service"
 
-SRCREV = "33e991acaa96af562f6fd9cba78b9d74b9f3f682"
+SRCREV = "4e2d4703183cb73657c2cc34eb066a66113f3ace"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 

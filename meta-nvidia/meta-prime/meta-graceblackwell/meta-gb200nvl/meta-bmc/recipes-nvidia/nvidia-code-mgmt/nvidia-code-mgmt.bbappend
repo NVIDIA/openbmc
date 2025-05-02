@@ -3,10 +3,12 @@ FILESEXTRAPATHS:append := "${THISDIR}/files:"
 RDEPENDS:${PN} = " bash "
 
 SRC_URI:append = " file://fw_status_precheck.sh \
-                   file://cpldmanager.env \
                    file://systemd/hmc-ready.service \
                    file://systemd/hmc-notready.service \
                    file://systemd/com.Nvidia.FWStatus.service \
+                   file://cpldmanager_cx7.env \
+                   file://cpldmanager_cx8.env \
+                   file://systemd/gb200nvl-cpld.conf \
                   "
 
 EXTRA_OEMESON:append = "${@bb.utils.contains('DISTRO_FEATURES', 'erotless-bmc', '', ' -DDEBUG_TOKEN_SUPPORT=enabled', d)}"
@@ -31,6 +33,8 @@ SYSTEMD_SERVICE:${PN}:append = " hmc-notready.service"
 SYSTEMD_SERVICE:${PN}:append = " cpld-update@.service"
 SYSTEMD_SERVICE:${PN}:append = " com.Nvidia.CPLD_N.Updater@.service"
 SYSTEMD_SERVICE:${PN}:append = " com.Nvidia.CPLD_N.Starter.service"
+
+SYSTEMD_OVERRIDE:${PN}:append = "systemd/gb200nvl-cpld.conf:com.Nvidia.CPLD_N.Starter.service.d/gb200nvl-cpld.conf "
 
 EXTRA_OEMESON:append = " -DVMEPLAYER_SUPPORT=enabled "
 EXTRA_OEMESON:append = " -DVMEPLAYER0_SUPPORTED_MODEL='Nvidia:LATTICE_CPLD_0:0b8e8c7922a44b9ca22cdcc1f14a20eb' "
@@ -58,7 +62,8 @@ do_install:append() {
     install -m 0755 ${WORKDIR}/fw_status_precheck.sh ${D}/${bindir}/
 
     install -d ${D}${sysconfdir}/cpldupdate
-    install -m 0644 ${WORKDIR}/cpldmanager.env ${D}${sysconfdir}/cpldupdate/cpldmanager.env
+    install -m 0644 ${WORKDIR}/cpldmanager_cx7.env ${D}${sysconfdir}/cpldupdate/cpldmanager_cx7.env
+    install -m 0644 ${WORKDIR}/cpldmanager_cx8.env ${D}${sysconfdir}/cpldupdate/cpldmanager_cx8.env
 
     install -m 0644 ${WORKDIR}/systemd/hmc-ready.service ${D}${nonarch_base_libdir}/systemd/system/
     install -m 0644 ${WORKDIR}/systemd/hmc-notready.service ${D}${nonarch_base_libdir}/systemd/system/

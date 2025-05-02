@@ -1,0 +1,52 @@
+{
+    "CPLD": [
+        {
+            "Name" : "FW_CPLD_0",
+            "Index" : "0",
+            "Bus" : "17",
+            "Address" : "0x40",
+            "Arbitration" : "0",
+            "CpldRegBus" : "17",
+            "CpldRegAddress" : "0x40",
+            "CpldRawBus" : "17",
+            "RawLattice": true,
+            "ImageSelect": 2,
+            "ImageOffset": 4096,
+            "Model" : "BP",
+            "Manufacturer" : "Lattice",
+            "PowerOnDevice" : true,
+            "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded",
+            "DeviceId": [
+              "01",
+              "2b",
+              "c0",
+              "43"
+            ],
+            "CPLDDeviceNo" : 0
+        },
+        {
+            "Name" : "FW_CPLD_1",
+            "Index" : "1",
+            "Bus" : "29",
+            "Address" : "0x40",
+            "Arbitration" : "0",
+            "CpldRegBus" : "29",
+            "CpldRegAddress" : "0x40",
+            "CpldRawBus" : "29",
+            "RawLattice": true,
+            "ImageSelect": 2,
+            "ImageOffset": 4096,
+            "Model" : "BP",
+            "Manufacturer" : "Lattice",
+            "PowerOnDevice" : true,
+            "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded",
+            "DeviceId": [
+              "01",
+              "2b",
+              "c0",
+              "43"
+            ],
+            "CPLDDeviceNo" : 1
+        }
+    ]
+}

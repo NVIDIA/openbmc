@@ -2,6 +2,8 @@
 Description=NVIDIA CPLD monitor
 #TDB add After Clause
 BindsTo=host-poweron@0.service
+Requires=io-board-detect.service
+After=io-board-detect.service
 
 [Service]
 Restart=always

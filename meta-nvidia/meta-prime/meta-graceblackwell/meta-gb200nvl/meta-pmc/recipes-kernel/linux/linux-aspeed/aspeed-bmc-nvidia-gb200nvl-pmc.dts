@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0+
 /dts-v1/;
 
-#include "nvidia-gb200nvl-pmc-core.dtsi"
+#include "aspeed/aspeed-g6.dtsi"
+#include <dt-bindings/gpio/aspeed-gpio.h>
 #include <dt-bindings/leds/common.h>
 
 / {
@@ -56,7 +57,7 @@
     status = "okay";
 };
 
-// MAC1 (per schematics, 1-based MAC1-MAC4) of AST2600 connected to external PHY
+// MAC2 (per schematics, 1-based MAC1-MAC4) of AST2600 connected to external PHY
 // This is "mac0" in zero-based DTS
 &mdio1 {
     status = "okay";
@@ -75,4 +76,14 @@
     pinctrl-0 = <&pinctrl_rgmii2_default>;
 };
 
+&i2c5 {
+    status = "okay";
+};
 
+&i2c6 {
+    status = "okay";
+    eeprom@50 {
+        compatible = "atmel,24c64";
+        reg = <0x50>;
+    };
+};
