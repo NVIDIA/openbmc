@@ -5,8 +5,6 @@ After=network.target
 
 [Service]
 Environment=PLATFORMS_PATH=/tmp/nvidia-fdr/platforms
-LogRateLimitIntervalSec=86400s
-LogRateLimitBurst=500
 
 TimeoutStartSec=360
 ExecStartPre=/usr/bin/fdr_platforms.sh
@@ -14,7 +12,7 @@ ExecStartPre=/usr/bin/fdr_platforms.sh
 ExecReload=kill -s HUP $MAINPID
 ExecStart=/usr/bin/nvidia-fdr
 Type=simple
-Restart=on-failure
+Restart=always
 
 
 StartLimitInterval=1000

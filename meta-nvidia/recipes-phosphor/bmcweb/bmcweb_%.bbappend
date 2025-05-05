@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/bmcweb;protocol=https;branch=develop"
-SRCREV = "24986fca5f589a7d6e49cb338496bf5f5f566642"
+SRCREV = "7233bd3397ee049d85913b1cc4683eff82c86ace"
 
 EXTRA_OEMESON += "-Dredfish-dump-log=enabled"
 EXTRA_OEMESON += "-Dredfish-new-powersubsystem-thermalsubsystem=enabled"
@@ -9,7 +9,7 @@ EXTRA_OEMESON += "-Dupdate-service-task-timeout=5 -Dhttp-body-limit=300"
 EXTRA_OEMESON += "-Dfirmware-image-limit=200"
 EXTRA_OEMESON += "-Dbmcweb-logging=error"
 EXTRA_OEMESON += "-Dinsecure-enable-redfish-query=enabled"
-EXTRA_OEMESON += "-Dbmcweb-response-timeout=180"
+EXTRA_OEMESON += "-Dbmcweb-response-timeout=600"
 EXTRA_OEMESON += "-Dbmcweb-chunking=enabled"
 EXTRA_OEMESON += "-Drsyslog-client=enabled"
 
