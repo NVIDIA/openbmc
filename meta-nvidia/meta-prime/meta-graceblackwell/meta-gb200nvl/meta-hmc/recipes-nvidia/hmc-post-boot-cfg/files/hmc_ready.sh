@@ -18,6 +18,7 @@ source /usr/bin/multi_module_detection.sh
 source /etc/default/platform_var.conf
 
 polling_timeout=20
+erot_reset_delay=10
 
 #######################################
 # Set initial HMC GPIO out states
@@ -163,7 +164,7 @@ check_cpu_erot_auth() {
         echo "[WARNING] Boot status query command not supported, using vdm command in pseudo MCTP mode"
         i2ctransfer -y $BUS w17@0x28 0xf 0xe 0x1 0x1 0x0 0x0 0xc8 0x7f 0x47 0x16 0x0 0x0 0x81 0x1 0x5 0x1 0x89
 
-        sleep 0.5
+        sleep 1
 
         #get the response to the vdm command
         cmd_output=$(i2ctransfer -y $BUS w1@0x28 0x0D r73)
@@ -172,9 +173,9 @@ check_cpu_erot_auth() {
         auth_status_byte=25
     else
         #add sleep here to avoid checking status too frequently
-        sleep 0.5
+        sleep 1
 
-        if [ "$cmd_status" -ne "0x00" ]; then
+        if [ "$cmd_status" != "0x00" ]; then
             echo "[WARNING] Boot status query command returned error ${cmd_status}, retrying."
             return 0
         fi
@@ -223,6 +224,10 @@ check_fpga_ready_and_erot_auth() {
         return
     fi
 
+    #Add arbitrary buffer to the polling timeout to allow ERoT to complete
+    #authentication
+    local timeout_buffer=3
+    local auth_polling_timeout=$((polling_timeout-erot_reset_delay+timeout_buffer))
     local count=0
     local fpga0_status=0
     local fpga1_status=0
@@ -244,7 +249,7 @@ check_fpga_ready_and_erot_auth() {
             fpga1_status=1  
         fi
 
-        while [ $count -lt $polling_timeout ]; do
+        while [ $count -lt $auth_polling_timeout ]; do
 
             if [[ "$fpga0_status" -eq 0 ]]; then
                 check_cpu_erot_auth "$fpga0_bus"
@@ -260,7 +265,9 @@ check_fpga_ready_and_erot_auth() {
             if [[ "$fpga0_status" -eq 1 && "$fpga1_status" -eq 1 ]]; then
                 break
             else
-                ((count++))
+                #increment count by 2 to account for the 1 second delay for each
+                #cpu auth check
+                ((count=count+2))
             fi
         done
 
@@ -271,7 +278,7 @@ check_fpga_ready_and_erot_auth() {
             break
         fi
 
-        while [ $count -lt $polling_timeout ]; do
+        while [ $count -lt $auth_polling_timeout ]; do
             check_cpu_erot_auth "$fpga0_bus"
             fpga0_status=$?
             if [ "$fpga0_status" -eq 1 ]; then
@@ -288,7 +295,7 @@ check_fpga_ready_and_erot_auth() {
             break
         fi
 
-        while [ $count -lt $polling_timeout ]; do
+        while [ $count -lt $auth_polling_timeout ]; do
             check_cpu_erot_auth "$fpga1_bus"
             fpga1_status=$?
             if [ "$fpga1_status" -eq 1 ]; then
@@ -300,7 +307,7 @@ check_fpga_ready_and_erot_auth() {
 
     fi
     
-    if [ $count -eq $polling_timeout ]; then
+    if [ $count -ge $auth_polling_timeout ]; then
         echo "Timed out waiting for cpu erot to finish authentication"
     fi
     
@@ -365,6 +372,12 @@ hmc_ready_sequence()
         sleep 1  # Sleep for 1 second before the next check
         ((count++))  # Increment the counter
     done
+
+    #Delay to allow ERoT to become ready. In a case of where there was a ERoT
+    #Firmware update, the ERoT will perform background copy and reset itself.
+    #During the reset, the ERoT may not respond to I2C commands.  This delay
+    #allows for the ERoT to safely complete the background copy and reset.
+    sleep $erot_reset_delay
 
     check_fpga_ready_and_erot_auth 1 $fpga0_ready 2 $fpga1_ready
 
