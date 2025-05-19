@@ -254,20 +254,18 @@ check_fpga_ready_and_erot_auth() {
             if [[ "$fpga0_status" -eq 0 ]]; then
                 check_cpu_erot_auth "$fpga0_bus"
                 fpga0_status=$?
+                ((count++))
             fi
 
             if [[ "$fpga1_status" -eq 0 ]]; then
                 check_cpu_erot_auth "$fpga1_bus"
                 fpga1_status=$?
+                ((count++))
             fi
 
 
             if [[ "$fpga0_status" -eq 1 && "$fpga1_status" -eq 1 ]]; then
                 break
-            else
-                #increment count by 2 to account for the 1 second delay for each
-                #cpu auth check
-                ((count=count+2))
             fi
         done
 

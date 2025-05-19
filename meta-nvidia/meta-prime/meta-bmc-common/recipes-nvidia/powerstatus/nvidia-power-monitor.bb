@@ -20,13 +20,11 @@ FILESEXTRAPATHS:append := ":${THISDIR}/files"
 SYSDSVCS = "nvidia-power-monitor.service \
             nvidia-shutdown-ok-monitor.service \
             nvidia-standby-power-monitor.service \
-            nvidia-sync-host-req-transition-to-off.service \
             "
 
 SRC_URI = "file://power_status_monitor.sh \
            file://shutdown_ok_monitor.sh \
            file://standby_power_status_monitor.sh \
-           file://nvidia-sync-host-req-transition.sh \
           "
 
 SYSTEMD_PACKAGES = "${PN}"
@@ -39,6 +37,5 @@ do_install() {
     install -m 0755 ${WORKDIR}/power_status_monitor.sh ${D}${bindir}/
     install -m 0755 ${WORKDIR}/shutdown_ok_monitor.sh ${D}${bindir}/
     install -m 0755 ${WORKDIR}/standby_power_status_monitor.sh ${D}${bindir}/
-    install -m 0755 ${WORKDIR}/nvidia-sync-host-req-transition.sh ${D}${bindir}/
 }
 

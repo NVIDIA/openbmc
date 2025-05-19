@@ -13,9 +13,11 @@ FILESEXTRAPATHS:append := "${THISDIR}/files:"
 SRC_URI = " \
            file://emmc-logging.sh \
            file://nvidia-emmc-logging.service \
+           file://check_logmount.sh \
            "
 
 DEPENDS = "systemd"
+RDEPENDS:${PN} += "bash"
 
 SYSTEMD_PACKAGES = "${PN}"
 SYSTEMD_SERVICE:${PN} = " \
@@ -25,5 +27,6 @@ SYSTEMD_SERVICE:${PN} = " \
 do_install:append() {
     install -d ${D}/${bindir}
     install -m 0755 ${WORKDIR}/emmc-logging.sh ${D}/${bindir}/
+    install -m 0755 ${WORKDIR}/check_logmount.sh ${D}/${bindir}/
 }
 

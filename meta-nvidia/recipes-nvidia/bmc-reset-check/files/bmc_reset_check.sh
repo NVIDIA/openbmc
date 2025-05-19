@@ -3,6 +3,37 @@
 # Inherit Logging
 source /etc/default/nvidia_event_logging.sh
 
+# BMC Reset Reason Documentation
+# This script identifies and logs BMC reset events based on reset_reason from u-boot
+#
+# Reset Scenarios and Expected Variable Values:
+# +-------------------+----------+------------+---------------------------------+-----------------------------------+
+# |     uboot env     |   wdt    | reset_mode |           Description           |                Log                |
+# +-------------------+----------+------------+---------------------------------+-----------------------------------+
+# | Power_On          | N/A      | N/A        | Cold reboot                     | BMC power-on reset                |
+# +-------------------+----------+------------+---------------------------------+-----------------------------------+
+# | WDT1_SOC          | WDT1     | SOC        | Warm reboot triggered by user   | BMC normal reset                  |
+# | WDT1_FULL         |          | FULL       |                                 |                                   |
+# | WDT1_ARM          |          | ARM        |                                 |                                   |
+# | WDT1_SW           |          | SW         |                                 |                                   |
+# +-------------------+----------+------------+---------------------------------+-----------------------------------+
+# | WDT[2-8]_SOC      | WDT[2-8] | SOC        | Warm reboot triggered by other  | BMC reset due to $wdt $reset_mode |
+# | WDT[2-8]_FULL     |          | FULL       | watchdog timer                  | Reset                             |
+# | WDT[2-8]_ARM      |          | ARM        |                                 |                                   |
+# | WDT[2-8]_SW       |          | SW         |                                 |                                   |
+# +-------------------+----------+------------+---------------------------------+-----------------------------------+
+# | Kernel_WDT <TBI>  | N/A      | N/A        | Reboot due to kernel watchdog   | BMC reset due to kernel watchdog  |
+# |                   |          |            | timeout                         | timeout                           |
+# +-------------------+----------+------------+---------------------------------+-----------------------------------+
+# | N/A               | N/A      | N/A        | Reboot due to panic/exception,  | BMC kernel panic occurred         |
+# |                   |          |            | which is checked by             |                                   |
+# |                   |          |            | "PStore dmesg-ramoops" in the   |                                   |
+# |                   |          |            | journal                         |                                   |
+# +-------------------+----------+------------+---------------------------------+-----------------------------------+
+#
+# Note:
+# - The Kernel_WDT reason has not been implemented yet in uboot env.
+
 # Check if kernel panic occurred
 check_if_kernel_panic_occurred=$(journalctl -b | grep "PStore dmesg-ramoops")
 
@@ -12,7 +43,9 @@ wdt=$(echo $bmc_reset_reason | awk '{print $1}')
 reset_mode=$(echo $bmc_reset_reason | awk '{print $2}')
 
 if [[ -n "$bmc_reset_reason" ]]; then
-    if [[ "$wdt" == "WDT1" ]]; then
+    if [[ $bmc_reset_reason == "Power On" ]]; then
+        phosphor_log "BMC power-on reset" $sevNot
+    elif [[ "$wdt" == "WDT1" ]]; then
         phosphor_log "BMC normal reset" $sevNot
     else
         phosphor_log "BMC reset due to $wdt $reset_mode Reset" $sevWarn

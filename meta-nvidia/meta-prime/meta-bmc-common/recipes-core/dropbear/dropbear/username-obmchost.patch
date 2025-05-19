@@ -1,0 +1,16 @@
+Upstream-Status: Pending
+---
+diff --git a/svr-auth.c b/svr-auth.c
+index ec20a9b..82ce99d 100644
+--- a/svr-auth.c
++++ b/svr-auth.c
+@@ -98,7 +98,8 @@ void recv_msg_userauth_request() {
+ 	servicename = buf_getstring(ses.payload, &servicelen);
+ 	methodname = buf_getstring(ses.payload, &methodlen);
+ 
+-	if (strncmp(username, "service", 7) != 0)
++	if ((strncmp(username, "service", 7) != 0) &&
++       (strncmp(username, "admin", 5) != 0))
+ 	{
+ 		valid_user = 0;
+

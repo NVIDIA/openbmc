@@ -64,6 +64,7 @@ pci_mux_sel_pin="PCI_MUX_SEL-O"
 chassis_object=`busctl tree $CHASSIS_SERVICE --list | grep chassis`
 host_object=`busctl tree $HOST_SERVICE --list | grep host`
 on_edge=0
+is_ac=1
 
 pin_val=`get_gpio "$pwrsts_pin"`
 echo "Power Status Monitor starts with RUN_POWER_PG-I = $pin_val"
@@ -191,6 +192,7 @@ while true; do
         i2ctransfer -f -y 6 w2@0x23 0x00 0x00
         i2ctransfer -f -y 6 w2@0x2c 0x00 0x00
         i2ctransfer -f -y 6 w2@0x2f 0x00 0x00
+        is_ac=0
     else
         #
         # Write to these as quickly as possible
@@ -206,6 +208,14 @@ while true; do
         # Signal transition to phosphor-chassis-state-manager
 	    busctl set-property $CHASSIS_SERVICE $chassis_object $CHASSIS_INTERFACE \
             $CHASSIS_TRANSITION_PROPERTY s ${CHASSIS_VALNAME}.Transition.Off
+
+	if [ "$is_ac" == "0" ]; then
+            echo "Setting $HOST_SERVICE $host_object $HOST_INTERFACE $HOST_TRANSITION_PROPERTY to ${HOST_VALNAME}.Transition.Off"
+            # Signal transition to phosphor-host-state-manager
+            busctl set-property $HOST_SERVICE $host_object $HOST_INTERFACE \
+                $HOST_TRANSITION_PROPERTY s ${HOST_VALNAME}.Transition.Off
+	fi
+	is_ac=0
 
         # Remove chassis-on file
         rm_exists $SYS_DISCOVERY_FILE

@@ -24,6 +24,14 @@
                 "AuxNames": ["IO_Board_0_CX8_0_Port_0_Temp"]
             },
             {
+                "Name": "IO_Board_0_CX8_0_Port_0_State",
+                "Type": "SensorAuxName",
+                "SensorId": 200,
+                "Bus": 16,
+                "Address": 50,
+                "AuxNames": ["Port_0"]
+            },
+            {
                 "Name": "IO_Board_0_CX8_1",
                 "Type": "I2CDeviceAssociation",
                 "Bus": 18,
@@ -44,6 +52,14 @@
                 "Bus": 18,
                 "Address": 50,
                 "AuxNames": ["IO_Board_0_CX8_1_Port_0_Temp"]
+            },
+            {
+                "Name": "IO_Board_0_CX8_1_Port_0_State",
+                "Type": "SensorAuxName",
+                "SensorId": 200,
+                "Bus": 18,
+                "Address": 50,
+                "AuxNames": ["Port_0"]
             }
         ],
         "Name": "IO_Board_0",
@@ -152,7 +168,7 @@
                 [
                     "all_states",
                     "parent_device",
-                    "/xyz/openbmc_project/state/PLDM_Sensor_4_101/IO_Board_0_CX8_0_Port_0_State"
+                    "/xyz/openbmc_project/state/PLDM_Sensor_200_101/Port_0"
                 ]
             ]
         },
@@ -188,7 +204,7 @@
                 [
                     "all_states",
                     "parent_device",
-                    "/xyz/openbmc_project/state/PLDM_Sensor_4_102/IO_Board_0_CX8_1_Port_0_State"
+                    "/xyz/openbmc_project/state/PLDM_Sensor_200_102/Port_0"
                 ]
             ]
         },
@@ -219,6 +235,14 @@
                 "AuxNames": ["IO_Board_1_CX8_0_Port_0_Temp"]
             },
             {
+                "Name": "IO_Board_1_CX8_0_Port_0_State",
+                "Type": "SensorAuxName",
+                "SensorId": 200,
+                "Bus": 28,
+                "Address": 50,
+                "AuxNames": ["Port_0"]
+            },
+            {
                 "Name": "IO_Board_1_CX8_1",
                 "Type": "I2CDeviceAssociation",
                 "Bus": 30,
@@ -239,6 +263,14 @@
                 "Bus": 30,
                 "Address": 50,
                 "AuxNames": ["IO_Board_1_CX8_1_Port_0_Temp"]
+            },
+            {
+                "Name": "IO_Board_1_CX8_1_Port_0_State",
+                "Type": "SensorAuxName",
+                "SensorId": 200,
+                "Bus": 30,
+                "Address": 50,
+                "AuxNames": ["Port_0"]
             }
         ],
         "Name": "IO_Board_1",
@@ -343,6 +375,11 @@
                     "parent_device",
                     "all_states",
                     "/xyz/openbmc_project/inventory/system/board/IO_Board_1"
+                ],
+                [
+                    "all_states",
+                    "parent_device",
+                    "/xyz/openbmc_project/state/PLDM_Sensor_200_103/Port_0"
                 ]
             ]
         },
@@ -374,6 +411,11 @@
                     "parent_device",
                     "all_states",
                     "/xyz/openbmc_project/inventory/system/board/IO_Board_1"
+                ],
+                [
+                    "all_states",
+                    "parent_device",
+                    "/xyz/openbmc_project/state/PLDM_Sensor_200_104/Port_0"
                 ]
             ]
         },

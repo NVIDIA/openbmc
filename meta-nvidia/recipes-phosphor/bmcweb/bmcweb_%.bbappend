@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/bmcweb;protocol=https;branch=Core-24.09-1_br"
-SRCREV = "33f6680e89e0656c53b2db977e107b5a90781dc1"
+SRCREV = "396b4a3905f4f3143d89977341b054fd269a3219"
 
 EXTRA_OEMESON += "-Dredfish-dump-log=enabled"
 EXTRA_OEMESON += "-Dredfish-new-powersubsystem-thermalsubsystem=enabled"

@@ -1,6 +1,6 @@
 # Use NVIDIA gitlab Phosphor Sel Logger
 SRC_URI = "git://github.com/NVIDIA/phosphor-sel-logger;protocol=https;branch=Core-24.09-1_br"
-SRCREV = "03de9111010906ea079342c31ffc8af334b39a13"
+SRCREV = "8f55bf5850b69f571654c03736ad48bff7c278b9"
 
 DEPENDS += "phosphor-ipmi-host phosphor-logging"
 

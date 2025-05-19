@@ -337,7 +337,7 @@
         "Name": "M0_VregSocPower0",
         "Name1": "ProcessorModule_0_Vreg_0_SocPower_0",
         "PollRate": 1,
-        "MinValue": 0.01,
+        "MinValue": 0,
         "MaxValue": 10,
         "ValueType": "PLDM",
         "Type": "Satellite"
@@ -475,7 +475,7 @@
         "Name": "M1_VregSocPower0",
         "Name1": "ProcessorModule_1_Vreg_0_SocPower_0",
         "PollRate": 1,
-        "MinValue": 0.01,
+        "MinValue": 0,
         "MaxValue": 10,
         "ValueType": "PLDM",
         "Type": "Satellite"

@@ -3,7 +3,6 @@ FILESEXTRAPATHS:prepend := "${THISDIR}:"
 FILESEXTRAPATHS:prepend := "${THISDIR}/ltssm_dump/:"
 
 SRC_URI:append = " \
-                   file://check_logmount.sh \
                    file://aries-link-dump.tar.gz \
                    file://hmc_dump_link_logs.bash \
                    file://retimerLtssmDump.sh "

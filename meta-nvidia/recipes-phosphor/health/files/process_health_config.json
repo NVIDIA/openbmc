@@ -53,12 +53,12 @@
         "Window_size": 30,
         "Threshold": {
             "Critical_Upper": {
-                "Value": 15.0,
+                "Value": 20.0,
                 "Log": true,
                 "Target": "HMServiceRecovery@.service"
             },
             "Warning_Upper": {
-                "Value": 10.0,
+                "Value": 15.0,
                 "Log": true,
                 "Target": "HMServiceWarning@.service"
             }
@@ -117,12 +117,12 @@
         "Window_size": 30,
         "Threshold": {
             "Critical_Upper": {
-                "Value": 15.0,
+                "Value": 20.0,
                 "Log": true,
                 "Target": "HMServiceRecovery@.service"
             },
             "Warning_Upper": {
-                "Value": 10.0,
+                "Value": 15.0,
                 "Log": true,
                 "Target": "HMServiceWarning@.service"
             }
@@ -133,12 +133,12 @@
         "Window_size": 30,
         "Threshold": {
             "Critical_Upper": {
-                "Value": 20.0,
+                "Value": 25.0,
                 "Log": true,
                 "Target": "HMServiceRecovery@.service"
             },
             "Warning_Upper": {
-                "Value": 15.0,
+                "Value": 20.0,
                 "Log": true,
                 "Target": "HMServiceWarning@.service"
             }

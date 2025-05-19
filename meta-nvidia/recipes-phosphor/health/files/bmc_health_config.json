@@ -1,41 +1,44 @@
 {
     "CPU": {
+        "Window_size": 18,
         "Threshold": {
             "Critical_Upper": {
-                "Value": 95.0,
+                "Value": 98.0,
                 "Log": true,
                 "Target": "HMSystemRecovery@.service"
             },
             "Warning_Upper": {
-                "Value": 80.0,
+                "Value": 90.0,
                 "Log": true,
                 "Target": "HMSystemWarning@.service"
             }
         }
     },
     "CPU_User": {
+        "Window_size": 18,
         "Threshold": {
             "Critical_Upper": {
-                "Value": 95.0,
+                "Value": 98.0,
                 "Log": true,
                 "Target": "HMSystemRecovery@.service"
             },
             "Warning_Upper": {
-                "Value": 80.0,
+                "Value": 90.0,
                 "Log": true,
                 "Target": "HMSystemWarning@.service"
             }
         }
     },
     "CPU_Kernel": {
+        "Window_size": 18,
         "Threshold": {
             "Critical_Upper": {
-                "Value": 95.0,
+                "Value": 98.0,
                 "Log": true,
                 "Target": "HMSystemRecovery@.service"
             },
             "Warning_Upper": {
-                "Value": 80.0,
+                "Value": 90.0,
                 "Log": true,
                 "Target": "HMSystemWarning@.service"
             }

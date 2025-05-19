@@ -6,4 +6,4 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://README.md;md5=f104f1dd1349cfc64bf390d7495ed4a0"
 
 SRC_URI = "git://github.com/NVIDIA/spdm;protocol=https;branch=Core-24.09-1_br"
-SRCREV = "1cfad94fc467c9bff9ed4f82da50298dfd291d6a"
+SRCREV = "85109698689b1d7bdbc0548c7ad6b9c6c76c3512"
