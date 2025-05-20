@@ -1,0 +1,63 @@
+{
+    "InterfaceName": "xyz.openbmc_project.State.ServiceReady",
+    "TypeInCategory": "xyz.openbmc_project.State.ServiceReady.ServiceTypes.HmcReadyGpio",
+    "State": {
+        "State_property": "State",
+        "Default": "xyz.openbmc_project.State.ServiceReady.States.Disabled",
+        "States": {
+            "xyz.openbmc_project.State.ServiceReady.States.Disabled": {
+                "Conditions": {
+                    "cond_bmcweb": {
+                        "Service": "org.freedesktop.systemd1",
+                        "Object": "/org/freedesktop/systemd1/unit/bmcweb_2eservice",
+                        "Intf": "org.freedesktop.systemd1.Unit",
+                        "Property": "SubState",
+                        "Value": "dead"
+                    }
+                },
+                "Actions": [
+                    "hmc-ready-pull@down.service"
+                ]
+            },
+            "xyz.openbmc_project.State.ServiceReady.States.Enabled": {
+                "Conditions": {
+                    "cond_bmcweb": {
+                        "Service": "org.freedesktop.systemd1",
+                        "Object": "/org/freedesktop/systemd1/unit/bmcweb_2eservice",
+                        "Intf": "org.freedesktop.systemd1.Unit",
+                        "Property": "SubState",
+                        "Value": "running"
+                    },
+                    "cond_rwfs": {
+                        "Service": "org.freedesktop.systemd1",
+                        "Object": "/org/freedesktop/systemd1/unit/run_2dinitramfs_2drw_2emount",
+                        "Intf": "org.freedesktop.systemd1.Unit",
+                        "Property": "SubState",
+                        "Value": "mounted"
+                    },
+                    "cond_logging": {
+                        "cond_logging_result": {
+                            "Service": "org.freedesktop.systemd1",
+                            "Object": "/org/freedesktop/systemd1/unit/nvidia_2demmc_2dlogging_2eservice",
+                            "Intf": "org.freedesktop.systemd1.Service",
+                            "Property": "Result",
+                            "Value": "success"
+                        },
+                        "cond_logging_sstate": {
+                            "Service": "org.freedesktop.systemd1",
+                            "Object": "/org/freedesktop/systemd1/unit/nvidia_2demmc_2dlogging_2eservice",
+                            "Intf": "org.freedesktop.systemd1.Unit",
+                            "Property": "SubState",
+                            "Value": "exited"
+                        },
+                        "Logic": "AND"
+                    },
+                    "Logic": "AND"
+                },
+                "Actions": [
+                    "hmc-ready-pull@up.service"
+                ]
+            }
+        }
+    }
+}

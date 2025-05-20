@@ -1,5 +1,4 @@
-[
-  {
+{
   "Exposes": [
     {
       "I2CAddress": 109,
@@ -37,16 +36,4 @@
   "Name": "OCP_Recovery_Devices",
   "Probe": "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB[2-3]00 1CPU: ?2GPU Board PC'})",
   "Type": "Recovery_Config"
-},
-{
-  "Exposes":[
-     {
-       "Model":"gb200nvl_hmc_2GPU",
-       "Name": "$BOARD_PRODUCT_NAME $BUS",
-       "Type": "FDRConfig"
-      }
-   ],
-   "Name": "FDR_config",
-   "Probe": "xyz.openbmc_project.FruDevice({'PRODUCT_PRODUCT_NAME': 'GB[2-3]00 1CPU: ?2GPU Board PC'})"
- }
-]
+}

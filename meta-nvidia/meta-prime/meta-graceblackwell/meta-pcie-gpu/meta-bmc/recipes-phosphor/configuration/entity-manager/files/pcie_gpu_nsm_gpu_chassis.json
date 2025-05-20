@@ -39,7 +39,7 @@
         "Name": "Assembly0",
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:0:3",
-        "DeviceAssembly": false,
+        "AssemblyType": "Board",
         "Area": {
           "Type": "NSM_Area",
           "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
@@ -63,7 +63,7 @@
         "Name": "Assembly1",
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:0:3",
-        "DeviceAssembly": true,
+        "AssemblyType": "Device",
         "Area": {
           "Type": "NSM_Area",
           "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"

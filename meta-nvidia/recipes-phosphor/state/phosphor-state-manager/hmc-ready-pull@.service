@@ -1,0 +1,8 @@
+[Unit]
+Description=HMC Ready GPIO %i Service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/hmc-ready-gpio.sh %i
+RemainAfterExit=yes
+SyslogIdentifier=hmc-ready-pull %i

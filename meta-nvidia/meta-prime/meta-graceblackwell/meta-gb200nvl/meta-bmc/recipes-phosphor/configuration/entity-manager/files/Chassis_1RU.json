@@ -1678,7 +1678,7 @@
         ],
         "Name": "Chassis_0",
         "Probe": [
-            "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-(24975-(0[34]00|2000)|24059-1000).*'})",
+            "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-(24975-(0[34]00|2000|3000)|24059-1000).*'})",
             "OR",
             "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'Quanta Cloud Technology Inc.', 'PRODUCT_PRODUCT_NAME': '.?Ariel.*PDB.?'})"
         ],
@@ -1736,7 +1736,7 @@
     {
         "Name": "PDB Chassis FRU Assembly0",
         "Probe": [
-            "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-(24975-(0[34]00|2000)|24059-1000).*'})",
+            "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-(24975-(0[34]00|2000|3000)|24059-1000).*'})",
             "OR",
             "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'Quanta Cloud Technology Inc.', 'PRODUCT_PRODUCT_NAME': '.?Ariel.*PDB.?'})"
         ],
@@ -1757,7 +1757,7 @@
     {
         "Name": "PDB Board FRU Assembly1",
         "Probe": [
-            "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-(24975-(0[34]00|2000)|24059-1000).*'})",
+            "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-(24975-(0[34]00|2000|3000)|24059-1000).*'})",
             "OR",
             "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'Quanta Cloud Technology Inc.', 'PRODUCT_PRODUCT_NAME': '.?Ariel.*PDB.?'})"
         ],
@@ -1779,7 +1779,7 @@
     {
         "Name": "PDB Product FRU Assembly2",
         "Probe": [
-            "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-(24975-(0[34]00|2000)|24059-1000).*'})",
+            "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-(24975-(0[34]00|2000|3000)|24059-1000).*'})",
             "OR",
             "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'Quanta Cloud Technology Inc.', 'PRODUCT_PRODUCT_NAME': '.?Ariel.*PDB.?'})"
         ],

@@ -1,2 +1,2 @@
 # Enable threshold  monitoring
-PACKAGECONFIG:append = " log-threshold log-watchdog"
+PACKAGECONFIG:append = " log-threshold log-watchdog use-dmtf-registry"

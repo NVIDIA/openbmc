@@ -63,7 +63,7 @@
             }
         ],
         "Name": "IO_Board_0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '699-24768-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '(900-24768-0002|699-24768-0000).?'})",
         "Type": "Board",
         "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Chassis_0",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
@@ -102,7 +102,7 @@
     },
     {
         "Name": "IO_Board_0 Board FRU Assembly0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '699-24768-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '(900-24768-0002|699-24768-0000).?'})",
         "Type": "Assembly",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Model": "$BOARD_PRODUCT_NAME",
@@ -120,7 +120,7 @@
     },
     {
         "Name": "IO_Board_0 Product FRU Assembly1",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '699-24768-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '(900-24768-0002|699-24768-0000).?'})",
         "Type": "Assembly",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Model": "$PRODUCT_PRODUCT_NAME",
@@ -140,7 +140,7 @@
     },
     {
         "Name": "IO_Board_0_CX7_0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '699-24768-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '(900-24768-0002|699-24768-0000).?'})",
         "Type": "NetworkAdapter",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
             "Bus": 16,
@@ -176,7 +176,7 @@
     },
     {
         "Name": "IO_Board_0_CX7_1",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '699-24768-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '(900-24768-0002|699-24768-0000).?'})",
         "Type": "NetworkAdapter",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
             "Bus": 18,
@@ -274,7 +274,7 @@
             }
         ],
         "Name": "IO_Board_1",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '699-24768-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '(900-24768-0002|699-24768-0000).?'})",
         "Type": "Board",
         "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Chassis_0",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
@@ -313,7 +313,7 @@
     },
     {
         "Name": "IO_Board_1 Board FRU Assembly0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '699-24768-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '(900-24768-0002|699-24768-0000).?'})",
         "Type": "Assembly",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Model": "$BOARD_PRODUCT_NAME",
@@ -331,7 +331,7 @@
     },
     {
         "Name": "IO_Board_1 Product FRU Assembly1",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '699-24768-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '(900-24768-0002|699-24768-0000).?'})",
         "Type": "Assembly",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Model": "$PRODUCT_PRODUCT_NAME",
@@ -351,7 +351,7 @@
     },
     {
         "Name": "IO_Board_1_CX7_0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '699-24768-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '(900-24768-0002|699-24768-0000).?'})",
         "Type": "NetworkAdapter",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
             "Bus": 28,
@@ -387,7 +387,7 @@
     },
     {
         "Name": "IO_Board_1_CX7_1",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '699-24768-0000.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '(900-24768-0002|699-24768-0000).?'})",
         "Type": "NetworkAdapter",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
             "Bus": 30,

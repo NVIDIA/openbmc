@@ -39,7 +39,7 @@
         "Name": "Assembly0",
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:0:0",
-        "DeviceAssembly": false,
+        "AssemblyType": "Board",
         "Area": {
           "Type": "NSM_Area",
           "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
@@ -63,7 +63,7 @@
         "Name": "Assembly1",
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:0:0",
-        "DeviceAssembly": true,
+        "AssemblyType": "Device",
         "Area": {
           "Type": "NSM_Area",
           "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
@@ -405,7 +405,8 @@
         "MessageArgs": [
           "GPU_0",
           "rediscovery"
-        ]
+        ],
+        "Logging": false
       },
       {
         "Name": "NVLink",
@@ -562,7 +563,8 @@
             "EDPpScalingFactor",
             "PowerSmoothingPrivilegeLevel1",
             "PowerSmoothingPrivilegeLevel2",
-            "EGMMode"
+            "EGMMode",
+            "InfoROMFileSystemRecreate"
           ]
         },
         "TotalNvLinksCount": {
@@ -804,7 +806,7 @@
         "Name": "Assembly0",
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:0:1",
-        "DeviceAssembly": false,
+        "AssemblyType": "Board",
         "Area": {
           "Type": "NSM_Area",
           "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
@@ -828,7 +830,7 @@
         "Name": "Assembly1",
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:0:1",
-        "DeviceAssembly": true,
+        "AssemblyType": "Device",
         "Area": {
           "Type": "NSM_Area",
           "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
@@ -1170,7 +1172,8 @@
         "MessageArgs": [
           "GPU_1",
           "rediscovery"
-        ]
+        ],
+        "Logging": false
       },
       {
         "Name": "NVLink",
@@ -1327,7 +1330,8 @@
             "EDPpScalingFactor",
             "PowerSmoothingPrivilegeLevel1",
             "PowerSmoothingPrivilegeLevel2",
-            "EGMMode"
+            "EGMMode",
+            "InfoROMFileSystemRecreate"
           ]
         },
         "TotalNvLinksCount": {

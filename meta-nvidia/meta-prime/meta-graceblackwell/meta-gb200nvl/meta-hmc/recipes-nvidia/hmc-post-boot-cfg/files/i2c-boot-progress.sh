@@ -169,6 +169,13 @@ function update_service_status_all()
     # Additional Service Status in extended register 
     service_status=0x00
     service_status=$(update_service_status 'xyz.openbmc_project.Dump.Manager' "$service_status" 0)
+    #Avoid updating for inkenrel mctp
+    if ! zcat /proc/config.gz | grep -q "CONFIG_MCTP_TRANSPORT_USB=y"; then
+        service_status=$(update_service_status 'mctp-usb-demux' "$service_status" 1)
+    fi
+    if ! zcat /proc/config.gz | grep -q "CONFIG_MCTP_TRANSPORT_SPI=y"; then
+        service_status=$(update_service_status 'mctp-spi0-demux' "$service_status" 2)
+    fi
     data_array[14]=$service_status
 }
 
@@ -444,23 +451,30 @@ function run_event_check()
 
         # log event when log partition usage increase above 90% 
         # the event is logged only once and gets enabled if usage falls below 80% 
-        IFS=" " read -r -a u_a <<< $(df -h | grep $log_partition)                                                                             
-        fs_cur_usage=$((10#$(echo ${u_a[4]} | sed 's/.$//')))                                                                                                                                                                                          
-        if [ $fs_cur_usage -ge 90 ] && [ $fs_prv_usage -le 89 ] && [ $fs_prv_usage -ge 1 ] && [ $enable_fs_usage_event == "true" ];      
-        then                    
-            busctl call xyz.openbmc_project.Logging /xyz/openbmc_project/logging xyz.openbmc_project.Logging.Create Create ssa{ss} \
-                    ResourceEvent.1.0.ResourceStatusChangedWarning xyz.openbmc_project.Logging.Entry.Level.Informational 2 \
-                    REDFISH_MESSAGE_ID ResourceEvent.1.0.ResourceWarningThresholdExceeded \
-                    REDFISH_MESSAGE_ARGS "HMC Log Storage,90% Usage"                                                                                                                                                                                                                            
-            enable_fs_usage_event=false                                                                                                
-        fi                                                                                                                             
-                                                                                                                                    
-        if [ $fs_cur_usage -le 85 ];                                                                                                    
-        then                                                                                                                           
-            enable_fs_usage_event=true                                                                                                 
-        fi                                                                                                                             
-        fs_prv_usage=fs_cur_usage        
-
+        IFS=" " read -r -a u_a <<< $(df -h | grep $log_partition)  
+        # Output of df has format: Filesystem Size Used Avail Use% Mounted on
+        # We need at least 5 elements to safely access the usage percentage at index 4
+        DF_MIN_FIELDS_REQUIRED=4
+        if [ ${#u_a[@]} -gt $DF_MIN_FIELDS_REQUIRED ]; then
+            fs_cur_usage=$((10#$(echo ${u_a[4]} | sed 's/.$//')))                                                                                                                                                                                          
+            if [ $fs_cur_usage -ge 90 ] && [ $fs_prv_usage -le 89 ] && [ $fs_prv_usage -ge 1 ] && [ $enable_fs_usage_event == "true" ];      
+            then                    
+                busctl call xyz.openbmc_project.Logging /xyz/openbmc_project/logging xyz.openbmc_project.Logging.Create Create ssa{ss} \
+                        ResourceEvent.1.0.ResourceStatusChangedWarning xyz.openbmc_project.Logging.Entry.Level.Informational 2 \
+                        REDFISH_MESSAGE_ID ResourceEvent.1.0.ResourceWarningThresholdExceeded \
+                        REDFISH_MESSAGE_ARGS "HMC Log Storage,90% Usage"                                                                                                                                                                                                                            
+                enable_fs_usage_event=false                                                                                                
+            fi                                                                                                                             
+                                                                                                                                        
+            if [ $fs_cur_usage -le 85 ];                                                                                                    
+            then                                                                                                                           
+                enable_fs_usage_event=true                                                                                                 
+            fi                                                                                                                             
+            fs_prv_usage=fs_cur_usage        
+        else
+            # Log partition not found or not mounted
+            echo "Log partition $log_partition not found or not mounted"
+        fi
         update_hmc_uptime                                                                                                  
     fi 
 }
@@ -492,8 +506,8 @@ function run_fs_health_check()
     fi 
 
     ## moutning log partition can take time in some cases so 
-    ## helath check is delayed and done after 1.5 minutes
-    if [ $fs_delay_cnt -le 90 ]
+    ## helath check is delayed and done after 10 minutes
+    if [ $fs_delay_cnt -le 600 ]
     then
         fs_delay_cnt=$fs_delay_cnt+$1
     else

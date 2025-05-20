@@ -24,6 +24,14 @@
                 "AuxNames": ["IO_Board_0_CX8_0_Port_0_Temp"]
             },
             {
+                "Name": "IO_Board_0_CX8_0_Port_0_State",
+                "Type": "SensorAuxName",
+                "SensorId": 200,
+                "Bus": 16,
+                "Address": 50,
+                "AuxNames": ["Port_0"]
+            },
+            {
                 "Name": "IO_Board_0_CX8_1",
                 "Type": "I2CDeviceAssociation",
                 "Bus": 18,
@@ -44,10 +52,18 @@
                 "Bus": 18,
                 "Address": 50,
                 "AuxNames": ["IO_Board_0_CX8_1_Port_0_Temp"]
+            },
+            {
+                "Name": "IO_Board_0_CX8_1_Port_0_State",
+                "Type": "SensorAuxName",
+                "SensorId": 200,
+                "Bus": 18,
+                "Address": 50,
+                "AuxNames": ["Port_0"]
             }
         ],
         "Name": "IO_Board_0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00SX.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00[C|S]X.?'})",
         "Type": "Board",
 	"Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Chassis_0",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
@@ -86,7 +102,7 @@
     },
     {
         "Name": "IO_Board_0 Board FRU Assembly0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00SX.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00[C|S]X.?'})",
         "Type": "Assembly",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Model": "$BOARD_PRODUCT_NAME",
@@ -104,7 +120,7 @@
     },
     {
         "Name": "IO_Board_0 Product FRU Assembly1",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00SX.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00[C|S]X.?'})",
         "Type": "Assembly",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Model": "$PRODUCT_PRODUCT_NAME",
@@ -124,7 +140,7 @@
     },
     {
         "Name": "IO_Board_0_CX8_0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00SX.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00[C|S]X.?'})",
         "Type": "NetworkAdapter",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
             "Bus": 16,
@@ -152,7 +168,7 @@
                 [
                     "all_states",
                     "parent_device",
-                    "/xyz/openbmc_project/state/PLDM_Sensor_4_101/IO_Board_0_CX8_0_Port_0_State"
+                    "/xyz/openbmc_project/state/PLDM_Sensor_200_101/Port_0"
                 ]
             ]
         },
@@ -160,7 +176,7 @@
     },
     {
         "Name": "IO_Board_0_CX8_1",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00SX.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 21, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00[C|S]X.?'})",
         "Type": "NetworkAdapter",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
             "Bus": 18,
@@ -188,7 +204,7 @@
                 [
                     "all_states",
                     "parent_device",
-                    "/xyz/openbmc_project/state/PLDM_Sensor_4_102/IO_Board_0_CX8_1_Port_0_State"
+                    "/xyz/openbmc_project/state/PLDM_Sensor_200_102/Port_0"
                 ]
             ]
         },
@@ -219,6 +235,14 @@
                 "AuxNames": ["IO_Board_1_CX8_0_Port_0_Temp"]
             },
             {
+                "Name": "IO_Board_1_CX8_0_Port_0_State",
+                "Type": "SensorAuxName",
+                "SensorId": 200,
+                "Bus": 28,
+                "Address": 50,
+                "AuxNames": ["Port_0"]
+            },
+            {
                 "Name": "IO_Board_1_CX8_1",
                 "Type": "I2CDeviceAssociation",
                 "Bus": 30,
@@ -239,10 +263,18 @@
                 "Bus": 30,
                 "Address": 50,
                 "AuxNames": ["IO_Board_1_CX8_1_Port_0_Temp"]
+            },
+            {
+                "Name": "IO_Board_1_CX8_1_Port_0_State",
+                "Type": "SensorAuxName",
+                "SensorId": 200,
+                "Bus": 30,
+                "Address": 50,
+                "AuxNames": ["Port_0"]
             }
         ],
         "Name": "IO_Board_1",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00SX.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00[C|S]X.?'})",
         "Type": "Board",
         "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Chassis_0",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
@@ -281,7 +313,7 @@
     },
     {
         "Name": "IO_Board_1 Board FRU Assembly0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00SX.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00[C|S]X.?'})",
         "Type": "Assembly",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Model": "$BOARD_PRODUCT_NAME",
@@ -299,7 +331,7 @@
     },
     {
         "Name": "IO_Board_1 Product FRU Assembly1",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00SX.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00[C|S]X.?'})",
         "Type": "Assembly",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Model": "$PRODUCT_PRODUCT_NAME",
@@ -319,7 +351,7 @@
     },
     {
         "Name": "IO_Board_1_CX8_0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00SX.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00[C|S]X.?'})",
         "Type": "NetworkAdapter",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
             "Bus": 28,
@@ -343,6 +375,11 @@
                     "parent_device",
                     "all_states",
                     "/xyz/openbmc_project/inventory/system/board/IO_Board_1"
+                ],
+                [
+                    "all_states",
+                    "parent_device",
+                    "/xyz/openbmc_project/state/PLDM_Sensor_200_103/Port_0"
                 ]
             ]
         },
@@ -350,7 +387,7 @@
     },
     {
         "Name": "IO_Board_1_CX8_1",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00SX.?'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 33, 'ADDRESS': 80, 'BOARD_PART_NUMBER': '900-9X86E-00[C|S]X.?'})",
         "Type": "NetworkAdapter",
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
             "Bus": 30,
@@ -374,6 +411,11 @@
                     "parent_device",
                     "all_states",
                     "/xyz/openbmc_project/inventory/system/board/IO_Board_1"
+                ],
+                [
+                    "all_states",
+                    "parent_device",
+                    "/xyz/openbmc_project/state/PLDM_Sensor_200_104/Port_0"
                 ]
             ]
         },

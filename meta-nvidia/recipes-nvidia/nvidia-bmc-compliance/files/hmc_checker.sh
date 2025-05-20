@@ -297,11 +297,13 @@ get_baseboard_hw_part_number() {
 get_platform_hw_product_name() {
     local i2c_bus="$1"
     local fru_addr="$2"
+    local skip_bytes="$3"
+    local count_bytes="$4"
     local output
     # default i2c_bus to 3 (I2C-4), FRU address to 0x53 (FPGA exposed)
-    bus=${i2c_bus:-3} && addr=${fru_addr:-0x53}
+    bus=${i2c_bus:-3} && addr=${fru_addr:-0x53} && skip_bytes=${skip_bytes:-147} && count_bytes=${count_bytes:-21}
     if [[ -f "/sys/bus/i2c/devices/"$bus"-00"${addr#0x}"/eeprom" ]]; then
-        output=$(_log_ dd if=/sys/bus/i2c/devices/"$bus"-00"${addr#0x}"/eeprom bs=1 skip=147 count=21 | hexdump -v -e '/1 "0x%02X "' | tr -d ' ' | sed 's/0x/\\x/g')
+        output=$(_log_ dd if=/sys/bus/i2c/devices/"$bus"-00"${addr#0x}"/eeprom bs=1 skip=$skip_bytes count=$count_bytes | hexdump -v -e '/1 "0x%02X "' | tr -d ' ' | sed 's/0x/\\x/g')
     else
         output=$(_log_ i2ctransfer -f -y "$bus" w1@"$addr" 0x93 r21 | tr -d ' ' | sed 's/0x/\\x/g')
     fi
@@ -318,11 +320,13 @@ get_platform_hw_product_name() {
 get_platform_hw_serial_number() {
     local i2c_bus="$1"
     local fru_addr="$2"
+    local skip_bytes="$3"
+    local count_bytes="$4"
     local output
     # default i2c_bus to 3 (I2C-4), FRU address to 0x53 (FPGA exposed)
-    bus=${i2c_bus:-3} && addr=${fru_addr:-0x53}
+    bus=${i2c_bus:-3} && addr=${fru_addr:-0x53} && skip_bytes=${skip_bytes:-191} && count_bytes=${count_bytes:-13}
     if [[ -f "/sys/bus/i2c/devices/"$bus"-00"${addr#0x}"/eeprom" ]]; then
-        output=$(_log_ dd if=/sys/bus/i2c/devices/"$bus"-00"${addr#0x}"/eeprom bs=1 skip=191 count=13 | hexdump -v -e '/1 "0x%02X "' | tr -d ' ' | sed 's/0x/\\x/g')
+        output=$(_log_ dd if=/sys/bus/i2c/devices/"$bus"-00"${addr#0x}"/eeprom bs=1 skip=$skip_bytes count=$count_bytes | hexdump -v -e '/1 "0x%02X "' | tr -d ' ' | sed 's/0x/\\x/g')
     else
         output=$(_log_ i2ctransfer -f -y "$bus" w1@"$addr" 0xbf r13 | tr -d ' ' | sed 's/0x/\\x/g')
     fi
@@ -339,11 +343,13 @@ get_platform_hw_serial_number() {
 get_platform_hw_part_number() {
     local i2c_bus="$1"
     local fru_addr="$2"
+    local skip_bytes="$3"
+    local count_bytes="$4"
     local output
     # default i2c_bus to 3 (I2C-4), FRU address to 0x53 (FPGA exposed)
-    bus=${i2c_bus:-3} && addr=${fru_addr:-0x53}
+    bus=${i2c_bus:-3} && addr=${fru_addr:-0x53} && skip_bytes=${skip_bytes:-169} && count_bytes=${count_bytes:-18}
     if [[ -f "/sys/bus/i2c/devices/"$bus"-00"${addr#0x}"/eeprom" ]]; then
-        output=$(_log_ dd if=/sys/bus/i2c/devices/"$bus"-00"${addr#0x}"/eeprom bs=1 skip=169 count=18 | hexdump -v -e '/1 "0x%02X "' | tr -d ' ' | sed 's/0x/\\x/g')
+        output=$(_log_ dd if=/sys/bus/i2c/devices/"$bus"-00"${addr#0x}"/eeprom bs=1 skip=$skip_bytes count=$count_bytes | hexdump -v -e '/1 "0x%02X "' | tr -d ' ' | sed 's/0x/\\x/g')
     else
         output=$(_log_ i2ctransfer -f -y "$bus" w1@"$addr" 0xa9 r18 | tr -d ' ' | sed 's/0x/\\x/g')
     fi
@@ -1675,8 +1681,61 @@ local slot_id="$2"
 eid=${input_eid:-14} && slot=${slot_id:-1} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
 }
 
-# Component-Level Category: FPGA #
-## FPGA: Hardware Interface
+# HMC-HMC_EROT-NSM-01
+# Function to get Security Version Number (SVN) / Active Componnet SVN f HMC ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Security Version Number (SVN)
+get_hmc_erot_nsm_svn() {
+local eid="$1"
+eid=${eid:-14} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x10 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+
+    # Extract 12th and 13th bytes and convert to little endian integer
+    local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
+}
+
+# HMC-HMC_EROT-NSM-02
+# Function to get Pending Component Security Version Number (SVN) of HMC ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Pending Component Security Version Number (SVN)
+get_hmc_erot_nsm_pending_svn() {
+local eid="$1"
+eid=${eid:-14} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x10 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+
+    # Extract 14th and 15th bytes and convert to little endian integer
+    local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
+}
+
+# HMC-HMC_EROT-NSM-03
+# Function to get Minimum Security Version Number (MIN_SVN) of HMC ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Minimum Security Version Number (MIN_SVN)
+get_hmc_erot_nsm_min_svn() {
+local eid="$1"
+eid=${eid:-14} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x10 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+
+    # Extract 16th and 17th bytes and convert to little endian integer
+    local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
+}
+
+# HMC-HMC_EROT-NSM-04
+# Function to get Pending Component Minimum Security Version Number  of HMC ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Pending Component Minimum Security Version Number 
+get_hmc_erot_nsm_pending_min_svn() {
+local eid="$1"
+eid=${eid:-14} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x10 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+
+    # Extract 18th and 19th bytes and convert to little endian integer
+    local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
+}
 
 # HMC-FPGA-PCIe-01
 # Function to get PCIe speed of FPGA
@@ -2388,7 +2447,138 @@ get_sma_nsm_signing_key_index_nsmtool() {
     [[ $raw_data ]] && echo "$raw_data" | awk '{print $'$signing_key_index_data_byte', $'$((signing_key_index_data_byte + 1))'}' || echo ""
 }
 
-## FPGA: Firmware Update Protocol
+# HMC-SXM-SMA-IROT-NSM-01       
+# Function to get Active Component Security Version Number (SVN) SXM SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Active Component Security Version Number (SVN) of SXM SMA IROT
+get_sxm_sma_irot_nsm_svn() {
+    local sxm_sma_eid="$1"
+    eid=${sxm_sma_eid:-60} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 12th and 13th bytes and convert to little endian integer
+    local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
+}
+
+# HMC-SXM-SMA-IROT-NSM-02
+# Function to get Pending Component Security Version Number (SVN) SXM SMA IROT using nsmtool    
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Pending Component Security Version Number (SVN) of SXM SMA IROT
+get_sxm_sma_irot_nsm_pending_svn() {
+    local sxm_sma_eid="$1"
+    eid=${sxm_sma_eid:-60} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 14th and 15th bytes and convert to little endian integer
+    local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
+}   
+
+# HMC-SXM-SMA-IROT-NSM-03
+# Function to get Active Component Minimum Security Version Number (MIN_SVN) SXM SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Active Component Minimum Security Version Number (MIN_SVN) of SXM SMA IROT
+get_sxm_sma_irot_nsm_min_svn() {
+    local sxm_sma_eid="$1"
+    eid=${sxm_sma_eid:-60} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 16th and 17th bytes and convert to little endian integer
+    local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
+}       
+
+# HMC-SXM-SMA-IROT-NSM-04
+# Function to get Pending Component Minimum Security Version Number (MIN_SVN) SXM SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Pending Component Minimum Security Version Number (MIN_SVN) of SXM SMA IROT
+get_sxm_sma_irot_nsm_pending_min_svn() {
+    local sxm_sma_eid="$1"
+    eid=${sxm_sma_eid:-60} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 18th and 19th bytes and convert to little endian integer
+    local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
+}
+
+# HMC-CX8-SMA-IROT-NSM-01
+# Function to get Active Component Security Version Number (SVN) CX8 SMA IROT using nsmtool 
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Active Component Security Version Number (SVN) of CX8 SMA IROT
+get_cx8_sma_irot_nsm_svn() {
+    local cx8_sma_eid="$1"
+    eid=${cx8_sma_eid:-40} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 12th and 13th bytes and convert to little endian integer
+    local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
+}
+
+# HMC-CX8-SMA-IROT-NSM-02
+# Function to get Pending Component Security Version Number (SVN) CX8 SMA IROT using nsmtool 
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Pending Component Security Version Number (SVN) of CX8 SMA IROT   
+get_cx8_sma_irot_nsm_pending_svn() {
+    local cx8_sma_eid="$1"
+    eid=${cx8_sma_eid:-40} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 14th and 15th bytes and convert to little endian integer
+    local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
+}   
+
+# HMC-CX8-SMA-IROT-NSM-03
+# Function to get Active Component Minimum Security Version Number (MIN_SVN) CX8 SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Active Component Minimum Security Version Number (MIN_SVN) of CX8 SMA IROT
+get_cx8_sma_irot_nsm_min_svn() {
+    local cx8_sma_eid="$1"
+    eid=${cx8_sma_eid:-40} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 16th and 17th bytes and convert to little endian integer
+    local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
+}   
+
+# HMC-CX8-SMA-IROT-NSM-04
+# Function to get Pending Component Minimum Security Version Number (MIN_SVN) CX8 SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Pending Component Minimum Security Version Number (MIN_SVN) of CX8 SMA IROT
+get_cx8_sma_irot_nsm_pending_min_svn() {
+    local cx8_sma_eid="$1"
+    eid=${cx8_sma_eid:-40} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 18th and 19th bytes and convert to little endian integer
+    local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
+}
+
+
+# HMC-SXM-SMA-SPDM-01
+# Function to get SPDM Certificate Count of SXM SMA
+# Arguments:
+#   $1: MCTP EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate Count
+get_sxm_sma_spdm_certificate_count() {
+local input_eid="$1"
+local slot_id="$2"
+# default EID to 73, SXM SMA; slot to 0, MCHP cert chain
+eid=${input_eid:-73} && slot=${slot_id:-0} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
+}
+
+# HMC-CX8-SMA-SPDM-01
+# Function to get SPDM Certificate Count of CX8 SMA
+# Arguments:
+#   $1: MCTP EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate Count
+get_cx8_sma_spdm_certificate_count() {
+local input_eid="$1"
+local slot_id="$2"
+# default EID to 69  CX8 SMA; slot to 0, MCHP cert chain
+eid=${input_eid:-69} && slot=${slot_id:-0} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
+}
 
 # HMC-FPGA-Version-01
 # Function to get FPGA FW version from FPGA Register Table
@@ -3184,6 +3374,58 @@ local input_eid="$1"
 local slot_id="$2"
 # default EID to 13, FPGA ERoT; slot to 1, MCHP cert chain
 eid=${input_eid:-13} && slot=${slot_id:-1} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
+}
+
+# HMC-FPGA_EROT-NSM-01
+# Function to get Active Component Security Version Number (SVN) FPGA  ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Active Component Security Version Number (SVN) of FPGA
+get_fpga_erot_nsm_svn() {
+local eid="$1"
+eid=${eid:-13} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x50 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 12th and 13th bytes and convert to little endian integer
+    local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
+}
+
+# HMC-FPGA_EROT-NSM-02
+# Function to get Pending Component Security Version Number (SVN) FPGA ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Pending Component Security Version Number (SVN)
+get_fpga_erot_nsm_pending_svn() {
+local eid="$1"
+eid=${eid:-13} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x50 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 14th and 15th bytes and convert to little endian integer
+    local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
+}
+
+# HMC-FPGA_EROT-NSM-03
+# Function to get Minimum Security Version Number (MIN_SVN) FPGA ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Minimum Security Version Number (MIN_SVN)
+get_fpga_erot_nsm_min_svn() {
+local eid="$1"
+eid=${eid:-13} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x50 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 16th and 17th bytes and convert to little endian integer
+    local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
+}
+
+# HMC-FPGA_EROT-NSM-04
+# Function to get Pending Component Minimum Security Version Number (MIN_SVN) FPGA ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Pending Component Minimum Security Version Number (MIN_SVN)
+get_fpga_erot_nsm_pending_min_svn() {
+local eid="$1"
+eid=${eid:-13} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x50 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 18th and 19th bytes and convert to little endian integer
+    local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
 }
 
 ## GPU: Transport Protocol
@@ -4353,6 +4595,57 @@ local slot_id="$2"
 eid=${input_eid:-28} && slot=${slot_id:-0} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
 }
 
+# HMC-GPU_IROT-NSM-01
+# Function to get Active Component Security Version Number (SVN) GPU IROT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Active Component Security Version Number (SVN) of GPU
+get_gpu_irot_nsm_svn() {
+local eid="$1"
+eid=${eid:-61} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x00 0xC0 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 12th and 13th bytes and convert to little endian integer
+    local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
+}
+
+# HMC-GPU_IROT-NSM-02
+# Function to get Pending Component Security Version Number (SVN) GPU IROT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Pending Component Security Version Number (SVN) of GPU
+get_gpu_irot_nsm_pending_svn() {
+local eid="$1"
+eid=${eid:-61} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x00 0xC0 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 14th and 15th bytes and convert to little endian integer
+    local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
+} 
+
+# HMC-GPU_IROT-NSM-03
+# Function to get Active Component Minimum Security Version Number (MIN_SVN) GPU IROT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Active Component Minimum Security Version Number (MIN_SVN) of GPU
+get_gpu_irot_nsm_min_svn() {
+local eid="$1"
+eid=${eid:-61} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x00 0xC0 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 16th and 17th bytes and convert to little endian integer
+    local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
+}   
+    
+# HMC-GPU_IROT-NSM-04
+# Function to get Pending Component Minimum Security Version Number (MIN_SVN) GPU IROT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Pending Component Minimum Security Version Number (MIN_SVN) of GPU
+get_gpu_irot_nsm_pending_min_svn() {
+local eid="$1"
+eid=${eid:-61} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x00 0xC0 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 18th and 19th bytes and convert to little endian integer
+    local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
+}
 
 ## Retimer: Firmware Update Protocol
 
@@ -5463,6 +5756,58 @@ local slot_id="$2"
 eid=${input_eid:-17} && slot=${slot_id:-1} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
 }
 
+# HMC-CX7_EROT-NSM-01
+# Function to get Active Component Security Version Number (SVN) CX7 ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Active Component Security Version Number (SVN) of CX7 ERoT
+get_cx7_erot_nsm_svn() {
+local eid="$1"
+eid=${eid:-17} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xbc 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 12th and 13th bytes and convert to little endian integer
+    local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
+}
+
+# HMC-CX7_EROT-NSM-02
+# Function to get Pending Component Security Version Number (SVN) CX7 ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Pending Component Security Version Number (SVN) of CX7 ERoT
+get_cx7_erot_nsm_pending_svn() {
+local eid="$1"
+eid=${eid:-17} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xbc 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 14th and 15th bytes and convert to little endian integer
+    local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
+}
+
+# HMC-CX7_EROT-NSM-03
+# Function to get Active Component Minimum Security Version Number (MIN_SVN) CX7 ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Active Component Minimum Security Version Number (MIN_SVN) of CX7 ERoT
+get_cx7_erot_nsm_min_svn() {
+local eid="$1"  
+eid=${eid:-17} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xbc 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 16th and 17th bytes and convert to little endian integer
+    local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
+}
+
+# HMC-CX7_EROT-NSM-04
+# Function to get Pending Component Minimum Security Version Number (MIN_SVN) CX7 ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Pending Component Minimum Security Version Number (MIN_SVN) of CX7 ERoT
+get_cx7_erot_nsm_pending_min_svn() {
+local eid="$1"  
+eid=${eid:-17} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xbc 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 18th and 19th bytes and convert to little endian integer
+    local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
+}
+
 # Component-Level Category: CX8 #
 ## CX8: Firmware Update Protocol
 
@@ -5524,6 +5869,72 @@ get_cx8_pldm_pci_subsys_vendor_id() {
 local eid="${1:-41}"
 # default EID to 41, CX8-2 IRoT I3C
 key=${sku_key:-"PCI Subsystem Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-CX8-IROT-NSM-01
+# Function to get Active Component Security Version Number (SVN) CX8 IROT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Active Component Security Version Number (SVN) of CX8 IROT
+get_cx8_irot_nsm_svn() { 
+local eid="$1"
+eid=${eid:-42} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x01 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 12th and 13th bytes and convert to little endian integer
+    local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
+} 
+
+# HMC-CX8-IROT-NSM-02
+# Function to get Pending Component Security Version Number (SVN) CX8 IROT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Pending Component Security Version Number (SVN) of CX8 IROT   
+get_cx8_irot_nsm_pending_svn() {
+local eid="$1"
+eid=${eid:-42} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x01 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 14th and 15th bytes and convert to little endian integer
+    local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
+}
+
+# HMC-CX8-IROT-NSM-03
+# Function to get Active Component Minimum Security Version Number (MIN_SVN) CX8 IROT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Active Component Minimum Security Version Number (MIN_SVN) of CX8 IROT    
+get_cx8_irot_nsm_min_svn() {
+local eid="$1"
+eid=${eid:-42} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x01 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 16th and 17th bytes and convert to little endian integer
+    local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
+}   
+
+# HMC-CX8-IROT-NSM-04
+# Function to get Pending Component Minimum Security Version Number (MIN_SVN) CX8 IROT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Pending Component Minimum Security Version Number (MIN_SVN) of CX8 IROT   
+get_cx8_irot_nsm_pending_min_svn() {    
+local eid="$1"
+eid=${eid:-42} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x01 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 18th and 19th bytes and convert to little endian integer
+    local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
+}
+
+# HMC-CX8-SPDM-01
+# Function to get SPDM Certificate Count of CX8 IROT
+# Arguments:
+#   $1: MCTP EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate Count
+get_cx8_spdm_certificate_count() {
+local input_eid="$1"
+local slot_id="$2"
+# default EID to 54, CX8 SPDM; slot to 0, MCHP cert chain
+eid=${input_eid:-54} && slot=${slot_id:-0} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
 }
 
 # HMC-SMA-PLDM_T5-05
@@ -6413,6 +6824,58 @@ local input_eid="$1"
 local slot_id="$2"
 # default EID to 15, NVSwitch_0 ERoT; slot to 1, MCHP cert chain
 eid=${input_eid:-15} && slot=${slot_id:-1} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
+}
+
+# HMC-NVSwitch_EROT-NSM-01
+# Function to get Security Version Number NVSwitch ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Security Version Number (SVN)
+get_nvswitch_erot_nsm_svn() {
+local eid="$1"
+eid=${eid:-15} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xcf 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 12th and 13th bytes and convert to little endian integer
+    local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
+}
+
+# HMC-NVSwitch_EROT-NSM-02
+# Function to get Pending Component Security Version Number (SVN) NVSwitch ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Pending Component Security Version Number (SVN)   
+get_nvswitch_erot_nsm_pending_svn() {
+local eid="$1"
+eid=${eid:-15} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xcf 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 14th and 15th bytes and convert to little endian integer
+    local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
+}
+
+# HMC-NVSwitch_EROT-NSM-03
+# Function to get Minimum Security Version Number (MIN_SVN) NVSwitch ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Minimum Security Version Number (MIN_SVN) 
+get_nvswitch_erot_nsm_min_svn() {
+local eid="$1"
+eid=${eid:-15} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xcf 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 16th and 17th bytes and convert to little endian integer
+    local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
+}   
+
+# HMC-NVSwitch_EROT-NSM-04
+# Function to get Pending Component Minimum Security Version Number (MIN_SVN) NVSwitch ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Pending Component Minimum Security Version Number (MIN_SVN)
+get_nvswitch_erot_nsm_pending_min_svn() {
+local eid="$1"
+eid=${eid:-15} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xcf 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 18th and 19th bytes and convert to little endian integer
+    local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
 }
 
 # HMC-NVSWITCH_IROT-01

@@ -36,8 +36,7 @@ SRC_URI:append = " file://fpga_dump.sh \
                    file://selftest_dump.sh \
                    file://erot_dump.sh \
                    file://sma_dump.sh \
-                   file://dump.fs_dep.conf \
-                   file://check_logmount.sh "
+                   file://dump.fs_dep.conf "
 
 
 FILES:${PN}-manager +=  "${bindir}/fpga_dump.sh"
@@ -45,7 +44,6 @@ FILES:${PN}-manager +=  "${datadir}/fpga_register_table_info.csv"
 FILES:${PN}-manager +=  "${bindir}/selftest_dump.sh"
 FILES:${PN}-manager +=  "${bindir}/erot_dump.sh"
 FILES:${PN}-manager +=  "${bindir}/sma_dump.sh"
-FILES:${PN}-manager +=  "${bindir}/check_logmount.sh"
 
 RDEPENDS:${PN}-manager += "bash"
 RDEPENDS:${PN}-manager += "i2c-tools"
@@ -60,7 +58,6 @@ do_install:append() {
     install -m 755 ${WORKDIR}/selftest_dump.sh ${D}${bindir}/
     install -m 755 ${WORKDIR}/erot_dump.sh ${D}${bindir}/
     install -m 755 ${WORKDIR}/sma_dump.sh ${D}${bindir}/
-    install -m 755 ${WORKDIR}/check_logmount.sh ${D}${bindir}/
 }
 
 install_nvidia_plugins() {
