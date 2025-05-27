@@ -1,6 +1,7 @@
 {
     "Namespace": "ProcessorMetrics",
     "MetricProperties": [
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}#/Status/State",
         "/redfish/v1/Chassis/HGX_GPU_{GpuId}/PCIeDevices/GPU_{GpuId}#/PCIeInterface/PCIeType",
         "/redfish/v1/Chassis/HGX_GPU_{GpuId}/PCIeDevices/GPU_{GpuId}#/PCIeInterface/MaxLanes",
         "/redfish/v1/Chassis/HGX_GPU_{GpuId}/PCIeDevices/GPU_{GpuId}#/PCIeInterface/LanesInUse",

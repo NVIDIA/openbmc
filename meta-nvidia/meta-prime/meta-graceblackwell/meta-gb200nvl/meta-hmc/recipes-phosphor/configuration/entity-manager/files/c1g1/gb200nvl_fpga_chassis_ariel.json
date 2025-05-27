@@ -88,17 +88,17 @@
           {
             "Name": "UpperFatal",
             "Dynamic": false,
-            "Value": 65.0
+            "Value": 80.0
           },
           {
             "Name": "UpperCritical",
             "Dynamic": false,
-            "Value": 63.0
+            "Value": 78.0
           },
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 60.0
+            "Value": 75.0
           }
         ],
         "UUID": "STATIC:3:0",
@@ -122,17 +122,17 @@
           {
             "Name": "UpperFatal",
             "Dynamic": false,
-            "Value": 65.0
+            "Value": 80.0
           },
           {
             "Name": "UpperCritical",
             "Dynamic": false,
-            "Value": 63.0
+            "Value": 78.0
           },
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 60.0
+            "Value": 75.0
           }
         ],
         "UUID": "STATIC:3:0",
@@ -156,17 +156,17 @@
           {
             "Name": "UpperFatal",
             "Dynamic": false,
-            "Value": 75.0
+            "Value": 89.0
           },
           {
             "Name": "UpperCritical",
             "Dynamic": false,
-            "Value": 73.0
+            "Value": 86.0
           },
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 70.0
+            "Value": 84.0
           }
         ],
         "UUID": "STATIC:3:0",
@@ -243,7 +243,8 @@
         "OperationalStatus": {
           "Type": "NSM_OperationalStatus",
           "InventoryObjPaths": [
-            "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_0"
+            "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_0",
+            "/xyz/openbmc_project/inventory/system/accelerator/GPU_0"
           ],
           "Priority": false
         }
@@ -379,17 +380,17 @@
           {
             "Name": "UpperFatal",
             "Dynamic": false,
-            "Value": 65.0
+            "Value": 80.0
           },
           {
             "Name": "UpperCritical",
             "Dynamic": false,
-            "Value": 63.0
+            "Value": 78.0
           },
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 60.0
+            "Value": 75.0
           }
         ],
         "UUID": "STATIC:3:1",
@@ -413,17 +414,17 @@
           {
             "Name": "UpperFatal",
             "Dynamic": false,
-            "Value": 65.0
+            "Value": 80.0
           },
           {
             "Name": "UpperCritical",
             "Dynamic": false,
-            "Value": 63.0
+            "Value": 78.0
           },
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 60.0
+            "Value": 75.0
           }
         ],
         "UUID": "STATIC:3:1",
@@ -447,17 +448,17 @@
           {
             "Name": "UpperFatal",
             "Dynamic": false,
-            "Value": 75.0
+            "Value": 89.0
           },
           {
             "Name": "UpperCritical",
             "Dynamic": false,
-            "Value": 73.0
+            "Value": 86.0
           },
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 70.0
+            "Value": 84.0
           }
         ],
         "UUID": "STATIC:3:1",
@@ -491,7 +492,8 @@
         "OperationalStatus": {
           "Type": "NSM_OperationalStatus",
           "InventoryObjPaths": [
-            "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_1"
+            "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_1",
+            "/xyz/openbmc_project/inventory/system/accelerator/GPU_1"
           ],
           "Priority": false
         }

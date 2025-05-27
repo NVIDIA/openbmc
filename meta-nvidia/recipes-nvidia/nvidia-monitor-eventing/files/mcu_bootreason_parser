@@ -1,0 +1,350 @@
+#!/usr/bin/env bash
+
+# Copyright (c) 2025, NVIDIA CORPORATION.  All rights reserved.
+#
+#  NVIDIA CORPORATION and its licensors retain all intellectual property
+#  and proprietary rights in and to this software, related documentation
+#  and any modifications thereto.  Any use, reproduction, disclosure or
+#  distribution of this software and related documentation without an express
+#  license agreement from NVIDIA CORPORATION is strictly prohibited.
+
+set -o pipefail
+
+appname=mcu_bootreason_parser
+appver=0.1
+
+err()
+{
+    echo "${appname}[E]$@" >&2
+    return 0
+}
+
+help()
+{
+    echo "$@" >&2
+    return 0
+}
+
+show_help()
+{
+    help "MCU Boot Reason Parser, ver=$appver"
+    help "<usage>"
+    help "  $appname <devid>"
+    help
+    return 250
+}
+
+find_profile()
+{
+    local profile="mcu.profile"
+    local profile_dir="
+        ./
+        /tmp
+        /usr/share
+        "
+    local dir
+    for dir in $profile_dir; do
+        [ -f "$dir/$profile" ] && echo "$dir/$profile" && return 0
+    done
+    return 1
+}
+
+# Server-RAS-Catalog SubErrorId to Dbus BootReason mapping
+declare -A reason_list=(
+    [WAKEUP]="WakeUp"
+    [POWERON]="PowerOn"
+    [VOLTAGEDET]="VoltageDetect"
+    [WARMRESET]="WarmReset"
+    [FATALERROR]="FatalError"
+    [PIN]="Pin"
+    [DEBUGACCESSPORT]="DebugAccessPort"
+    [RESETTIMEOUT]="ResetTimeout"
+    [LOWPOWERACKTIMEOUT]="LowPowerAcknowledgeTimeout"
+    [SYSCLKGEN]="SystemClockGenerator"
+    [WINWTD0]="WindowedWatchdog0"
+    [SW]="Software"
+    [LOCKUPRESET]="LockupReset"
+    [CPU1]="CPU1"
+    [VBAT]="VBAT"
+    [WINWTD1]="WindowedWatchdog1"
+    [CWTD0]="CodeWatchdog0"
+    [CWTD1]="CodeWatchdog1"
+    [JTAG]="JTAG"
+    [SECVIOLATION]="SecurityViolation"
+    [TAMPER]="Tamper"
+)
+
+bootreason_dbus_to_rf() # (data)
+{
+    local data=$1;shift
+    [ -z "$data" ] && return 1
+
+    local prefix="com.nvidia.ResetCounters.ResetCounterMetrics.BootReasonTypes."
+    # Data example:
+    # as 3 "com.nvidia.ResetCounters.ResetCounterMetrics.BootReasonTypes.PowerOn" "com.nvidia.ResetCounters.ResetCounterMetrics.BootReasonTypes.VoltageDetect" "com.nvidia.ResetCounters.ResetCounterMetrics.BootReasonTypes.FatalError"
+    data=$(echo "$data" | grep -o "${prefix}[^\"]*" | sed "s/${prefix}//g")
+    data=$(echo "$data" | tr '\n' ';')
+    echo ${data:0:-1} # remove the last ';'
+    return 0
+}
+
+bootreason_rf_to_dbus() # (data)
+{
+    local data=$1;shift # optional, can be empty
+    [ -z "$data" ] && echo "as 0" && return 0
+
+    local prefix="com.nvidia.ResetCounters.ResetCounterMetrics.BootReasonTypes."
+
+    local count=$(echo "${data//;/ }" | wc -w)
+    data=$(echo ";"$data | sed "s/;/\" \"${prefix}/g")
+    data="as $count ${data:2}\"" # remove the leading '" ' and format as dbus property
+    echo "$data"
+    return 0
+}
+
+read_boot_reason() # (devid)
+{
+    local devid=$1
+    [ -z "$devid" ] && return 1
+
+    local data
+
+    # EINJ mode
+    local einj_file=$(get_einj_file "$devid")
+    if [ -f "$einj_file" ]; then
+        data=$(cat "$einj_file")
+        bootreason_dbus_to_rf "$data"
+        return 0
+    fi
+
+    # Get BootReason Dbus property
+    local svc="xyz.openbmc_project.NSM"
+    local path="/xyz/openbmc_project/inventory/system/chassis/HGX_${devid}/ResetStatistics"
+    local intf="com.nvidia.ResetCounters.ResetCounterMetrics"
+    local prop="BootReason"
+
+    local rc=0
+    data=$(busctl get-property $svc $path $intf $prop);rc=$?
+    if [ "$rc" -ne 0 ]; then
+        err "Failed to get boot reason for $devid from DBus"
+        return $rc
+    fi
+
+    bootreason_dbus_to_rf "$data"
+    return 0
+}
+
+write_boot_reason() # (devid, reasons[])
+{
+    local devid=$1;shift
+    local reasons=$* # optional, can be empty
+    [ -z "$devid" ] && return 1
+
+    # Convert Server-RAS-Catalog SubErrorId to Dbus BootReason
+    local data
+    local reason
+    for reason in $reasons; do
+        data+=";${reason_list[$reason]}"
+    done
+    data=${data:1} # remove the leading ';'
+    data=$(bootreason_rf_to_dbus "$data")
+
+    # EINJ mode
+    local einj_file=$(get_einj_file "$devid")
+    [ -f "$einj_file" ] && echo "$data" > "$einj_file" && return 0
+
+    # Set BootReason Dbus property
+    local svc="xyz.openbmc_project.NSM"
+    local path="/xyz/openbmc_project/inventory/system/chassis/HGX_${devid}/ResetStatistics"
+    local intf="com.nvidia.ResetCounters.ResetCounterMetrics"
+    local prop="BootReason"
+
+    local rc=0
+    busctl set-property $svc $path $intf $prop $data;rc=$?
+    if [ "$rc" -ne 0 ]; then
+        err "Failed to set boot reason for $devid from DBus."
+        return $rc
+    fi
+
+    return 0
+}
+
+## EINJ Module ##
+app_einj="/tmp/${deviceid}_bootreason.einj"
+get_einj_file() #(devid)
+{
+    echo "/tmp/${1}_bootreason.einj"
+    return 0
+}
+
+einj_cap()
+{
+    echo "list_errors"
+    echo "list_devices"
+    grep -E "^einj_*()" $(which $0) | cut -d'(' -f1 2>/dev/null
+
+    return 0
+}
+
+list_errors()
+{
+    echo ${!reason_list[@]}
+    return 0
+}
+
+list_devices()
+{
+    cat $mcu_profile | grep _usb_tree | cut -d'=' -f1 | sed 's/_usb_tree//g'
+}
+
+einj_start()
+{
+    local dev
+    for dev in $(list_devices); do
+        touch $(get_einj_file "$dev")
+    done
+    return 0
+}
+
+einj_stop()
+{
+    rm -f /tmp/*_bootreason.einj
+    return 0
+}
+
+# True only if all einj files are created
+einj_is_running()
+{
+    local dev
+    for dev in $(list_devices); do
+        [ ! -f $(get_einj_file "$dev") ] && return 1
+    done
+    return 0
+}
+
+einj_error() #(dev_id, errors[])
+{
+    local dev_id=$1;shift
+    local errors=$*
+
+    write_boot_reason "$dev_id" "$errors"
+    return $?
+}
+
+einj_error_all() #(dev_id)
+{
+    einj_error "$1" $(list_errors)
+    return $?
+}
+
+einj_clear() #(dev_id)
+{
+    local dev_id=$1;shift
+    [ -z "$dev_id" ] && return 1
+    local rc=0
+    write_boot_reason "$dev_id" "" # clear boot reason
+    return $rc
+}
+
+einj_clear_all() #(dev_id)
+{
+    einj_clear "$1"
+    return $rc
+}
+
+# UT
+start_ut()
+{
+    einj_start
+
+    local pass=0
+    local fail=0
+    ## Single EINJ Test
+    echo "## Single Injection Test ##"
+    echo "----------------------------"
+
+    local err
+    for err in $(list_errors);do
+        local exp=${reason_list[$err]}
+
+        local devid=SXM_SMA_1
+        # Do injection
+        einj_error "$devid" "$err" >/dev/null
+
+        # Get pwrfail messages (the test target)
+        local rc=0
+        local rslt;rslt=$(read_boot_reason "$devid");rc=$?
+
+        # Test result evaluation
+        if [ "$rc" -ne "0" ]; then
+            echo -e "Test [$exp] rc=$rc: \e[1;31mFAIL\e[0m"
+            fail=$((fail+1))
+            continue
+        fi
+
+        if [ "${exp}" != "${rslt}" ]; then
+            echo -e "Test [$exp] mismatch with [$rslt]: \e[1;31mFAIL\e[0m"
+            fail=$((fail+1))
+            continue
+        fi
+
+        echo -e "Test [$exp] match with [$rslt]: \e[1;92mPASS\e[0m"
+        pass=$((pass+1))
+    done
+    echo
+
+    ## Multi-EINJ Test
+    echo "## Multi-Injection Test ##"
+    echo "----------------------------"
+
+    local exp="WarmReset;WindowedWatchdog0;Tamper"
+    devid=ConnectX_SMA_0
+    # Do Injection
+    einj_error "$devid" WARMRESET WINWTD0 TAMPER >/dev/null
+
+    # Get pwrfail messages (the test target)
+    local rc=0
+    local rslt;rslt=$(read_boot_reason "$devid");rc=$?
+
+    # Test result evaluation
+    if [ "$rc" -ne "0" ]; then
+        echo -e "Test [$exp] rc=$rc: \e[1;31mFAIL\e[0m"
+        fail=$((fail+1))
+    elif [ "${exp}" != "${rslt}" ]; then
+        echo -e "Test [$exp] mismatch with [$rslt]: \e[1;31mFAIL\e[0m"
+        fail=$((fail+1))
+    else
+        echo -e "Test [$exp] match with [$rslt]: \e[1;92mPASS\e[0m"
+        pass=$((pass+1))
+    fi
+
+    #einj_stop
+
+    # Test summary
+    echo "==================================="
+    echo "Pass: $pass, Fail: $fail, Pass Rate: $((pass * 100 / (fail + pass)))%"
+    echo "==================================="
+
+    return $fail
+}
+
+
+## MAIN ##
+mcu_profile=$(find_profile)
+[ $? -ne 0 ] && err "mcu profile file $mcu_profile not found" && exit 249
+
+[ $# -ne 0 ] && if grep "^$1()" $(which $0) &> /dev/null; then func=$1;shift;$func "$@";exit $?; fi
+
+[ "$1" == "--help" ] && show_help && exit 1
+[ "$#" -ne 1 ] && show_help && exit 1
+
+deviceid=$1;shift
+
+rc=0
+
+bootreason=$(read_boot_reason "$deviceid");rc=$?
+[ "$rc" -ne 0 ] && err "Failed to read boot reason on $deviceid, rc=$rc!" && exit $rc
+
+echo "$bootreason"
+exit 0
+

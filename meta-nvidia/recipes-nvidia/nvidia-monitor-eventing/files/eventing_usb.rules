@@ -1,0 +1,5 @@
+ACTION=="add", SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", \
+RUN+="/usr/bin/eventing_usb_hotplug add %p"
+
+ACTION=="remove", SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", \
+RUN+="/usr/bin/eventing_usb_hotplug remove %p"

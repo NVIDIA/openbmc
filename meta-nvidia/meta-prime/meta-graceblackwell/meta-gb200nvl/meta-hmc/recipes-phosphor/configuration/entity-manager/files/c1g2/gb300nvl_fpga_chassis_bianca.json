@@ -88,17 +88,17 @@
           {
             "Name": "UpperFatal",
             "Dynamic": false,
-            "Value": 65.0
+            "Value": 80.0
           },
           {
             "Name": "UpperCritical",
             "Dynamic": false,
-            "Value": 63.0
+            "Value": 78.0
           },
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 60.0
+            "Value": 75.0
           }
         ],
         "UUID": "STATIC:3:0",
@@ -122,17 +122,17 @@
           {
             "Name": "UpperFatal",
             "Dynamic": false,
-            "Value": 65.0
+            "Value": 80.0
           },
           {
             "Name": "UpperCritical",
             "Dynamic": false,
-            "Value": 63.0
+            "Value": 78.0
           },
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 60.0
+            "Value": 75.0
           }
         ],
         "UUID": "STATIC:3:0",
@@ -156,17 +156,17 @@
           {
             "Name": "UpperFatal",
             "Dynamic": false,
-            "Value": 85.0
+            "Value": 89.0
           },
           {
             "Name": "UpperCritical",
             "Dynamic": false,
-            "Value": 81.0
+            "Value": 86.0
           },
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 78.0
+            "Value": 84.0
           }
         ],
         "UUID": "STATIC:3:0",
@@ -451,17 +451,17 @@
           {
             "Name": "UpperFatal",
             "Dynamic": false,
-            "Value": 65.0
+            "Value": 80.0
           },
           {
             "Name": "UpperCritical",
             "Dynamic": false,
-            "Value": 63.0
+            "Value": 78.0
           },
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 60.0
+            "Value": 75.0
           }
         ],
         "UUID": "STATIC:3:1",
@@ -485,17 +485,17 @@
           {
             "Name": "UpperFatal",
             "Dynamic": false,
-            "Value": 65.0
+            "Value": 80.0
           },
           {
             "Name": "UpperCritical",
             "Dynamic": false,
-            "Value": 63.0
+            "Value": 78.0
           },
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 60.0
+            "Value": 75.0
           }
         ],
         "UUID": "STATIC:3:1",
@@ -519,17 +519,17 @@
           {
             "Name": "UpperFatal",
             "Dynamic": false,
-            "Value": 85.0
+            "Value": 89.0
           },
           {
             "Name": "UpperCritical",
             "Dynamic": false,
-            "Value": 81.0
+            "Value": 86.0
           },
           {
             "Name": "UpperCaution",
             "Dynamic": false,
-            "Value": 78.0
+            "Value": 84.0
           }
         ],
         "UUID": "STATIC:3:1",

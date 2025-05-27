@@ -506,7 +506,7 @@
                         {
                             "forward": "inventory",
                             "reverse": "associated_ROT",
-                            "endpoint": "/xyz/openbmc_project/inventory/system/cpu/CPU_0"
+                            "endpoint": "/xyz/openbmc_project/inventory/system/cpu/CPU_1"
                         }
                     ]
                 },

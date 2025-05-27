@@ -818,25 +818,25 @@
             "Direction": "greater than",
             "Name": "upper non recoverable",
             "Severity": 4,
-            "Value": 65.0
+            "Value": 80.0
           },
           {
             "Direction": "greater than",
             "Name": "soft shutdown",
             "Severity": 3,
-            "Value": 63.0
+            "Value": 78.0
           },
           {
             "Direction": "greater than",
             "Name": "upper critical",
             "Severity": 1,
-            "Value": 63.0
+            "Value": 78.0
           },
           {
             "Direction": "greater than",
             "Name": "upper non critical",
             "Severity": 0,
-            "Value": 60.0
+            "Value": 75.0
           }
         ],
         "ValueType": "Raw",
@@ -858,25 +858,25 @@
             "Direction": "greater than",
             "Name": "upper non recoverable",
             "Severity": 4,
-            "Value": 65.0
+            "Value": 80.0
           },
           {
             "Direction": "greater than",
             "Name": "soft shutdown",
             "Severity": 3,
-            "Value": 63.0
+            "Value": 78.0
           },
           {
             "Direction": "greater than",
             "Name": "upper critical",
             "Severity": 1,
-            "Value": 63.0
+            "Value": 78.0
           },
           {
             "Direction": "greater than",
             "Name": "upper non critical",
             "Severity": 0,
-            "Value": 60.0
+            "Value": 75.0
           }
         ],
         "ValueType": "Raw",
@@ -898,25 +898,25 @@
             "Direction": "greater than",
             "Name": "upper non recoverable",
             "Severity": 4,
-            "Value": 85.0
+            "Value": 89.0
           },
           {
             "Direction": "greater than",
             "Name": "soft shutdown",
             "Severity": 3,
-            "Value": 81.0
+            "Value": 86.0
           },
           {
             "Direction": "greater than",
             "Name": "upper critical",
             "Severity": 1,
-            "Value": 81.0
+            "Value": 86.0
           },
           {
             "Direction": "greater than",
             "Name": "upper non critical",
             "Severity": 0,
-            "Value": 78.0
+            "Value": 84.0
           }
         ],
         "ValueType": "Raw",
@@ -938,25 +938,25 @@
             "Direction": "greater than",
             "Name": "upper non recoverable",
             "Severity": 4,
-            "Value": 65.0
+            "Value": 80.0
           },
           {
             "Direction": "greater than",
             "Name": "soft shutdown",
             "Severity": 3,
-            "Value": 63.0
+            "Value": 78.0
           },
           {
             "Direction": "greater than",
             "Name": "upper critical",
             "Severity": 1,
-            "Value": 63.0
+            "Value": 78.0
           },
           {
             "Direction": "greater than",
             "Name": "upper non critical",
             "Severity": 0,
-            "Value": 60.0
+            "Value": 75.0
           }
         ],
         "ValueType": "Raw",
@@ -978,25 +978,25 @@
             "Direction": "greater than",
             "Name": "upper non recoverable",
             "Severity": 4,
-            "Value": 65.0
+            "Value": 80.0
           },
           {
             "Direction": "greater than",
             "Name": "soft shutdown",
             "Severity": 3,
-            "Value": 63.0
+            "Value": 78.0
           },
           {
             "Direction": "greater than",
             "Name": "upper critical",
             "Severity": 1,
-            "Value": 63.0
+            "Value": 78.0
           },
           {
             "Direction": "greater than",
             "Name": "upper non critical",
             "Severity": 0,
-            "Value": 60.0
+            "Value": 75.0
           }
         ],
         "ValueType": "Raw",
@@ -1018,25 +1018,25 @@
             "Direction": "greater than",
             "Name": "upper non recoverable",
             "Severity": 4,
-            "Value": 85.0
+            "Value": 89.0
           },
           {
             "Direction": "greater than",
             "Name": "soft shutdown",
             "Severity": 3,
-            "Value": 81.0
+            "Value": 86.0
           },
           {
             "Direction": "greater than",
             "Name": "upper critical",
             "Severity": 1,
-            "Value": 81.0
+            "Value": 86.0
           },
           {
             "Direction": "greater than",
             "Name": "upper non critical",
             "Severity": 0,
-            "Value": 78.0
+            "Value": 84.0
           }
         ],
         "ValueType": "Raw",

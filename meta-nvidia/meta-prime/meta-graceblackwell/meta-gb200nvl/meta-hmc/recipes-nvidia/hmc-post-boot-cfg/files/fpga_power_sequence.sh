@@ -23,9 +23,23 @@ EROT_FPGA_RECOVERY_L=$GPIO_D2
 HMC_GLOBAL_WP=$GPIO_I6
 FPGA_RST_L=$GPIO_M2
 
+#Execute CPLD reset
+execute_hmc_cpld_reset()
+{
+    local ready=$(gpioget `gpiofind "$FPGA_READY_NAME"`)
+    #Check if FPGA is ready
+    if [[ "$ready" -eq $LOW ]]; then
+        echo "FPGA is not ready, executing CPLD reset"
+        gpioset 0 123=0
+        sleep 1
+        gpioset 0 123=1
+    fi
+}
+
 # Release FPGA from reset
 set_fpga_rst()
 {
+    execute_hmc_cpld_reset
     echo "Set FPGA reset, set ${FPGA_RST_NAME} to 1"
     gpioset `gpiofind "FPGA_RST_L-O"`=1
 }

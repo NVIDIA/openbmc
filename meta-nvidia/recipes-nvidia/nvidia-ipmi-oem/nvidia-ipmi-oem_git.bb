@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
 
 
 SRC_URI = "git://github.com/NVIDIA/nvidia-ipmi-oem;protocol=https;branch=develop"
-SRCREV = "1e2e6a96b7ccc57790b689719933254faf2360cc"
+SRCREV = "269038af5125afd2c0dddd1a8da84edd347886c8"
 
 S = "${WORKDIR}/git"
 PV = "0.1+git${SRCPV}"

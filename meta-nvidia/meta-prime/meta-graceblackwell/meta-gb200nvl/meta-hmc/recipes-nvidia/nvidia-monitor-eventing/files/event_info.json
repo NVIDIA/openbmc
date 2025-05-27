@@ -517,60 +517,6 @@
       "log_namespace": "Baseboard_0"
     },
     {
-      "event": "ERoT_CPU EROT SPI_ERR_CPU_INT Abnormal State Change",
-      "device_type": "ERoT_CPU_[0-1]",
-      "error_id": "EROT_SPI_ERR_CPU_INT-ERROR",
-      "managed": "yes",
-      "rollup_device": "CPU_[0-1]",
-      "category": [
-        "erot_control"
-      ],
-      "event_trigger": {
-        "type": "DBUS",
-        "object": "/xyz/openbmc_project/GpioStatusHandler",
-        "interface": "xyz.openbmc_project.GpioStatus",
-        "property": "I2C2_ALERT",
-        "check": {
-          "equal": "false"
-        }
-      },
-      "accessor": {
-        "type": "CMDLINE",
-        "executable": "fpga_regtbl",
-        "arguments": "EROT_SPI_ERR_CPU_INT [0-1]",
-        "check": {
-          "equal": "1"
-        }
-      },
-      "severity": "Warning",
-      "resolution": "AC cycle the system. If problem persists, collect all dumps per troubleshooting guide, isolate the system and evaluate for RMA.",
-      "debounce": {
-        "type": "",
-        "duration": ""
-      },
-      "trigger_count": 0,
-      "event_counter_reset": {
-        "type": "",
-        "metadata": ""
-      },
-      "redfish": {
-        "message_id": "ResourceEvent.1.0.ResourceErrorsDetected",
-        "origin_of_condition": "/redfish/v1/Chassis/HGX_CPU_[0-1]",
-        "message_args": {
-          "patterns": [
-            "ERoT_CPU_[0-1] SPI_ERR_INT",
-            "Abnormal State Change"
-          ],
-          "parameters": []
-        }
-      },
-      "telemetries": [],
-      "action": "",
-      "value_as_count": false,
-      "description": "FPGA interrupt EROT_SPI_ERR_CPU_INT happens.",
-      "log_namespace": "CPU_[0-1]"
-    },
-    {
       "event": "MOD PS_RUN_PWR_FAULT Abnormal State Change",
       "device_type": "Power_0",
       "error_id": "PS_RUN_PWR_FAULT-ERROR",

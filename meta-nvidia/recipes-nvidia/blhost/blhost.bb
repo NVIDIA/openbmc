@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = " \
     file://src/blfwk/json.h;md5=103fb1035d39134ae18e437f3538d00a \
 "
 SRC_URI = "git://github.com/NVIDIA/blhost;protocol=https;branch=main"
-SRCREV = "0a796b0c76b66c9c002483aac0a36d6635465445"
+SRCREV = "da43dd3c94d9a70571e9880717d46fc12d8b4da1"
 
 inherit meson
 S = "${WORKDIR}/git"

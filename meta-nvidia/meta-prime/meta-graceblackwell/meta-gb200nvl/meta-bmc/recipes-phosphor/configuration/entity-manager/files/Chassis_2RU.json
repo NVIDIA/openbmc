@@ -611,7 +611,7 @@
                 "ILimitMax": 100.0,
                 "ILimitMin": 30.0,
                 "Inputs": [
-                    "ProcessorModule_0_Exhaust_Temp_0"
+                    "M0_ExhaustTemp0"
                 ],
                 "Name": "PID_MODULE_0_EXHAUST_0",
                 "NegativeHysteresis": 0.0,
@@ -636,7 +636,7 @@
                 "ILimitMax": 100.0,
                 "ILimitMin": 30.0,
                 "Inputs": [
-                    "ProcessorModule_1_Exhaust_Temp_0"
+                    "M1_ExhaustTemp0"
                 ],
                 "Name": "PID_MODULE_1_EXHAUST_0",
                 "NegativeHysteresis": 0.0,

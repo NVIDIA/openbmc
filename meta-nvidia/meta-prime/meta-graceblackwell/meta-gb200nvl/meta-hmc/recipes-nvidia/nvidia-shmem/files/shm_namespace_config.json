@@ -79,6 +79,7 @@
                 "ueCount",
                 "OperatingSpeed",
                 "Utilization",
+                "State",
                 "L0ToRecoveryCount",
                 "LanesInUse",
                 "MaxLanes",

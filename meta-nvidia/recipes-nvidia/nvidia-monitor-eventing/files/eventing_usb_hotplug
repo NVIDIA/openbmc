@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+
+# Copyright (c) 2025, NVIDIA CORPORATION.  All rights reserved.
+#
+#  NVIDIA CORPORATION and its licensors retain all intellectual property
+#  and proprietary rights in and to this software, related documentation
+#  and any modifications thereto.  Any use, reproduction, disclosure or
+#  distribution of this software and related documentation without an express
+#  license agreement from NVIDIA CORPORATION is strictly prohibited.
+
+set -o pipefail
+
+appname=eventing_usb_hotplug
+appver=0.1
+apptmp=/tmp/$appname
+mcu_profile=/usr/share/mcu.profile
+
+err()
+{
+    echo "${appname}[E]$@" >&2
+    return 0
+}
+
+help()
+{
+    echo "$@" >&2
+    return 0
+}
+
+show_help()
+{
+    help "USB Hotplug Eventing handler, ver=$appver"
+    help "<usage>"
+    help "  $appname <action> <devpath>"
+    help
+    return 250
+}
+
+usbdev_to_device() # (devpath)
+{
+    local devpath=$1;shift
+    [ -z "$devpath" ] && return 250
+
+    local dev;dev=$(cat "$mcu_profile" | grep "_usb_tree=" | grep "$devpath" | cut -d= -f1)
+    [ -z "$dev" ] && return 1
+    echo "${dev//_usb_tree/}"
+    return 0
+}
+
+get_errid_prefix() # (devid)
+{
+    local devid=$1;shift
+    [ -z "$devid" ] && return 250
+
+    devid=${devid%_*} # get device type from devid
+
+    local prefix;prefix=$(cat "$mcu_profile" | grep "_errid_prefix=" | grep "$devid" | cut -d= -f2)
+    [ -z "$prefix" ] && return 1
+    prefix=${prefix%%#*} # remove comment
+    prefix=${prefix// /} # remove spaces
+    prefix=${prefix//\"/} # remove double quotes
+    prefix=${prefix//\'/} # remove single quotes
+    echo "$prefix"
+    return 0
+}
+
+## MAIN ##
+[ $# -ne 0 ] && if grep "^$1()" $(which $0) &> /dev/null; then func=$1;shift;$func "$@";exit $?; fi
+
+if [ "$#" -ne 2 ]; then
+    show_help
+    exit $?
+fi
+
+[ ! -f "$mcu_profile" ] && err "mcu profile file $mcu_profile not found" && exit 249
+source $mcu_profile
+
+ACTION=$1;shift
+DEVPATH=$1;shift # /devices/platform/ahb/1e6a1000.usb/usb1/1-1/1-1.2/1-1.2.4
+DEVPATH=${DEVPATH##*/} # to get: 1-1.2.4
+
+evt_cfg_dir=/usr/share/mon_evt
+
+err "$ACTION $DEVPATH"
+
+errid=
+devid=$(usbdev_to_device "$DEVPATH")
+[ "$?" -ne 0 ] && err "No MCU device name for $DEVPATH, ignore!" && exit 1
+errid_prefix=$(get_errid_prefix "$devid")
+[ -n "$errid_prefix" ] && errid_prefix+="_"
+
+evt_cmd="monitor-eventingd -S -e $evt_cfg_dir/event_info.json -d $evt_cfg_dir/dat.json"
+evt_cmd="$evt_cmd --device-id $devid"
+
+if [ "$ACTION" == "add" ]; then
+    VID=$(cat /sys/bus/usb/devices/$DEVPATH/idVendor)
+    PID=$(cat /sys/bus/usb/devices/$DEVPATH/idProduct)
+    if [ "${VID}:${PID}" == "0955:cf1f" ]; then
+        err "$errid on $devid"
+        errid="SMA_FW_RECOVERY_MODE"
+    elif [ "${VID}:${PID}" ==  "1fc9:0158" ]; then
+        err "$errid on $devid"
+        errid="SMA_NOT_PROVISIONED"
+    elif [ "${VID}:${PID}" ==  "0955:cf11" ]; then
+        err "USB operational, no issue."
+    else
+        err "Unknown USB Device [${VID}:${PID}]"
+        exit 4
+    fi
+elif [ "$ACTION" == "remove" ]; then
+    err "$errid on $devid"
+    errid="SMA_REMOVED_FROM_USB"
+else
+    err "Unknown ACTION [$ACTION]"
+    exit 5
+fi
+
+err "Error[$errid] on $devid occurs."
+evt_cmd="$evt_cmd --error-id ${errid_prefix}$errid"
+$evt_cmd

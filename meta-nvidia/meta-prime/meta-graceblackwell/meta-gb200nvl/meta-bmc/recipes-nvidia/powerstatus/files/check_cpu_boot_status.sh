@@ -13,6 +13,8 @@ fruDeviceCommand="dbus-send --system --print-reply \
                   string:'/xyz/openbmc_project/FruDevice/' \
                   int32:0 array:string:'xyz.openbmc_project.FruDevice' | grep -o 'string \".*\"' | cut -d' ' -f2 | sed 's/\"//g'"
 
+hostlog_dir="/var/lib/logging/phosphor-post-code-manager/host0"
+
 function getDbusProperty()
 {
     objpath=$1
@@ -85,18 +87,33 @@ done
 # Function to check all CPU boot post codes
 check_all_cpu_boot_post_code() {
     trycnt=1
+    missing_file=false
+
+    echo "Checking CPU boot post codes started"
+
     until [[ $trycnt -gt 60 ]]; do
-        # Get the current BootCycleCount
+        # Get current boot cycle count
         boot_cycle_count=$(busctl get-property xyz.openbmc_project.State.Boot.PostCode0 /xyz/openbmc_project/State/Boot/PostCode0 xyz.openbmc_project.State.Boot.PostCode CurrentBootCycleCount | awk '{print $2}')
 
-        # Command to retrieve post codes
-        get_post_code_command="busctl call xyz.openbmc_project.State.Boot.PostCode0 /xyz/openbmc_project/State/Boot/PostCode0 xyz.openbmc_project.State.Boot.PostCode GetPostCodes q $boot_cycle_count -j"
+        # Path to retrieve post codes
+        target_file="${hostlog_dir}/${boot_cycle_count}"
+        if [ ! -f "$target_file" ]; then
+            missing_file=true
+            sleep 1
+            ((trycnt++))
+            continue
+        fi
 
-        # Execute the command and capture output
-        output=$($get_post_code_command)
+        # transform hexdump to decimal array
+        mapfile -t bytes < <(hexdump -v -e '1/1 "%d\n"' "$target_file")
 
-        # Extract the arrays from the JSON output
-        IFS=$'\n' read -r -d '' -a arrays < <(echo "$output" | grep -o '\[[0-9,]\+\]')
+        # sliding window to get 9-byte sequence
+        arrays=()
+        total=${#bytes[@]}
+        for ((i=0; i<=total-9; i++)); do
+            seq="[${bytes[i]},${bytes[i+1]},${bytes[i+2]},${bytes[i+3]},${bytes[i+4]},${bytes[i+5]},${bytes[i+6]},${bytes[i+7]},${bytes[i+8]}]"
+            arrays+=("$seq")
+        done
 
         # Reset found count
         found_count=0
@@ -112,6 +129,7 @@ check_all_cpu_boot_post_code() {
         # Check if all CPU post codes are found
         if [ $found_count -eq $cpu_count ]; then
             # all CPU post codes are found, exit
+            echo "Found all CPU post codes at boot_cycle_count: $boot_cycle_count in $trycnt tries"
             exit 0
         else
             sleep 1
@@ -119,6 +137,11 @@ check_all_cpu_boot_post_code() {
 
         ((trycnt++))
     done
+
+    if [ "$missing_file" = true ]; then
+        echo "WARNING: $target_file does not exist after $((trycnt - 1)) retries"
+        exit 0
+    fi
 }
 
 # Check for all CPU target arrays

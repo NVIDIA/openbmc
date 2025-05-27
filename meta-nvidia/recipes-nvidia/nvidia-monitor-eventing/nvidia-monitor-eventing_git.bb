@@ -26,7 +26,7 @@ SVC_NAME = "nvidia-monitor-eventing"
 # You could change the passphase to empty by 'ssh-keygen -p -f ~/.ssh/<your_gitlab_id_file>'
 # This issue will be solved when we upstream all codes to github.
 SRC_URI += "git://github.com/NVIDIA/nvidia-monitor-eventing;protocol=https;branch=develop"
-SRCREV = "01ba951e32be9bd0e54370e59739ca775d0a23e1"
+SRCREV = "e8e392302db1a674aeaca78356850f7f4415eced"
 S = "${WORKDIR}/git"
 
 FILES:${PN}:append = " ${bindir}/monitor-eventingd"
@@ -36,6 +36,7 @@ FILES:${PN}:append = " ${systemd_system_unitdir}/${SVC_NAME}.service.d/*.conf"
 FILES:${PN}:append = " ${datadir}/mon_evt/*.json"
 FILES:${PN}:append = " ${datadir}/*.conf"
 FILES:${PN}:append = " ${datadir}/*.csv"
+FILES:${PN}:append = " ${datadir}/*.profile"
 
 SYSTEMD_PACKAGES = "${PN}"
 SYSTEMD_SERVICE:${PN} = "${SVC_NAME}.service"

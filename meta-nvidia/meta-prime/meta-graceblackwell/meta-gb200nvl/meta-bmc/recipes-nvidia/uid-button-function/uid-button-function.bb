@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 SRC_URI = "git://github.com/NVIDIA/uid-button-function;protocol=https;branch=main"
-SRCREV = "70c790a8fc70fa7f7abba18217f2cf094e9eef48"
+SRCREV = "2a7ab9a239a3a4d97218049a863c1bef9d1c5ee1"
 
 PV = "1.0+git${SRCPV}"
 

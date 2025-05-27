@@ -1,0 +1,1 @@
+EXTRA_OEMESON += "${@bb.utils.contains('DISTRO_FEATURES', 'mctp-inkernel', ' -Denable-in-kernel-mctp=enabled', '', d)}"

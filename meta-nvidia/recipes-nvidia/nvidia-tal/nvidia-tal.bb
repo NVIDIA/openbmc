@@ -15,7 +15,7 @@ DEPENDS += "phosphor-logging"
 DEPENDS += "nvidia-shmem"
 
 SRC_URI = "git://github.com/NVIDIA/nvidia-tal;protocol=https;branch=develop"
-SRCREV = "e183b6d0d61cdea68b1ad9135229d04aac03d8fb"
+SRCREV = "3acd8da18f4ea47eb23834b35d160edcfc46a697"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}:"
 SRC_URI += "file://smbus-telemetry-config/smbus-telemetry-config.csv" 

@@ -1,0 +1,135 @@
+#!/usr/bin/env bash
+
+# Copyright (c) 2025, NVIDIA CORPORATION.  All rights reserved.
+#
+#  NVIDIA CORPORATION and its licensors retain all intellectual property
+#  and proprietary rights in and to this software, related documentation
+#  and any modifications thereto.  Any use, reproduction, disclosure or
+#  distribution of this software and related documentation without an express
+#  license agreement from NVIDIA CORPORATION is strictly prohibited.
+
+set -o pipefail
+
+appname=mcu_isp_mode_ctrl
+appver=0.1
+apptmp=/tmp/$appname
+
+mcu_profile=/usr/share/mcu.profile
+[ ! -f "$mcu_profile" ] && err "mcu profile file $mcu_profile not found" && exit 249
+source $mcu_profile
+
+err()
+{
+    echo "${appname}[E]$@" >&2
+    return 0
+}
+
+help()
+{
+    echo "$@" >&2
+    return 0
+}
+
+show_help()
+{
+    help "A tool to control MCU ISP mode, ver=$appver"
+    help "<usage>"
+    help "  $appname <device_id> <enable|disable>"
+    help
+    return 250
+}
+
+gpio_set() # (pin_name, value)
+{
+    local pin_name=$1;shift
+    local value=$1;shift
+
+    [ -z "$pin_name" ] && return 1
+    [ -z "$value" ] && return 2
+
+    local pin;pin=$(gpiofind $pin_name)
+    [ "$?" -ne 0 ] && return 3
+    gpioset $pin=$value
+    [ "$?" -ne 0 ] && return 4
+    return 0
+}
+
+
+isp_mode_ctrl() # (device_id, enable|disable)
+{
+    local device_id=$1;shift
+    local action=$1;shift
+    [ -z "$device_id" ] && {
+        err "device_id is required"
+        return 255
+    }
+
+    [ -z "$action" ] && {
+        err "action (enable or disable) is required"
+        return 255
+    }
+
+    local pin_name="${device_id}_reset_pin"
+    local rst_pin=${!pin_name}
+    pin_name="${device_id}_isp_pin"
+    local isp_pin=${!pin_name}
+
+    [ -z "$rst_pin" ] && {
+        err "reset_pin for device $device_id is not set"
+        return 1
+    }
+
+    [ -z "$isp_pin" ] && {
+        err "isp_pin for device $device_id is not set"
+        return 2
+    }
+
+    local pin_val=0
+    case "$action" in
+        enable)
+            pin_val=0
+            ;;
+        disable)
+            pin_val=1
+            ;;
+        *)
+            err "invalid action: $action"
+            return 255
+            ;;
+    esac
+
+    gpio_set $isp_pin $pin_val && # control ISP mode state
+    gpio_set $rst_pin 0 && # reset MCU to activate ISP mode state
+    sleep 0.5 &&
+    gpio_set $rst_pin 1
+}
+
+enable() # (device_id)
+{
+    isp_mode_ctrl "$1" enable
+    return 0
+}
+
+disable() # (device_id)
+{
+    isp_mode_ctrl "$1" disable
+    return 0
+}
+
+## MAIN ##
+device_id=$1;shift
+action=$1;shift
+
+case "$action" in
+    enable)
+        enable "$device_id"
+        ;;
+    disable)
+        disable "$device_id"
+        ;;
+    *)
+        show_help
+        ;;
+esac
+
+exit $?
