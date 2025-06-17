@@ -48,21 +48,33 @@ check_and_extract_single_file() {
 
 # Step 3: Get obj-path for FRU FDR config.
 get_fdr_obj_path() {
-    obj_path=$(dbus-send --system --print-reply \
-        --dest=xyz.openbmc_project.ObjectMapper \
-        /xyz/openbmc_project/object_mapper \
-        xyz.openbmc_project.ObjectMapper.GetSubTreePaths \
-        string:"/" int32:0 array:string:"xyz.openbmc_project.Configuration.NvidiaFlightDataRecorder" \
-        | grep "string" | head -n 1 | awk '{print $2}' | tr -d '"')
-    
-    if [ -z "$obj_path" ]; then
-        log_to_journal "WARNING: No valid FDR_config object path found. Using default YAML."
-        echo ""
-        return
-    fi
-    
-    log_to_journal "Selected object path: $obj_path"
-    echo "$obj_path"
+    local start_time=$(date +%s)
+    local max_duration=$((5 * 60))  # 5 minutes in seconds
+    local interval=10
+
+    while true; do
+        obj_path=$(dbus-send --system --print-reply \
+            --dest=xyz.openbmc_project.ObjectMapper \
+            /xyz/openbmc_project/object_mapper \
+            xyz.openbmc_project.ObjectMapper.GetSubTreePaths \
+            string:"/" int32:0 array:string:"xyz.openbmc_project.Configuration.NvidiaFlightDataRecorder" \
+            | grep "string" | head -n 1 | awk '{print $2}' | tr -d '"')
+        
+        if [ -n "$obj_path" ]; then
+            log_to_journal "Selected object path: $obj_path"
+            echo "$obj_path"
+            return 0
+        fi
+
+        elapsed_time=$(( $(date +%s) - start_time ))
+        if [ $elapsed_time -ge $max_duration ]; then
+            log_to_journal "WARNING: Timeout reached while waiting for object path. Using default YAML."
+            echo ""
+            return 1
+        fi
+
+        sleep $interval
+    done
 }
 
 # Get default YAML file from platform directory
@@ -144,11 +156,23 @@ select_and_extract_file() {
 
 # Step 6: Wait for HMC Ready
 check_hmcready() {
+    local start_time=$(date +%s)
+    local max_duration=$((5 * 60))  # 5 minutes in seconds
+    local interval=10
+    local remaining_time=0
+
+    # Calculate remaining time from get_fdr_obj_path
+    if [ -n "$1" ]; then
+        elapsed_time=$(( $(date +%s) - $1 ))
+        remaining_time=$(( max_duration - elapsed_time ))
+        if [ $remaining_time -le 0 ]; then
+            log_to_journal "No time remaining for HMC ready check after object path wait"
+            return 0
+        fi
+    fi
+
     CMD="busctl get-property xyz.openbmc_project.State.ConfigurableStateManager /xyz/openbmc_project/state/configurableStateManager/Manager xyz.openbmc_project.State.FeatureReady State"
     DESIRED_OUTPUT='s "xyz.openbmc_project.State.FeatureReady.States.Enabled"'
-    INTERVAL=10
-    MAX_DURATION=$((5 * 60))
-    START_TIME=$(date +%s)
 
     while true; do
         OUTPUT=$(eval "$CMD")
@@ -158,24 +182,23 @@ check_hmcready() {
             return 0
         fi
 
-        ELAPSED_TIME=$(( $(date +%s) - START_TIME ))
-
-        if [[ $ELAPSED_TIME -ge $MAX_DURATION ]]; then
-            log_to_journal "Timeout reached ($MAX_DURATION sec). Current state: $OUTPUT"
+        elapsed_time=$(( $(date +%s) - start_time ))
+        if [ $elapsed_time -ge $remaining_time ]; then
+            log_to_journal "Timeout reached for HMC ready check. Current state: $OUTPUT"
             return 0
         fi
 
-        sleep $INTERVAL
+        sleep $interval
     done
 }
 
 main() {
     clean_tmp_directory                                 # Step 1: Prepare the temporary directory
     check_and_extract_single_file                       # Step 2: Handle single file case or continue
+    start_time=$(date +%s)                             # Record start time for combined timeout
     obj_path=$(get_fdr_obj_path)                        # Step 3: Get obj-path for FRU FDR config
     yaml_file=$(get_yaml_filename "$obj_path")          # Step 4: Get the YAML file name
     select_and_extract_file "$yaml_file"                # Step 5: Extract YAML file
-    check_hmcready                                      # Step 6: Wait till HMC Ready
 }
 
 main

@@ -148,12 +148,15 @@ check_dump_progress() {
       percentage=$(echo "$output" | cut -d ' ' -f 3)
    fi
 
-   if [[ "$dump_status" == "Completed" ]]; then
+   if [[ "$dump_status" == "InProgress" ]]; then
+      dump_size=0
+      execution_status_hex="\x00" # InProgress
+   elif [[ "$dump_status" == "Completed" ]]; then
       dump_size=$(busctl call xyz.openbmc_project.Dump.Manager $entry_path org.freedesktop.DBus.Properties Get ss xyz.openbmc_project.Dump.Entry Size | cut -d ' ' -f 3)
-      execution_status_hex="\x01"
+      execution_status_hex="\x01" # Completed
    else
       dump_size=0
-      execution_status_hex="\x00"
+      execution_status_hex="\x02" # Failed
    fi
 
    # Set 6 bytes of output data.

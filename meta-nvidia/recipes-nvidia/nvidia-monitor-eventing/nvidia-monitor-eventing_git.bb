@@ -26,7 +26,7 @@ SVC_NAME = "nvidia-monitor-eventing"
 # You could change the passphase to empty by 'ssh-keygen -p -f ~/.ssh/<your_gitlab_id_file>'
 # This issue will be solved when we upstream all codes to github.
 SRC_URI += "git://github.com/NVIDIA/nvidia-monitor-eventing;protocol=https;branch=develop"
-SRCREV = "e8e392302db1a674aeaca78356850f7f4415eced"
+SRCREV = "01d0871b73814f2e6d0cc3061a9b819169920017"
 S = "${WORKDIR}/git"
 
 FILES:${PN}:append = " ${bindir}/monitor-eventingd"
@@ -55,6 +55,25 @@ do_install:append() {
     install -m 0755 ${WORKDIR}/mctp-vdm-util-wrapper ${D}${bindir}/
     install -m 0755 ${WORKDIR}/fpga_regtbl ${D}${bindir}/
 }
+
+python do_validate_json() {
+    import json
+    import glob
+    import os
+
+    json_files = glob.glob(os.path.join(d.getVar('WORKDIR'), '*.json'))
+    bb.note(f"json files: {json_files}")
+    for file_path in json_files:
+        try:
+            with open(file_path, 'r') as f:
+                json.load(f)
+            bb.note(f"{file_path} is a valid JSON file.")
+        except json.JSONDecodeError as e:
+            bb.fatal(f"Invalid JSON file: {file_path}. Error: {e}")
+}
+
+addtask validate_json after do_unpack before do_compile
+
 
 #
 # Monitor Eventing Service memory watcher configuration

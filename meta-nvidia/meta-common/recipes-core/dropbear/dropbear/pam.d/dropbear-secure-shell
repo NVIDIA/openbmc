@@ -1,0 +1,8 @@
+#%PAM-1.0
+
+auth     [success=ignore default=1] pam_exec.so quiet /usr/bin/hostconsole-login.sh
+auth     [success=1 default=die] pam_succeed_if.so user ingroup hostconsole
+auth     [success=ok default=die] pam_succeed_if.so user = service
+auth     include  common-auth
+account  include  common-account
+password include  common-password

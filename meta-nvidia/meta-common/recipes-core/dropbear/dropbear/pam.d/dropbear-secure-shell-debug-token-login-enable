@@ -1,0 +1,10 @@
+#%PAM-1.0
+
+auth     [success=ignore default=1] pam_exec.so quiet /usr/bin/hostconsole-login.sh
+auth     [success=3 default=die] pam_succeed_if.so user ingroup hostconsole
+auth     [success=2 default=ignore] pam_succeed_if.so user = service
+auth     requisite pam_succeed_if.so user ingroup secure-shell-dt-login
+auth     required  pam_exec.so /usr/bin/secure-shell-debug-token-login-enable.sh
+auth     include common-auth
+account  include common-account
+password include common-password

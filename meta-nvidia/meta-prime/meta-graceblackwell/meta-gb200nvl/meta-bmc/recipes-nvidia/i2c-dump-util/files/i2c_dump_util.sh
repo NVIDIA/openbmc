@@ -76,6 +76,9 @@ while true; do
             dump_size_hex=$(echo "$output" | cut -d ' ' -f 3-6)
             dump_size=$(hex_to_dec "$dump_size_hex")
             break
+        elif [[ "$status" == "0x02" ]]; then
+            echo ""
+            error "Dump($entry_id) creation failed. Task ended with not Completed state."
         fi
     fi
     sleep 5

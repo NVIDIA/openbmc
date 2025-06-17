@@ -5,7 +5,7 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=3d6b07c89629cff2990d2e8e1f4c2382"
 
 SRC_URI = "git://github.com/Microsemi/switchtec-user.git;branch=master;protocol=https"
-SRCREV = "3bb6ce6fe6007333e30ca0c5cebde66e4fc26627"
+SRCREV = "7f82f0b51e2b817a12279da5a642d5d9c154a148"
 
 S = "${WORKDIR}/git"
 

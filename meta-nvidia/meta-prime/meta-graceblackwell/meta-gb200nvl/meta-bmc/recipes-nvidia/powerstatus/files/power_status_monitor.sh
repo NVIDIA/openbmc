@@ -65,6 +65,9 @@ chassis_object=`busctl tree $CHASSIS_SERVICE --list | grep chassis`
 host_object=`busctl tree $HOST_SERVICE --list | grep host`
 on_edge=0
 is_ac=1
+# The default delay to postpone requesting host power-off during BMC booting
+# in case the power resort policy is overwritten.
+ac_delay=3
 
 pin_val=`get_gpio "$pwrsts_pin"`
 echo "Power Status Monitor starts with RUN_POWER_PG-I = $pin_val"
@@ -188,10 +191,22 @@ while true; do
         create_poweron_eeprom_devices
 
         # Get the fan controllers out of standby mode
-        i2ctransfer -f -y 6 w2@0x20 0x00 0x00
-        i2ctransfer -f -y 6 w2@0x23 0x00 0x00
-        i2ctransfer -f -y 6 w2@0x2c 0x00 0x00
-        i2ctransfer -f -y 6 w2@0x2f 0x00 0x00
+        # Read the current value of the registers
+        controller1=$(i2cget -y -f 6 0x20 0x0)
+        controller2=$(i2cget -y -f 6 0x23 0x0)
+        controller3=$(i2cget -y -f 6 0x2c 0x0)
+        controller4=$(i2cget -y -f 6 0x2f 0x0)
+        # Clear the necessary bits
+        controller1=$((controller1 & 0x5f))
+        controller2=$((controller2 & 0x5f))
+        controller3=$((controller3 & 0x5f))
+        controller4=$((controller4 & 0x5f))
+        # Write the new value back to the registers
+        i2cset -y -f 6 0x20 0x0 $controller1
+        i2cset -y -f 6 0x23 0x0 $controller2
+        i2cset -y -f 6 0x2c 0x0 $controller3
+        i2cset -y -f 6 0x2f 0x0 $controller4
+
         is_ac=0
     else
         #
@@ -210,10 +225,34 @@ while true; do
             $CHASSIS_TRANSITION_PROPERTY s ${CHASSIS_VALNAME}.Transition.Off
 
 	if [ "$is_ac" == "0" ]; then
+            # Power-off may be detected after AC so add the delay to avoid
+            # the host state is synced by the below request
+            sleep $ac_delay
+
             echo "Setting $HOST_SERVICE $host_object $HOST_INTERFACE $HOST_TRANSITION_PROPERTY to ${HOST_VALNAME}.Transition.Off"
             # Signal transition to phosphor-host-state-manager
             busctl set-property $HOST_SERVICE $host_object $HOST_INTERFACE \
                 $HOST_TRANSITION_PROPERTY s ${HOST_VALNAME}.Transition.Off
+	else
+	    retry=0
+	    max_retry=5
+
+            # Avoid powercrtl.sh invoked by host-poweroff@0.service
+            # It may run in parrallel with this service and fail to
+            # read the power status from the GPIO pin which is being 
+            # monitored by this service
+	    while [ $retry -lt $max_retry ]; do
+		status=$(systemctl is-active host-poweroff@0.service)
+		if [ "$status" = "active" ]; then
+		    break
+		fi
+		retry=$((retry+1))
+		sleep 1
+	    done
+
+	    if [ $retry -eq $max_retry ]; then
+		echo "host-poweroff did not become active after $max_retry attempts."
+	    fi
 	fi
 	is_ac=0
 
@@ -249,10 +288,21 @@ while true; do
         remove_poweron_eeprom_devices
 
         # Set the fan controllers to standby mode (this gets their PWMs to 0 while the fans aren't powered)
-        i2ctransfer -f -y 6 w2@0x20 0x00 0xa0
-        i2ctransfer -f -y 6 w2@0x23 0x00 0xa0
-        i2ctransfer -f -y 6 w2@0x2c 0x00 0xa0
-        i2ctransfer -f -y 6 w2@0x2f 0x00 0xa0
+        # Read the current value of the registers
+        controller1=$(i2cget -y -f 6 0x20 0x0)
+        controller2=$(i2cget -y -f 6 0x23 0x0)
+        controller3=$(i2cget -y -f 6 0x2c 0x0)
+        controller4=$(i2cget -y -f 6 0x2f 0x0)
+        # Use bitwise OR to set controller to standby mode
+        controller1=$((controller1 | 0xa0))
+        controller2=$((controller2 | 0xa0))
+        controller3=$((controller3 | 0xa0))
+        controller4=$((controller4 | 0xa0))
+        # Write the new value back to the register
+        i2cset -y -f 6 0x20 0x0 $controller1
+        i2cset -y -f 6 0x23 0x0 $controller2
+        i2cset -y -f 6 0x2c 0x0 $controller3
+        i2cset -y -f 6 0x2f 0x0 $controller4
     fi
 
     # the pin may have transitioned since it was last checked, so compare prev with current values
@@ -267,3 +317,4 @@ while true; do
     on_edge=1
 
 done
+

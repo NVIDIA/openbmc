@@ -2,7 +2,7 @@
 # Disable HostLogger in Redfish
 EXTRA_OEMESON:append = " -Dredfish-host-logger=disabled"
 EXTRA_OEMESON:append = " -Dnvidia-oem-properties=enabled"
-EXTRA_OEMESON:append = " -Dredfish-system-faultlog-dump-log=enabled"
+EXTRA_OEMESON:append = " -Dredfish-system-faultlog-dump-log=disabled"
 EXTRA_OEMESON:append = " -Dreset-bios-by-clear-nonvolatile=enabled"
 EXTRA_OEMESON:append = " -Dhealth-rollup-alternative=enabled"
 EXTRA_OEMESON:append = " -Dredfish-dbus-event=enabled"

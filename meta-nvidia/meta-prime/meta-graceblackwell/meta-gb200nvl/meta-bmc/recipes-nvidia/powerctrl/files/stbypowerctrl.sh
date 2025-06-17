@@ -175,6 +175,10 @@ power_off()
 #
 aux_cycle()
 {
+    # Requesting power-off will overwrite the previous host state
+    # Stop it to avoid falling into the power-off handler
+    systemctl stop nvidia-power-monitor.service
+
     #
     # Run Power Off
     #
@@ -198,6 +202,7 @@ aux_cycle()
             else
             {
                 echo "Run Power is ON - must turn off before standby power off"
+                systemctl start nvidia-power-monitor.service
                 exit 1
             }
             fi

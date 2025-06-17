@@ -8,7 +8,8 @@ SRC_URI:append = " file://fw_status_precheck.sh \
                    file://systemd/com.Nvidia.FWStatus.service \
                    file://cpldmanager_cx7.env \
                    file://cpldmanager_cx8.env \
-                   file://systemd/gb200nvl-cpld.conf \
+                   file://systemd/gb200nvl-cpld-starter.conf \
+                   file://systemd/gb200nvl-cpld-updater.conf \
                   "
 
 EXTRA_OEMESON:append = "${@bb.utils.contains('DISTRO_FEATURES', 'erotless-bmc', '', ' -DDEBUG_TOKEN_SUPPORT=enabled', d)}"
@@ -34,7 +35,8 @@ SYSTEMD_SERVICE:${PN}:append = " cpld-update@.service"
 SYSTEMD_SERVICE:${PN}:append = " com.Nvidia.CPLD_N.Updater@.service"
 SYSTEMD_SERVICE:${PN}:append = " com.Nvidia.CPLD_N.Starter.service"
 
-SYSTEMD_OVERRIDE:${PN}:append = "systemd/gb200nvl-cpld.conf:com.Nvidia.CPLD_N.Starter.service.d/gb200nvl-cpld.conf "
+SYSTEMD_OVERRIDE:${PN}:append = "systemd/gb200nvl-cpld-starter.conf:com.Nvidia.CPLD_N.Starter.service.d/gb200nvl-cpld-starter.conf "
+SYSTEMD_OVERRIDE:${PN}:append = "systemd/gb200nvl-cpld-updater.conf:com.Nvidia.CPLD_N.Updater@.service.d/gb200nvl-cpld-updater.conf "
 
 EXTRA_OEMESON:append = " -DVMEPLAYER_SUPPORT=enabled "
 EXTRA_OEMESON:append = " -DVMEPLAYER0_SUPPORTED_MODEL='Nvidia:LATTICE_CPLD_0:0b8e8c7922a44b9ca22cdcc1f14a20eb' "

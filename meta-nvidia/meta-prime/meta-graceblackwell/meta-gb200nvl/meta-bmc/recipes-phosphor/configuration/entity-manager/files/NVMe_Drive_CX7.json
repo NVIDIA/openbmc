@@ -204,14 +204,75 @@
         ],
         "Name": "StorageBackplane_0",
         "Type": "Board",
-        "Probe": "xyz.openbmc_project.Inventory.Item.I2CDevice({'Bus': 14, 'Address': 64})",
-	"Parent_Chassis":  "/xyz/openbmc_project/inventory/system/chassis/Chassis_0",
+        "Probe": [
+            "xyz.openbmc_project.Inventory.Item.I2CDevice({'Bus': 14, 'Address': 64})",
+            "OR",
+            "xyz.openbmc_project.FruDevice({'BUS': 14, 'ADDRESS': 86})",
+            "MATCH_ONE"
+        ],
+        "Parent_Chassis":  "/xyz/openbmc_project/inventory/system/chassis/Chassis_0",
         "xyz.openbmc_project.Inventory.Item.Chassis": {
             "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
         },
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
-            "Manufacturer": "NVIDIA",
-            "Model": "NVIDIA NVMe E1.S Backplane"
+            "Manufacturer": "$BOARD_MANUFACTURER",
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        },
+        "xyz.openbmc_project.Association.Definitions": {
+            "Associations": [
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/StorageBackplane_0_Board_FRU_Assembly0"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/StorageBackplane_0_Product_FRU_Assembly1"
+                ]
+            ]
+        }
+    },
+    {
+        "Name": "StorageBackplane_0 Board FRU Assembly0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 14, 'ADDRESS': 86})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+            "BuildDate": "$BOARD_MANUFACTURE_DATE",
+            "Manufacturer": "$BOARD_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "StorageBackplane_0 Product FRU Assembly1",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 14, 'ADDRESS': 86})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$PRODUCT_PRODUCT_NAME",
+            "PartNumber": "$PRODUCT_PART_NUMBER",
+            "SerialNumber": "$PRODUCT_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Revision": {
+            "Version": "$PRODUCT_VERSION"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
         }
     },
     {
@@ -419,14 +480,75 @@
         ],
         "Name": "StorageBackplane_1",
         "Type": "Board",
-        "Probe": "xyz.openbmc_project.Inventory.Item.I2CDevice({'Bus': 15, 'Address': 64})",
-	"Parent_Chassis":  "/xyz/openbmc_project/inventory/system/chassis/Chassis_0",
+        "Probe": [
+            "xyz.openbmc_project.Inventory.Item.I2CDevice({'Bus': 15, 'Address': 64})",
+            "OR",
+            "xyz.openbmc_project.FruDevice({'BUS': 15, 'ADDRESS': 86})",
+            "MATCH_ONE"
+        ],
+        "Parent_Chassis":  "/xyz/openbmc_project/inventory/system/chassis/Chassis_0",
         "xyz.openbmc_project.Inventory.Item.Chassis": {
             "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
         },
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
-            "Manufacturer": "NVIDIA",
-            "Model": "NVIDIA NVMe E1.S Backplane"
+            "Manufacturer": "$BOARD_MANUFACTURER",
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        },
+        "xyz.openbmc_project.Association.Definitions": {
+            "Associations": [
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/StorageBackplane_1_Board_FRU_Assembly0"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/StorageBackplane_1_Product_FRU_Assembly1"
+                ]
+            ]
+        }
+    },
+    {
+        "Name": "StorageBackplane_1 Board FRU Assembly0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 15, 'ADDRESS': 86})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+            "BuildDate": "$BOARD_MANUFACTURE_DATE",
+            "Manufacturer": "$BOARD_MANUFACTURER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "StorageBackplane_1 Product FRU Assembly1",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 15, 'ADDRESS': 86})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Model": "$PRODUCT_PRODUCT_NAME",
+            "PartNumber": "$PRODUCT_PART_NUMBER",
+            "SerialNumber": "$PRODUCT_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Revision": {
+            "Version": "$PRODUCT_VERSION"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
         }
     },
     {

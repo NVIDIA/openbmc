@@ -44,3 +44,5 @@ IMAGE_FEATURES:remove = " \
 # TODO: temporarily commented out to maintain compatibility with CI system
 # IMAGE_NAME:append = "-${BUILD_TYPE}"
 # IMAGE_LINK_NAME:append = "-${BUILD_TYPE}"
+
+NVIDIA_EXTRA_USERS_PARAMS += "${@bb.utils.contains('DISTRO_FEATURES', 'nvidia-secure-shell-debug-token-login-enable', 'usermod -a -G secure-shell-dt-login root;', '', d)}"

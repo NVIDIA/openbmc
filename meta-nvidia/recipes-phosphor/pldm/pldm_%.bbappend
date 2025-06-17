@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/pldm;protocol=https;branch=develop"
-SRCREV = "b1d3d93f40ac58037a421d322cf1f6d00653612e"
+SRCREV = "ec16c9d5af664ff2eb24774efeaa1102b1918a63"
 
 DEPENDS += "nvidia-tal"
 DEPENDS += "libmctp"

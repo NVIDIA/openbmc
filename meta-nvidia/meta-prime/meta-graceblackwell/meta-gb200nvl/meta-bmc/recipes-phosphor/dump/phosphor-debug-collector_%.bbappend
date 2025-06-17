@@ -1,4 +1,4 @@
-EXTRA_OEMESON += "-Dfaultlog-dump-extension=enabled"
+EXTRA_OEMESON += "-Dfaultlog-dump-extension=disabled"
 
 # Directory where faultlog dump are placed
 EXTRA_OEMESON += "-DFAULTLOG_DUMP_PATH=/var/lib/logging/dumps/faultlog"

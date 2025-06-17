@@ -6,7 +6,7 @@ SRC_URI:append = " file://fw_atts_dump.sh \
                    file://device_mctp_eid_c1g1.csv \
                 "
 
-EXTRA_OEMESON += "-Dfaultlog-dump-extension=enabled"
+EXTRA_OEMESON += "-Dfaultlog-dump-extension=disabled"
 EXTRA_OEMESON += "-Dnvidia-dumps-extension=enabled"
 # Directory where BMC dumps are placed
 #todo: clean up DBMC_DUMP_PATH

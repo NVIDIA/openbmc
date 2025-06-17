@@ -1,32 +1,42 @@
 {
     "InterfaceName": "xyz.openbmc_project.State.FeatureReady",
     "TypeInCategory": "xyz.openbmc_project.State.FeatureReady.FeatureTypes.MCTP",
-    "ServicesToBeMonitored": {
-        "xyz.openbmc_project.State.ServiceReady": [
-            "/xyz/openbmc_project/mctp/USB1_1",
-            "/xyz/openbmc_project/mctp/SPI0"
-        ]
-    },
     "State": {
         "State_property": "State",
         "Default": "xyz.openbmc_project.State.FeatureReady.States.Starting",
         "States": {
             "xyz.openbmc_project.State.FeatureReady.States.Enabled": {
                 "Conditions": {
-                    "xyz.openbmc_project.State.ServiceReady": {
+                    "cond_mctp_spi": {
+                        "Object": "/xyz/openbmc_project/mctp/SPI0",
+                        "Intf": "xyz.openbmc_project.State.ServiceReady",
                         "Property": "State",
-                        "Value": "xyz.openbmc_project.State.ServiceReady.States.Enabled",
-                        "Logic": "AND"
-                    }
+                        "Value": "xyz.openbmc_project.State.ServiceReady.States.Enabled"
+                    },
+                    "cond_mctp_usb": {
+                        "Object": "/xyz/openbmc_project/mctp/USB1_1",
+                        "Intf": "xyz.openbmc_project.State.ServiceReady",
+                        "Property": "State",
+                        "Value": "xyz.openbmc_project.State.ServiceReady.States.Enabled"
+                    },
+                    "Logic": "AND"
                 }
             },
             "xyz.openbmc_project.State.FeatureReady.States.Starting": {
                 "Conditions": {
-                    "xyz.openbmc_project.State.ServiceReady": {
+                    "cond_mctp_spi": {
+                        "Object": "/xyz/openbmc_project/mctp/SPI0",
+                        "Intf": "xyz.openbmc_project.State.ServiceReady",
                         "Property": "State",
-                        "Value": "xyz.openbmc_project.State.ServiceReady.States.Starting",
-                        "Logic": "OR"
-                    }
+                        "Value": "xyz.openbmc_project.State.ServiceReady.States.Starting"
+                    },
+                    "cond_mctp_usb": {
+                        "Object": "/xyz/openbmc_project/mctp/USB1_1",
+                        "Intf": "xyz.openbmc_project.State.ServiceReady",
+                        "Property": "State",
+                        "Value": "xyz.openbmc_project.State.ServiceReady.States.Starting"
+                    },
+                    "Logic": "OR"
                 }
             }
         }

@@ -8,7 +8,8 @@ SRC_URI:append = " file://GB200NVL_DCSCM.json \
                    file://HMC_C2G4_GB300.json \
                    file://Cable_Backplane_Cartridge.json \
                    file://PCIe_Cards.json \
-                   file://i2cPcieMapping.json \
+                   file://i2cPcieMapping_CX7.json \
+                   file://i2cPcieMapping_CX8.json \
                    file://fru-service.conf \
                    file://blacklist.json \
                    file://PDB_NVIDIA.json \
@@ -49,7 +50,6 @@ do_install:append() {
      install -m 0444 ${WORKDIR}/IO_Board_CX8.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/FIO_Board.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/PCIe_Cards.json ${D}/usr/share/entity-manager/configurations
-     install -m 0444 ${WORKDIR}/i2cPcieMapping.json ${D}/usr/share/entity-manager/
      install -m 0444 ${WORKDIR}/PDB_NVIDIA.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/PDB_Quanta.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/NVMe_Drive_CX7.json ${D}/usr/share/entity-manager/configurations
@@ -68,4 +68,10 @@ do_install:append() {
      mkdir -p ${D}${base_libdir}/systemd/system/xyz.openbmc_project.FruDevice.service.d
      install -m 0444 ${WORKDIR}/fru-service.conf  ${D}${base_libdir}/systemd/system/xyz.openbmc_project.FruDevice.service.d/
      install -m 0444 ${WORKDIR}/blacklist.json ${D}/usr/share/entity-manager/
+
+     install -m 0444 ${WORKDIR}/i2cPcieMapping_CX7.json ${D}/usr/share/entity-manager
+     install -m 0444 ${WORKDIR}/i2cPcieMapping_CX8.json ${D}/usr/share/entity-manager
+
+     # Create symbolic link from /usr/share/entity-manager/i2cPcieMapping.json to /etc/entity-manager/i2cPcieMapping.json
+     ln -sf /etc/default/entity-manager/i2cPcieMapping.json  ${D}${datadir}/entity-manager/i2cPcieMapping.json
 }

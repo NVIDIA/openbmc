@@ -135,7 +135,7 @@
                  {
                     "Name":"Bus",
                     "Type":"u",
-                    "Value":14
+                    "Value":15
                  }
               ]
            },
@@ -172,57 +172,6 @@
            },
            "component_info":{
               "NIC_0":1
-           }
-        },
-        {
-           "match":{
-              "Interface":"xyz.openbmc_project.Inventory.Decorator.I2CDevice",
-              "Properties":[
-                 {
-                    "Name":"Address",
-                    "Type":"u",
-                    "Value":50
-                 },
-                 {
-                    "Name":"Bus",
-                    "Type":"u",
-                    "Value":15
-                 }
-              ]
-           },
-           "device_inventory": {
-               "create": {
-                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/IRoT_BF3_1",
-                  "associations": [
-                    {
-                       "forward": "parent_chassis",
-                       "reverse": "all_chassis",
-                       "endpoint": "/xyz/openbmc_project/inventory/system/board/Riser_Slot2_BlueField_3_Card"
-                    },
-                    {
-                       "forward": "inventory",
-                       "reverse": "associated_ROT",
-                       "endpoint": "/xyz/openbmc_project/inventory/system/board/Riser_Slot2_BlueField_3_Card"
-                    }
-                 ]
-               }
-           },
-           "firmware_inventory":{
-              "create":{
-                 "NIC_1":{
-                    "component_id":1,
-                    "associations":[
-                       {
-                          "forward":"inventory",
-                          "reverse":"activation",
-                          "endpoint":"/xyz/openbmc_project/inventory/system/chassis/BF3_1"
-                       }
-                    ]
-                 }
-              }
-           },
-           "component_info":{
-              "NIC_1":1
            }
         },
         {

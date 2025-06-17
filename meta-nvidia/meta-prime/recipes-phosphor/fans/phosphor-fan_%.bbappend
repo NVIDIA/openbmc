@@ -1,5 +1,5 @@
 SRC_URI = "git://github.com/NVIDIA/phosphor-fan-presence;protocol=https;branch=develop"
-SRCREV = "72fb5c2bbad2d319a279a263e49723151d60c6ba"
+SRCREV = "f540aba3c1bb2ac62c570fb1fe1bbea9f616221f"
 
 PACKAGECONFIG:remove = "control presence monitor"
 

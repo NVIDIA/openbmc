@@ -4,6 +4,7 @@
       "event": "CPU Boot completed failure",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU-BOOT-COMP-ERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -19,7 +20,7 @@
         }
       },
       "severity": "Critical",
-      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow. If the problem persists, isolate the server for RMA evaluation.",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs via NVDebug (NVONLINE: 1109504), and reflash AP firmware with recovery flow. If the problem persists, isolate the server for RMA evaluation.",
       "debounce": {
         "type": "",
         "duration": ""
@@ -50,6 +51,7 @@
       "event": "CPU Secure boot failure",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU-SEC-BOOT-ERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -65,7 +67,7 @@
         }
       },
       "severity": "Critical",
-      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs and reflash AP firmware with recovery flow.",
+      "resolution": "ERoT will try to recover AP by a reset/reboot. If there is still a problem, collect ERoT logs via NVDebug (NVONLINE: 1109504), and reflash AP firmware with recovery flow.",
       "debounce": {
         "type": "",
         "duration": ""
@@ -96,6 +98,7 @@
       "event": "CPU SPI flash error",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU-SPI-FLASH-ERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -111,7 +114,7 @@
         }
       },
       "severity": "Critical",
-      "resolution": "Collect ERoT logs and isolate the server for RMA evaluation.",
+      "resolution": "Collect ERoT logs via NVDebug (NVONLINE: 1109504), and isolate the server for RMA evaluation.",
       "debounce": {
         "type": "",
         "duration": ""
@@ -142,10 +145,11 @@
       "event": "GPU GPU THERM_OVERT_INT Abnormal State Change",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_THERM_OVERT_INT-ERROR",
+      "error_type": "FPGA-ALERT",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "thermal_control"
+        "Thermal Error"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -196,10 +200,11 @@
       "event": "GPU GPU THERM_WARN_INT Abnormal State Change",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_THERM_WARN_INT-ERROR",
+      "error_type": "FPGA-ALERT",
       "managed": "no",
       "rollup_device": "",
       "category": [
-        "thermal_control"
+        "Thermal Error"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -250,6 +255,7 @@
       "event": "CPU CPU THERM_OVERT_INT Abnormal State Change",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_THERM_OVERT_INT-ERROR",
+      "error_type": "FPGA-ALERT",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -304,6 +310,7 @@
       "event": "CPU CPU THERM_WARN_INT Abnormal State Change",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_THERM_WARN_INT-ERROR",
+      "error_type": "FPGA-ALERT",
       "managed": "no",
       "rollup_device": "",
       "category": [
@@ -358,6 +365,7 @@
       "event": "ERoT_CPU CPU EROT_FATAL_ERR_INT Abnormal State Change",
       "device_type": "ERoT_CPU_[0-1]",
       "error_id": "CPU_EROT_FATAL_ERR_INT-ERROR",
+      "error_type": "FPGA-ALERT",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -381,7 +389,7 @@
         }
       },
       "severity": "Critical",
-      "resolution": "Talk to ERoT directly via MCTP vendor command to triage. For details, please refer to the section ERoT Fatal Troubleshooting\" of the latest NVIDIA Oberon Error Reporting (NVOnline: xxxxxxx). - TBD\"",
+      "resolution": "Collect ERoT logs via NVDebug (NVONLINE: 1109504), and isolate the server for RMA evaluation.",
       "debounce": {
         "type": "",
         "duration": ""
@@ -412,6 +420,7 @@
       "event": "PCBTempSensor PCB TEMP_ALERT_INT Abnormal State Change",
       "device_type": "PCB_[0-1]_Temp_0",
       "error_id": "PCB_TEMP_ALERT_INT-ERROR",
+      "error_type": "FPGA-ALERT",
       "managed": "no",
       "rollup_device": "",
       "category": [
@@ -466,6 +475,7 @@
       "event": "ERoT_FPGA FPGA_EROT SPI_ERR_INT Abnormal State Change",
       "device_type": "ERoT_FPGA_0",
       "error_id": "FPGA_EROT_SPI_ERR_INT-ERROR",
+      "error_type": "FPGA-ALERT",
       "managed": "no",
       "rollup_device": "",
       "category": [
@@ -489,7 +499,7 @@
         }
       },
       "severity": "Warning",
-      "resolution": "AC cycle the system. If problem persists, collect all dumps per troubleshooting guide, isolate the system and evaluate for RMA.",
+      "resolution": "AC cycle the system. If problem persists, collect all dumps via NVDebug (NVONLINE: 1109504), isolate the system and evaluate for RMA.",
       "debounce": {
         "type": "",
         "duration": ""
@@ -520,6 +530,7 @@
       "event": "MOD PS_RUN_PWR_FAULT Abnormal State Change",
       "device_type": "Power_0",
       "error_id": "PS_RUN_PWR_FAULT-ERROR",
+      "error_type": "FPGA-ALERT",
       "managed": "yes",
       "rollup_device": "Baseboard_0",
       "category": [
@@ -536,7 +547,7 @@
         }
       },
       "severity": "Critical",
-      "resolution": "AC cycle the system. If problem persists, collect all dumps per troubleshooting guide, isolate the system and evaluate for RMA.",
+      "resolution": "Power on the system. If problem persists, collect dumps via NVDebug (NVONLINE: 1109504), isolate the system and evaluate for RMA.",
       "debounce": {
         "type": "",
         "duration": ""
@@ -565,17 +576,18 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "FPGA report of all power registers. RF event reports all power registers with status. For all possible power registers monitored via this event please see the accompying release not document.",
+      "description": "FPGA report of all power registers. See PS_RUN_PWR_FAULT-ERROR:* for all possible error types reported.\nThe 'POWER_REGISTER_VALUE' in the event will be a hex number that represents the raw register value at time of error reporting, to be leveraged by NVIDIA for debug purposes.\n",
       "log_namespace": "Baseboard_0"
     },
     {
       "event": "GPU SRAM ECC uncorrectable error count exceed threshold",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU-SRAM-ECC-ERROR",
+      "error_type": "TELEMETRY-BASED",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "memory_status"
+        "Memory Error"
       ],
       "event_trigger": {},
       "accessor": {
@@ -671,10 +683,11 @@
       "event": "GPU Row Remapping Pending",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU-ROW-REMAPPING-PENDING-EVENT",
+      "error_type": "TELEMETRY-BASED",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "memory_status"
+        "Memory Error"
       ],
       "event_trigger": {},
       "accessor": {
@@ -749,10 +762,11 @@
       "event": "GPU Row Remapping Failure",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU-ROW-REMAPPING-ERROR",
+      "error_type": "TELEMETRY-BASED",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "memory_status"
+        "Memory Error"
       ],
       "event_trigger": {},
       "accessor": {
@@ -827,10 +841,11 @@
       "event": "GPU GPU NVLink Training Error",
       "device_type": "GPU_[0-3]/NVLink_[0-17]",
       "error_id": "GPU-NVLINK-TRAINING-ERROR",
+      "error_type": "TELEMETRY-BASED",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "interface_status"
+        "NVLink Error"
       ],
       "event_trigger": {},
       "accessor": {
@@ -891,10 +906,11 @@
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_OCP_DEVICE_STATUS:DEVICEERROR",
+      "error_type": "TELEMETRY-BASED (IROT)",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "firmware_status"
+        "Firmware Failure"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -940,17 +956,18 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU OCP_DEVICE_STATUS",
+      "description": "OCP DEVICE_STATUS command: 0x2 \"Device Error\"\nSee https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
       "log_namespace": "GPU_[0-3]"
     },
     {
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_GHSWE",
+      "error_type": "TELEMETRY-BASED (IROT)",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "firmware_status"
+        "Firmware Failure"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -996,17 +1013,18 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU OCP_DEVICE_STATUS",
+      "description": "OCP DEVICE_STATUS command: 0x3 \"Recovery Mode\", Recovery Reason 0x2\nSee https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
       "log_namespace": "GPU_[0-3]"
     },
     {
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_STF",
+      "error_type": "TELEMETRY-BASED (IROT)",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "firmware_status"
+        "Firmware Failure"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -1052,17 +1070,18 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU OCP_DEVICE_STATUS",
+      "description": "OCP DEVICE_STATUS command: 0x3 \"Recovery Mode\", Recovery Reason 0x3\nSee https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
       "log_namespace": "GPU_[0-3]"
     },
     {
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_MCKM",
+      "error_type": "TELEMETRY-BASED (IROT)",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "firmware_status"
+        "Firmware Failure"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -1108,17 +1127,18 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU OCP_DEVICE_STATUS",
+      "description": "OCP DEVICE_STATUS command: 0x3 \"Recovery Mode\", Recovery Reason 0x5\nSee https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
       "log_namespace": "GPU_[0-3]"
     },
     {
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_AF_KM",
+      "error_type": "TELEMETRY-BASED (IROT)",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "firmware_status"
+        "Firmware Failure"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -1164,17 +1184,18 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU OCP_DEVICE_STATUS",
+      "description": "OCP DEVICE_STATUS command: 0x3 \"Recovery Mode\", Recovery Reason 0x6\nSee https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
       "log_namespace": "GPU_[0-3]"
     },
     {
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_ARF_KM",
+      "error_type": "TELEMETRY-BASED (IROT)",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "firmware_status"
+        "Firmware Failure"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -1220,17 +1241,18 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU OCP_DEVICE_STATUS",
+      "description": "OCP DEVICE_STATUS command: 0x3 \"Recovery Mode\", Recovery Reason 0x7\nSee https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
       "log_namespace": "GPU_[0-3]"
     },
     {
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_MCBL",
+      "error_type": "TELEMETRY-BASED (IROT)",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "firmware_status"
+        "Firmware Failure"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -1276,17 +1298,18 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU OCP_DEVICE_STATUS",
+      "description": "OCP DEVICE_STATUS command: 0x3 \"Recovery Mode\", Recovery Reason 0x8\nSee https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
       "log_namespace": "GPU_[0-3]"
     },
     {
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_AF_BL",
+      "error_type": "TELEMETRY-BASED (IROT)",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "firmware_status"
+        "Firmware Failure"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -1332,17 +1355,18 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU OCP_DEVICE_STATUS",
+      "description": "OCP DEVICE_STATUS command: 0x3 \"Recovery Mode\", Recovery Reason 0x9\nSee https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
       "log_namespace": "GPU_[0-3]"
     },
     {
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_ARF_BL",
+      "error_type": "TELEMETRY-BASED (IROT)",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "firmware_status"
+        "Firmware Failure"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -1388,17 +1412,18 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU OCP_DEVICE_STATUS",
+      "description": "OCP DEVICE_STATUS command: 0x3 \"Recovery Mode\", Recovery Reason 0xA\nSee https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
       "log_namespace": "GPU_[0-3]"
     },
     {
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_MCRF",
+      "error_type": "TELEMETRY-BASED (IROT)",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "firmware_status"
+        "Firmware Failure"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -1444,17 +1469,18 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU OCP_DEVICE_STATUS",
+      "description": "OCP DEVICE_STATUS command: 0x3 \"Recovery Mode\", Recovery Reason 0xE\nSee https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
       "log_namespace": "GPU_[0-3]"
     },
     {
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_AF_RF",
+      "error_type": "TELEMETRY-BASED (IROT)",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "firmware_status"
+        "Firmware Failure"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -1500,17 +1526,18 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU OCP_DEVICE_STATUS",
+      "description": "OCP DEVICE_STATUS command: 0x3 \"Recovery Mode\", Recovery Reason 0x6\nSee https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
       "log_namespace": "GPU_[0-3]"
     },
     {
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_ARF_RF",
+      "error_type": "TELEMETRY-BASED (IROT)",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "firmware_status"
+        "Firmware Failure"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -1556,17 +1583,18 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU OCP_DEVICE_STATUS",
+      "description": "OCP DEVICE_STATUS command: 0x3 \"Recovery Mode\", Recovery Reason 0xD\nSee https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
       "log_namespace": "GPU_[0-3]"
     },
     {
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_OCP_DEVICE_STATUS:RECOVERYMODE_FR",
+      "error_type": "TELEMETRY-BASED (IROT)",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "firmware_status"
+        "Firmware Failure"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -1612,17 +1640,18 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU OCP_DEVICE_STATUS",
+      "description": "OCP DEVICE_STATUS command: 0x3 \"Recovery Mode\", Recovery Reason 0x11\nSee https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
       "log_namespace": "GPU_[0-3]"
     },
     {
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_OCP_DEVICE_STATUS:BOOTFAILURE_CMCD",
+      "error_type": "TELEMETRY-BASED (IROT)",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "firmware_status"
+        "Firmware Failure"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -1668,17 +1697,18 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU OCP_DEVICE_STATUS",
+      "description": "OCP DEVICE_STATUS command: 0xE \"Boot Failure\", Recovery Reason 0x4\nSee https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
       "log_namespace": "GPU_[0-3]"
     },
     {
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_OCP_DEVICE_STATUS:BOOTFAILURE_MCMM",
+      "error_type": "TELEMETRY-BASED (IROT)",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "firmware_status"
+        "Firmware Failure"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -1724,17 +1754,18 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU OCP_DEVICE_STATUS",
+      "description": "OCP DEVICE_STATUS command: 0xE \"Boot Failure\", Recovery Reason 0xB\nSee https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
       "log_namespace": "GPU_[0-3]"
     },
     {
       "event": "GPU OCP Device Status",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU_OCP_DEVICE_STATUS:FATALERROR",
+      "error_type": "TELEMETRY-BASED (IROT)",
       "managed": "yes",
       "rollup_device": "GPU_[0-3]",
       "category": [
-        "firmware_status"
+        "Firmware Failure"
       ],
       "event_trigger": {
         "type": "DBUS",
@@ -1751,7 +1782,7 @@
         }
       },
       "severity": "Critical",
-      "resolution": "Start recovery flow with the recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide). If failed persistently, collecting all IRoT dumps and isolate the server for RMA evaluation.",
+      "resolution": "Start recovery flow with the recovery image (Refer to Device Firmware Recovery section of NVIDIA Blackwell HGX 8-GPU Baseboard Firmware Update and Security Guide). If failed persistently, collecting all IRoT dumps via NVDebug (NVONLINE: 1109504) and isolate the server for RMA evaluation.",
       "debounce": {
         "type": "",
         "duration": ""
@@ -1780,13 +1811,14 @@
       ],
       "action": "",
       "value_as_count": false,
-      "description": "GPU OCP_DEVICE_STATUS",
+      "description": "OCP DEVICE_STATUS command: 0xF \"Fatal Error\"\nSee https://www.opencompute.org/documents/ocp-recovery-document-1p0-final-1-pdf",
       "log_namespace": "GPU_[0-3]"
     },
     {
       "event": "CPU EC_TAG0_AUTH_ERROR",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_EC_TAG0_AUTH_ERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -1828,13 +1860,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU EC_TAG0_AUTH_ERROR",
+      "description": "EC_TAG0_AUTH_ERROR.\nTAG0 image authentication failed; TAG1 image in use.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU EC_TAG1_COPY_ERROR",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_EC_TAG1_COPY_ERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -1876,13 +1909,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU EC_TAG1_COPY_ERROR",
+      "description": "EC_TAG1_COPY_ERROR.\nCopying TAG0 image to TAG1 image failed.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU EC_OTP_MISMATCH_ERROR",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_EC_OTP_MISMATCH_ERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -1924,13 +1958,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU EC_OTP_MISMATCH_ERROR",
+      "description": "EC_OTP_MISMATCH_ERROR.\nOTP content does not match expectation.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU EC_STRAP_MISMATCH",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_EC_STRAP_MISMATCH",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -1972,13 +2007,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU EC_STRAP_MISMATCH",
+      "description": "EC_STRAP_MISMATCH.\nAP strap on board does not match value in OTP.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_PRIMARY_ValidatePublicKeyError",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_PRIMARY_VALIDATEPUBLICKEYERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2020,13 +2056,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_PRIMARY_ValidatePublicKeyError",
+      "description": "AP0_PRIMARY_FW_AUTENTICATION_STATUS: VALIDATE_PUBLIC_KEY_ERROR\nPublic key hash does not match the key from the key hash blob.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_PRIMARY_KeyRevokeCheckError",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_PRIMARY_KEYREVOKECHECKERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2068,13 +2105,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_PRIMARY_KeyRevokeCheckError",
+      "description": "AP0_PRIMARY_FW_AUTENTICATION_STATUS: KEY_REVOKE_CHECK_ERROR\nKey index is revoked.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_PRIMARY_RollbackProtectionCheckError",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_PRIMARY_ROLLBACKPROTECTIONCHECKERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2116,13 +2154,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_PRIMARY_RollbackProtectionCheckError",
+      "description": "AP0_PRIMARY_FW_AUTENTICATION_STATUS: ROLLBACK_PROTECTION_CHECK_ERROR\nImage security version is revoke.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_PRIMARY_AuthenticateError",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_PRIMARY_AUTHENTICATEERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2164,13 +2203,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_PRIMARY_AuthenticateError",
+      "description": "AP0_PRIMARY_FW_AUTENTICATION_STATUS: AUTHENTICATE_ERROR\nSignature verification fialed.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_PRIMARY_SpiReadError",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_PRIMARY_SPIREADERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2212,13 +2252,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_PRIMARY_SpiReadError",
+      "description": "AP0_PRIMARY_FW_AUTENTICATION_STATUS: KEY_REVOKE_CHECK_ERROR\nFailed to read the SPI flash during the authentication.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_SECONDARY_ValidatePublicKeyError",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_SECONDARY_VALIDATEPUBLICKEYERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2260,13 +2301,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_SECONDARY_ValidatePublicKeyError",
+      "description": "AP0_SECONDARY_FW_AUTENTICATION_STATUS: VALIDATE_PUBLIC_KEY_ERROR\nPublic key hash does not match the key from the key hash blob.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_SECONDARY_KeyRevokeCheckError",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_SECONDARY_KEYREVOKECHECKERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2308,13 +2350,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_SECONDARY_KeyRevokeCheckError",
+      "description": "AP0_SECONDARY_FW_AUTENTICATION_STATUS: KEY_REVOKE_CHECK_ERROR\nKey index is revoked.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_SECONDARY_RollbackProtectionCheckError",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_SECONDARY_ROLLBACKPROTECTIONCHECKERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2356,13 +2399,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_SECONDARY_RollbackProtectionCheckError",
+      "description": "AP0_SECONDARY_FW_AUTENTICATION_STATUS: ROLLBACK_PROTECTION_CHECK_ERROR\nImage security version is revoke.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_SECONDARY_AuthenticateError",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_SECONDARY_AUTHENTICATEERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2404,13 +2448,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_SECONDARY_AuthenticateError",
+      "description": "AP0_SECONDARY_FW_AUTENTICATION_STATUS: AUTHENTICATE_ERROR\nSignature verification fialed.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_SECONDARY_SpiReadError",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_SECONDARY_SPIREADERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2452,13 +2497,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_SECONDARY_SpiReadError",
+      "description": "AP0_SECONDARY_FW_AUTENTICATION_STATUS: KEY_REVOKE_CHECK_ERROR\nFailed to read the SPI flash during the authentication.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_RECOVERY_ValidatePublicKeyError",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_RECOVERY_VALIDATEPUBLICKEYERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2500,13 +2546,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_RECOVERY_ValidatePublicKeyError",
+      "description": "AP0_RECOVERY_FW_AUTENTICATION_STATUS: VALIDATE_PUBLIC_KEY_ERROR\nPublic key hash does not match the key from the key hash blob.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_RECOVERY_KeyRevokeCheckError",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_RECOVERY_KEYREVOKECHECKERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2548,13 +2595,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_RECOVERY_KeyRevokeCheckError",
+      "description": "AP0_RECOVERY_FW_AUTENTICATION_STATUS: KEY_REVOKE_CHECK_ERROR\nKey index is revoked.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_RECOVERY_RollbackProtectionCheckError",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_RECOVERY_ROLLBACKPROTECTIONCHECKERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2596,13 +2644,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_RECOVERY_RollbackProtectionCheckError",
+      "description": "AP0_RECOVERY_FW_AUTENTICATION_STATUS: ROLLBACK_PROTECTION_CHECK_ERROR\nImage security version is revoke.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_RECOVERY_AuthenticateError",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_RECOVERY_AUTHENTICATEERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2644,13 +2693,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_RECOVERY_AuthenticateError",
+      "description": "AP0_RECOVERY_FW_AUTENTICATION_STATUS: AUTHENTICATE_ERROR\nSignature verification fialed.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_RECOVERY_SpiReadError",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_RECOVERY_SPIREADERROR",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2692,13 +2742,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_RECOVERY_SpiReadError",
+      "description": "AP0_RECOVERY_FW_AUTENTICATION_STATUS: KEY_REVOKE_CHECK_ERROR\nFailed to read the SPI flash during the authentication.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_SPI_READ_FAILURE",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_SPI_READ_FAILURE",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2740,13 +2791,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_SPI_READ_FAILURE",
+      "description": "AP0_SPI_READ_FAILURE.\nFailed to read the SPI falsh manufacturer and device IDs.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_SPI_ACCESS_VIOLATION_OPCODE",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_SPI_ACCESS_VIOLATION_OPCODE",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2788,13 +2840,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_SPI_ACCESS_VIOLATION_OPCODE",
+      "description": "AP0_SPI_ACCESS_VIOLATION_OPCODE.\nAP0 attempted to issue adisallowed SPI flash opcode.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_SPI_ACCESS_VIOLATION_RANGE",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_SPI_ACCESS_VIOLATION_RANGE",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2836,13 +2889,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_SPI_ACCESS_VIOLATION_RANGE",
+      "description": "AP0_SPI_ACCESS_VIOLATION_RANGE.\nAP0 attempted to read, write, or erase a disallowed address.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_HEARTBEAT_TIMEOUT",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_HEARTBEAT_TIMEOUT",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2884,13 +2938,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_HEARTBEAT_TIMEOUT",
+      "description": "AP0_HEARTBEAT_TIMEOUT.\nHeartbeat was not received from AP0 in the timeout period.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU AP0_BOOTCOMPLETE_TIMEOUT",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_AP0_BOOTCOMPLETE_TIMEOUT",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2932,13 +2987,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU AP0_BOOTCOMPLETE_TIMEOUT",
+      "description": "AP0_BOOTCOMPLETE_TIMEOUT.\nBoot complete was not received from the AP0 timeout period.\nSee CEC1736 command guide, NVONLINE 1109972\n",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU FATAL_ERROR_CODE_ErrorAuthApFw",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_FATAL_ERROR_CODE_ERRORAUTHAPFW",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -2980,13 +3036,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU FATAL_ERROR_CODE_ErrorAuthApFw",
+      "description": "FATAL_ERROR_CODE: ErrorAuthApFw\nAuthentication failure. The ERoT holds the AP in resett mode.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU FATAL_ERROR_CODE_ErrorInitResetEvent",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_FATAL_ERROR_CODE_ERRORINITRESETEVENT",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -3028,13 +3085,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU FATAL_ERROR_CODE_ErrorInitResetEvent",
+      "description": "FATAL_ERROR_CODE: ErrorInitResetEvent\nError in initialization after a reset event.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU FATAL_ERROR_CODE_ErrorSetupSpimon",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_FATAL_ERROR_CODE_ERRORSETUPSPIMON",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -3076,13 +3134,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU FATAL_ERROR_CODE_ErrorSetupSpimon",
+      "description": "FATAL_ERROR_CODE: ErrorSetupSpimon\nFailed to configure the SPI monitor.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU FATAL_ERROR_CODE_ErrorGrantApSpiAccess",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_FATAL_ERROR_CODE_ERRORGRANTAPSPIACCESS",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -3124,13 +3183,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU FATAL_ERROR_CODE_ErrorGrantApSpiAccess",
+      "description": "FATAL_ERROR_CODE: ErrorGrantApSpiAccess\nFailed to Grant AP access to the AP firmware SPI flash.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU FATAL_ERROR_CODE_ErrorTryReleaseOnInvalidSlot",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_FATAL_ERROR_CODE_ERRORTRYRELEASEONINVALIDSLOT",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -3172,13 +3232,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU FATAL_ERROR_CODE_ErrorTryReleaseOnInvalidSlot",
+      "description": "FATAL_ERROR_CODE: ErrorTryReleaseOnInvalidSlot\nAttempted to release an AP reset with an invalid firmwanre slow.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU FATAL_ERROR_CODE_ErrorBootCompleteMsgFromInvalidSlot",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_FATAL_ERROR_CODE_ERRORBOOTCOMPLETEMSGFROMINVALIDSLOT",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -3220,13 +3281,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU FATAL_ERROR_CODE_ErrorBootCompleteMsgFromInvalidSlot",
+      "description": "FATAL_ERROR_CODE: ErrorBootCompleteMsgFromInvalidSlot\nAP indicated a successful boot to invalid firmware slot.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU FATAL_ERROR_CODE_ErrorBootCompleteTimeoutMaxAttempt",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_FATAL_ERROR_CODE_ERRORBOOTCOMPLETETIMEOUTMAXATTEMPT",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -3268,13 +3330,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU FATAL_ERROR_CODE_ErrorBootCompleteTimeoutMaxAttempt",
+      "description": "FATAL_ERROR_CODE: ErrorBootCompleteTimeoutMaxAttempt.\nBootComplete timeout detected on all retry attempts.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU FATAL_ERROR_CODE_ErrorSetTimer",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_FATAL_ERROR_CODE_ERRORSETTIMER",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -3316,13 +3379,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU FATAL_ERROR_CODE_ErrorSetTimer",
+      "description": "FATAL_ERROR_CODE: ErrorSetTimer\nFailed to setup the boot complete and/or the heartbeat timer.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU FATAL_ERROR_CODE_ErrorGetStrapSettingFromMetadata",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_FATAL_ERROR_CODE_ERRORGETSTRAPSETTINGFROMMETADATA",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -3364,13 +3428,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU FATAL_ERROR_CODE_ErrorGetStrapSettingFromMetadata",
+      "description": "FATAL_ERROR_CODE: ErrorGetStrapSettingFromMetadata.\nFailed to read the extended strap settings from the metadata.\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU FATAL_ERROR_CODE_ErrorFirmwareRestriction",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_FATAL_ERROR_CODE_ERRORFIRMWARERESTRICTION",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -3412,13 +3477,14 @@
       "telemetries": [],
       "action": "",
       "value_as_count": false,
-      "description": "CPU FATAL_ERROR_CODE_ErrorFirmwareRestriction",
+      "description": "FATAL_ERROR_CODE: ErrorFirmwareRestriction\nSee CEC1736 command guide, NVONLINE 1109972",
       "log_namespace": "CPU_[0-1]"
     },
     {
       "event": "CPU REGION_CP_FAIL_Timeout",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_REGION_CP_FAIL_TIMEOUT",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -3467,6 +3533,7 @@
       "event": "CPU REGION_CP_FAIL_OtherReason",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_REGION_CP_FAIL_OTHERREASON",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -3515,6 +3582,7 @@
       "event": "CPU STAGE_DL_FAILED_BackgroundCopyToInactiveFailed",
       "device_type": "CPU_[0-1]",
       "error_id": "CPU_STAGE_DL_FAILED_BACKGROUNDCOPYTOINACTIVEFAILED",
+      "error_type": "TELEMETRY-BASED (EROT)",
       "managed": "yes",
       "rollup_device": "CPU_[0-1]",
       "category": [
@@ -3563,10 +3631,11 @@
       "event": "GPU Hardware Throttled State",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU-THROTTLE-EVENT",
+      "error_type": "TELEMETRY-BASED",
       "managed": "no",
       "rollup_device": "",
       "category": [
-        "inband_status"
+        "Performance"
       ],
       "event_trigger": {},
       "accessor": {
@@ -3619,10 +3688,11 @@
       "event": "GPU Thermal Throttled State",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU-THERMAL-THROTTLE-EVENT",
+      "error_type": "TELEMETRY-BASED",
       "managed": "no",
       "rollup_device": "",
       "category": [
-        "inband_status"
+        "Performance"
       ],
       "event_trigger": {},
       "accessor": {
@@ -3675,10 +3745,11 @@
       "event": "GPU Power Brake Throttled State",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU-PWBRAKE-THROTTLE-EVENT",
+      "error_type": "TELEMETRY-BASED",
       "managed": "no",
       "rollup_device": "",
       "category": [
-        "inband_status"
+        "Performance"
       ],
       "event_trigger": {},
       "accessor": {
@@ -3731,10 +3802,11 @@
       "event": "GPU SYNC Boost Throttled State",
       "device_type": "GPU_[0-3]",
       "error_id": "GPU-SYNCBOOST-THROTTLE-EVENT",
+      "error_type": "TELEMETRY-BASED",
       "managed": "no",
       "rollup_device": "",
       "category": [
-        "inband_status"
+        "Performance"
       ],
       "event_trigger": {},
       "accessor": {

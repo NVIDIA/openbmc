@@ -1,5 +1,5 @@
 #!/bin/bash
-
+export LG2_FORCE_STDERR=1
 export LOG_FILE="/tmp/hmc_checker.log"
 # Function to redirect and log stdout and stderr
 # Arguments:
@@ -42,12 +42,14 @@ _log_() {
         # The 'nsmtool raw' use phoshpor-logging/lg2.
         # The command stdout of TTY cannot be redirected to a file nor grep.
         # The journal log records the command output, so grep from the log.
-        nsmtool_pid=$("$@" >/dev/null 2>&1 & echo $!) && sleep 5; journalctl _PID=$nsmtool_pid | tee -a "$LOG_FILE"
+        # nsmtool_pid=$("$@" >/dev/null 2>&1 & echo $!) && sleep 5; journalctl _PID=$nsmtool_pid | tee -a "$LOG_FILE"
+        "$@" 2>&1 | tee -a "$LOG_FILE"
     elif [[ "$1" = "pldmtool" &&  ("$2" = "raw") ]]; then
         # The 'pldmtool raw' use phoshpor-logging/lg2.
         # The command stdout of TTY cannot be redirected to a file nor grep.
         # The journal log records the command output, so grep from the log.
-        pldmtool_pid=$("$@" >/dev/null 2>&1 & echo $!) && sleep 5; journalctl _PID=$pldmtool_pid | tee -a "$LOG_FILE"
+        # pldmtool_pid=$("$@" >/dev/null 2>&1 & echo $!) && sleep 5; journalctl _PID=$pldmtool_pid | tee -a "$LOG_FILE"
+        "$@" 2>&1 | tee -a "$LOG_FILE"
     else
         # The pipe to 'tee' allows only stdout to be piped through
         "$@" 2> >(tee -a "$LOG_FILE" >/dev/null) | tee -a "$LOG_FILE"
@@ -84,13 +86,58 @@ _crc8 ()
     echo $crc
 }
 
+_retry() {
+    local cmd_to_run="$@"
+
+    # Execute the command, capturing both stdout and stderr
+    output=$(eval "$cmd_to_run" 2>&1)
+
+    # Extract the first Tx and Rx lines from the output
+    # Filters for lines containing "Tx:" or "Rx:" and takes the first one of each
+    tx_line=$(echo "$output" | grep "Tx:" | head -n 1)
+    rx_line=$(echo "$output" | grep "Rx:" | head -n 1)
+
+    # Extract the byte strings following "Tx: " and "Rx: "
+    # Uses sed to get all text after "Tx: " (and optional spaces)
+    tx_bytes_full=$(echo "$tx_line" | sed -n 's/.*Tx: *//p')
+    rx_bytes_full=$(echo "$rx_line" | sed -n 's/.*Rx: *//p')
+
+    # Extract and concatenate selected bytes for Tx and Rx
+    tx_selected_bytes=$(echo "$tx_bytes_full" | cut -d ' ' -f1,2,4,5,6 | sed 's/^ *//;s/ *$//;s/  */ /g')
+    rx_selected_bytes=$(echo "$rx_bytes_full" | cut -d ' ' -f1,2,4,5,6 | sed 's/^ *//;s/ *$//;s/  */ /g')
+    rx_status_byte=$(echo "$rx_bytes_full" | cut -d ' ' -f7)
+
+    # Compare the extracted first 6 bytes from Tx and Rx
+    if [ "$tx_selected_bytes" = "$rx_selected_bytes" ] && [ "$rx_status_byte" = "00" ]; then
+        # If they match, print the entire original Tx line to standard output
+        echo "$output"
+        return 0 # Success
+    else
+        return 1 # Fail
+    fi
+}
+
+_nmstool_raw_retry(){
+    local cmd="$@"
+    local max_retry_attempts=3
+
+    for i in $(seq 1 $max_retry_attempts); do
+        output=$(eval _retry "$cmd" 2>&1)
+        if [ $? -eq 0 ]; then
+            echo "$output"
+            return 0
+        fi
+        [ $i -lt $max_retry_attempts ] && echo "Attempt-$i Failed Retrying"
+    done
+}
+
 # HMC-SMA-Security Helper to get active firmware slot and raw data
 _get_sma_nsm_active_firmware_slot() {
     local sma_eid="$1"
     local active_key_set_data_byte=15    
     # default EID to 40 SMA-CX8-24_Bridge
     # the 'nsmtool' outputs to journal log
-    eid=${sma_eid:-40} && raw_output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x01 0x05 0x0a 0x00 0x02 0xff 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    eid=${sma_eid:-40} && raw_output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x01 0x05 0x0a 0x00 0x02 0xff 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     if [[ $raw_output ]]; then
         slot=$(echo "$raw_output" | awk '{print $'$active_key_set_data_byte'}')
         echo "$slot $raw_output"
@@ -1689,7 +1736,7 @@ eid=${input_eid:-14} && slot=${slot_id:-1} && count=$(_log_ spdmtool -e ${eid} g
 #   valid Security Version Number (SVN)
 get_hmc_erot_nsm_svn() {
 local eid="$1"
-eid=${eid:-14} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x10 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-14} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x10 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
 
     # Extract 12th and 13th bytes and convert to little endian integer
     local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
@@ -1703,7 +1750,7 @@ eid=${eid:-14} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Pending Component Security Version Number (SVN)
 get_hmc_erot_nsm_pending_svn() {
 local eid="$1"
-eid=${eid:-14} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x10 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-14} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x10 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
 
     # Extract 14th and 15th bytes and convert to little endian integer
     local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
@@ -1717,7 +1764,7 @@ eid=${eid:-14} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Minimum Security Version Number (MIN_SVN)
 get_hmc_erot_nsm_min_svn() {
 local eid="$1"
-eid=${eid:-14} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x10 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-14} && output=$(_log_ _nmstool_raw_retry  nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x10 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
 
     # Extract 16th and 17th bytes and convert to little endian integer
     local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
@@ -1731,7 +1778,7 @@ eid=${eid:-14} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Pending Component Minimum Security Version Number 
 get_hmc_erot_nsm_pending_min_svn() {
 local eid="$1"
-eid=${eid:-14} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x10 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-14} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x10 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
 
     # Extract 18th and 19th bytes and convert to little endian integer
     local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
@@ -2327,7 +2374,7 @@ local cmd=0x00
 
 # default EID to 12, FPGA MCTP Bridge EID
 # the 'nsmtool' outputs to journal log
-eid=${fpga_bridge_eid:-12} && [[ "00" = $(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '7p') ]] && echo "yes" || echo "no"
+eid=${fpga_bridge_eid:-12} && [[ "00" = $(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '7p') ]] && echo "yes" || echo "no"
 }
 
 # HMC-FPGA-NSM_T0-03
@@ -2357,7 +2404,7 @@ local cmd=0x01
 
 # default EID to 12, FPGA MCTP Bridge EID
 # the 'nsmtool' outputs to journal log
-eid=${fpga_bridge_eid:-12} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
+eid=${fpga_bridge_eid:-12} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
 }
 
 # HMC-SMA-Security-03
@@ -2455,7 +2502,7 @@ get_sma_nsm_signing_key_index_nsmtool() {
 #   valid Active Component Security Version Number (SVN) of SXM SMA IROT
 get_sxm_sma_irot_nsm_svn() {
     local sxm_sma_eid="$1"
-    eid=${sxm_sma_eid:-60} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    eid=${sxm_sma_eid:-60} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 12th and 13th bytes and convert to little endian integer
     local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
 }
@@ -2468,7 +2515,7 @@ get_sxm_sma_irot_nsm_svn() {
 #   valid Pending Component Security Version Number (SVN) of SXM SMA IROT
 get_sxm_sma_irot_nsm_pending_svn() {
     local sxm_sma_eid="$1"
-    eid=${sxm_sma_eid:-60} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    eid=${sxm_sma_eid:-60} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 14th and 15th bytes and convert to little endian integer
     local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
 }   
@@ -2481,7 +2528,7 @@ get_sxm_sma_irot_nsm_pending_svn() {
 #   valid Active Component Minimum Security Version Number (MIN_SVN) of SXM SMA IROT
 get_sxm_sma_irot_nsm_min_svn() {
     local sxm_sma_eid="$1"
-    eid=${sxm_sma_eid:-60} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    eid=${sxm_sma_eid:-60} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 16th and 17th bytes and convert to little endian integer
     local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
 }       
@@ -2494,7 +2541,7 @@ get_sxm_sma_irot_nsm_min_svn() {
 #   valid Pending Component Minimum Security Version Number (MIN_SVN) of SXM SMA IROT
 get_sxm_sma_irot_nsm_pending_min_svn() {
     local sxm_sma_eid="$1"
-    eid=${sxm_sma_eid:-60} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    eid=${sxm_sma_eid:-60} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 18th and 19th bytes and convert to little endian integer
     local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
 }
@@ -2507,7 +2554,7 @@ get_sxm_sma_irot_nsm_pending_min_svn() {
 #   valid Active Component Security Version Number (SVN) of CX8 SMA IROT
 get_cx8_sma_irot_nsm_svn() {
     local cx8_sma_eid="$1"
-    eid=${cx8_sma_eid:-40} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    eid=${cx8_sma_eid:-40} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 12th and 13th bytes and convert to little endian integer
     local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
 }
@@ -2520,7 +2567,7 @@ get_cx8_sma_irot_nsm_svn() {
 #   valid Pending Component Security Version Number (SVN) of CX8 SMA IROT   
 get_cx8_sma_irot_nsm_pending_svn() {
     local cx8_sma_eid="$1"
-    eid=${cx8_sma_eid:-40} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    eid=${cx8_sma_eid:-40} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 14th and 15th bytes and convert to little endian integer
     local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
 }   
@@ -2533,7 +2580,7 @@ get_cx8_sma_irot_nsm_pending_svn() {
 #   valid Active Component Minimum Security Version Number (MIN_SVN) of CX8 SMA IROT
 get_cx8_sma_irot_nsm_min_svn() {
     local cx8_sma_eid="$1"
-    eid=${cx8_sma_eid:-40} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    eid=${cx8_sma_eid:-40} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 16th and 17th bytes and convert to little endian integer
     local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
 }   
@@ -2546,7 +2593,7 @@ get_cx8_sma_irot_nsm_min_svn() {
 #   valid Pending Component Minimum Security Version Number (MIN_SVN) of CX8 SMA IROT
 get_cx8_sma_irot_nsm_pending_min_svn() {
     local cx8_sma_eid="$1"
-    eid=${cx8_sma_eid:-40} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    eid=${cx8_sma_eid:-40} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 18th and 19th bytes and convert to little endian integer
     local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
 }
@@ -3384,7 +3431,7 @@ eid=${input_eid:-13} && slot=${slot_id:-1} && count=$(_log_ spdmtool -e ${eid} g
 #   valid Active Component Security Version Number (SVN) of FPGA
 get_fpga_erot_nsm_svn() {
 local eid="$1"
-eid=${eid:-13} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x50 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-13} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x50 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 12th and 13th bytes and convert to little endian integer
     local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
 }
@@ -3397,7 +3444,7 @@ eid=${eid:-13} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Pending Component Security Version Number (SVN)
 get_fpga_erot_nsm_pending_svn() {
 local eid="$1"
-eid=${eid:-13} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x50 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-13} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x50 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 14th and 15th bytes and convert to little endian integer
     local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
 }
@@ -3410,7 +3457,7 @@ eid=${eid:-13} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Minimum Security Version Number (MIN_SVN)
 get_fpga_erot_nsm_min_svn() {
 local eid="$1"
-eid=${eid:-13} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x50 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-13} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x50 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 16th and 17th bytes and convert to little endian integer
     local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
 }
@@ -3423,7 +3470,7 @@ eid=${eid:-13} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Pending Component Minimum Security Version Number (MIN_SVN)
 get_fpga_erot_nsm_pending_min_svn() {
 local eid="$1"
-eid=${eid:-13} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x50 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-13} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x50 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 18th and 19th bytes and convert to little endian integer
     local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
 }
@@ -3713,7 +3760,7 @@ local cmd=0x00
 
 # default EID to 32, GPU #5
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-32} && [[ "00" = $(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '7p') ]] && echo "yes" || echo "no"
+eid=${gpu_eid:-32} && [[ "00" = $(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '7p') ]] && echo "yes" || echo "no"
 }
 
 # HMC-GPU-NSM_T0-03
@@ -3743,7 +3790,7 @@ local cmd=0x01
 
 # default EID to 32, GPU #5
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-32} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
+eid=${gpu_eid:-32} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
 }
 
 ## GPU: Firmware Update Protocol
@@ -4313,7 +4360,7 @@ local cmd=0x00
 
 # default EID to 32, GPU #5
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-32} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,27p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
+eid=${gpu_eid:-32} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,27p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
 }
 
 # HMC-GPU-NSM_T2-02
@@ -4328,7 +4375,7 @@ local cmd=0x01
 
 # default EID to 32, GPU #5
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-32} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,15p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
+eid=${gpu_eid:-32} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,15p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
 }
 
 # HMC-GPU-NSM_T2-03
@@ -4343,7 +4390,7 @@ local cmd=0x02
 
 # default EID to 32, GPU #5
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-32} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,13p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
+eid=${gpu_eid:-32} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,13p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
 }
 
 # HMC-GPU-NSM_T2-07
@@ -4358,7 +4405,7 @@ local cmd=0x03
 
 # default EID to 32, GPU #5
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-32} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x01 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
+eid=${gpu_eid:-32} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x01 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
 }
 
 # HMC-GPU-NSM_T2-08
@@ -4373,7 +4420,7 @@ local cmd=0x03
 
 # default EID to 32, GPU #5
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-32} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x0e 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
+eid=${gpu_eid:-32} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x0e 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
 }
 
 # HMC-GPU-NSM_T2-09
@@ -4388,7 +4435,7 @@ local cmd=0x03
 
 # default EID to 32, GPU #5
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-32} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x05 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,13p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
+eid=${gpu_eid:-32} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x05 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,13p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
 }
 
 # HMC-GPU-NSM_T2-10
@@ -4403,7 +4450,7 @@ local cmd=0x03
 
 # default EID to 32, GPU #5
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-32} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x02 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
+eid=${gpu_eid:-32} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x02 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
 }
 
 # HMC-GPU-NSM_T2-11
@@ -4418,7 +4465,7 @@ local cmd=0x03
 
 # default EID to 32, GPU #5
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-32} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x03 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
+eid=${gpu_eid:-32} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x03 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
 }
 
 # HMC-GPU-NSM_T2-12
@@ -4433,7 +4480,7 @@ local cmd=0x03
 
 # default EID to 32, GPU #5
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-32} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x06 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,15p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
+eid=${gpu_eid:-32} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x06 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,15p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
 }
 
 # HMC-GPU-NSM_T2-13
@@ -4448,7 +4495,7 @@ local cmd=0x03
 
 # default EID to 32, GPU #5
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-32} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x07 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,15p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
+eid=${gpu_eid:-32} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x07 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,15p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
 }
 
 # HMC-GPU-NSM_T2-14
@@ -4463,7 +4510,7 @@ local cmd=0x03
 
 # default EID to 32, GPU #5
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-32} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x08 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,13p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
+eid=${gpu_eid:-32} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x08 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,13p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
 }
 
 # HMC-GPU-NSM_T2-15
@@ -4478,7 +4525,7 @@ local cmd=0x03
 
 # default EID to 32, GPU #5
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-32} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x0a 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,13p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
+eid=${gpu_eid:-32} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x0a 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,13p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
 }
 
 # HMC-GPU-NSM_T2-16
@@ -4493,7 +4540,7 @@ local cmd=0x03
 
 # default EID to 32, GPU #5
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-32} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x09 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,13p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
+eid=${gpu_eid:-32} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x09 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,13p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
 }
 
 # HMC-GPU-NSM_T2-17
@@ -4508,7 +4555,7 @@ local cmd=0x03
 
 # default EID to 32, GPU #5
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-32} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x04 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
+eid=${gpu_eid:-32} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x02 $cmd 0x02 0x04 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p' | awk '{printf "0x%s ", $0} END {print ""}') && echo "$output"
 }
 
 ## GPU: Security Protocol
@@ -4603,7 +4650,7 @@ eid=${input_eid:-28} && slot=${slot_id:-0} && count=$(_log_ spdmtool -e ${eid} g
 #   valid Active Component Security Version Number (SVN) of GPU
 get_gpu_irot_nsm_svn() {
 local eid="$1"
-eid=${eid:-61} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x00 0xC0 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-61} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x00 0xC0 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 12th and 13th bytes and convert to little endian integer
     local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
 }
@@ -4616,7 +4663,7 @@ eid=${eid:-61} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Pending Component Security Version Number (SVN) of GPU
 get_gpu_irot_nsm_pending_svn() {
 local eid="$1"
-eid=${eid:-61} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x00 0xC0 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-61} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x00 0xC0 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 14th and 15th bytes and convert to little endian integer
     local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
 } 
@@ -4629,7 +4676,7 @@ eid=${eid:-61} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Active Component Minimum Security Version Number (MIN_SVN) of GPU
 get_gpu_irot_nsm_min_svn() {
 local eid="$1"
-eid=${eid:-61} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x00 0xC0 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-61} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x00 0xC0 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 16th and 17th bytes and convert to little endian integer
     local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
 }   
@@ -4642,7 +4689,7 @@ eid=${eid:-61} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Pending Component Minimum Security Version Number (MIN_SVN) of GPU
 get_gpu_irot_nsm_pending_min_svn() {
 local eid="$1"
-eid=${eid:-61} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x00 0xC0 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-61} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x00 0xC0 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 18th and 19th bytes and convert to little endian integer
     local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
 }
@@ -4708,7 +4755,7 @@ local cmd=0x0c
 
 # default EID to 12, FPGA MCTP Bridge EID
 # the 'nsmtool' outputs to journal log
-eid=${fpga_bridge_eid:-12} && cmd=${cmd:-"0x0c"} && req=${req_1:-"0x90"} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x03 $cmd 0x01 "${req}" -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,19p' | awk '{print "0x"$0}' | tr '\n' ' ') && [[ $output ]] && echo "$output" || echo ""
+eid=${fpga_bridge_eid:-12} && cmd=${cmd:-"0x0c"} && req=${req_1:-"0x90"} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x03 $cmd 0x01 "${req}" -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12,19p' | awk '{print "0x"$0}' | tr '\n' ' ') && [[ $output ]] && echo "$output" || echo ""
 }
 
 # Component-Level Category: CX7 #
@@ -4968,7 +5015,7 @@ local cmd=0x00
 
 # default EID to 24, CX7 MCTP EID
 # the 'nsmtool' outputs to journal log
-eid=${cx7_eid:-24} && [[ "00" = $(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '7p') ]] && echo "yes" || echo "no"
+eid=${cx7_eid:-24} && [[ "00" = $(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '7p') ]] && echo "yes" || echo "no"
 }
 
 # HMC-CX7-NSM_T0-03
@@ -4998,7 +5045,7 @@ local cmd=0x01
 
 # default EID to 24, CX7 MCTP EID
 # the 'nsmtool' outputs to journal log
-eid=${gpu_eid:-24} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
+eid=${gpu_eid:-24} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
 }
 
 
@@ -5764,7 +5811,7 @@ eid=${input_eid:-17} && slot=${slot_id:-1} && count=$(_log_ spdmtool -e ${eid} g
 #   valid Active Component Security Version Number (SVN) of CX7 ERoT
 get_cx7_erot_nsm_svn() {
 local eid="$1"
-eid=${eid:-17} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xbc 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-17} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xbc 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 12th and 13th bytes and convert to little endian integer
     local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
 }
@@ -5777,7 +5824,7 @@ eid=${eid:-17} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Pending Component Security Version Number (SVN) of CX7 ERoT
 get_cx7_erot_nsm_pending_svn() {
 local eid="$1"
-eid=${eid:-17} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xbc 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-17} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xbc 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 14th and 15th bytes and convert to little endian integer
     local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
 }
@@ -5790,7 +5837,7 @@ eid=${eid:-17} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Active Component Minimum Security Version Number (MIN_SVN) of CX7 ERoT
 get_cx7_erot_nsm_min_svn() {
 local eid="$1"  
-eid=${eid:-17} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xbc 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-17} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xbc 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 16th and 17th bytes and convert to little endian integer
     local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
 }
@@ -5803,7 +5850,7 @@ eid=${eid:-17} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Pending Component Minimum Security Version Number (MIN_SVN) of CX7 ERoT
 get_cx7_erot_nsm_pending_min_svn() {
 local eid="$1"  
-eid=${eid:-17} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xbc 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-17} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xbc 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 18th and 19th bytes and convert to little endian integer
     local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
 }
@@ -5879,7 +5926,7 @@ key=${sku_key:-"PCI Subsystem Vendor ID"} && output=$(_log_ pldmtool fw_update Q
 #   valid Active Component Security Version Number (SVN) of CX8 IROT
 get_cx8_irot_nsm_svn() { 
 local eid="$1"
-eid=${eid:-42} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x01 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-42} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x01 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 12th and 13th bytes and convert to little endian integer
     local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
 } 
@@ -5892,7 +5939,7 @@ eid=${eid:-42} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Pending Component Security Version Number (SVN) of CX8 IROT   
 get_cx8_irot_nsm_pending_svn() {
 local eid="$1"
-eid=${eid:-42} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x01 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-42} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x01 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 14th and 15th bytes and convert to little endian integer
     local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
 }
@@ -5905,7 +5952,7 @@ eid=${eid:-42} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Active Component Minimum Security Version Number (MIN_SVN) of CX8 IROT    
 get_cx8_irot_nsm_min_svn() {
 local eid="$1"
-eid=${eid:-42} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x01 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-42} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x01 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 16th and 17th bytes and convert to little endian integer
     local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
 }   
@@ -5918,7 +5965,7 @@ eid=${eid:-42} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Pending Component Minimum Security Version Number (MIN_SVN) of CX8 IROT   
 get_cx8_irot_nsm_pending_min_svn() {    
 local eid="$1"
-eid=${eid:-42} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x01 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-42} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x01 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 18th and 19th bytes and convert to little endian integer
     local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
 }
@@ -6261,7 +6308,7 @@ local cmd=0x00
 
 # default EID to 22, NVSWITCH MCTP EID
 # the 'nsmtool' outputs to journal log
-eid=${nvswitch_eid:-22} && [[ "00" = $(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '7p') ]] && echo "yes" || echo "no"
+eid=${nvswitch_eid:-22} && [[ "00" = $(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '7p') ]] && echo "yes" || echo "no"
 }
 
 # HMC-NVSWITCH-NSM_T0-03
@@ -6291,7 +6338,7 @@ local cmd=0x01
 
 # default EID to 22, NVSWITCH MCTP EID
 # the 'nsmtool' outputs to journal log
-eid=${nvswitch_eid:-22} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
+eid=${nvswitch_eid:-22} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
 }
 
 ## NVSWITCH: Firmware Update Protocol
@@ -6834,7 +6881,7 @@ eid=${input_eid:-15} && slot=${slot_id:-1} && count=$(_log_ spdmtool -e ${eid} g
 #   valid Security Version Number (SVN)
 get_nvswitch_erot_nsm_svn() {
 local eid="$1"
-eid=${eid:-15} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xcf 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-15} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xcf 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 12th and 13th bytes and convert to little endian integer
     local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
 }
@@ -6847,7 +6894,7 @@ eid=${eid:-15} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Pending Component Security Version Number (SVN)   
 get_nvswitch_erot_nsm_pending_svn() {
 local eid="$1"
-eid=${eid:-15} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xcf 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-15} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xcf 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 14th and 15th bytes and convert to little endian integer
     local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
 }
@@ -6860,7 +6907,7 @@ eid=${eid:-15} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Minimum Security Version Number (MIN_SVN) 
 get_nvswitch_erot_nsm_min_svn() {
 local eid="$1"
-eid=${eid:-15} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xcf 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-15} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xcf 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 16th and 17th bytes and convert to little endian integer
     local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
 }   
@@ -6873,7 +6920,7 @@ eid=${eid:-15} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x
 #   valid Pending Component Minimum Security Version Number (MIN_SVN)
 get_nvswitch_erot_nsm_pending_min_svn() {
 local eid="$1"
-eid=${eid:-15} && output=$(_log_ nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xcf 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+eid=${eid:-15} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xcf 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
     # Extract 18th and 19th bytes and convert to little endian integer
     local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
 }

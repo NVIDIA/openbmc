@@ -3,8 +3,9 @@ Description=Phosphor Log Manager
 
 [Service]
 ExecStart=/usr/bin/phosphor-log-manager /etc/phosphor-logging/conf/phosphor-logging-namespace.json
+Nice=10
 Restart=always
-Type=dbus
+Type=simple
 BusName=xyz.openbmc_project.Logging
 TimeoutSec=900
 

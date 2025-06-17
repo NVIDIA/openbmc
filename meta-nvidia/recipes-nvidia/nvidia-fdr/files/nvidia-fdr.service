@@ -6,6 +6,11 @@ After=network.target
 [Service]
 Environment=PLATFORMS_PATH=/tmp/nvidia-fdr/platforms
 
+# Enhanced CPU resource control - limit to 7%
+CPUQuota=7%
+Nice=19
+IOSchedulingClass=idle
+
 TimeoutStartSec=360
 ExecStartPre=/usr/bin/fdr_platforms.sh
 
@@ -13,7 +18,6 @@ ExecReload=kill -s HUP $MAINPID
 ExecStart=/usr/bin/nvidia-fdr
 Type=simple
 Restart=always
-
 
 StartLimitInterval=1000
 StartLimitBurst=3

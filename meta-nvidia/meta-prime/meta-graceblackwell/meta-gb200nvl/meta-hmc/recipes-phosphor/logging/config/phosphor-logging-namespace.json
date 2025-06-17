@@ -53,8 +53,8 @@
         },
         {
             "ID": "SEL",
-            "ErrorCapacity": 0,
-            "InfoErrorCapacity": 3000
+            "ErrorCapacity": 1500,
+            "InfoErrorCapacity": 1500
         },
         {
             "ID": "Manager",

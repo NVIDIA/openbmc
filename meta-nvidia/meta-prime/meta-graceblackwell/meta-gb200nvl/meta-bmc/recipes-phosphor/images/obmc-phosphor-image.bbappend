@@ -55,22 +55,18 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " phosphor-gpio-monitor "
 # IMAGE_NAME:append = "-${BUILD_TYPE}"
 # IMAGE_LINK_NAME:append = "-${BUILD_TYPE}"
 
+NVIDIA_EXTRA_USERS_PARAMS += "${@bb.utils.contains('DISTRO_FEATURES', 'nvidia-secure-shell-debug-token-login-enable', 'usermod -a -G secure-shell-dt-login root;', '', d)}"
+
 NVIDIA_ADMIN_ACCOUNT_PARAMS = "\
   useradd --groups priv-admin,redfish,web,ipmi,hostconsole -s /bin/sh admin; \
   usermod -p '\$6\$QJXcS28/6LB9qyvS\$CQk0HXAJdi5LcRlp/P1zkwcy8MSrGppFYlvJbm5z6Q3SXt7Hg/QuD1BEXOqi9jME9vDrZdz7mxrrdki0WvVIA0' admin; \
+  ${@bb.utils.contains('DISTRO_FEATURES', 'nvidia-secure-shell-debug-token-login-enable', 'usermod -a -G secure-shell-dt-login admin;', '', d)} \
   passwd-expire admin; \
-  ${@bb.utils.contains('BUILD_TYPE', 'prod', " passwd-expire root;", '', d)} \
+  "
+
+# Lock root account on DGX BMC
+NVIDIA_ADMIN_ACCOUNT_PARAMS:append:gb200nvl-bmc-dgx = " \
   ${@bb.utils.contains('BUILD_TYPE', 'prod', " usermod --lock -e 1 root;", '', d)} \
   "
 
 EXTRA_USERS_PARAMS:pn-obmc-phosphor-image += "${@bb.utils.contains('DISTRO_FEATURES', 'nvidia-admin-account', " ${NVIDIA_ADMIN_ACCOUNT_PARAMS}", '', d)}"
-
-# Refer to the EAS SPEC to check the actual password
-# The password is '0penBmc'
-NVIDIA_OBMCHOST_ACCOUNT_PARAMS = "\
-  useradd --groups redfish,web,ipmi,hostconsole,ssh-users -s /bin/sh obmchost; \
-  usermod -p '\$1\$UGMqyqdG\$FZiylVFmRRfl9Z0Ue8G7e/' obmchost; \
-  passwd-expire obmchost; \
-  "
-
-EXTRA_USERS_PARAMS:pn-obmc-phosphor-image += "${@bb.utils.contains('DISTRO_FEATURES', 'nvidia-secure-shell', " ${NVIDIA_OBMCHOST_ACCOUNT_PARAMS}", '', d)}"

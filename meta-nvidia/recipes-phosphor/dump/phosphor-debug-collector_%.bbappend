@@ -1,9 +1,10 @@
 # Use NVIDIA gitlab Phosphor Debug Collector
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 SRC_URI = "git://github.com/NVIDIA/phosphor-debug-collector;protocol=https;branch=develop"
-SRCREV = "d88eaf56d408cba8045d76da88508d6bbd907c9e"
+SRCREV = "f19c2e0c2f25a2567c39c3d942ab981175c785ab"
 
 SRC_URI += "file://create-dump-dbus.service"
+SRC_URI += "file://xyz.openbmc_project.Dump.Manager.service"
 
 EXTRA_OEMESON += "-DBMC_DUMP_MAX_LIMIT=1"
 EXTRA_OEMESON += "-DBMC_DUMP_MAX_SIZE=4096"
@@ -19,8 +20,6 @@ EXTRA_OEMESON += "-DBMC_DUMP_MIN_SPACE_REQD=4096"
 PACKAGECONFIG[jffs-workaround] = "-Djffs-workaround=disabled"
 
 SRC_URI:append = " file://cper_dump.sh "
-SRC_URI:append = " file://dump.watchdog.conf "
-SRC_URI:append = " file://coredump.watchdog.conf "
 
 FILES:${PN}-manager +=  " \
     ${bindir}/phosphor-dump-manager \
@@ -38,19 +37,10 @@ FILES:${PN}-monitor += " \
 S = "${WORKDIR}/git"
 SRC_URI += "file://coretemp.conf"
 
-FILES:${PN}-manager += " ${systemd_system_unitdir}/xyz.openbmc_project.Dump.Manager.service.d/dump.watchdog.conf"
-FILES:${PN}-manager += " ${systemd_system_unitdir}/obmc-dump-monitor.service.d/coredump.watchdog.conf"
-
-SYSTEMD_OVERRIDE:${PN}-manager += "dump.watchdog.conf:xyz.openbmc_project.Dump.Manager.service.d/dump.watchdog.conf"
-SYSTEMD_OVERRIDE:${PN}-manager += "coredump.watchdog.conf:obmc-dump-monitor.service.d/coredump.watchdog.conf"
-
 do_install:append() {
     install -d ${D}${exec_prefix}/lib/tmpfiles.d
     install -m 644 ${WORKDIR}/coretemp.conf ${D}${exec_prefix}/lib/tmpfiles.d/
     install -m 755 -d ${D}/usr/local/bin/nvidia
     ln -s -r ${D}${bindir}/create-dump-dbus ${D}/usr/local/bin/nvidia/create-dump-dbus
-    install -d ${D}${systemd_system_unitdir}/xyz.openbmc_project.Dump.Manager.service.d
-    install -d ${D}${systemd_system_unitdir}/obmc-dump-monitor.service.d
-    install -m 644 ${WORKDIR}/dump.watchdog.conf ${D}${systemd_system_unitdir}/xyz.openbmc_project.Dump.Manager.service.d/
-    install -m 644 ${WORKDIR}/coredump.watchdog.conf ${D}${systemd_system_unitdir}/obmc-dump-monitor.service.d/
+    install -m 644 ${WORKDIR}/xyz.openbmc_project.Dump.Manager.service ${D}${systemd_system_unitdir}/
 }

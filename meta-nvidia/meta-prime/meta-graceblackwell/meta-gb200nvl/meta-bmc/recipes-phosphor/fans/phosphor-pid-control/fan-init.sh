@@ -11,7 +11,7 @@ do
     if [ `i2cdetect -y 6 0x20 0x20 |grep UU | wc -l` == 0 ]; then
         echo "max31790 driver not bound..."
         if [ -e /sys/bus/i2c/drivers/max31790/bind ]; then
-            echo "Binding"
+            echo "Binding the fan controller drivers"
             echo 6-0020 > /sys/bus/i2c/drivers/max31790/bind
             echo 6-0023 > /sys/bus/i2c/drivers/max31790/bind
             echo 6-002c > /sys/bus/i2c/drivers/max31790/bind
@@ -30,6 +30,23 @@ do
     fi
     ((Count++))
 done
+
+echo "Enabling the fan controller watchdog timers"
+# Read the current value of the registers
+controller1=$(i2cget -y -f 6 0x20 0x0)
+controller2=$(i2cget -y -f 6 0x23 0x0)
+controller3=$(i2cget -y -f 6 0x2c 0x0)
+controller4=$(i2cget -y -f 6 0x2f 0x0)
+# Use bitwise OR to set watchdog timer to 10s
+controller1=$((controller1 | 0x04))
+controller2=$((controller2 | 0x04))
+controller3=$((controller3 | 0x04))
+controller4=$((controller4 | 0x04))
+# Write the new value back to the register
+i2cset -y -f 6 0x20 0x0 $controller1
+i2cset -y -f 6 0x23 0x0 $controller2
+i2cset -y -f 6 0x2c 0x0 $controller3
+i2cset -y -f 6 0x2f 0x0 $controller4
 
 # Convert PWM5 and PWM6 to Tach Input (needed to enable certain fans)
 i2cset -f -y 6 0x20 0x6 0x9

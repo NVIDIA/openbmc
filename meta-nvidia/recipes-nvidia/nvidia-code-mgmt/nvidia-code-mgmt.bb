@@ -11,7 +11,7 @@ inherit meson pkgconfig obmc-phosphor-systemd
 S = "${WORKDIR}/git"
 
 SRC_URI = "git://github.com/NVIDIA/nvidia-code-mgmt;protocol=https;branch=develop"
-SRCREV = "950dd1629f927bd1f9c9a6a3100a0bae011598c9"
+SRCREV = "8c10c8b67b825de802611fd3b7ad35088acf5b05"
 
 PV = "0.1+git${SRCPV}"
 

@@ -1,26 +1,6 @@
 {
     "Namespaces": [
         {
-            "ID": "GPU_0",
-            "ErrorCapacity": 180,
-            "InfoErrorCapacity": 10
-        },
-        {
-            "ID": "GPU_1",
-            "ErrorCapacity": 180,
-            "InfoErrorCapacity": 10
-        },
-        {
-            "ID": "GPU_0_XID",
-            "ErrorCapacity": 20,
-            "InfoErrorCapacity": 10
-        },
-        {
-            "ID": "GPU_1_XID",
-            "ErrorCapacity": 20,
-            "InfoErrorCapacity": 10
-        },
-        {
             "ID": "Baseboard_0",
             "ErrorCapacity": 200,
             "InfoErrorCapacity": 10
@@ -33,8 +13,8 @@
         },
         {
             "ID": "SEL",
-            "ErrorCapacity": 0,
-            "InfoErrorCapacity": 3000
+            "ErrorCapacity": 1500,
+            "InfoErrorCapacity": 1500
         },
         {
             "ID": "Manager",

@@ -18,6 +18,7 @@ source /usr/bin/multi_module_detection.sh
 source /etc/default/platform_var.conf
 
 polling_timeout=20
+erot_reset_delay=10
 
 #######################################
 # Set initial HMC GPIO out states
@@ -59,6 +60,82 @@ set_hmc_ready()
 }
 
 #######################################
+# Check if CPU Erot manual boot is enabled
+#
+# ARGUMENTS:
+#   i2c bus 
+# RETURN:
+#   0 - manual boot is disabled
+#   1 - manual boot is enabled
+check_cpu_erot_manual_boot() {
+    local BUS=$1
+
+    # Default manual boot enabled to false
+    local manual_boot_enabled="false"
+
+    #enable direct access to the erot
+    i2ctransfer -y $BUS w2@0x60 0xc0 0x01
+
+    #query manual boot mode status
+    local cmd_output=$(i2ctransfer -y $BUS w1@0x28 0x15 r3)
+
+    #command status is the second byte of the command output
+    local cmd_status=$(echo $cmd_output | awk '{print $2}')
+
+    #check if command is supported. 0xff means command not supported
+    if [ "$cmd_status" = "0xff" ]; then
+        #fall back to pseudo MCTP mode command. Note that this mode is not well
+        #supported and have been known to cause ERoT timeouts. See NVbug
+        #5201593. Allowing this option to avoid rev-lock with ERoTs.
+        echo "[WARNING] Manual boot query command not supported, using vdm command in pseudo MCTP mode"
+        manual_boot_query_message="0xf 0xf 0x1 0x1 0x0 0x0 0xc8 0x7f 0x47 0x16 0x0 0x0 0x81 0x1 0x11 0x1 0x02"
+
+        #check if manual boot is enabled
+        arr=($manual_boot_query_message)
+        len=$((${#arr[@]}+1))
+
+        #0xA4 is the 8bit address of the destination 0x52
+        #CRC is calculated for "A4 ${manual_boot_query_message}"
+        crc="0xb3"
+        i2ctransfer -y $BUS w${len}@0x28 ${manual_boot_query_message} ${crc}
+
+        sleep 0.5
+
+        ret=$(i2ctransfer -y $BUS w1@0x28 0x0d r20)
+
+        response=($ret)
+        echo "ERoT manual boot response: ${response[@]}"
+
+        command=${response[15]}
+        completion=${response[17]}
+        status=${response[18]}
+        
+        # If command fails, do not skip authentication
+        # Wait for us to timeout
+        if [[ "${command}" -eq "0x11" && "${completion}" -eq "0x00" && "${status}" -eq "0x01" ]]; then
+            manual_boot_enabled="true"
+        fi
+    else
+        #Byte2 of the command output is the boot status. See Query Manual Boot
+        #command in Glacier Firmware Design Document for more details.
+        boot_status=$(echo $cmd_output | awk '{print $3}')
+        if [[ "${cmd_status}" -eq "0x00" && "${boot_status}" -eq "0x01" ]]; then
+            manual_boot_enabled="true"
+        fi
+    fi
+
+    #disable direct access to the erot after we are done
+    i2ctransfer -y $BUS w2@0x60 0xc0 0x00
+
+    if [ "${manual_boot_enabled}" = "true" ]; then
+        echo "Manual boot is enabled on bus $BUS, skip CPU ERoT authentication"
+        return 1
+    else
+        return 0
+    fi 
+}
+
+#######################################
 # Check if CPU Erot passed authentcation
 # 1. Execute FPGA power sequence
 #
@@ -70,21 +147,55 @@ set_hmc_ready()
 check_cpu_erot_auth() {
     local BUS=$1
 
-    #passthrough on the fpga
+    #enable direct access to the erot
     i2ctransfer -y $BUS w2@0x60 0xc0 0x01
-    #send vdm command to erot
-    i2ctransfer -y $BUS w17@0x28 0xf 0xe 0x1 0x1 0x0 0x0 0xc8 0x7f 0x47 0x16 0x0 0x0 0x81 0x1 0x5 0x1 0x89
 
-    sleep 1
+    #query erot boot status
+    local cmd_output=$(i2ctransfer -y $BUS w1@0x28 0x14 r10)
 
-    #get the response to the vdm command
-    local output=$(i2ctransfer -y $BUS w1@0x28 0x0D r73)
+    #command status is the second byte of the command output
+    local cmd_status=$(echo $cmd_output | awk '{print $2}')
 
-    local byte25=$(echo $output | awk '{print $25}')
+    #check if command is supported. 0xff means command not supported
+    if [ "$cmd_status" = "0xff" ]; then
+        #fall back to pseudo MCTP mode command. Note that this mode is not well
+        #supported and have been known to cause ERoT timeouts. See NVbug
+        #5201593. Allowing this option to avoid rev-lock with ERoTs.
+        echo "[WARNING] Boot status query command not supported, using vdm command in pseudo MCTP mode"
+        i2ctransfer -y $BUS w17@0x28 0xf 0xe 0x1 0x1 0x0 0x0 0xc8 0x7f 0x47 0x16 0x0 0x0 0x81 0x1 0x5 0x1 0x89
 
-    local upper_nibble=$(echo $(($byte25 >> 4)))
-    local lower_nibble=$(echo $(($byte25 & 0x0F)))
-    if ([ $upper_nibble -eq 0 ] || [ $upper_nibble -eq 15 ]) || ([ $lower_nibble -eq 0 ] || [ $lower_nibble -eq 15 ]); then
+        sleep 1
+
+        #get the response to the vdm command
+        cmd_output=$(i2ctransfer -y $BUS w1@0x28 0x0D r73)
+
+        #Byte offset of Authentication Status in command output
+        auth_status_byte=25
+    else
+        #add sleep here to avoid checking status too frequently
+        sleep 1
+
+        if [ "$cmd_status" != "0x00" ]; then
+            echo "[WARNING] Boot status query command returned error ${cmd_status}, retrying."
+            return 0
+        fi
+
+        #Byte offset of Authentication Status in command output. See Boot
+        #Status Query command for more details.
+        auth_status_byte=9
+    fi
+
+    #disable direct access to the erot after we are done
+    i2ctransfer -y $BUS w2@0x60 0xc0 0x00
+
+    #auth status is bit 8-15 of Boot Status Code. Obtain from command output
+    auth_status=$(echo $cmd_output | awk -v byte="$auth_status_byte" '{print $byte}')
+
+    #parsing for primary and secondary firmware authentication status as defined
+    #in the Glacier Firmware Design Document
+    local sec_fw_auth_status=$(echo $(($auth_status >> 4)))
+    local pri_fw_auth_status=$(echo $(($auth_status & 0x0F)))
+    if ([ $sec_fw_auth_status -eq 0 ] || [ $sec_fw_auth_status -eq 15 ]) || ([ $pri_fw_auth_status -eq 0 ] || [ $pri_fw_auth_status -eq 15 ]); then
         return 0
     else
         return 1
@@ -95,33 +206,109 @@ check_cpu_erot_auth() {
 # Execute required steps to check erot auth status
 # #
 # ARGUMENTS:
-#  fpga_ready value
-#  i2c bus to be used
+#  fpga0_bus value
+#  fpga0_ready value
+#  fpga1_bus value
+#  fpga1_ready value
 # RETURN:
 #   None
 check_fpga_ready_and_erot_auth() {
-    local fpga_ready=$1
-    local i2c_bus=$2
 
-    if [ "$fpga_ready" -eq 1 ]; then
-        local count=0
+    local fpga0_bus=$1
+    local fpga0_ready=$2
+    local fpga1_bus=$3
+    local fpga1_ready=$4
 
-        while [ $count -lt $polling_timeout ]; do
-            check_cpu_erot_auth "$i2c_bus"
-            local status=$?
+    if [[ "$fpga0_ready" -eq 0 && "$fpga1_ready" -eq 0 ]]; then
+        echo "FPGA0 and FPGA1 are not ready, do not authenticate CPU ERoTs"
+        return
+    fi
 
-            if [ "$status" -eq 1 ]; then
+    #Add arbitrary buffer to the polling timeout to allow ERoT to complete
+    #authentication
+    local timeout_buffer=3
+    local auth_polling_timeout=$((polling_timeout-erot_reset_delay+timeout_buffer))
+    local count=0
+    local fpga0_status=0
+    local fpga1_status=0
+
+    # There may be cases where either fpga0 or fpga1 is
+    # ready, or both are ready.
+    # Implement this way to parallelize the polling
+    if [[ "$fpga0_ready" -eq 1 && "$fpga1_ready" -eq 1 ]]; then
+
+        check_cpu_erot_manual_boot "$fpga0_bus"
+        if [ $? -eq 1 ]; then
+            echo "Skip authentication for CPU ERoT exposed by fpga0"
+            fpga0_status=1
+        fi
+
+        check_cpu_erot_manual_boot "$fpga1_bus"
+        if [ $? -eq 1 ]; then
+            echo "Skip authentication for CPU ERoT exposed by fpga1"
+            fpga1_status=1  
+        fi
+
+        while [ $count -lt $auth_polling_timeout ]; do
+
+            if [[ "$fpga0_status" -eq 0 ]]; then
+                check_cpu_erot_auth "$fpga0_bus"
+                fpga0_status=$?
+                ((count++))
+            fi
+
+            if [[ "$fpga1_status" -eq 0 ]]; then
+                check_cpu_erot_auth "$fpga1_bus"
+                fpga1_status=$?
+                ((count++))
+            fi
+
+
+            if [[ "$fpga0_status" -eq 1 && "$fpga1_status" -eq 1 ]]; then
+                break
+            fi
+        done
+
+    elif [[ "$fpga0_ready" -eq 1 && "$fpga1_ready" -eq 0 ]]; then
+        
+        check_cpu_erot_manual_boot "$fpga0_bus"
+        if [ $? -eq 1 ]; then
+            break
+        fi
+
+        while [ $count -lt $auth_polling_timeout ]; do
+            check_cpu_erot_auth "$fpga0_bus"
+            fpga0_status=$?
+            if [ "$fpga0_status" -eq 1 ]; then
                 break
             else
-                sleep 1
                 ((count++))
             fi
         done
 
-        if [ $count -eq $polling_timeout ]; then
-            echo "Timed out waiting for cpu erot on bus $i2c_bus to finish authentication"
+    elif [[ "$fpga0_ready" -eq 0 && "$fpga1_ready" -eq 1 ]]; then
+
+        check_cpu_erot_manual_boot "$fpga1_bus"
+        if [ $? -eq 1 ]; then
+            break
         fi
+
+        while [ $count -lt $auth_polling_timeout ]; do
+            check_cpu_erot_auth "$fpga1_bus"
+            fpga1_status=$?
+            if [ "$fpga1_status" -eq 1 ]; then
+                break
+            else
+                ((count++))
+            fi
+        done
+
     fi
+    
+    if [ $count -ge $auth_polling_timeout ]; then
+        echo "Timed out waiting for cpu erot to finish authentication"
+    fi
+    
 }
 
 #######################################
@@ -184,8 +371,17 @@ hmc_ready_sequence()
         ((count++))  # Increment the counter
     done
 
-    check_fpga_ready_and_erot_auth $fpga0_ready 1
-    check_fpga_ready_and_erot_auth $fpga1_ready 2
+    # Backdrive feature was enabled in FPGA in version 1v44. This will fail on previous builds, so ignore errors
+    echo "Enabling FPGA backdrive feature"
+    i2ctransfer -y 1 w3@0x11 0x13 0x00 0x01 || true
+
+    #Delay to allow ERoT to become ready. In a case of where there was a ERoT
+    #Firmware update, the ERoT will perform background copy and reset itself.
+    #During the reset, the ERoT may not respond to I2C commands.  This delay
+    #allows for the ERoT to safely complete the background copy and reset.
+    sleep $erot_reset_delay
+
+    check_fpga_ready_and_erot_auth 1 $fpga0_ready 2 $fpga1_ready
 
     check_rw_filesystems
     rc=$?

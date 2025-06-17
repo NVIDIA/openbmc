@@ -9,17 +9,16 @@ CPLD_ENV_LINK="${CPLD_ENV_DIR}/cpldmanager.env"
 PLDM_CONFIG_RO_DIR="/usr/share/pldm"
 PLDM_CONFIG_RW_DIR="/etc/default/pldm"
 
-# Create cpldmanager directory if it doesn't exist
-if ! mkdir -p "${CPLD_CONFIG_RW_DIR}"; then
-    echo "Error: Failed to create directory ${CPLD_CONFIG_RW_DIR}"
-    exit 1
-fi
+EM_CONFIG_RO_DIR="/usr/share/entity-manager"
+EM_CONFIG_RW_DIR="/etc/default/entity-manager"
 
-# Create pldm directory if it doesn't exist
-if ! mkdir -p "${PLDM_CONFIG_RW_DIR}"; then
-    echo "Error: Failed to create directory ${PLDM_CONFIG_RW_DIR}"
-    exit 1
-fi
+# Create required directories if they don't exist
+for dir in "${CPLD_CONFIG_RW_DIR}" "${PLDM_CONFIG_RW_DIR}" "${EM_CONFIG_RW_DIR}"; do
+    if ! mkdir -p "${dir}"; then
+        echo "Error: Failed to create directory ${dir}"
+        exit 1
+    fi
+done
 
 # BP CPLD i2c addresses are 0x40, 0x41 and 0x43
 # We use 0x41 instead of 0x40 to avoid false positives 
@@ -64,6 +63,23 @@ create_cpld_env_link() {
     echo "Created soft link to ${env_file}"
 }
 
+copy_em_config() {
+    local config_file="$1"
+    local source="${EM_CONFIG_RO_DIR}/${config_file}"
+    local target="${EM_CONFIG_RW_DIR}/i2cPcieMapping.json"
+
+    if [ ! -f "${source}" ]; then
+        echo "Error: Source file ${source} not found"
+        return 1
+    fi
+
+    if ! cp -af "${source}" "${target}"; then
+        echo "Error: Failed to copy ${source} to ${target}"
+        return 1
+    fi
+    echo "Copied ${config_file} to ${target}"
+}
+
 copy_pldm_config() {
     local config_file="$1"
     local source="${PLDM_CONFIG_RO_DIR}/${config_file}"
@@ -88,6 +104,7 @@ detect_io_board() {
         copy_cpld_config "cpld_config_cx8.json"
         copy_pldm_config "fw_update_config_cx8.json"
         create_cpld_env_link "cpldmanager_cx8.env"
+        copy_em_config "i2cPcieMapping_CX8.json"
 
         echo "Holding SMA reset pin"
         gpioset `gpiofind MCU_RST_N-O`=0
@@ -97,6 +114,7 @@ detect_io_board() {
         copy_cpld_config "cpld_config_cx7.json"
         copy_pldm_config "fw_update_config_cx7.json"
         create_cpld_env_link "cpldmanager_cx7.env"
+        copy_em_config "i2cPcieMapping_CX7.json"
     fi
 }
 
