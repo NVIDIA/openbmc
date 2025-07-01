@@ -1,0 +1,11 @@
+[Unit]
+Description=PCIE chip power signal watcher
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/pciechip_power_watch.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

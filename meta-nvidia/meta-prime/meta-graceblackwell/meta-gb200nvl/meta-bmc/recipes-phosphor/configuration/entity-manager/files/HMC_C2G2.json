@@ -324,7 +324,7 @@
         "Name1": "ProcessorModule_0_Vreg_0_CpuPower_0",
         "PollRate": 1,
         "MinValue": 0,
-        "MaxValue": 100,
+        "MaxValue": 300,
         "ValueType": "PLDM",
         "Type": "Satellite"
       },
@@ -338,7 +338,7 @@
         "Name1": "ProcessorModule_0_Vreg_0_SocPower_0",
         "PollRate": 1,
         "MinValue": 0,
-        "MaxValue": 10,
+        "MaxValue": 300,
         "ValueType": "PLDM",
         "Type": "Satellite"
       },
@@ -462,7 +462,7 @@
         "Name1": "ProcessorModule_1_Vreg_0_CpuPower_0",
         "PollRate": 1,
         "MinValue": 0,
-        "MaxValue": 100,
+        "MaxValue": 300,
         "ValueType": "PLDM",
         "Type": "Satellite"
       },
@@ -476,7 +476,7 @@
         "Name1": "ProcessorModule_1_Vreg_0_SocPower_0",
         "PollRate": 1,
         "MinValue": 0,
-        "MaxValue": 10,
+        "MaxValue": 300,
         "ValueType": "PLDM",
         "Type": "Satellite"
       },

@@ -13,6 +13,7 @@ SRC_URI = " \
         file://grace-c1.cfg \
         file://grace-c2.cfg \
         file://grace-cg4.cfg \
+        file://test.cfg \
 "
 
 SRCREV_openocd = "91bd4313444c5a949ce49d88ab487608df7d6c37"
@@ -40,4 +41,5 @@ do_install:append() {
     install -m 0644 ${WORKDIR}/jtag_driver.cfg  ${D}${datadir}/openocd/scripts/interface/
     install -m 0644 ${WORKDIR}/grace.cfg  ${D}${datadir}/openocd/scripts/target/
     install -m 0644 ${WORKDIR}/grace-c2.cfg  ${D}${datadir}/openocd/scripts/board/grace-system.cfg
+    install -m 0644 ${WORKDIR}/test.cfg  ${D}${datadir}/openocd/scripts/board/
 }

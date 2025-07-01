@@ -69,16 +69,19 @@ function cleanup()
 
 # Function to get the subtree paths
 function get_subtree_paths() {
-  busctl call -j xyz.openbmc_project.ObjectMapper /xyz/openbmc_project/object_mapper xyz.openbmc_project.ObjectMapper GetSubTree sias /xyz/openbmc_project/inventory/system/recovery_config/OCP_Recovery_Devices 0 1 xyz.openbmc_project.Configuration.OCPRecovery --json=pretty
+  local device_type=$1
+  local interface=$2
+  busctl call -j xyz.openbmc_project.ObjectMapper /xyz/openbmc_project/object_mapper xyz.openbmc_project.ObjectMapper GetSubTree sias /xyz/openbmc_project/inventory/system/recovery_config/${device_type} 0 1 xyz.openbmc_project.Configuration.${interface} --json=pretty
 }
 
 # Function to extract paths from JSON
 function extract_paths() {
   local json=$1
+  local device_type=$2
   local IFS=$'\n'
   local paths=()
   for line in $json; do
-    if [[ $line =~ \"(/xyz/openbmc_project/inventory/system/recovery_config/OCP_Recovery_Devices/[^\"]*)\" ]]; then
+    if [[ $line =~ \"(/xyz/openbmc_project/inventory/system/recovery_config/${device_type}/[^\"]*)\" ]]; then
       paths+=("${BASH_REMATCH[1]}")
     fi
   done
@@ -88,15 +91,17 @@ function extract_paths() {
 # Function to get properties for a given path
 function get_properties() {
     local path=$1
+    local interface=$2
+    local device_prefix=$3
 
-    name=$(busctl get-property xyz.openbmc_project.EntityManager "$path" xyz.openbmc_project.Configuration.OCPRecovery Name 2>/dev/null)
-    i2c_address=$(busctl get-property xyz.openbmc_project.EntityManager "$path" xyz.openbmc_project.Configuration.OCPRecovery I2CAddress 2>/dev/null)
-    i2c_bus=$(busctl get-property xyz.openbmc_project.EntityManager "$path" xyz.openbmc_project.Configuration.OCPRecovery I2CBus 2>/dev/null)
+    name=$(busctl get-property xyz.openbmc_project.EntityManager "$path" xyz.openbmc_project.Configuration.${interface} Name 2>/dev/null)
+    i2c_address=$(busctl get-property xyz.openbmc_project.EntityManager "$path" xyz.openbmc_project.Configuration.${interface} I2CAddress 2>/dev/null)
+    i2c_bus=$(busctl get-property xyz.openbmc_project.EntityManager "$path" xyz.openbmc_project.Configuration.${interface} I2CBus 2>/dev/null)
 
     name=${name#* }
     name=$(echo "$name" | tr -d '"')
     # Extract the desired part of the name
-    name=$(echo "$name" | sed -e 's/^.*_\(GPU_[0-9]*\)$/\1/')
+    name=$(echo "$name" | sed -e "s/^.*_\(${device_prefix}_[0-9]*\)$/\1/")
     i2c_address=${i2c_address#* }
     i2c_bus=${i2c_bus#* }
 
@@ -129,6 +134,68 @@ function get_dump_cfg_input_file()
     echo -n "$cfg_file"
 }
 
+function glacier_i2c_dump() {
+    local component="$1"
+    local target_path=""
+    local i2cDumpFileName=""
+    local deviceName=""
+    local i2c_address=""
+    local i2c_bus=""
+
+    # Special case for HMC_0
+    if [ "$component" = "HMC_0" ]; then
+        i2c_bus="0"
+        i2c_address="0x52"
+        i2cDumpFileName="/tmp/${component}_i2c_erot_dump.bin"
+
+        /usr/bin/glacier_i2c_log_dl.sh ${i2c_bus} ${i2c_address} ${i2cDumpFileName}
+        if [ $? -ne 0 ]; then
+            echo "Error: I2C ERoT dump failed for $component"
+            return 1
+        fi
+
+        return 0
+    fi
+
+    response=$(get_subtree_paths "Glacier_Crisis_Recovery_Devices" "GlacierCrisisRecovery")
+    paths=$(extract_paths "$response" "Glacier_Crisis_Recovery_Devices")
+    
+    # Find the path that ends with the component name
+    for path in $paths; do
+        if [[ $(basename "$path") == *"$component"* ]]; then
+            target_path=$path
+            break
+        fi
+    done
+
+    if [ -z "$target_path" ]; then
+        echo "Error: No matching path found for component $component"
+        return 1
+    fi
+
+    properties=$(get_properties "$target_path" "GlacierCrisisRecovery" "")
+    if [[ $? -ne 0 ]]; then
+        echo "Error: Failed to get properties for $component"
+        return 1
+    fi
+
+    IFS=',' read -r deviceName i2c_address i2c_bus <<< "$properties"
+    i2cDumpFileName="/tmp/${component}_i2c_erot_dump.bin"
+    i2cset -y ${i2c_bus} 0x60 0xc0 0x01 i # the aggregate command to show hidden glacier if FPGA >=1.7b
+    sleep 1
+    if [ $? -ne 0 ]; then
+        echo "Error: FPGA aggregate command failed on showing hidden glacier parts, still attempt I2C ERot dump"
+    fi
+
+    /usr/bin/glacier_i2c_log_dl.sh ${i2c_bus} ${i2c_address} ${i2cDumpFileName}
+    if [ $? -ne 0 ]; then
+        echo "Error: I2C ERoT dump failed for $component"
+        return 1
+    fi
+
+    return 0
+}
+
 function main()
 {
     DUMP_CFG_INPUT_FILE="$(get_dump_cfg_input_file)"
@@ -144,6 +211,10 @@ function main()
         ${cmddump}; rc=$?
         if [ $rc -ne 0 ]; then
             echo "An error occured while running $cmddump"
+            echo "Try I2C ERoT dump"
+            glacier_i2c_dump "$name"
+            tmpFileName="${name}_i2c_erot_dump.bin"
+            mv -f "/tmp/${tmpFileName}" "$TMP_DIR_PATH/$tmpFileName"
         fi
         tmpFileName="${name}_erot_dump.bin"
         mv -f $GLACIER_LOG_FILE "$TMP_DIR_PATH/$tmpFileName"
@@ -163,12 +234,12 @@ function main()
         mv -f "/tmp/${querryBootTmpFileName}" $TMP_DIR_PATH
     done
 
-    response=$(get_subtree_paths)
-    paths=$(extract_paths "$response")
+    response=$(get_subtree_paths "OCP_Recovery_Devices" "OCPRecovery")
+    paths=$(extract_paths "$response" "OCP_Recovery_Devices")
 
     for path in $paths 
     do
-        properties=$(get_properties "$path")
+        properties=$(get_properties "$path" "OCPRecovery" "GPU")
             if [[ $? -eq 0 ]]; then
                   # Split the properties into variables
                     IFS=',' read -r deviceName i2c_address i2c_bus <<< "$properties"

@@ -67,6 +67,33 @@ function cleanup()
     return $res_ret
 }
 
+function glacier_i2c_dump() {
+    local component="$1"
+    local target_path=""
+    local i2cDumpFileName=""
+    local deviceName=""
+    local i2c_address=""
+    local i2c_bus=""
+
+    # Special case for BMC_0
+    if [ "$component" = "BMC_0" ]; then
+        i2c_bus="10"
+        i2c_address="0x52"
+        i2cDumpFileName="/tmp/${component}_i2c_erot_dump.bin"
+
+        /usr/bin/glacier_i2c_log_dl.sh ${i2c_bus} ${i2c_address} ${i2cDumpFileName}
+        if [ $? -ne 0 ]; then
+            echo "Error: I2C ERoT dump failed for $component"
+            return 1
+        fi
+
+        return 0
+    else
+        echo "Error: I2C ERoT not supported for $component"
+        return 1
+    fi
+}
+
 function main()
 {
     DEVICENAME_EID_LIST=`cat "$DUMP_CFG_INPUT_FILE"`
@@ -81,6 +108,10 @@ function main()
         ${cmddump}; rc=$?
         if [ $rc -ne 0 ]; then
             echo "An error occured while running $cmddump"
+            echo "Try I2C ERoT dump"
+            glacier_i2c_dump "$name"
+            tmpFileName="${name}_i2c_erot_dump.bin"
+            mv -f "/tmp/${tmpFileName}" "$TMP_DIR_PATH/$tmpFileName"
         fi
         tmpFileName="${name}_erot_dump.bin"
         mv -f $GLACIER_LOG_FILE "$TMP_DIR_PATH/$tmpFileName"

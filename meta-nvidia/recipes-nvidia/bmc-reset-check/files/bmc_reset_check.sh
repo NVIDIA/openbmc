@@ -42,17 +42,15 @@ bmc_reset_reason=$(fw_printenv | grep reset_reason | cut -d "=" -f 2 | sed 's/_/
 wdt=$(echo $bmc_reset_reason | awk '{print $1}')
 reset_mode=$(echo $bmc_reset_reason | awk '{print $2}')
 
-if [[ -n "$bmc_reset_reason" ]]; then
+if [[ -n "$check_if_kernel_panic_occurred" ]]; then
+    phosphor_log "BMC kernel panic occurred" $sevErr
+elif [[ -n "$bmc_reset_reason" ]]; then
     if [[ $bmc_reset_reason == "Power On" ]]; then
         phosphor_log "BMC power-on reset" $sevNot
     elif [[ "$wdt" == "WDT1" ]]; then
         phosphor_log "BMC normal reset" $sevNot
     else
         phosphor_log "BMC reset due to $wdt $reset_mode Reset" $sevWarn
-
-        if [[ -n "$check_if_kernel_panic_occurred" ]]; then
-            phosphor_log "BMC kernel panic occurred" $sevErr
-        fi
     fi
 else
     phosphor_log "BMC reset due to Unknown" $sevWarn

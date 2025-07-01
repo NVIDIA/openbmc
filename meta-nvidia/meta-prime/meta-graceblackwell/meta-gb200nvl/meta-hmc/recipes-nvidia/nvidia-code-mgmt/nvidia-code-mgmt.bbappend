@@ -4,7 +4,7 @@ SRC_URI:append = " \
            file://setup_pciechip.sh \
            file://cleanup_pciechip.sh \
            file://pciechip.json \
-           file://copy_chip_binary.sh \
+           file://pciechip_power_watch.sh \
            file://fw_status_precheck.sh \
            file://systemd/com.Nvidia.FWStatus.conf \
         "
@@ -40,6 +40,7 @@ SYSTEMD_SERVICE:${PN}:append = " ocp-recovery@.service"
 SYSTEMD_SERVICE:${PN}:append = " com.Nvidia.GlacierRecovery.Updater.service"
 SYSTEMD_SERVICE:${PN}:append = " glacier-recovery@.service"
 SYSTEMD_SERVICE:${PN}:append = " com.Nvidia.FWStatus.service"
+SYSTEMD_SERVICE:${PN}:append = " pciechip-power-watcher.service"
 
 EXTRA_OEMESON:append = " -DMTD_UPDATER_SUPPORT=enabled -DPCIECHIP_SUPPORTED_MODEL='Nvidia:PCIECHIP_MTD:9a38e3da0f6a4ca99e68ea87dfd8d852' "
 SYSTEMD_SERVICE:${PN}:append = " cpu_is_on.service cpu_is_off.service"
@@ -50,7 +51,7 @@ SYSTEMD_OVERRIDE:${PN}:append = "systemd/com.Nvidia.FWStatus.conf:com.Nvidia.FWS
 do_install:append() {
         install -m 0755 ${WORKDIR}/setup_pciechip.sh ${D}${bindir}/
         install -m 0755 ${WORKDIR}/cleanup_pciechip.sh ${D}${bindir}/
-        install -m 0755 ${WORKDIR}/copy_chip_binary.sh ${D}${bindir}/
+        install -m 0755 ${WORKDIR}/pciechip_power_watch.sh ${D}${bindir}/
         install -m 0755 ${WORKDIR}/fw_status_precheck.sh ${D}/${bindir}/
         install -d ${D}${datadir}/mtd_targets
         install -m 0644 ${WORKDIR}/pciechip.json ${D}${datadir}/mtd_targets/

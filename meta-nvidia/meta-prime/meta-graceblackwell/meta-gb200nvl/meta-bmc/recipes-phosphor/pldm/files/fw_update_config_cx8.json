@@ -205,7 +205,7 @@
                         {
                            "forward":"inventory",
                            "reverse":"activation",
-                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/CX8_0"
+                           "endpoint":"/xyz/openbmc_project/inventory/system/board/IO_Board_0"
                         }
                      ]
                   }
@@ -246,7 +246,7 @@
                         {
                            "forward":"inventory",
                            "reverse":"activation",
-                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/CX8_1"
+                           "endpoint":"/xyz/openbmc_project/inventory/system/board/IO_Board_0"
                         }
                      ]
                   }
@@ -287,7 +287,7 @@
                         {
                            "forward":"inventory",
                            "reverse":"activation",
-                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/CX8_2"
+                           "endpoint":"/xyz/openbmc_project/inventory/system/board/IO_Board_1"
                         }
                      ]
                   }
@@ -328,7 +328,7 @@
                         {
                            "forward":"inventory",
                            "reverse":"activation",
-                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/CX8_3"
+                           "endpoint":"/xyz/openbmc_project/inventory/system/board/IO_Board_1"
                         }
                      ]
                   }

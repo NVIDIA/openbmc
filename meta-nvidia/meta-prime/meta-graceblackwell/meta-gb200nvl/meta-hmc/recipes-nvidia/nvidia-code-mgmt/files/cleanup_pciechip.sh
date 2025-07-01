@@ -1,43 +1,54 @@
 #!/bin/sh
 
 findmtd() {
-        m=$(grep -xl "$1" /sys/class/mtd/*/name)
-        m=${m%/name}
-        m=${m##*/}
-        echo $m
+    m=$(grep -xl "$1" /sys/class/mtd/*/name 2>/dev/null | head -n1)
+    m=${m%/name}
+    m=${m##*/}
+    echo "$m"
 }
 
-er=0
+wait_for_pciechip_mtd_release() {
+    mtddev=$(findmtd "pciechip_config")
+    [ -z "$mtddev" ] && return 0  # Not present? Nothing to wait for.
 
-mkdir -p /var/pciechip/
+    devpath="/dev/$mtddev"
+    for i in {1..10}; do
+        if ! lsof "$devpath" >/dev/null 2>&1; then
+            return 0
+        fi
+        echo "Waiting for $devpath to be released..."
+        sleep 1
+    done
+    echo "Timeout waiting for $devpath to close"
+    return 1
+}
+
 FILE_PATH=/var/pciechip/file.bin
+mkdir -p /var/pciechip/
 
-#execute below only if fw update (param 1 is 1) or the file
-#does not exist on the file system
-#this way we do not take spi chip from the pciechip if we
-#absolutely do not have to
 if { [ -n "$1" ] && [ "$1" -eq 1 ]; } || [ ! -e "$FILE_PATH" ]; then
     m=$(findmtd "pciechip_config")
-    if test -z "$m"
-    then
-        echoerr "Unable to find mtd partition for ${f##*/}."
-        er=1
+    if [ -n "$m" ]; then
+        dd if="/dev/$m" of="$FILE_PATH" bs=4K
     else
-        dd if=/dev/$m of="$FILE_PATH" bs=4K
+        echo "Unable to find MTD partition for pciechip_config"
     fi
 fi
 
-#unbind mtd driver since it is no longer needed
+wait_for_pciechip_mtd_release
+
 echo "1e630000.spi" > /sys/bus/platform/drivers/spi-aspeed-smc/unbind
+udevadm settle
 sleep 1
 
-#bind spi raw driver to talk to the chip registers
 echo "1e630000.spiraw" > /sys/bus/platform/drivers/fmc_spi/bind
+udevadm settle
 sleep 1
+
 set-spi-wp -d /dev/spidev2.0 -a assert
 
-gpioset `gpiofind "BRDG_MUX_SEL_IOX"`=1
-gpioset `gpiofind "MUX_SEL_FPGA_BRDG_1V8"`=0
+gpioset $(gpiofind "BRDG_MUX_SEL_IOX")=1
+gpioset $(gpiofind "MUX_SEL_FPGA_BRDG_1V8")=0
 
 #execute below only if it is fw update which will
 #have 3 parameters and the first one is equal to 1

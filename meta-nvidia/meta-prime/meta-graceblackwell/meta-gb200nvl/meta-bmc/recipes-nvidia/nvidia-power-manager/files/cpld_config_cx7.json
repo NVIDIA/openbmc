@@ -16,6 +16,7 @@
             "Manufacturer" : "Lattice",
             "PowerOnDevice" : true,
             "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded",
+            "ChassisAssociationEndpoint" : "/xyz/openbmc_project/inventory/system/board/CPLD_0",
             "DeviceId": [
               "01",
               "2b",
@@ -40,6 +41,7 @@
             "Manufacturer" : "Lattice",
             "PowerOnDevice" : true,
             "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded",
+            "ChassisAssociationEndpoint" : "/xyz/openbmc_project/inventory/system/board/CPLD_1",
             "DeviceId": [
               "01",
               "2b",
@@ -64,6 +66,7 @@
             "Manufacturer" : "Lattice",
             "PowerOnDevice" : true,
             "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded",
+            "ChassisAssociationEndpoint" : "/xyz/openbmc_project/inventory/system/board/CPLD_2",
             "DeviceId": [
               "01",
               "2b",
@@ -88,6 +91,7 @@
             "Manufacturer" : "Lattice",
             "PowerOnDevice" : true,
             "LocationType" : "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded",
+            "ChassisAssociationEndpoint" : "/xyz/openbmc_project/inventory/system/board/CPLD_3",
             "DeviceId": [
               "01",
               "2b",
