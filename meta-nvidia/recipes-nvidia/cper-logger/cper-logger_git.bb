@@ -14,7 +14,7 @@ DEPENDS = " \
 "
 
 SRC_URI = "git://github.com/NVIDIA/cper-logger;protocol=https;branch=develop"
-SRCREV = "00e7a866f586431d7c871f26d5e87f2dff68c911"
+SRCREV = "a75d16c5aca9a7c5888270efa72daec08e62da0b"
 
 PV = "1.0+git${SRCPV}"
 

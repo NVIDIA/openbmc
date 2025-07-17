@@ -1578,6 +1578,11 @@
                     "assembly",
                     "parent_chassis",
                     "/xyz/openbmc_project/inventory/system/assembly/PDB_Product_FRU_Assembly2"
+                ],
+                [
+                    "activation",
+                    "inventory",
+                    "/xyz/openbmc_project/software/UEFI"
                 ]
             ]
         },

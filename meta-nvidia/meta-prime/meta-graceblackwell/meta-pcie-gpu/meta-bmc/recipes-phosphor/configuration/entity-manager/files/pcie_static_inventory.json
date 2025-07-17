@@ -1,0 +1,25 @@
+[
+  {
+    "Exposes": [],
+    "Name": "NSM_DEV_GPU_0",
+    "Probe": "TRUE",
+    "Type": "NSM_Configs",
+    "xyz.openbmc_project.NsmDevice": {
+        "DEVICE_TYPE": 0,
+        "INSTANCE_NUMBER": 0,
+        "UUID": "STATIC:0:0"
+    }
+  },
+  {
+    "Exposes": [],
+    "Name": "NSM_SXM_SMA_0",
+    "Probe": "TRUE",
+    "Type": "NSM_Configs",
+    "xyz.openbmc_project.NsmDevice": {
+        "DEVICE_TYPE": 5,
+        "DEVICE_ROLE": "SXMSMA",
+        "INSTANCE_NUMBER": 0,
+        "UUID": "STATIC:261:0"
+    }
+  }
+]

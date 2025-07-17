@@ -1,9 +1,9 @@
 [Unit]
 Description=MCTP I2C 8 demultiplexer daemon
 Wants=mctp-i2c8-demux.socket
-Conflicts=obmc-power-off@0.target
 Requires=cpu-boot-done.service
 After=cpu-boot-done.service
+Conflicts=obmc-power-off@0.target
 
 [Service]
 Type=notify

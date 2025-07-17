@@ -2,7 +2,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI = "git://github.com/NVIDIA/libmctp;protocol=https;branch=develop \
            file://default"
-SRCREV = "bc6483e485567ae458aac330d0d339d038c2fb7a"
+SRCREV = "d5b3402611c88ef6ca2eca6844341d6eb362afdf"
 
 inherit obmc-phosphor-dbus-service obmc-phosphor-systemd
 

@@ -273,6 +273,9 @@ while true; do
             set_gpio "$pci_mux_sel_pin" 0
         fi
 
+        # Remove IPEX, HDD, QSFP, and 1G NIC FRU EEPROM devices
+        remove_poweron_eeprom_devices
+
         # Unbind WGI210AT I2C Mux
         if [ -d "/sys/bus/i2c/drivers/pca954x/17-0074" ]; then
             echo 17-0074 > /sys/bus/i2c/drivers/pca954x/unbind
@@ -283,9 +286,6 @@ while true; do
         if [ -d "/sys/bus/i2c/drivers/pca954x/29-0074" ]; then
             echo 29-0074 > /sys/bus/i2c/drivers/pca954x/unbind
         fi
-
-        # Remove IPEX, HDD, QSFP, and 1G NIC FRU EEPROM devices
-        remove_poweron_eeprom_devices
 
         # Set the fan controllers to standby mode (this gets their PWMs to 0 while the fans aren't powered)
         # Read the current value of the registers

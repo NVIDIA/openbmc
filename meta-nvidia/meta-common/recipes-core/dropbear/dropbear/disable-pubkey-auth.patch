@@ -1,0 +1,39 @@
+Upstream-Status: Pending
+---
+diff --git a/default_options.h b/default_options.h
+index 536f4e7..e6d495f 100644
+--- a/default_options.h
++++ b/default_options.h
+@@ -222,11 +222,11 @@ group1 in Dropbear server too */
+ 
+ /* ~/.ssh/authorized_keys authentication.
+  * You must define DROPBEAR_SVR_PUBKEY_AUTH in order to use plugins. */
+-#define DROPBEAR_SVR_PUBKEY_AUTH 1
++#define DROPBEAR_SVR_PUBKEY_AUTH 0
+ 
+ /* Whether to take public key options in 
+  * authorized_keys file into account */
+-#define DROPBEAR_SVR_PUBKEY_OPTIONS 1
++#define DROPBEAR_SVR_PUBKEY_OPTIONS 0
+ 
+ /* Set this to 0 if your system does not have multiple user support.
+    (Linux kernel CONFIG_MULTIUSER option)
+diff --git a/svr-chansession.c b/svr-chansession.c
+index 9ae2e60..656a968 100644
+--- a/svr-chansession.c
++++ b/svr-chansession.c
+@@ -1040,9 +1040,11 @@ static void execchild(const void *user_data) {
+ 	if (chansess->original_command) {
+ 		addnewvar("SSH_ORIGINAL_COMMAND", chansess->original_command);
+ 	}
+-        if (ses.authstate.pubkey_info != NULL) {
+-                addnewvar("SSH_PUBKEYINFO", ses.authstate.pubkey_info);
+-        }
++#if DROPBEAR_SVR_PUBKEY_OPTIONS_BUILT
++	if (ses.authstate.pubkey_info != NULL) {
++		addnewvar("SSH_PUBKEYINFO", ses.authstate.pubkey_info);
++	}
++#endif
+ 
+ 	/* change directory */
+ 	if (chdir(ses.authstate.pw_dir) < 0) {

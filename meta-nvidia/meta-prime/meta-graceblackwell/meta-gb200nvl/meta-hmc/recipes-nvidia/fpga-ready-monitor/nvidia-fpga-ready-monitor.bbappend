@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 BIN = "fpga_ready_init.sh"
-RDEPENDS:${PN} += "bash"
+RDEPENDS:${PN} += "bash nvidia-event-logs"
 
 SRC_URI:append = " file://${BIN} \
                    file://fpga1_ready.sh \

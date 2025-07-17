@@ -2,7 +2,7 @@
 # with specifics of our Git repo, branch names, and Linux version
 #
 LINUX_VERSION = "6.12.9"
-SRCREV="470a05d79137823d94d423fcecf0bc2523501094"
+SRCREV="de4983f0ff05a9c78d63fae0d7221a119ad3eab4"
 KSRC = "git://github.com/NVIDIA/linux;protocol=https;branch=develop-6.12"
 # From 5.10+ the COPYING file changed
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"

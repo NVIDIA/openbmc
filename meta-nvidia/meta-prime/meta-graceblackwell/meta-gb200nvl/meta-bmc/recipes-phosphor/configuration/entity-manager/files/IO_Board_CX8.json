@@ -10,7 +10,7 @@
             {
                 "Name": "IO_Board_0_CX8_0_Temp",
                 "Type": "SensorAuxName",
-                "SensorId": 500,
+                "SensorId": 300,
                 "Bus": 16,
                 "Address": 50,
                 "AuxNames": ["IO_Board_0_CX8_0_Temp"]
@@ -18,7 +18,7 @@
             {
                 "Name": "IO_Board_0_CX8_0_Port_0_Temp",
                 "Type": "SensorAuxName",
-                "SensorId": 300,
+                "SensorId": 500,
                 "Bus": 16,
                 "Address": 50,
                 "AuxNames": ["IO_Board_0_CX8_0_Port_0_Temp"]
@@ -40,7 +40,7 @@
             {
                 "Name": "IO_Board_0_CX8_1_Temp",
                 "Type": "SensorAuxName",
-                "SensorId": 500,
+                "SensorId": 300,
                 "Bus": 18,
                 "Address": 50,
                 "AuxNames": ["IO_Board_0_CX8_1_Temp"]
@@ -48,7 +48,7 @@
             {
                 "Name": "IO_Board_0_CX8_1_Port_0_Temp",
                 "Type": "SensorAuxName",
-                "SensorId": 300,
+                "SensorId": 500,
                 "Bus": 18,
                 "Address": 50,
                 "AuxNames": ["IO_Board_0_CX8_1_Port_0_Temp"]
@@ -221,7 +221,7 @@
             {
                 "Name": "IO_Board_1_CX8_0_Temp",
                 "Type": "SensorAuxName",
-                "SensorId": 500,
+                "SensorId": 300,
                 "Bus": 28,
                 "Address": 50,
                 "AuxNames": ["IO_Board_1_CX8_0_Temp"]
@@ -229,7 +229,7 @@
             {
                 "Name": "IO_Board_1_CX8_0_Port_0_Temp",
                 "Type": "SensorAuxName",
-                "SensorId": 300,
+                "SensorId": 500,
                 "Bus": 28,
                 "Address": 50,
                 "AuxNames": ["IO_Board_1_CX8_0_Port_0_Temp"]
@@ -251,7 +251,7 @@
             {
                 "Name": "IO_Board_1_CX8_1_Temp",
                 "Type": "SensorAuxName",
-                "SensorId": 500,
+                "SensorId": 300,
                 "Bus": 30,
                 "Address": 50,
                 "AuxNames": ["IO_Board_1_CX8_1_Temp"]
@@ -259,7 +259,7 @@
             {
                 "Name": "IO_Board_1_CX8_1_Port_0_Temp",
                 "Type": "SensorAuxName",
-                "SensorId": 300,
+                "SensorId": 500,
                 "Bus": 30,
                 "Address": 50,
                 "AuxNames": ["IO_Board_1_CX8_1_Port_0_Temp"]

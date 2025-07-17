@@ -23,6 +23,26 @@ rwfs_full=false
 rwfs_full_counter=0
 script_start=$(date +%M)
 log_partition=/dev/mmcblk0p3
+
+fwgetenv() {
+    local key="$1"
+    local output
+    local status
+
+    # Run fw_printenv and capture both stdout and stderr
+    output=$(fw_printenv -n "$key" 2>&1)
+    status=$?
+
+    if [[ $status -eq 0 ]]; then
+        echo "$output"
+    elif [[ "$output" == *"## Error: \"$key\" not defined"* ]]; then
+        echo 0
+    else
+        echo "fw_printenv error: $output" >&2
+        return 1
+    fi
+}
+
 signature_enable_file=/var/check_signature
 
 BMC_IP=172.31.13.241
@@ -480,6 +500,9 @@ function run_event_check()
 }
 
 declare -i fs_delay_cnt=0
+# Maximum consecutive RWFS recovery attempts before giving up
+MAX_REBOOT_RECOVERY_ATTEMPTS=3
+
 function run_fs_health_check()
 {
     if [ "$rwfs_full" == "true" ];
@@ -511,10 +534,11 @@ function run_fs_health_check()
     then
         fs_delay_cnt=$fs_delay_cnt+$1
     else
+        # Run recovery logic regardless of rwfs_count_ret_code, but only if fs_sanity is false
         if [ "$fs_sanity" == "false" ]
         then
             fs_delay_cnt=0
-            declare -i i=0 
+            declare -i i=0
             if ! mountpoint /run/initramfs/rw &> /dev/null;
             then
                 echo "Mount missing at /run/initramfs/rw"
@@ -550,17 +574,68 @@ function run_fs_health_check()
                 fs_recovered=true
             fi
 
-            if [ "$fs_recovered" == "true" ]
+            # Read current recovery count
+            rwfs_count=$(fwgetenv rwfs_recovery_count)
+            rwfs_count_ret_code=$?
+
+            # Only trigger reboot if we can read the count and it's below threshold
+            if [ "$fs_recovered" == "true" ] && [ $rwfs_count_ret_code -eq 0 ] && [ $rwfs_count -lt $MAX_REBOOT_RECOVERY_ATTEMPTS ]
             then
                 # set uboot env and reboot 
                 echo "Data flash recovery done, rebooting"
                 fw_setenv dataflashrecovery yes  
+                # Increment recovery counter
+                rwfs_count=$((rwfs_count + 1))
+                fw_setenv rwfs_recovery_count $rwfs_count
                 sleep 5    
-                reboot   
+                systemctl reboot --force
+                exit 0
             fi 
+
             fs_sanity=true        
-        fi
-    fi 
+            if [ $rwfs_count_ret_code -eq 0 ] && [ "$rwfs_count" -gt 0 ] && [ "$fs_recovered" == "false" ]; then
+                echo "Filesystem is healthy after previous recovery attempts, resetting counter"
+                message_arg="HMC Rwfs,Filesystem is healthy after previous recovery attempts resetting counter"
+                busctl call xyz.openbmc_project.Logging /xyz/openbmc_project/logging xyz.openbmc_project.Logging.Create Create ssa{ss} \
+                        ResourceEvent.1.0.ResourceErrorsCorrected xyz.openbmc_project.Logging.Entry.Level.Informational 2 \
+                        REDFISH_MESSAGE_ID ResourceEvent.1.0.ResourceErrorsCorrected \
+                        REDFISH_MESSAGE_ARGS "$message_arg"
+                fw_setenv rwfs_recovery_count 0
+                return 0
+            fi
+
+            # Check if we can read the recovery count
+            if [ $rwfs_count_ret_code -ne 0 ]
+            then
+                # Cannot read recovery count, leave reboot for external
+                if [ "$fs_recovered" == "false" ]; then
+                    echo "Failed to read environment variable rwfs_recovery_count using fwgetenv."
+                else
+                    echo "System has recovered using the recovery filesystem. An external reboot is required to complete the resolution as fwgetenv failed."
+                    message_arg="HMC Rwfs,System has recovered using the recovery filesystem"
+                    resolution_arg="An external reboot is required to complete the resolution."
+                    busctl call xyz.openbmc_project.Logging /xyz/openbmc_project/logging xyz.openbmc_project.Logging.Create Create ssa{ss} \
+                            ResourceEvent.1.0.ResourceErrorsDetected xyz.openbmc_project.Logging.Entry.Level.Critical 3 \
+                            REDFISH_MESSAGE_ID ResourceEvent.1.0.ResourceErrorsDetected \
+                            REDFISH_MESSAGE_ARGS "$message_arg" \
+                            xyz.openbmc_project.Logging.Entry.Resolution "$resolution_arg"
+                fi
+            else
+                # Can read recovery count, check if it exceeds threshold
+                if [ $rwfs_count -ge $MAX_REBOOT_RECOVERY_ATTEMPTS ]
+                then
+                    echo "Maximum RWFS recovery attempts ($MAX_REBOOT_RECOVERY_ATTEMPTS) reached. An external recovery is required try physical power cycle to complete the resolution."
+                    message_arg="HMC Rwfs,Recovery failed and stopped due to attempts reaching the limit"
+                    resolution_arg="An external recovery is required try physical power cycle to complete the resolution."
+                    busctl call xyz.openbmc_project.Logging /xyz/openbmc_project/logging xyz.openbmc_project.Logging.Create Create ssa{ss} \
+                            ResourceEvent.1.0.ResourceErrorsDetected xyz.openbmc_project.Logging.Entry.Level.Critical 3 \
+                            REDFISH_MESSAGE_ID ResourceEvent.1.0.ResourceErrorsDetected \
+                            REDFISH_MESSAGE_ARGS "$message_arg" \
+                            xyz.openbmc_project.Logging.Entry.Resolution "$resolution_arg"
+                fi
+            fi
+        fi 
+    fi
 }
 
 function control_remote_logging()

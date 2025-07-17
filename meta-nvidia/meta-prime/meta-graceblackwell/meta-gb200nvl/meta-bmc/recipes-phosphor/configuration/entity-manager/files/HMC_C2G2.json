@@ -801,17 +801,10 @@
         ],
         "ValueType": "Raw",
         "Type": "Satellite"
-      },
-      {
-        "Hostname": "172.31.13.251",
-        "Port": "80",
-        "Name": "sat0",
-        "Type": "SatelliteController",
-        "AuthType": "None"
       }
     ],
     "Name": "HMC_0",
-    "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB[2-3]00 1CPU: ?1GPU Board PC'})",
+    "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB[2-3]00 1CPU: ?1GPU .*'})",
     "Type": "BMC"
   }
 ]

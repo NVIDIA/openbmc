@@ -3,6 +3,7 @@
 #
 SUMMARY = "NVIDIA Code management"
 DESCRIPTION = "NVIDIA Code management"
+RDEPENDS:${PN} += "bash"
 
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=26466f864df20e300683aa7a8d293486"
@@ -11,7 +12,7 @@ inherit meson pkgconfig obmc-phosphor-systemd
 S = "${WORKDIR}/git"
 
 SRC_URI = "git://github.com/NVIDIA/nvidia-code-mgmt;protocol=https;branch=develop"
-SRCREV = "1c2d946a9ead84b860d3055c068f586578ed67a5"
+SRCREV = "d622b597cc159ae7074df9396dde7d76f3752282"
 
 PV = "0.1+git${SRCPV}"
 

@@ -1,6 +1,6 @@
 [Unit]
 Description=MCTP I2C 8 control daemon
-After=mctp-i2c8-demux.service obmc-power-on@0.target
+After=mctp-i2c8-demux.service cpu-boot-done.service
 Requires=mctp-i2c8-demux.service
 
 [Service]

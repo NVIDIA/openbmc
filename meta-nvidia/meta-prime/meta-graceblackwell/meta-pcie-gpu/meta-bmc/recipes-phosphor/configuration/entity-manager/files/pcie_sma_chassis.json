@@ -1,0 +1,87 @@
+[
+  {
+    "Exposes": [
+      {
+        "Name": "HGX_SXM_SMA_$INSTANCE_NUMBER",
+        "Type": "NSM_Chassis",
+        "UUID": "$UUID",
+        "DeviceType": "$DEVICE_TYPE",
+        "Associations": [
+          {
+            "Forward": "parent_chassis",
+            "Backward": "chassis",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_SXM_$INSTANCE_NUMBER + 1"
+          },
+          {
+            "Forward": "all_chassis",
+            "Backward": "chassis",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_IRoT_SXM_SMA_$INSTANCE_NUMBER"
+          },
+          {
+            "Forward": "bridging_processor",
+            "Backward": "bridged_processor",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/processors/GPU_$INSTANCE_NUMBER"
+          }
+        ],
+        "Chassis": {
+          "Type": "NSM_Chassis",
+          "DEVICE_UUID": "$DEVICE_UUID"
+        },
+        "Asset": {
+          "Type": "NSM_Asset",
+          "Manufacturer": "NVIDIA",
+          "SKU": "8675302"
+        },
+        "Location": {
+          "Type": "NSM_Location",
+          "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "ChassisType": {
+          "Type": "NSM_ChassisType",
+          "ChassisType": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        },
+        "Health": {
+          "Type": "NSM_Health",
+          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        },
+        "ResetMetrics": {
+          "Type": "NSM_ResetMetrics"
+        },
+        "ErrorInjectionPayload": {
+          "Type": "NSM_ChassisErrorInjectionPayload"
+        }
+      },
+      {
+        "Name": "HGX_SXM_SMA_$INSTANCE_NUMBER_Temp_0",
+        "Type": "NSM_Temp",
+        "Associations": [
+          {
+            "Forward": "chassis",
+            "Backward": "all_sensors",
+            "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_SXM_SMA_$INSTANCE_NUMBER"
+          }
+        ],
+        "ThermalParameters": [
+          {
+            "Name": "UpperFatal",
+            "Dynamic": false,
+            "Value": 100.0
+          }
+        ],
+        "UUID": "$UUID",
+        "PhysicalContext": "GPUSubsystem",
+        "Description": "Internal SMA temperature values",
+        "Aggregated": true,
+        "SensorId": 5,
+        "Priority": true
+      }
+    ],
+    "Name": "HGX_SXM_SMA_$INSTANCE_NUMBER",
+    "Type": "chassis",
+    "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/HGX_Chassis_0",
+    "Probe": "xyz.openbmc_project.NsmDevice({'DEVICE_TYPE': 5, 'DEVICE_ROLE': 'SXMSMA'})",
+    "xyz.openbmc_project.Inventory.Decorator.Location": {
+      "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+    }
+  }
+]

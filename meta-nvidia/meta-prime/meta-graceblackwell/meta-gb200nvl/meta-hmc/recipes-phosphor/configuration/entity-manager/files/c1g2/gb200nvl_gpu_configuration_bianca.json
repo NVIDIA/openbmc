@@ -34,6 +34,6 @@
     }
   ],
   "Name": "OCP_Recovery_Devices",
-  "Probe": "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB[2-3]00 1CPU: ?2GPU Board PC'})",
+  "Probe": "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB[2-3]00 1CPU: ?2GPU .*'})",
   "Type": "Recovery_Config"
 }

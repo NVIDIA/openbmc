@@ -6,6 +6,7 @@ SRC_URI:append = " \
            file://pciechip.json \
            file://pciechip_power_watch.sh \
            file://fw_status_precheck.sh \
+           file://update_last_state_change_time.sh \
            file://systemd/com.Nvidia.FWStatus.conf \
         "
 
@@ -53,6 +54,7 @@ do_install:append() {
         install -m 0755 ${WORKDIR}/cleanup_pciechip.sh ${D}${bindir}/
         install -m 0755 ${WORKDIR}/pciechip_power_watch.sh ${D}${bindir}/
         install -m 0755 ${WORKDIR}/fw_status_precheck.sh ${D}/${bindir}/
+        install -m 0755 ${WORKDIR}/update_last_state_change_time.sh ${D}/${bindir}/
         install -d ${D}${datadir}/mtd_targets
         install -m 0644 ${WORKDIR}/pciechip.json ${D}${datadir}/mtd_targets/
 }

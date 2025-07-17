@@ -1,0 +1,23 @@
+[
+  {
+    "Exposes": [
+      {
+        "Name": "GPUMapping",
+        "Type": "NSM_GetInstanceIDByDeviceEID",
+        "MappingArray": [
+          12
+        ]
+      },
+      {
+        "Name": "SXMSMAMapping",
+        "Type": "NSM_GetInstanceIDByDeviceEID",
+        "MappingArray": [
+          13
+        ]
+      }
+    ],
+    "Name": "Mapping",
+    "Probe": "TRUE",
+    "Type": "NSM_Configs"
+  }
+]

@@ -356,7 +356,7 @@
     "Probe": [
       "FOUND('NSM_DEV_FPGA_0')",
       "AND",
-      "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?2GPU Board PC'})"
+      "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?2GPU .*'})"
     ],
     "Name": "HGX_FPGA_0",
     "Type": "Component",
@@ -638,7 +638,7 @@
     "Probe": [
       "FOUND('NSM_DEV_FPGA_1')",
       "AND",
-      "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?2GPU Board PC'})"
+      "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?2GPU .*'})"
     ],
     "Name": "HGX_FPGA_1",
     "Type": "Component",

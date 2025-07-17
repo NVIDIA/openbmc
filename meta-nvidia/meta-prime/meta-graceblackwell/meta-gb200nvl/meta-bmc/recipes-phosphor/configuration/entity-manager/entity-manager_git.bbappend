@@ -6,6 +6,7 @@ SRC_URI:append = " file://GB200NVL_DCSCM.json \
                    file://HMC_C2G2.json \
                    file://HMC_C2G4.json \
                    file://HMC_C2G4_GB300.json \
+                   file://HMC_SAT.json \
                    file://Cable_Backplane_Cartridge.json \
                    file://PCIe_Cards.json \
                    file://i2cPcieMapping_CX7.json \
@@ -45,6 +46,7 @@ do_install:append() {
      install -m 0444 ${WORKDIR}/HMC_C2G2.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/HMC_C2G4.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/HMC_C2G4_GB300.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${WORKDIR}/HMC_SAT.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/Cable_Backplane_Cartridge.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/IO_Board_CX7.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${WORKDIR}/IO_Board_CX8.json ${D}/usr/share/entity-manager/configurations

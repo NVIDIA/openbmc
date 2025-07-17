@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI = "git://github.com/NVIDIA/phosphor-dbus-interfaces;protocol=https;branch=develop"
-SRCREV = "a2ccfd23fa075d5c567ee49f91be72fa712daf66"
+SRCREV = "d1bc4a70ba0653305af90e86cff5ac15a3622c94"
 
 EXTRA_OEMESON:append = " \
      -Ddata_com_nvidia=true \
