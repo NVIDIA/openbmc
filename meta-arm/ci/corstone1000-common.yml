@@ -1,0 +1,11 @@
+header:
+  version: 14
+  includes:
+    - ci/base.yml
+    - ci/meta-openembedded.yml
+    - ci/meta-secure-core.yml
+    - kas/corstone1000-image-configuration.yml
+
+target:
+  - core-image-minimal
+  - perf

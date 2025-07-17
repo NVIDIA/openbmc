@@ -1,0 +1,24 @@
+# Simple target to build the FVPs that are publically available
+
+header:
+  version: 14
+  includes:
+    - ci/base.yml
+
+machine: qemuarm64
+
+local_conf_header:
+  license: |
+    LICENSE_FLAGS_ACCEPTED += "Arm-FVP-EULA"
+  sdk: |
+    SDKMACHINE = "x86_64"
+
+target:
+  # Target packages to test aarch64
+  - fvp-base-a-aem
+  - fvp-corstone1000
+  # Nativesdk to test x86-64
+  - nativesdk-fvp-base-a-aem
+  - nativesdk-fvp-corstone1000
+  - nativesdk-fvp-n1-edge
+  - nativesdk-fvp-sgi575

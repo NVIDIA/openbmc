@@ -1,0 +1,29 @@
+/xyz/openbmc_project/control/chassis0/chassiscapabilities:
+    - Interface: xyz.openbmc_project.Control.ChassisCapabilities
+      Properties:
+          CapabilitiesFlags:
+              Default: 32
+          ChassisIntrusionEnabled:
+              Default: 'true'
+          ChassisFrontPanelLockoutEnabled:
+              Default: 'true'
+          ChassisNMIEnabled:
+              Default: 'true'
+          ChassisPowerInterlockEnabled:
+              Default: 'true'
+          FRUDeviceAddress:
+              Default: 32
+          SDRDeviceAddress:
+              Default: 32
+          SELDeviceAddress:
+              Default: 32
+          SMDeviceAddress:
+              Default: 32
+          BridgeDeviceAddress:
+              Default: 32
+
+/xyz/openbmc_project/control/host0/power_restore_policy:
+    - Interface: xyz.openbmc_project.Control.Power.RestorePolicy
+      Properties:
+          PowerRestorePolicy:
+              Default: RestorePolicy::Policy::AlwaysOn

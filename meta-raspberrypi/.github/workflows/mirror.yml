@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: Andrei Gherzan <andrei.gherzan@huawei.com>
+#
+# SPDX-License-Identifier: MIT
+
+name: Mirrors
+
+on: [ push, delete, create ]
+
+concurrency:
+  group: git-mirror-me
+
+jobs:
+  yocto-mirror:
+    name: Yocto Git Mirror
+    runs-on: ubuntu-latest
+    steps:
+      - uses: agherzan/git-mirror-me-action@11f54c7186724daafbe5303b5075954f1a19a63e
+        env:
+          GMM_SSH_PRIVATE_KEY: ${{ secrets.YOCTO_META_RASPBERRYPI_SSH_PRIVATE_KEY }}
+          GMM_SSH_KNOWN_HOSTS: ${{ secrets.YOCTO_META_RASPBERRYPI_SSH_KNOWN_HOSTS }}
+          GMM_DST_REPO: "ssh://git@push.yoctoproject.org/meta-raspberrypi"
+          GMM_DEBUG: "1"

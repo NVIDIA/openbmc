@@ -1,0 +1,216 @@
+[
+    {
+        "Desc":
+        {
+            "Config": "D-Bus",
+            "Type": "Maximum"
+        }
+    },
+    {
+        "Desc":
+        {
+            "Name": "total_power",
+            "SensorType": "power"
+        },
+        "Threshold" :
+        {
+        },
+        "Associations":
+        [
+            [
+                "chassis",
+                "all_sensors",
+                "/xyz/openbmc_project/inventory/system/chassis/Mt_Jade"
+            ],
+            [
+                "inventory",
+                "sensors",
+                "/xyz/openbmc_project/inventory/system/chassis/Mt_Jade"
+            ]
+        ],
+        "Params":
+        {
+            "DbusParam":
+            [
+                {
+                    "ParamName": "P0",
+                    "Desc":
+                    {
+                        "Name": "PSU0_POUTPUT",
+                        "SensorType": "power"
+                    }
+                },
+                {
+                    "ParamName": "P1",
+                    "Desc":
+                    {
+                        "Name": "PSU1_POUTPUT",
+                        "SensorType": "power"
+                    }
+                }
+            ]
+        },
+        "Expression": "sumIgnoreNaN(P0, P1)"
+    },
+    {
+        "Desc": {
+            "Name": "S1_CPU_Pwr",
+            "SensorType": "power"
+        },
+        "Threshold" :
+        {
+            "CriticalHigh": 500
+        },
+        "Associations":
+        [
+            [
+                "chassis",
+                "all_sensors",
+                "/xyz/openbmc_project/inventory/system/chassis/Mt_Jade"
+            ],
+            [
+                "inventory",
+                "sensors",
+                "/xyz/openbmc_project/inventory/system/chassis/Mt_Jade"
+            ]
+        ],
+        "Params": {
+            "DbusParam": [
+                {
+                    "ParamName": "P1",
+                    "Desc": {
+                        "Name": "S1_Core_VRD_Pwr",
+                        "SensorType": "power"
+                    }
+                },
+                {
+                    "ParamName": "P2",
+                    "Desc": {
+                        "Name": "S1_SOC_VRD_Pwr",
+                        "SensorType": "power"
+                    }
+                }
+            ]
+        },
+        "Expression": "sumIgnoreNaN(P1, P2)"
+    },
+    {
+        "Desc": {
+            "Name": "S0_CPU_Pwr",
+            "SensorType": "power"
+        },
+        "Threshold" :
+        {
+            "CriticalHigh": 500
+        },
+        "Associations":
+        [
+            [
+                "chassis",
+                "all_sensors",
+                "/xyz/openbmc_project/inventory/system/chassis/Mt_Jade"
+            ],
+            [
+                "inventory",
+                "sensors",
+                "/xyz/openbmc_project/inventory/system/chassis/Mt_Jade"
+            ]
+        ],
+        "Params": {
+            "DbusParam": [
+                {
+                    "ParamName": "P1",
+                    "Desc": {
+                        "Name": "S0_Core_VRD_Pwr",
+                        "SensorType": "power"
+                    }
+                },
+                {
+                    "ParamName": "P2",
+                    "Desc": {
+                        "Name": "S0_SOC_VRD_Pwr",
+                        "SensorType": "power"
+                    }
+                }
+            ]
+        },
+        "Expression": "sumIgnoreNaN(P1, P2)"
+    },
+    {
+        "Desc": {
+            "Name": "S0_MEM_Pwr",
+            "SensorType": "power"
+        },
+        "Associations":
+        [
+            [
+                "chassis",
+                "all_sensors",
+                "/xyz/openbmc_project/inventory/system/chassis/Mt_Jade"
+            ],
+            [
+                "inventory",
+                "sensors",
+                "/xyz/openbmc_project/inventory/system/chassis/Mt_Jade"
+            ]
+        ],
+        "Params": {
+            "DbusParam": [
+                {
+                    "ParamName": "P1",
+                    "Desc": {
+                        "Name": "S0_DIMM_VR1_Pwr",
+                        "SensorType": "power"
+		    }
+                },
+                {
+                    "ParamName": "P2",
+                    "Desc": {
+                        "Name": "S0_DIMM_VR2_Pwr",
+                        "SensorType": "power"
+                    }
+                }
+            ]
+        },
+        "Expression": "sumIgnoreNaN(P1, P2)"
+    },
+    {
+        "Desc": {
+            "Name": "S1_MEM_Pwr",
+            "SensorType": "power"
+        },
+        "Associations":
+        [
+            [
+                "chassis",
+                "all_sensors",
+                "/xyz/openbmc_project/inventory/system/chassis/Mt_Jade"
+            ],
+            [
+                "inventory",
+                "sensors",
+                "/xyz/openbmc_project/inventory/system/chassis/Mt_Jade"
+            ]
+        ],
+        "Params": {
+            "DbusParam": [
+                {
+                    "ParamName": "P1",
+                    "Desc": {
+                        "Name": "S1_DIMM_VR1_Pwr",
+                        "SensorType": "power"
+                    }
+                },
+                {
+                    "ParamName": "P2",
+                    "Desc": {
+                        "Name": "S1_DIMM_VR2_Pwr",
+                        "SensorType": "power"
+                    }
+                }
+            ]
+        },
+        "Expression": "sumIgnoreNaN(P1, P2)"
+    }
+]
+

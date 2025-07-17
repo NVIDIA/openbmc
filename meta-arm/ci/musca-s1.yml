@@ -1,0 +1,10 @@
+header:
+  version: 14
+  includes:
+    - ci/base.yml
+    - ci/meta-openembedded.yml
+
+machine: musca-s1
+
+target:
+  - trusted-firmware-m

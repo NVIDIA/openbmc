@@ -1,0 +1,8 @@
+owners:
+- geissonator@yahoo.com
+- anoo@us.ibm.com
+
+matchers:
+- partial_regex: recipes-kernel
+  reviewers:
+  - joel@jms.id.au

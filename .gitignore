@@ -1,0 +1,5 @@
+build*/*
+customrc
+*.sw?
+.repo/
+.vscode/
