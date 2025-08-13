@@ -6,6 +6,9 @@ Subject: [PATCH] Update shunt-resistor-micro-ohms for LTC4286 driver
 Since we need to load the HSC configuration at runtime rather than use a
 DT on GBL200, we need to patch the kernel directly with the value from
 the HSC schematics from our ODM.
+
+Upstream-Status: Pending
+
 ---
  drivers/hwmon/pmbus/ltc4286.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)

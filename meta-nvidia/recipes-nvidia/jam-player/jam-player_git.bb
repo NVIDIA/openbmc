@@ -19,5 +19,5 @@ SRC_URI:append = "\
 "
 
 do_install:append() {
-	install -m 0755 ${WORKDIR}/jamplayer-update.sh ${D}${bindir}/
+	install -m 0755 ${UNPACKDIR}/jamplayer-update.sh ${D}${bindir}/
 }

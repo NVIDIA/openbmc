@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:${THISDIR}/csm:"
 
 SRC_URI = "git://github.com/NVIDIA/phosphor-state-manager;protocol=https;branch=develop"
-SRCREV = "eae1e8d86c872b170ee976eb628bad2b8c20871b"
+SRCREV = "32e4e62ff34c233a8be6b04e9af65b5f91c2b87a"
 
 SRC_URI:append = " \
            file://phosphor-clear-one-time@.service \
@@ -39,18 +39,18 @@ pkg_postinst:${PN}-obmc-targets:append() {
 
 do_install:append() {
         install -d ${D}${base_libdir}/systemd/system
-        install -m 0644 ${WORKDIR}/phosphor-clear-one-time@.service ${D}${base_libdir}/systemd/system/phosphor-clear-one-time@.service
-        install -m 0644 ${WORKDIR}/phosphor-reset-host-reboot-attempts@.service ${D}${base_libdir}/systemd/system/phosphor-reset-host-reboot-attempts@.service
-        install -m 0644 ${WORKDIR}/phosphor-reset-host-recovery@.service ${D}${base_libdir}/systemd/system/phosphor-reset-host-recovery@.service
-        install -m 0644 ${WORKDIR}/phosphor-reset-sensor-states@.service ${D}${base_libdir}/systemd/system/phosphor-reset-sensor-states@.service
-        install -m 0644 ${WORKDIR}/phosphor-set-host-transition-to-off@.service ${D}${base_libdir}/systemd/system/phosphor-set-host-transition-to-off@.service
-        install -m 0644 ${WORKDIR}/phosphor-set-host-transition-to-running@.service ${D}${base_libdir}/systemd/system/phosphor-set-host-transition-to-running@.service
+        install -m 0644 ${UNPACKDIR}/phosphor-clear-one-time@.service ${D}${base_libdir}/systemd/system/phosphor-clear-one-time@.service
+        install -m 0644 ${UNPACKDIR}/phosphor-reset-host-reboot-attempts@.service ${D}${base_libdir}/systemd/system/phosphor-reset-host-reboot-attempts@.service
+        install -m 0644 ${UNPACKDIR}/phosphor-reset-host-recovery@.service ${D}${base_libdir}/systemd/system/phosphor-reset-host-recovery@.service
+        install -m 0644 ${UNPACKDIR}/phosphor-reset-sensor-states@.service ${D}${base_libdir}/systemd/system/phosphor-reset-sensor-states@.service
+        install -m 0644 ${UNPACKDIR}/phosphor-set-host-transition-to-off@.service ${D}${base_libdir}/systemd/system/phosphor-set-host-transition-to-off@.service
+        install -m 0644 ${UNPACKDIR}/phosphor-set-host-transition-to-running@.service ${D}${base_libdir}/systemd/system/phosphor-set-host-transition-to-running@.service
 
         # install CSM
         install -d ${D}${base_libdir}/systemd/system
-        install -m 0644 ${WORKDIR}/xyz.openbmc_project.State.ConfigurableStateManager.service ${D}${base_libdir}/systemd/system/
+        install -m 0644 ${UNPACKDIR}/xyz.openbmc_project.State.ConfigurableStateManager.service ${D}${base_libdir}/systemd/system/
         install -d ${D}${datadir}/configurable-state-manager
-        install -m 0644 ${WORKDIR}/TelemetryReady.json ${D}${datadir}/configurable-state-manager/
+        install -m 0644 ${UNPACKDIR}/TelemetryReady.json ${D}${datadir}/configurable-state-manager/
 }
 
 FILES:${PN}-csm:append= " ${base_libdir}/systemd/system/xyz.openbmc_project.State.ConfigurableStateManager.service \

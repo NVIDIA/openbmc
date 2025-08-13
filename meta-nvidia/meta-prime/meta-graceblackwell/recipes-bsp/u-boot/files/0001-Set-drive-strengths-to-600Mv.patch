@@ -5,6 +5,8 @@ Subject: [PATCH] Set drive strengths to 600Mv
 
 Oberon has problems with networking.  Fix them.
 
+Upstream-Status: Pending
+
 Signed-off-by: Ed Tanous <etanous@nvidia.com>
 
 Add changes from do_patch

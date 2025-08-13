@@ -39,7 +39,7 @@ do_install(){
     install -d ${D}/${bindir}
     install -m 0755 uid-button-function ${D}/${bindir}/uid-button-function
     install -d ${D}/${sysconfdir}/pam.d
-    install -m 0755 ${WORKDIR}/passwordreset ${D}/${sysconfdir}/pam.d/passwordreset
+    install -m 0755 ${UNPACKDIR}/passwordreset ${D}/${sysconfdir}/pam.d/passwordreset
 }
 FILES_${PN} += "${sysconfdir}/pam.d/passwordreset"
 

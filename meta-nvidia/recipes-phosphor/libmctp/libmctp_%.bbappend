@@ -2,7 +2,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI = "git://github.com/NVIDIA/libmctp;protocol=https;branch=develop \
            file://default"
-SRCREV = "d5b3402611c88ef6ca2eca6844341d6eb362afdf"
+SRCREV = "b30b22203165a87d7c6d5210f57da33027818d25"
 
 inherit obmc-phosphor-dbus-service obmc-phosphor-systemd
 
@@ -26,6 +26,6 @@ FILES:${PN}:append = "${datadir} ${datadir}/mctp"
 do_install:append() {
     install -d ${D}${datadir}/mctp
     if [ -e "${WORKDIR}/mctp-restart-notify.service" ]; then
-        install -m 0644 ${WORKDIR}/mctp-restart-notify.service ${D}${nonarch_base_libdir}/systemd/system/mctp-restart-notify.service
+        install -m 0644 ${UNPACKDIR}/mctp-restart-notify.service ${D}${nonarch_base_libdir}/systemd/system/mctp-restart-notify.service
     fi
 }

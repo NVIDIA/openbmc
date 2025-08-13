@@ -18,5 +18,5 @@ FILES:${PN} += " \
 
 do_install:append() {
     install -d ${D}${sysconfdir}/systemd/network
-    install -m 0644 ${WORKDIR}/00-bmc-usb0.network ${D}${sysconfdir}/systemd/network
+    install -m 0644 ${UNPACKDIR}/00-bmc-usb0.network ${D}${sysconfdir}/systemd/network
 }

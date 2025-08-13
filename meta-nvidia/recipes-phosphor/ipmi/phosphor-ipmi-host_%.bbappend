@@ -3,7 +3,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI += " git://github.com/NVIDIA/phosphor-host-ipmid;protocol=https;branch=develop;name=override;"
 SRCREV_FORMAT = "override"
 
-SRCREV_override = "f99a31126ec9a5cb06b45e6ef221a6a0cf95b280"
+SRCREV_override = "48034f71b2b0e05800a16750cc8d4c6554985bb3"
 
 FILES:${PN}:append = " /usr/local/include/phosphor-ipmi-host/sensorhandler.hpp"
 FILES:${PN}:append = " /usr/local/include/phosphor-ipmi-host/selutility.hpp"
@@ -11,9 +11,9 @@ FILES:${PN}:append = " /usr/local/include/phosphor-ipmi-host/selutility.hpp"
 SRC_URI += "file://host-ipmid-whitelist_nvidia.conf"
 SRC_URI += "file://pam.d/host-ipmid"
 
-WHITELIST_CONF:append = " ${WORKDIR}/host-ipmid-whitelist_nvidia.conf"
+WHITELIST_CONF:append = " ${UNPACKDIR}/host-ipmid-whitelist_nvidia.conf"
 EXTRA_OECONF:append = " --enable-dbus-logger=yes"
-EXTRA_OEMESON:append = " -Dpam-service-name=host-ipmid"
+#EXTRA_OEMESON:append = " -Dpam-service-name=host-ipmid"
 
 do_install:append(){
   install -d ${D}${includedir}/phosphor-ipmi-host

@@ -1,0 +1,13 @@
+[Unit]
+Description=MCTP control protocol daemon
+Wants=mctp-local.target
+After=mctp-local.target
+
+[Service]
+Type=dbus
+BusName=au.com.codeconstruct.MCTP1
+ExecStartPre=-/bin/sh -c '/usr/sbin/modprobe /usr/lib/modules/*/kernel/drivers/spi/fmc_spi.ko'
+ExecStart=/usr/sbin/mctpd
+
+[Install]
+WantedBy=mctp.target

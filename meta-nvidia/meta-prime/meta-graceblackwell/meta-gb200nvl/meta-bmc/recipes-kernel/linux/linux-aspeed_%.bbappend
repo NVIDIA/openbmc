@@ -2,7 +2,7 @@
 # with specifics of our Git repo, branch names, and Linux version
 #
 LINUX_VERSION = "6.12.9"
-SRCREV="de4983f0ff05a9c78d63fae0d7221a119ad3eab4"
+SRCREV="4b898020890e954d2ad7ba5eb90f9651d891718f"
 KSRC = "git://github.com/NVIDIA/linux;protocol=https;branch=develop-6.12"
 # From 5.10+ the COPYING file changed
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
@@ -17,7 +17,7 @@ SRC_URI:append = " file://gb200nvl-bmc.cfg \
                    file://0001-Update-shunt-resistor-micro-ohms-for-LTC4286-driver.patch"
 
 do_configure:append() {
-	cp ${WORKDIR}/aspeed-bmc-nvidia-gb200nvl-bmc.dts ${S}/arch/arm/boot/dts/aspeed/
-	cp ${WORKDIR}/aspeed-bmc-nvidia-gb200nvl-bmc-ut3.dts ${S}/arch/arm/boot/dts/aspeed/
-	cp ${WORKDIR}/nvidia-gb200nvl-bmc-core.dtsi ${S}/arch/arm/boot/dts/aspeed/
+	cp ${UNPACKDIR}/aspeed-bmc-nvidia-gb200nvl-bmc.dts ${S}/arch/arm/boot/dts/aspeed/
+	cp ${UNPACKDIR}/aspeed-bmc-nvidia-gb200nvl-bmc-ut3.dts ${S}/arch/arm/boot/dts/aspeed/
+	cp ${UNPACKDIR}/nvidia-gb200nvl-bmc-core.dtsi ${S}/arch/arm/boot/dts/aspeed/
 }

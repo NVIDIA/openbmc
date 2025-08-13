@@ -19,12 +19,12 @@ do_install:append() {
     if [ "${SECURESHELLROOT}" = "1" -a "${SECURESHELL}" = "0" ]; then
         bbfatal "nvidia-secure-shell-debug-token-login-enable is added to DISTRO_FEATURES, but nvidia-secure-shell is not"
     elif [ "${SECURESHELLROOT}" = "1" ]; then
-        install -m 0644 ${WORKDIR}/pam.d/dropbear-secure-shell-debug-token-login-enable ${D}${sysconfdir}/pam.d/dropbear
+        install -m 0644 ${UNPACKDIR}/pam.d/dropbear-secure-shell-debug-token-login-enable ${D}${sysconfdir}/pam.d/dropbear
         sed -i "s/-G priv-admin[ ]*//g" ${D}${sysconfdir}/default/dropbear
     elif [ "${SECURESHELL}" = "1" ]; then
-        install -m 0644 ${WORKDIR}/pam.d/dropbear-secure-shell ${D}${sysconfdir}/pam.d/dropbear
+        install -m 0644 ${UNPACKDIR}/pam.d/dropbear-secure-shell ${D}${sysconfdir}/pam.d/dropbear
         sed -i "s/-G priv-admin[ ]*//g" ${D}${sysconfdir}/default/dropbear
     else
-        install -m 0644 ${WORKDIR}/pam.d/dropbear-non-secure-shell ${D}${sysconfdir}/pam.d/dropbear
+        install -m 0644 ${UNPACKDIR}/pam.d/dropbear-non-secure-shell ${D}${sysconfdir}/pam.d/dropbear
     fi
 }

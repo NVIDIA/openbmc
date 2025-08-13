@@ -12,7 +12,7 @@ DEPENDS += "boost"
 DEPENDS += "libgpiod"
 DEPENDS += "cli11"
 DEPENDS += "nlohmann-json"
-SRCREV = "9f8459a55d1f0cb42c5d99c0759b20739092b841"
+SRCREV = "c087fa76fb457790c93cfebc0acaaf14bf5023ad"
 PV = "1.0+git${SRCPV}"
 PR = "r1"
 
@@ -49,5 +49,5 @@ PACKAGE_BEFORE_PN += "${GPIO_PACKAGES}"
 
 do_install:append() {
     install -d ${D}${datadir}/phosphor-gpio-monitor/
-    install -m 0644 ${WORKDIR}/phosphor-multi-gpio-presence.json ${D}${datadir}/${PN}/
+    install -m 0644 ${UNPACKDIR}/phosphor-multi-gpio-presence.json ${D}${datadir}/${PN}/
 }

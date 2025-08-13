@@ -18,14 +18,14 @@ RDEPENDS:${PN} += "bash sbiosbootaccess phosphor-gpio-monitor-monitor "
 
 do_install:append() {
         mkdir -p ${D}/usr/share/phosphor-gpio-monitor/
-        install -m 0644 ${WORKDIR}/phosphor-multi-gpio-monitor.json ${D}/usr/share/phosphor-gpio-monitor/phosphor-multi-gpio-monitor.json
+        install -m 0644 ${UNPACKDIR}/phosphor-multi-gpio-monitor.json ${D}/usr/share/phosphor-gpio-monitor/phosphor-multi-gpio-monitor.json
 
         install -d ${D}${base_libdir}/systemd/system
-        install -m 0644 ${WORKDIR}/phosphor-multi-gpio-monitor.service ${D}${base_libdir}/systemd/system/phosphor-multi-gpio-monitor.service
-        install -m 0644 ${WORKDIR}/power-fault@.service ${D}${base_libdir}/systemd/system/power-fault@.service
-        install -m 0644 ${WORKDIR}/fan-fail@.service ${D}${base_libdir}/systemd/system/fan-fail@.service
-        install -m 0644 ${WORKDIR}/overtemp@.service ${D}${base_libdir}/systemd/system/overtemp@.service
-        install -m 0755 ${WORKDIR}/error_log.sh ${D}/${bindir}/
+        install -m 0644 ${UNPACKDIR}/phosphor-multi-gpio-monitor.service ${D}${base_libdir}/systemd/system/phosphor-multi-gpio-monitor.service
+        install -m 0644 ${UNPACKDIR}/power-fault@.service ${D}${base_libdir}/systemd/system/power-fault@.service
+        install -m 0644 ${UNPACKDIR}/fan-fail@.service ${D}${base_libdir}/systemd/system/fan-fail@.service
+        install -m 0644 ${UNPACKDIR}/overtemp@.service ${D}${base_libdir}/systemd/system/overtemp@.service
+        install -m 0755 ${UNPACKDIR}/error_log.sh ${D}/${bindir}/
 }
 
 do_install:append:gb200nvl-bmc-ut3() {

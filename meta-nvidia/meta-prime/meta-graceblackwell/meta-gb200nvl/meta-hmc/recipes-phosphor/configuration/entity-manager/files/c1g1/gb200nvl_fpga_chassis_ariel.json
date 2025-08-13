@@ -4,12 +4,12 @@
       {
         "Name": "HGX_Chassis_0",
         "Type": "NSM_Chassis",
-        "UUID": "STATIC:3:0",
+        "UUID": "STATIC:3:0:MCTP_EID:12",
         "DeviceType": "3",
         "InstanceNumber": "0",
         "Chassis": {
           "Type": "NSM_Chassis",
-          "DEVICE_UUID": "STATIC:3:0"
+          "DEVICE_UUID": "STATIC:3:0:MCTP_EID:12"
         },
         "ChassisType": {
           "Type": "NSM_ChassisType",
@@ -24,7 +24,7 @@
         "ChassisName": "HGX_Chassis_0",
         "Name": "Assembly",
         "Type": "NSM_ChassisAssembly",
-        "UUID": "STATIC:3:0",
+        "UUID": "STATIC:3:0:MCTP_EID:12",
         "Area": {
           "Type": "NSM_Area",
           "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPUSubsystem"
@@ -41,7 +41,7 @@
       {
         "Name": "HGX_Module_0_SPI",
         "Type": "NSM_SPI",
-        "UUID": "STATIC:3:0",
+        "UUID": "STATIC:3:0:MCTP_EID:12",
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/"
       },
       {
@@ -49,17 +49,17 @@
         "Name": "PCIeSlots",
         "Type": "NSM_ChassisPCIeSlot",
         "Priority": false,
-        "UUID": "STATIC:3:0",
+        "UUID": "STATIC:3:0:MCTP_EID:12",
         "DeviceIndex": "0",
         "SlotType": "xyz.openbmc_project.Inventory.Item.PCIeSlot.SlotTypes.OEM"
       },
       {
         "Name": "HGX_FPGA_0",
         "Type": "NSM_Chassis",
-        "UUID": "STATIC:3:0",
+        "UUID": "STATIC:3:0:MCTP_EID:12",
         "Chassis": {
           "Type": "NSM_Chassis",
-          "DEVICE_UUID": "STATIC:3:0"
+          "DEVICE_UUID": "STATIC:3:0:MCTP_EID:12"
         },
         "Asset": {
           "Type": "NSM_FPGA_Asset",
@@ -101,7 +101,7 @@
             "Value": 75.0
           }
         ],
-        "UUID": "STATIC:3:0",
+        "UUID": "STATIC:3:0:MCTP_EID:12",
         "PhysicalContext": "GPUSubsystem",
         "MaxAllowableOperatingValue": 255.0,
         "Aggregated": true,
@@ -135,7 +135,7 @@
             "Value": 75.0
           }
         ],
-        "UUID": "STATIC:3:0",
+        "UUID": "STATIC:3:0:MCTP_EID:12",
         "PhysicalContext": "GPUSubsystem",
         "MaxAllowableOperatingValue": 255.0,
         "Aggregated": true,
@@ -169,7 +169,7 @@
             "Value": 84.0
           }
         ],
-        "UUID": "STATIC:3:0",
+        "UUID": "STATIC:3:0:MCTP_EID:12",
         "PhysicalContext": "GPUSubsystem",
         "MaxAllowableOperatingValue": 125.0,
         "Aggregated": true,
@@ -199,7 +199,7 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1"
           }
         ],
-        "UUID": "STATIC:3:0"
+        "UUID": "STATIC:3:0:MCTP_EID:12"
       },
       {
         "Name": "TotalGPU_Power_0",
@@ -217,7 +217,7 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_Chassis_0"
           }
         ],
-        "UUID": "STATIC:3:0"
+        "UUID": "STATIC:3:0:MCTP_EID:12"
       },
       {
         "Name": "HGX_ProcessorModule_0_AltitudePressure_0",
@@ -229,7 +229,7 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/board/HGX_ProcessorModule_0"
           }
         ],
-        "UUID": "STATIC:3:0",
+        "UUID": "STATIC:3:0:MCTP_EID:12",
         "PhysicalContext": "GPUSubsystem",
         "MaxAllowableOperatingValue": 126000.0,
         "Priority": false
@@ -237,7 +237,7 @@
       {
         "Name": "HGX_GPU_0",
         "Type": "NSM_Chassis",
-        "UUID": "STATIC:3:0",
+        "UUID": "STATIC:3:0:MCTP_EID:12",
         "DeviceType": "3",
         "InstanceNumber": 0,
         "OperationalStatus": {
@@ -252,7 +252,7 @@
       {
         "Name": "HGX_FW_GPU_0",
         "Type": "NSM_WriteProtect",
-        "UUID": "STATIC:3:0",
+        "UUID": "STATIC:3:0:MCTP_EID:12",
         "DataIndex": 162,
         "Associations": [
           {
@@ -270,12 +270,12 @@
       {
         "Name": "HGX_ProcessorModule_0",
         "Type": "NSM_Chassis",
-        "UUID": "STATIC:3:0",
+        "UUID": "STATIC:3:0:MCTP_EID:12",
         "DeviceType": "3",
         "InstanceNumber": "0",
         "Chassis": {
           "Type": "NSM_Chassis",
-          "DEVICE_UUID": "STATIC:3:0"
+          "DEVICE_UUID": "STATIC:3:0:MCTP_EID:12"
         },
         "ChassisType": {
           "Type": "NSM_ChassisType",
@@ -288,7 +288,7 @@
       {
         "Name": "HGX_FW_CPU_0",
         "Type": "NSM_WriteProtect",
-        "UUID": "STATIC:3:0",
+        "UUID": "STATIC:3:0:MCTP_EID:12",
         "DataIndex": 224,
         "Associations": [
           {
@@ -306,7 +306,7 @@
       {
         "Name": "NVLinkLed",
         "Type": "NSM_ChassisLED",
-        "UUID": "STATIC:3:0",
+        "UUID": "STATIC:3:0:MCTP_EID:12",
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/chassis/HGX_FPGA_0"
       }
     ],
@@ -348,10 +348,10 @@
       {
         "Name": "HGX_FPGA_1",
         "Type": "NSM_Chassis",
-        "UUID": "STATIC:3:1",
+        "UUID": "STATIC:3:1:MCTP_EID:20",
         "Chassis": {
           "Type": "NSM_Chassis",
-          "DEVICE_UUID": "STATIC:3:1"
+          "DEVICE_UUID": "STATIC:3:1:MCTP_EID:20"
         },
         "Asset": {
           "Type": "NSM_FPGA_Asset",
@@ -393,7 +393,7 @@
             "Value": 75.0
           }
         ],
-        "UUID": "STATIC:3:1",
+        "UUID": "STATIC:3:1:MCTP_EID:20",
         "PhysicalContext": "GPUSubsystem",
         "MaxAllowableOperatingValue": 255.0,
         "Aggregated": true,
@@ -427,7 +427,7 @@
             "Value": 75.0
           }
         ],
-        "UUID": "STATIC:3:1",
+        "UUID": "STATIC:3:1:MCTP_EID:20",
         "PhysicalContext": "GPUSubsystem",
         "MaxAllowableOperatingValue": 255.0,
         "Aggregated": true,
@@ -461,7 +461,7 @@
             "Value": 84.0
           }
         ],
-        "UUID": "STATIC:3:1",
+        "UUID": "STATIC:3:1:MCTP_EID:20",
         "PhysicalContext": "GPUSubsystem",
         "MaxAllowableOperatingValue": 125.0,
         "Aggregated": true,
@@ -478,7 +478,7 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/board/HGX_ProcessorModule_1"
           }
         ],
-        "UUID": "STATIC:3:1",
+        "UUID": "STATIC:3:1:MCTP_EID:20",
         "PhysicalContext": "GPUSubsystem",
         "MaxAllowableOperatingValue": 126000.0,
         "Priority": false
@@ -486,7 +486,7 @@
       {
         "Name": "HGX_GPU_1",
         "Type": "NSM_Chassis",
-        "UUID": "STATIC:3:1",
+        "UUID": "STATIC:3:1:MCTP_EID:20",
         "DeviceType": "3",
         "InstanceNumber": 0,
         "OperationalStatus": {
@@ -501,7 +501,7 @@
       {
         "Name": "HGX_FW_GPU_1",
         "Type": "NSM_WriteProtect",
-        "UUID": "STATIC:3:1",
+        "UUID": "STATIC:3:1:MCTP_EID:20",
         "DataIndex": 164,
         "Associations": [
           {
@@ -519,12 +519,12 @@
       {
         "Name": "HGX_ProcessorModule_1",
         "Type": "NSM_Chassis",
-        "UUID": "STATIC:3:1",
+        "UUID": "STATIC:3:1:MCTP_EID:20",
         "DeviceType": "3",
         "InstanceNumber": "1",
         "Chassis": {
           "Type": "NSM_Chassis",
-          "DEVICE_UUID": "STATIC:3:1"
+          "DEVICE_UUID": "STATIC:3:1:MCTP_EID:20"
         },
         "ChassisType": {
           "Type": "NSM_ChassisType",
@@ -537,7 +537,7 @@
       {
         "Name": "HGX_FW_CPU_1",
         "Type": "NSM_WriteProtect",
-        "UUID": "STATIC:3:1",
+        "UUID": "STATIC:3:1:MCTP_EID:20",
         "DataIndex": 224,
         "Associations": [
           {
@@ -555,7 +555,7 @@
       {
         "Name": "NVLinkLed",
         "Type": "NSM_ChassisLED",
-        "UUID": "STATIC:3:1",
+        "UUID": "STATIC:3:1:MCTP_EID:20",
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/chassis/HGX_FPGA_1"
       }
     ],

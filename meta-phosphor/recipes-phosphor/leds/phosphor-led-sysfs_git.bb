@@ -8,7 +8,8 @@ DEPENDS += "sdbusplus"
 DEPENDS += "systemd"
 DEPENDS += "phosphor-dbus-interfaces"
 DEPENDS += "boost"
-SRCREV = "29bd56b16682ef75ca5ac856bd7c72281c90e892"
+DEPENDS += "phosphor-logging"
+SRCREV = "f8548eebf92c37de7fefc7ca697241aeb5b7561a"
 PV = "1.0+git${SRCPV}"
 PR = "r1"
 
@@ -21,4 +22,7 @@ inherit obmc-phosphor-dbus-service
 
 EXTRA_OEMESON:append = " -Dtests=disabled"
 
-SYSTEMD_SERVICE:${PN} += "xyz.openbmc_project.led.controller@.service"
+SYSTEMD_SERVICE:${PN} += "phosphor-ledcontroller.service"
+
+FILES:${PN} += "/usr/lib/systemd/system/sysfs-led@.service"
+FILES:${PN} += "/usr/share/dbus-1/system-services/xyz.openbmc_project.LED.Controller.service"

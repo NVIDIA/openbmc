@@ -93,7 +93,7 @@
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
 	    "Name": "HGX Baseboard",
             "Manufacturer": "$BOARD_MANUFACTURER",
-            "Model": "GB200 NVL",
+            "Model": "GB HMC",
             "PartNumber": "$BOARD_PART_NUMBER",
             "SerialNumber": "$BOARD_SERIAL_NUMBER",
             "SKU": ""

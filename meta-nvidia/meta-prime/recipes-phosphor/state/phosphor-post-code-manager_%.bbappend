@@ -12,7 +12,7 @@ SYSTEMD_OVERRIDE:${PN}-manager += "post-code.fs_dep.conf:xyz.openbmc_project.Sta
 
 do_install:append() {
     install -d ${D}${systemd_system_unitdir}/xyz.openbmc_project.State.Boot.PostCode@.service.d
-    install -m 0644 ${WORKDIR}/post-code.fs_dep.conf ${D}${systemd_system_unitdir}/xyz.openbmc_project.State.Boot.PostCode@.service.d/
+    install -m 0644 ${UNPACKDIR}/post-code.fs_dep.conf ${D}${systemd_system_unitdir}/xyz.openbmc_project.State.Boot.PostCode@.service.d/
 }
 
 FILES:${PN} += " ${systemd_system_unitdir}/xyz.openbmc_project.State.Boot.PostCode@.service.d"

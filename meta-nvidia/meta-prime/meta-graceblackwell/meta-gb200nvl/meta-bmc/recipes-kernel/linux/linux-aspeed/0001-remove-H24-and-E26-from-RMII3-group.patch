@@ -7,6 +7,8 @@ supports ncsi and this feature does not need GPIOC0(H24) and GPIOD3(E26).
 Therefore, GPIOC0(H24) and GPIOD3(E26) are used as GPIOs on this platform
 GPIOC0-SGPIO_I2C_MUX_SEL-O GPIOD3-UART1_MUX_SEL-O
 
+Upstream-Status: Pending
+
 Change:
 - remove H24 and E26 from RMII3 group
 ---

@@ -26,7 +26,7 @@ SYSTEMD_SERVICE:${PN} = " \
 
 do_install:append() {
     install -d ${D}/${bindir}
-    install -m 0755 ${WORKDIR}/emmc-logging.sh ${D}/${bindir}/
-    install -m 0755 ${WORKDIR}/check_logmount.sh ${D}/${bindir}/
+    install -m 0755 ${UNPACKDIR}/emmc-logging.sh ${D}/${bindir}/
+    install -m 0755 ${UNPACKDIR}/check_logmount.sh ${D}/${bindir}/
 }
 

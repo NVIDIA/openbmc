@@ -11,6 +11,6 @@ FILES:${PN}:append = " \
 
 do_install:append() {
     install -d ${D}${systemd_system_unitdir}/xyz.openbmc_project.FruDevice.service.d
-    install -m 0644 ${WORKDIR}/xyz.openbmc_project.FruDevice.conf ${D}${systemd_system_unitdir}/xyz.openbmc_project.FruDevice.service.d/
+    install -m 0644 ${UNPACKDIR}/xyz.openbmc_project.FruDevice.conf ${D}${systemd_system_unitdir}/xyz.openbmc_project.FruDevice.service.d/
      sed -i '/^WantedBy=multi-user.target/d' ${D}${systemd_system_unitdir}/xyz.openbmc_project.FruDevice.service
 }

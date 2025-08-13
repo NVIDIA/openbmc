@@ -9,8 +9,8 @@ inherit native
 PROVIDES += "virtual/phosphor-led-manager-config-native"
 
 SRC_URI = " file://led.yaml"
-S = "${WORKDIR}"
-SRC="${S}"
+S = "${WORKDIR}/sources"
+UNPACKDIR = "${S}"
 DEST="${D}${datadir}/phosphor-led-manager"
 
 FILES:${PN} = " ${datadir}/phosphor-led-manager/led.yaml "
@@ -18,5 +18,5 @@ FILES:${PN} = " ${datadir}/phosphor-led-manager/led.yaml "
 # Overwrite the example led layout yaml file prior
 # to building the phosphor-led-manager package
 do_install() {
-    install -D ${SRC}/led.yaml ${DEST}/led.yaml
+    install -D ${UNPACKDIR}/led.yaml ${DEST}/led.yaml
 }

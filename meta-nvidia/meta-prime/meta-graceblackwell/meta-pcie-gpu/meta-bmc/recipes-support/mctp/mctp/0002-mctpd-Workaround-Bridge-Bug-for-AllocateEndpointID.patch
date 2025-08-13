@@ -1,0 +1,41 @@
+From 2cad4e5721006540d4673ad3c0e2a8c060bc114f Mon Sep 17 00:00:00 2001
+From: Santosh Puranik <spuranik@nvidia.com>
+Date: Mon, 24 Mar 2025 14:21:24 +0530
+Subject: [PATCH 2/2] mctpd: Workaround Bridge Bug for AllocateEndpointID
+
+Some MCTP bridges do not provide the right response for the control
+command `AllocateEndpointID`. The EID included in the response to the
+command as per DSP0236 should be the start of the EID pool accepted by
+the bridge.
+
+Some bridges instead return their own EID in the response. To workaround
+this issue, just use the pool EID start that mctpd used in the request
+when adding peers post the response of `AllocateEndpointID`
+
+Upstream-Status: Pending
+
+Signed-off-by: Santosh Puranik <spuranik@nvidia.com>
+---
+ src/mctpd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/mctpd.c b/src/mctpd.c
+index 1ea2600..f3c4cc4 100644
+--- a/src/mctpd.c
++++ b/src/mctpd.c
+@@ -4440,10 +4440,10 @@ static int endpoint_send_allocate_endpoint_id(peer *peer,
+ 	}
+ 
+ 	*allocated_pool_size = resp->eid_pool_size;
+-	*allocated_pool_start = resp->eid_set;
++	*allocated_pool_start = eid_start;
+ 	if(peer->ctx->verbose) {
+ 		fprintf(stderr, "%s Allocated size of %d, starting from EID %d\n", __func__,
+-				resp->eid_pool_size, resp->eid_set);
++				resp->eid_pool_size, eid_start);
+ 	}
+ 
+ 	return 0;
+-- 
+2.48.1
+

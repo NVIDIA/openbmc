@@ -28,7 +28,7 @@ SYSTEMD_SERVICE:${PN}:remove = " mctp-pcie-demux.socket"
 do_install:append() {
     install -d ${D}/${bindir}
 
-    install -m 0644 ${WORKDIR}/systemd/mctp-usb-demux.socket  ${D}${nonarch_base_libdir}/systemd/system/
+    install -m 0644 ${UNPACKDIR}/systemd/mctp-usb-demux.socket  ${D}${nonarch_base_libdir}/systemd/system/
 
     rm -f ${D}${nonarch_base_libdir}/systemd/system/mctp-spi-ctrl.service
     rm -f ${D}${nonarch_base_libdir}/systemd/system/mctp-spi-demux.service
@@ -37,6 +37,6 @@ do_install:append() {
     rm -f ${D}${nonarch_base_libdir}/systemd/system/mctp-pcie-demux.service
     rm -f ${D}${nonarch_base_libdir}/systemd/system/mctp-pcie-demux.socket
     install -d ${D}${datadir}/mctp
-    install -m 0644 ${WORKDIR}/mctp ${D}${datadir}/mctp/mctp
+    install -m 0644 ${UNPACKDIR}/mctp ${D}${datadir}/mctp/mctp
 }
 

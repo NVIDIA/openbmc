@@ -21,7 +21,7 @@ SRC_URI:append = "\
 FILES:${PN}:append = " ${systemd_system_unitdir}/vme-jtag-busy.target "
 
 do_install:append() {
-	install -m 0755 ${WORKDIR}/vme-player.sh ${D}${bindir}/
+	install -m 0755 ${UNPACKDIR}/vme-player.sh ${D}${bindir}/
     install -d ${D}${systemd_system_unitdir}
-    install -m 0644 ${WORKDIR}/vme-jtag-busy.target ${D}${systemd_system_unitdir}
+    install -m 0644 ${UNPACKDIR}/vme-jtag-busy.target ${D}${systemd_system_unitdir}
 }

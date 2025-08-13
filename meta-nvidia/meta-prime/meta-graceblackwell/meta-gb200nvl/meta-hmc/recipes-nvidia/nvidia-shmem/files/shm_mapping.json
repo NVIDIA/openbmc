@@ -52,7 +52,8 @@
         },
         "HealthMetrics": {
             "Producers": [
-                "nvidia-monitor-eventing"
+                "nvidia-monitor-eventing",
+      		"nsmd"
             ],
             "SizeInBytes": 10240
         }

@@ -3,13 +3,13 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI += " git://github.com/NVIDIA/phosphor-host-ipmid;protocol=https;branch=develop;name=override;"
 SRCREV_FORMAT = "override"
 
-SRCREV_override = "f99a31126ec9a5cb06b45e6ef221a6a0cf95b280"
+SRCREV_override = "48034f71b2b0e05800a16750cc8d4c6554985bb3"
 
 SRC_URI += "file://host-ipmid-whitelist_nvidia.conf"
 SRC_URI += "file://master_write_read_white_list.json"
 SRC_URI += "file://phosphor-ipmi-host.conf"
 
-WHITELIST_CONF:append = " ${WORKDIR}/host-ipmid-whitelist_nvidia.conf"
+WHITELIST_CONF:append = " ${UNPACKDIR}/host-ipmid-whitelist_nvidia.conf"
 
 FILES:${PN}:append = " ${datadir}/ipmi-providers/master_write_read_white_list.json"
 
@@ -28,8 +28,8 @@ do_configure:prepend(){
 
 do_install:append() {
     install -d ${D}${datadir}/ipmi-providers
-    install -m 0644 ${WORKDIR}/master_write_read_white_list.json ${D}${datadir}/ipmi-providers
-    install -m 0644 ${WORKDIR}/phosphor-ipmi-host.conf \
+    install -m 0644 ${UNPACKDIR}/master_write_read_white_list.json ${D}${datadir}/ipmi-providers
+    install -m 0644 ${UNPACKDIR}/phosphor-ipmi-host.conf \
                     ${D}${systemd_system_unitdir}/phosphor-ipmi-host.service.d/
 
     rm -f ${S}/transporthandler_oem.cpp

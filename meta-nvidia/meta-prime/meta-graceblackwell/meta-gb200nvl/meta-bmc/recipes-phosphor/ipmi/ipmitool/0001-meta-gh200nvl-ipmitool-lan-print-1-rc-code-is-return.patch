@@ -10,6 +10,8 @@ ipmitool lan print 1 rc code is returning as 1
 Change List:
 Return rc, instead of NULL.
 
+Upstream-Status: Pending
+
 Tested:
 ssh root@10.137.159.234
 X11 forwarding request failed on channel 0

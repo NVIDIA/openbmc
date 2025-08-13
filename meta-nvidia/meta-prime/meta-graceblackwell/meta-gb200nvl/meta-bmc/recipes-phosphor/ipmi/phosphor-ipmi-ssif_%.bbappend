@@ -5,7 +5,7 @@
 
 SRC_URI = "git://github.com/NVIDIA/ssifbridge;protocol=https;branch=develop;name=override; \
            "
-SRCREV= "cfb8647eee960ec542cd2d05c6e6c31ca019994c"
+SRCREV= "88ae427d56d17e9499b790698cb6195760457cf4"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 

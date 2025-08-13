@@ -7,15 +7,15 @@ SRC_URI += "file://reserved-list \
 "
 
 do_install:append() {
-    install -m 0644 ${WORKDIR}/reserved-list ${D}/reserved-list
+    install -m 0644 ${UNPACKDIR}/reserved-list ${D}/reserved-list
 }
 
 do_install:append:gb200nvl-bmc-ut3() {
-    install -m 0755 ${WORKDIR}/gb200nvl-bmc-ut3/obmc-init.sh ${D}/init
+    install -m 0755 ${UNPACKDIR}/gb200nvl-bmc-ut3/obmc-init.sh ${D}/init
 }
 
 do_install:append:gb200nvl-hmc() {
-    install -m 0755 ${WORKDIR}/gb200nvl-hmc/obmc-init.sh ${D}/init
+    install -m 0755 ${UNPACKDIR}/gb200nvl-hmc/obmc-init.sh ${D}/init
 }
 
 do_install:append:gb300nvl-hmc() {

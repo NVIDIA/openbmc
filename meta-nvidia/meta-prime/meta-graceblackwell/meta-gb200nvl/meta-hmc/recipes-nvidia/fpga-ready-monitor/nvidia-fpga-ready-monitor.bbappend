@@ -26,13 +26,13 @@ SYSTEMD_OVERRIDE:${PN}:append = "systemd/nvidia-fpga-notready.conf:nvidia-fpga-n
 
 do_install:append() {
     install -d ${D}/${bindir}
-    install -m 0755 ${WORKDIR}/${BIN} ${D}${bindir}/${BIN}
-    install -m 0755 ${WORKDIR}/fpga1_ready.sh ${D}${bindir}
-    install -m 0755 ${WORKDIR}/fpga_usb_status_monitor.sh ${D}${bindir}
+    install -m 0755 ${UNPACKDIR}/${BIN} ${D}${bindir}/${BIN}
+    install -m 0755 ${UNPACKDIR}/fpga1_ready.sh ${D}${bindir}
+    install -m 0755 ${UNPACKDIR}/fpga_usb_status_monitor.sh ${D}${bindir}
 
     rm -f ${D}${nonarch_base_libdir}/systemd/system/nvidia-fpga-ready-monitor.service
-    install -m 0644 ${WORKDIR}/systemd/nvidia-fpga-ready-init.service ${D}${nonarch_base_libdir}/systemd/system/
-    install -m 0644 ${WORKDIR}/systemd/nvidia-fpga1-ready.service ${D}${nonarch_base_libdir}/systemd/system/
-    install -m 0644 ${WORKDIR}/systemd/nvidia-fpga1-notready.service ${D}${nonarch_base_libdir}/systemd/system/
-    install -m 0644 ${WORKDIR}/systemd/nvidia-fpga-usb-monitor.service ${D}${nonarch_base_libdir}/systemd/system/
+    install -m 0644 ${UNPACKDIR}/systemd/nvidia-fpga-ready-init.service ${D}${nonarch_base_libdir}/systemd/system/
+    install -m 0644 ${UNPACKDIR}/systemd/nvidia-fpga1-ready.service ${D}${nonarch_base_libdir}/systemd/system/
+    install -m 0644 ${UNPACKDIR}/systemd/nvidia-fpga1-notready.service ${D}${nonarch_base_libdir}/systemd/system/
+    install -m 0644 ${UNPACKDIR}/systemd/nvidia-fpga-usb-monitor.service ${D}${nonarch_base_libdir}/systemd/system/
 }

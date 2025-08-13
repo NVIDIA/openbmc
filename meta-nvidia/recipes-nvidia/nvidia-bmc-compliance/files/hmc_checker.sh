@@ -2431,19 +2431,33 @@ get_sma_nsm_active_key_set_nsmtool() {
 #   valid  (BuildType) (0 Development, 1 Release) - Build Type Size (1 Byte)
 get_sma_nsm_build_type_nsmtool() {
     local sma_eid="$1"
-    # Get both slot count and raw data
-    read slot_count raw_data <<< $(_get_sma_nsm_active_firmware_slot "${sma_eid}")
-    # Calculate build type data byte position
-    local build_type_data_byte=$((38 + ((slot_count * 47) + 30)))
-    # echo "build_type_data_byte: $build_type_data_byte"
-    # Use the raw_data directly instead of querying nsmtool again
-    if [[ $raw_data ]]; then
-        build_type=$(echo "$raw_data" | awk '{print $'$build_type_data_byte'}')
-        case "$build_type" in
-            "00") echo "development" ;;
-            "01") echo "release" ;;
-            *) echo "unknown" ;;
-        esac
+    # Call nsmtool and get JSON output
+    local nsmtool_output
+    nsmtool_output=$(__log_ nsmtool firmware GetRotInformation -m "$sma_eid" -c 0x0A -i 0xff02 -d 0)   
+    # Extract "Active Slot": 0, from nsmtool_output
+    # The output is expected to have a line like: "Active Slot": 0,
+    local active_slot
+    active_slot=$(echo "$nsmtool_output" | grep -o '"Active Slot":[ ]*[0-9]\+' | grep -o '[0-9]\+')
+    
+    # Extract all "Build type" values into an array
+    local build_type_array=()
+    while IFS= read -r line; do
+        # Extract the build type value (remove quotes and comma)
+        local build_type=$(echo "$line" | sed 's/.*"Build type":[ ]*"\([^"]*\)".*/\1/')
+        if [[ -n "$build_type" ]]; then
+            build_type_array+=("$build_type")
+        fi
+    done < <(echo "$nsmtool_output" | grep '"Build type":')
+    
+    # Return the build type corresponding to the active slot
+    if [[ ${#build_type_array[@]} -gt 0 && -n "$active_slot" ]]; then
+        # Convert active_slot to 0-based index
+        local index=$((active_slot))
+        if [[ $index -lt ${#build_type_array[@]} ]]; then
+            echo "${build_type_array[$index]}" | tr '[:upper:]' '[:lower:]'
+        else
+            echo ""
+        fi
     else
         echo ""
     fi
@@ -2457,21 +2471,33 @@ get_sma_nsm_build_type_nsmtool() {
 #   valid  (SigningType) (0 Debug, 1 Production, 2 External, 3 DOT) - Signing Type Size (1 Byte)
 get_sma_nsm_signing_type_nsmtool() {
     local sma_eid="$1"
-    # Get both slot count and raw data
-    read slot_count raw_data <<< $(_get_sma_nsm_active_firmware_slot "${sma_eid}")
-    # Calculate signing type data byte position
-    local signing_type_data_byte=$((38 + ((slot_count * 47) + 33)))
-    # echo "signing_type_data_byte: $signing_type_data_byte"
-    # Use the raw_data directly instead of querying nsmtool again
-    if [[ $raw_data ]]; then
-        signing_type=$(echo "$raw_data" | awk '{print $'$signing_type_data_byte'}')
-        case "$signing_type" in
-            "00") echo "debug" ;;
-            "01") echo "production" ;;
-            "02") echo "external" ;;
-            "03") echo "dot" ;;
-            *) echo "unknown" ;;
-        esac
+    # Call nsmtool and get JSON output
+    local nsmtool_output
+    nsmtool_output=$(__log_ nsmtool firmware GetRotInformation -m "$sma_eid" -c 0x0A -i 0xff02 -d 0)   
+    # Extract "Active Slot": 0, from nsmtool_output
+    # The output is expected to have a line like: "Active Slot": 0,
+    local active_slot
+    active_slot=$(echo "$nsmtool_output" | grep -o '"Active Slot":[ ]*[0-9]\+' | grep -o '[0-9]\+')
+    
+    # Extract all "Signing type" values into an array
+    local signing_type_array=()
+    while IFS= read -r line; do
+        # Extract the signing type value (remove quotes and comma)
+        local signing_type=$(echo "$line" | sed 's/.*"Signing type":[ ]*"\([^"]*\)".*/\1/')
+        if [[ -n "$signing_type" ]]; then
+            signing_type_array+=("$signing_type")
+        fi
+    done < <(echo "$nsmtool_output" | grep '"Signing type":')
+    
+    # Return the signing type corresponding to the active slot
+    if [[ ${#signing_type_array[@]} -gt 0 && -n "$active_slot" ]]; then
+        # Convert active_slot to 0-based index
+        local index=$((active_slot))
+        if [[ $index -lt ${#signing_type_array[@]} ]]; then
+            echo "${signing_type_array[$index]}" | tr '[:upper:]' '[:lower:]'
+        else
+            echo ""
+        fi
     else
         echo ""
     fi
@@ -2485,13 +2511,36 @@ get_sma_nsm_signing_type_nsmtool() {
 #   valid  (SigningKeyIndex)  (Index key used to sign fw) - Key Index Size (2 Bytes)
 get_sma_nsm_signing_key_index_nsmtool() {
     local sma_eid="$1"
-    # Get both slot count and raw data
-    read slot_count raw_data <<< $(_get_sma_nsm_active_firmware_slot "${sma_eid}")
-    # Calculate signing key index data byte position
-    local signing_key_index_data_byte=$((38 + ((slot_count * 47) + 46)))
-    # echo "signing_key_index_data_byte: $signing_key_index_data_byte"
-    # Use the raw_data directly instead of querying nsmtool again
-    [[ $raw_data ]] && echo "$raw_data" | awk '{print $'$signing_key_index_data_byte', $'$((signing_key_index_data_byte + 1))'}' || echo ""
+    # Call nsmtool and get JSON output
+    local nsmtool_output
+    nsmtool_output=$(__log_ nsmtool firmware GetRotInformation -m "$sma_eid" -c 0x0A -i 0xff02 -d 0)   
+    # Extract "Active Slot": 0, from nsmtool_output
+    # The output is expected to have a line like: "Active Slot": 0,
+    local active_slot
+    active_slot=$(echo "$nsmtool_output" | grep -o '"Active Slot":[ ]*[0-9]\+' | grep -o '[0-9]\+')
+    
+    # Extract all "Signing key index" values into an array
+    local signing_key_index_array=()
+    while IFS= read -r line; do
+        # Extract the signing key index value (numeric value, not quoted)
+        local signing_key_index=$(echo "$line" | sed 's/.*"Signing key index":[ ]*\([0-9]*\).*/\1/')
+        if [[ -n "$signing_key_index" ]]; then
+            signing_key_index_array+=("$signing_key_index")
+        fi
+    done < <(echo "$nsmtool_output" | grep '"Signing key index":')
+    
+    # Return the signing key index corresponding to the active slot
+    if [[ ${#signing_key_index_array[@]} -gt 0 && -n "$active_slot" ]]; then
+        # Convert active_slot to 0-based index
+        local index=$((active_slot))
+        if [[ $index -lt ${#signing_key_index_array[@]} ]]; then
+            echo "${signing_key_index_array[$index]}"
+        else
+            echo ""
+        fi
+    else
+        echo ""
+    fi
 }
 
 # HMC-SXM-SMA-IROT-NSM-01       

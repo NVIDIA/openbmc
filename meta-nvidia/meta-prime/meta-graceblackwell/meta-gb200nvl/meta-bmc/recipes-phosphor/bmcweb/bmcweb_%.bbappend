@@ -25,6 +25,9 @@ EXTRA_OEMESON:append = " -Dplatform-metrics-id=PlatformEnvironmentMetrics_0"
 EXTRA_OEMESON:append = " -Dhide-host-os-features-init-value=enabled "
 # Enable shared memory support
 EXTRA_OEMESON:append = " -Dshmem-platform-metrics=enabled "
+EXTRA_OEMESON:append = " -Dnvidia-oem-device-status-from-file=enabled"
+# Enable Grace CPU Diag
+EXTRA_OEMESON:append = " -Dcpu-diag-support=enabled "
 
 DEPENDS:append = " nvidia-shmem"
 DEPENDS:append = " nvidia-tal"
@@ -39,7 +42,8 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI:append= " file://fw_uuid_mapping.json \
                   file://listener.conf \
-                  file://mrd_PlatformEnvironmentMetrics.json \
+                  file://mrd_PlatformEnvironmentMetrics_CX7.json \
+                  file://mrd_PlatformEnvironmentMetrics_CX8.json \
                 "
 
 SRC_URI:append = " file://rot_chassis_properties_allowlist.json"
@@ -51,7 +55,8 @@ SYSTEMD_SERVICE:${PN} += " \
 FILES:${PN}:append = " \
     ${datadir}/${PN}/fw_uuid_mapping.json \
     ${datadir}/${PN}/rot_chassis_properties_allowlist.json \
-    ${datadir}/${PN}/mrd_PlatformEnvironmentMetrics.json \
+    ${datadir}/${PN}/mrd_PlatformEnvironmentMetrics_CX7.json \
+    ${datadir}/${PN}/mrd_PlatformEnvironmentMetrics_CX8.json \
 "
 
 DEPENDS += " \
@@ -61,9 +66,15 @@ DEPENDS += " \
 "
 do_install:append() {
     install -d ${D}${datadir}/${PN}/
-    install -m 0644 ${WORKDIR}/fw_uuid_mapping.json ${D}${datadir}/${PN}/fw_uuid_mapping.json
-    install -m 0644 ${WORKDIR}/rot_chassis_properties_allowlist.json ${D}${datadir}/${PN}/
+    install -m 0644 ${UNPACKDIR}/fw_uuid_mapping.json ${D}${datadir}/${PN}/fw_uuid_mapping.json
+    install -m 0644 ${UNPACKDIR}/rot_chassis_properties_allowlist.json ${D}${datadir}/${PN}/
     install -d ${D}${datadir}/rf_listener/
-    install -m 0644 ${WORKDIR}/listener.conf ${D}${datadir}/rf_listener/listener.conf
-    install -m 0644 ${WORKDIR}/mrd_PlatformEnvironmentMetrics.json ${D}${datadir}/${PN}/
+    install -m 0644 ${UNPACKDIR}/listener.conf ${D}${datadir}/rf_listener/listener.conf
+
+    install -m 0444 ${UNPACKDIR}/mrd_PlatformEnvironmentMetrics_CX7.json ${D}${datadir}/${PN}/
+    install -m 0444 ${UNPACKDIR}/mrd_PlatformEnvironmentMetrics_CX8.json ${D}${datadir}/${PN}/
+
+    # Create symbolic link from /usr/share/bmcweb/mrd_PlatformEnvironmentMetrics.json
+    # to /etc/default/bmcweb/mrd_PlatformEnvironmentMetrics.json
+    ln -sf /etc/default/bmcweb/mrd_PlatformEnvironmentMetrics.json  ${D}${datadir}/${PN}/mrd_PlatformEnvironmentMetrics.json
 }

@@ -50,12 +50,12 @@ FILES:${PN}:append = " ${datadir}/mtd_targets/pciechip.json "
 SYSTEMD_OVERRIDE:${PN}:append = "systemd/com.Nvidia.FWStatus.conf:com.Nvidia.FWStatus.service.d/com.Nvidia.FWStatus.conf "
 
 do_install:append() {
-        install -m 0755 ${WORKDIR}/setup_pciechip.sh ${D}${bindir}/
-        install -m 0755 ${WORKDIR}/cleanup_pciechip.sh ${D}${bindir}/
-        install -m 0755 ${WORKDIR}/pciechip_power_watch.sh ${D}${bindir}/
-        install -m 0755 ${WORKDIR}/fw_status_precheck.sh ${D}/${bindir}/
-        install -m 0755 ${WORKDIR}/update_last_state_change_time.sh ${D}/${bindir}/
+        install -m 0755 ${UNPACKDIR}/setup_pciechip.sh ${D}${bindir}/
+        install -m 0755 ${UNPACKDIR}/cleanup_pciechip.sh ${D}${bindir}/
+        install -m 0755 ${UNPACKDIR}/pciechip_power_watch.sh ${D}${bindir}/
+        install -m 0755 ${UNPACKDIR}/fw_status_precheck.sh ${D}/${bindir}/
+        install -m 0755 ${UNPACKDIR}/update_last_state_change_time.sh ${D}/${bindir}/
         install -d ${D}${datadir}/mtd_targets
-        install -m 0644 ${WORKDIR}/pciechip.json ${D}${datadir}/mtd_targets/
+        install -m 0644 ${UNPACKDIR}/pciechip.json ${D}${datadir}/mtd_targets/
 }
 

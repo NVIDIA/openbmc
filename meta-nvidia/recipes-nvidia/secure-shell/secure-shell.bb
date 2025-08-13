@@ -11,7 +11,8 @@ RDEPENDS:${PN} = "bash"
 
 FILESEXTRAPATHS:append := "${THISDIR}/files:"
 
-S = "${WORKDIR}"
+S = "${WORKDIR}/sources"
+UNPACKDIR = "${S}"
 
 SRC_URI = " \
         file://rbash \
@@ -43,12 +44,8 @@ do_install() {
     fi
 
     install -d ${D}${bindir}
-    install -m 755 ${S}/secure-shell.sh ${D}${bindir}/
-    install -m 755 ${S}/rbash ${D}${bindir}/
-    install -m 755 ${S}/hostconsole-login.sh ${D}${bindir}/
-    if [ "${SECURESHELLROOT}" = "1" ]; then
-         install -m 755 ${S}/secure-shell-debug-token-login-enable.sh ${D}${bindir}/
-    fi
+    install -m 755 ${UNPACKDIR}/secure-shell.sh ${D}${bindir}/
+    ln -s -r ${D}/bin/bash ${D}${bindir}/rbash
 
     install -d ${D}${systemd_system_unitdir}
     install -m 644 ${S}/secure-shell.service ${D}${systemd_system_unitdir}/

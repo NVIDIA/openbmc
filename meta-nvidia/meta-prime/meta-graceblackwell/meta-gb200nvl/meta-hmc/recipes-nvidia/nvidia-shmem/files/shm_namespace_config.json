@@ -61,6 +61,7 @@
                 "ceCount",
                 "ueCount",
                 "RowRemappingFailureState",
+		"RowRemappingPendingState",
                 "ceRowRemappingCount",
                 "ueRowRemappingCount",
                 "CapacityUtilizationPercent",
@@ -78,6 +79,7 @@
                 "ceCount",
                 "ueCount",
                 "OperatingSpeed",
+		"isThresholdExceeded",
                 "Utilization",
                 "State",
                 "L0ToRecoveryCount",
@@ -179,7 +181,6 @@
                 "LinkErrorRecoveryCounter",
                 "LinkDownCount",
                 "RXRemotePhysicalErrorPkts",
-                "RXSwitchRelayErrorPkts",
                 "QP1DroppedPkts",
                 "BitErrorRate",
                 "TXWait",
@@ -236,7 +237,8 @@
             "PropertyList": [
                 "Status",
                 "MemorySpareChannelPresence",
-                "LinkState"
+                "LinkState",
+		"LinkStatus"
             ]
         },
         {
@@ -252,6 +254,13 @@
             "PropertyList": [
                 "Health",
                 "HealthRollup"
+            ]
+        },
+	{
+            "Namespace": "HealthMetrics",
+            "ObjectpathKeywords": "inventory_software",
+            "PropertyList": [
+                "Functional"
             ]
         }
     ]

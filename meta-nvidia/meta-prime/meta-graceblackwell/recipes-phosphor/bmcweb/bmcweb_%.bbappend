@@ -6,11 +6,9 @@ EXTRA_OEMESON:append = " -Dredfish-system-faultlog-dump-log=disabled"
 EXTRA_OEMESON:append = " -Dreset-bios-by-clear-nonvolatile=enabled"
 EXTRA_OEMESON:append = " -Dhealth-rollup-alternative=enabled"
 EXTRA_OEMESON:append = " -Dredfish-dbus-event=enabled"
-EXTRA_OEMESON:append = " -Dsort-event-log=enabled"
 
 EXTRA_OEMESON:append = " -Dupdate-service-task-timeout=20"
 
-EXTRA_OEMESON:append = " -Darray-bootprogress=enabled"
 EXTRA_OEMESON:append = " -Dhost-iface=enabled "
 EXTRA_OEMESON:append = " -Ddot-support=enabled"
 EXTRA_OEMESON:append = " -Dnetwork-adapters-generic=enabled"

@@ -15,6 +15,7 @@ BBLAYERS ?= " \
   ##OEROOT##/meta-phosphor \
   ##OEROOT##/meta-aspeed \
   ##OEROOT##/meta-nvidia \
+  ##OEROOT##/meta-nvidia/meta-common \
   ##OEROOT##/meta-nvidia/meta-prime \
   ##OEROOT##/meta-nvidia/meta-prime/meta-hmc-common \
   ##OEROOT##/meta-nvidia/meta-prime/meta-graceblackwell \
@@ -31,6 +32,7 @@ BBLAYERS_NON_REMOVABLE ?= " \
   ##OEROOT##/meta-phosphor \
   ##OEROOT##/meta-aspeed \
   ##OEROOT##/meta-nvidia \
+  ##OEROOT##/meta-nvidia/meta-common \
   ##OEROOT##/meta-nvidia/meta-prime \
   ##OEROOT##/meta-nvidia/meta-prime/meta-hmc-common \
   ##OEROOT##/meta-nvidia/meta-prime/meta-graceblackwell \

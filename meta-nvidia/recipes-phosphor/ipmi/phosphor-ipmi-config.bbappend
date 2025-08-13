@@ -55,7 +55,7 @@ python do_populate_version() {
                 auxVer += int(rc_num[0]) << 16
 
             # Update dev_id.json with the information
-            workdir = d.getVar('WORKDIR', True)
+            workdir = d.getVar('UNPACKDIR', True)
             file = os.path.join(workdir, 'dev_id.json')
             with open(file, "r+") as jsonFile:
                 data = json.load(jsonFile)

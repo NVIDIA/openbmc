@@ -1,0 +1,614 @@
+From b8c5f6ab25c62100e66dcd4610f1091f78940571 Mon Sep 17 00:00:00 2001
+From: Faizan Ali <faizana@nvidia.com>
+Date: Tue, 26 Nov 2024 15:22:01 +0530
+Subject: [PATCH 1/2] Add Allocate EID support
+
+Adds the following feature:
+* new dbus argument for AllocateEndpointStatic
+ to account for start of EID allocation
+* implement Allocate EID command
+* add endpoint's pool size and pool start
+* add bridges endpoints to dbus interface
+* add pytest api for allocate eid testing
+
+Fixes jira https://jirasw.nvidia.com/browse/DGXOPENBMC-14097
+
+Upstream-Status: Pending
+
+Tested : Tested on Gb200 hmc machine over USB. Successful EID
+allocation of FPGA Bridge endpoints.
+
+Signed-off-by: Faizan Ali <faizana@nvidia.com>
+---
+ docs/mctpd.md           |   9 +-
+ src/mctp-control-spec.h |  24 +++++
+ src/mctpd.c             | 201 ++++++++++++++++++++++++++++++++++++++--
+ tests/conftest.py       |  30 ++++--
+ tests/test_mctpd.py     |  88 +++++++++++++++++-
+ 5 files changed, 330 insertions(+), 22 deletions(-)
+
+diff --git a/docs/mctpd.md b/docs/mctpd.md
+index d69cc77..3fa48d5 100644
+--- a/docs/mctpd.md
++++ b/docs/mctpd.md
+@@ -121,17 +121,20 @@ busctl call au.com.codeconstruct.MCTP1 \
+ 
+ Similar to SetupEndpoint, but will always assign an EID rather than querying for
+ existing ones. Will return `new = false` when an endpoint is already known to
+-`mctpd`.
++`mctpd`. Moreover, will also allocate downstream eids for MCTP Bridges.
+ 
+-#### `.AssignEndpointStatic`: `ayy` → `yisb`
++#### `.AssignEndpointStatic`: `ayyy` → `yisb`
+ 
+ Similar to AssignEndpoint, but takes an additional EID argument:
+ 
+ ```
+-AssignEndpointStatic <hwaddr> <static-EID>
++AssignEndpointStatic <hwaddr> <static-EID> <pool_start-EID>
+ ```
+ 
+ to assign `<static-EID>` to the endpoint with hardware address `hwaddr`.
++For MCTP Bridges `<pool_start-EID>` will be starting eid assigned for
++downstream devices. For non-bridge devices this argument value will be
++ignored.
+ 
+ This call will fail if the endpoint already has an EID, and that EID is
+ different from `static-EID`, or if `static-EID` is already assigned to another
+diff --git a/src/mctp-control-spec.h b/src/mctp-control-spec.h
+index ba29217..43df30f 100644
+--- a/src/mctp-control-spec.h
++++ b/src/mctp-control-spec.h
+@@ -67,6 +67,30 @@ struct mctp_ctrl_cmd_get_mctp_ver_support {
+ 	uint8_t msg_type_number;
+ } __attribute__((__packed__));
+ 
++typedef enum {
++	alloc_eid = 0,
++	force_alloc = 1,
++	get_alloc_info = 2,
++	reserved = 3
++} mctp_ctrl_cmd_alloc_eid_op;
++
++struct mctp_ctrl_cmd_alloc_eid {
++	struct mctp_ctrl_msg_hdr ctrl_hdr;
++	mctp_ctrl_cmd_alloc_eid_op alloc_eid_op : 2;
++	uint8_t : 6;
++	uint8_t pool_size;
++	uint8_t start_eid;
++} __attribute__((__packed__));
++
++struct mctp_ctrl_resp_alloc_eid {
++	struct mctp_ctrl_msg_hdr ctrl_hdr;
++	uint8_t completion_code;
++	uint8_t status : 2;
++	uint8_t : 6;
++	uint8_t eid_pool_size;
++	uint8_t eid_set;
++} __attribute__((__packed__));
++
+ #define MCTP_GET_VERSION_SUPPORT_BASE_INFO 0xFF
+ 
+ struct mctp_ctrl_resp_get_mctp_ver_support {
+diff --git a/src/mctpd.c b/src/mctpd.c
+index 52e3769..1ea2600 100644
+--- a/src/mctpd.c
++++ b/src/mctpd.c
+@@ -52,6 +52,7 @@
+ #define OPENBMC_IFACE_COMMON_UUID "xyz.openbmc_project.Common.UUID"
+ #define CC_MCTP_DBUS_IFACE_INTERFACE "au.com.codeconstruct.MCTP.Interface1"
+ 
++#define BRIDGE_SETTLE_DELAY_SEC 4
+ // an arbitrary constant for use with sd_id128_get_machine_app_specific()
+ static const char* mctpd_appid = "67369c05-4b97-4b7e-be72-65cfd8639f10";
+ 
+@@ -168,6 +169,11 @@ struct peer {
+ 
+ 	// Connectivity state
+ 	bool degraded;
++
++	// Pool size
++	uint8_t pool_size;
++	uint8_t pool_start;
++
+ 	struct {
+ 		uint64_t delay;
+ 		sd_event_source *source;
+@@ -237,6 +243,7 @@ static int add_local_eid(ctx *ctx, int net, int eid);
+ static int del_local_eid(ctx *ctx, int net, int eid);
+ static int add_net(ctx *ctx, int net);
+ static int add_interface(ctx *ctx, int ifindex);
++static int endpoint_allocate_eid(peer *peer);
+ 
+ mctp_eid_t local_addr(const ctx *ctx, int ifindex) {
+ 	mctp_eid_t *eids, ret = 0;
+@@ -1287,7 +1294,7 @@ static int endpoint_query_phys(ctx *ctx, const dest_phys *dest,
+ }
+ 
+ /* returns -ECONNREFUSED if the endpoint returns failure. */
+-static int endpoint_send_set_endpoint_id(const peer *peer, mctp_eid_t *new_eid)
++static int endpoint_send_set_endpoint_id(peer *peer, mctp_eid_t *new_eid)
+ {
+ 	struct sockaddr_mctp_ext addr;
+ 	struct mctp_ctrl_cmd_set_eid req = {0};
+@@ -1334,9 +1341,11 @@ static int endpoint_send_set_endpoint_id(const peer *peer, mctp_eid_t *new_eid)
+ 
+ 	alloc = resp->status & 0x3;
+ 	if (alloc != 0) {
+-		// TODO for bridges
+-		warnx("%s requested allocation pool, unimplemented",
+-			dest_phys_tostr(dest));
++		peer->pool_size = resp->eid_pool_size;
++		if (peer->ctx->verbose) {
++			warnx("%s requested allocation of pool size = %d",
++				dest_phys_tostr(dest), peer->pool_size);
++		}
+ 	}
+ 
+ 	rc = 0;
+@@ -2068,6 +2077,17 @@ static int method_assign_endpoint(sd_bus_message *call, void *data, sd_bus_error
+ 		goto err;
+ 	dfree(peer_path);
+ 
++	/* MCTP Bridge Support */
++	/* Look for starting pool EID
++	 * Allocate Endopint EID
++	 * Update pool endpoints to dbus */
++
++	if(peer->pool_size > 0) {
++		/* new start eid will be assigned before MCTP Allocate eid control command */
++		peer->pool_start = eid_alloc_max;
++		rc = endpoint_allocate_eid(peer);
++	}
++
+ 	return sd_bus_reply_method_return(call, "yisb",
+ 		peer->eid, peer->net, peer_path, 1);
+ err:
+@@ -2082,7 +2102,7 @@ static int method_assign_endpoint_static(sd_bus_message *call, void *data,
+ 	char *peer_path = NULL;
+ 	peer *peer = NULL;
+ 	ctx *ctx = data;
+-	uint8_t eid;
++	uint8_t eid, start_eid;
+ 	int rc;
+ 
+ 	dest->ifindex = interface_call_to_ifindex_busowner(ctx, call);
+@@ -2098,6 +2118,10 @@ static int method_assign_endpoint_static(sd_bus_message *call, void *data,
+ 	if (rc < 0)
+ 		goto err;
+ 
++	rc = sd_bus_message_read(call, "y", &start_eid);
++	if (rc < 0)
++		goto err;
++
+ 	rc = validate_dest_phys(ctx, dest);
+ 	if (rc < 0)
+ 		return sd_bus_error_setf(berr, SD_BUS_ERROR_INVALID_ARGS,
+@@ -2141,6 +2165,14 @@ static int method_assign_endpoint_static(sd_bus_message *call, void *data,
+ 	}
+ 	dfree(peer_path);
+ 
++	/* MCTP Bridge Support */
++	/* Allocate Endopint EID
++	 * Update pool endpoints to dbus */
++	if(peer->pool_size > 0) {
++		peer->pool_start = start_eid;
++		rc = endpoint_allocate_eid(peer);
++	}
++
+ 	return sd_bus_reply_method_return(call, "yisb",
+ 		peer->eid, peer->net, peer_path, 1);
+ err:
+@@ -2821,9 +2853,10 @@ static const sd_bus_vtable bus_owner_vtable[] = {
+ 		0),
+ 
+ 	SD_BUS_METHOD_WITH_NAMES("AssignEndpointStatic",
+-		"ayy",
++		"ayyy",
+ 		SD_BUS_PARAM(physaddr)
+-		SD_BUS_PARAM(eid),
++		SD_BUS_PARAM(eid)
++		SD_BUS_PARAM(start_eid),
+ 		"yisb",
+ 		SD_BUS_PARAM(eid)
+ 		SD_BUS_PARAM(net)
+@@ -4360,6 +4393,160 @@ static void setup_config_defaults(ctx *ctx)
+ 	ctx->default_role = ENDPOINT_ROLE_BUS_OWNER;
+ }
+ 
++static int endpoint_send_allocate_endpoint_id(peer *peer,
++	mctp_eid_t eid_start, uint8_t eid_pool_size, mctp_ctrl_cmd_alloc_eid_op oper,
++	uint8_t *allocated_pool_size, mctp_eid_t *allocated_pool_start)
++{
++	struct sockaddr_mctp_ext addr;
++	struct mctp_ctrl_cmd_alloc_eid req = {0};
++	struct mctp_ctrl_resp_alloc_eid *resp = NULL;
++	uint8_t *buf = NULL;
++	size_t buf_size;
++	uint8_t iid, stat;
++	int rc;
++
++	iid = mctp_next_iid(peer->ctx);
++	req.ctrl_hdr.rq_dgram_inst = RQDI_REQ | iid;
++	req.ctrl_hdr.command_code = MCTP_CTRL_CMD_ALLOCATE_ENDPOINT_IDS;
++	req.alloc_eid_op = alloc_eid;
++	req.pool_size = eid_pool_size;
++	req.start_eid = eid_start;
++	rc = endpoint_query_peer(peer, MCTP_CTRL_HDR_MSG_TYPE, &req, sizeof(req),
++							&buf, &buf_size, &addr);
++	if (rc < 0)
++		goto out;
++
++	rc = mctp_ctrl_validate_response(buf, buf_size, sizeof(*resp),
++									peer_tostr_short(peer), iid,
++									MCTP_CTRL_CMD_ALLOCATE_ENDPOINT_IDS);
++
++	if (rc)
++		goto out;
++
++	resp = (void *)buf;
++	if (!resp) {
++		warnx("%s Invalid response Buffer\n", __func__);
++		return -ENOMEM;
++	}
++
++	stat = resp->status & 0x03;
++	if (stat == 0x00) {
++		if(peer->ctx->verbose) {
++			fprintf(stderr, "%s Allocation Accepted \n", __func__);
++		}
++	}
++	else if (stat == 0x1) {
++		warnx("%s Allocation was rejected as it was Allocated by other bus \n", __func__);
++	}
++
++	*allocated_pool_size = resp->eid_pool_size;
++	*allocated_pool_start = resp->eid_set;
++	if(peer->ctx->verbose) {
++		fprintf(stderr, "%s Allocated size of %d, starting from EID %d\n", __func__,
++				resp->eid_pool_size, resp->eid_set);
++	}
++
++	return 0;
++out:
++	free(buf);
++	return rc;
++}
++static int cb_populate_pool_eids(sd_event_source *s, uint64_t t, void* data)
++{
++	peer *peer = data;
++	int net = peer->net;
++	struct peer *allocated_peer = NULL;
++	dest_phys dest = peer->phys;
++	int rc;
++
++	fprintf (stderr, "Bridge Time expired, set pool eids\n");
++	for (mctp_eid_t eid = peer->pool_start;
++		eid < peer->pool_start + peer->pool_size; eid++) {
++		rc = add_peer(peer->ctx, &dest, eid, net, &allocated_peer);
++		if (rc < 0) {
++			warnx("%s failed to find peer for allocated eid %d\n",
++					__func__, eid);
++			continue;
++		}
++
++		rc = setup_added_peer(allocated_peer);
++		if (rc < 0) {
++			warnx("%s failed to setup peer for allocated eid %d\n",
++					__func__, eid);
++			continue;
++		}
++	}
++
++	return 0;
++}
++
++static mctp_eid_t get_pool_start (peer *peer, mctp_eid_t eid_start, uint8_t pool_size)
++{
++	uint8_t count = 0;
++	mctp_eid_t pool_start = eid_alloc_max;
++	net_det *n = lookup_net(peer->ctx, peer->net);
++
++	if (!n) {
++		warnx("BUG: Unknown net %d : failed to get pool start\n", peer->net);
++		return eid_alloc_max;
++	}
++
++	for (mctp_eid_t e = eid_start; e <= eid_alloc_max; e++) {
++		if (n->peeridx[e] == -1) {
++			if(pool_start == eid_alloc_max) {
++				pool_start = e;
++			}
++			count++;
++			if (count == pool_size) return pool_start;
++		} else {
++			pool_start = eid_alloc_max;
++			count = 0;
++		}
++	}
++
++	return eid_alloc_max;
++}
++
++static int endpoint_allocate_eid(peer* peer)
++{
++	uint8_t allocated_pool_size = 0;
++	mctp_eid_t allocated_pool_start = 0;
++
++	/* Find pool sized contiguous unused eids to allocate on the bridge. */
++	peer->pool_start = get_pool_start(peer, peer->pool_start, peer->pool_size);
++	if(peer->pool_start == eid_alloc_max) {
++		warnx("%s failed to find contiguous EIDs of required size", __func__);
++		return 0;
++	} else {
++		if(peer->ctx->verbose)
++			fprintf(stderr, "%s Asking for contiguous EIDs for pool with start eid : %d\n", __func__, peer->pool_start);
++	}
++
++	int rc = endpoint_send_allocate_endpoint_id(peer, peer->pool_start, peer->pool_size,
++				alloc_eid, &allocated_pool_size, &allocated_pool_start);
++	if (rc) {
++		warnx("%s failed to allocate endpoints, returned %s %d\n",
++				__func__, strerror(-rc), rc);
++	} else {
++		peer->pool_size = allocated_pool_size;
++		peer->pool_start = allocated_pool_start;
++
++		//delay for settling MCTP Bridge after allocation of downstream eid
++		uint64_t now_usec, timer_usec;
++		// Get the current time in microseconds
++		if (sd_event_now(peer->ctx->event, CLOCK_MONOTONIC, &now_usec) < 0) {
++			warnx("Failed to get current time");
++			return -1;
++		}
++		timer_usec = now_usec + BRIDGE_SETTLE_DELAY_SEC * 1000000ULL;
++		rc = sd_event_add_time(peer->ctx->event, NULL,
++				CLOCK_MONOTONIC, timer_usec, 0,
++				cb_populate_pool_eids, peer);
++	}
++
++	return 0;
++}
++
+ int main(int argc, char **argv)
+ {
+ 	int rc;
+diff --git a/tests/conftest.py b/tests/conftest.py
+index f688233..7d9be5e 100644
+--- a/tests/conftest.py
++++ b/tests/conftest.py
+@@ -221,12 +221,13 @@ class MCTPControlCommand(MCTPCommand):
+         return bytes([flags, self.cmd]) + self.data
+ 
+ class Endpoint:
+-    def __init__(self, iface, lladdr, ep_uuid = None, eid = 0, types = None):
++    def __init__(self, iface, lladdr, ep_uuid = None, eid = 0, types = None, pool_size = 0):
+         self.iface = iface
+         self.lladdr = lladdr
+         self.uuid = ep_uuid or uuid.uuid1()
+         self.eid = eid
+         self.types = types or [0]
++        self.pool_size = pool_size
+         # keyed by (type, type-specific-instance)
+         self.commands = {}
+ 
+@@ -263,7 +264,10 @@ class Endpoint:
+                 # Set Endpoint ID
+                 (op, eid) = data[2:]
+                 self.eid = eid
+-                data = bytes(hdr + [0x00, 0x00, self.eid, 0x00])
++                if (self.pool_size):
++                    data = bytes(hdr + [0x00, 0x01, self.eid, self.pool_size])
++                else:
++                    data = bytes(hdr + [0x00, 0x00, self.eid, 0x00])
+                 await sock.send(raddr, data)
+ 
+             elif opcode == 2:
+@@ -281,7 +285,11 @@ class Endpoint:
+                 types = self.types
+                 data = bytes(hdr + [0x00, len(types)] + types)
+                 await sock.send(raddr, data)
+-
++            elif opcode == 8:
++                # Allocate Enpoint IDs
++                (_, pool_st) = data[3:]
++                data = bytes(hdr + [0x00, 0x00, self.pool_size, pool_st])
++                await sock.send(raddr, data)
+             else:
+                 await sock.send(raddr, bytes(hdr + [0x05])) # unsupported command
+ 
+@@ -316,9 +324,9 @@ class Network:
+     def add_endpoint(self, endpoint):
+         self.endpoints.append(endpoint)
+ 
+-    def lookup_endpoint(self, iface, lladdr):
++    def lookup_endpoint(self, iface, lladdr, eid):
+         for ep in self.endpoints:
+-            if ep.iface == iface and ep.lladdr == lladdr:
++            if ep.iface == iface and ep.lladdr == lladdr and (eid == ep.eid or not eid):
+                 return ep
+         return None
+ 
+@@ -538,7 +546,7 @@ class MCTPSocket(BaseSocket):
+         if phys is None:
+             return
+ 
+-        ep = self.network.lookup_endpoint(*phys)
++        ep = self.network.lookup_endpoint(*phys, a.eid)
+         if ep is None:
+             return
+ 
+@@ -941,8 +949,8 @@ Sysnet = namedtuple('SysNet', ['system', 'network'])
+ 
+ """Simple system & network.
+ 
+-Contains one interface (lladdr 0x10, local EID 8), and one endpoint (lladdr
+-0x1d), that reports support for MCTP control and PLDM.
++Contains two interface (lladdr 0x10, local EID 8), (lladdr 0x11, local EID 10) with one endpoint (lladdr
++0x1d), and MCTP bridge (lladdr 0x1e, pool size 2), that reports support for MCTP control and PLDM.
+ """
+ @pytest.fixture
+ async def sysnet():
+@@ -954,6 +962,12 @@ async def sysnet():
+     network = Network()
+     network.add_endpoint(Endpoint(iface, bytes([0x1d]), types = [0, 1]))
+ 
++    # new interface for MCTP Bridge device
++    bridge_iface = System.Interface('mctp1', 2, 2, bytes([0x11]), 68, 254, True)
++    await system.add_interface(bridge_iface)
++    await system.add_address(System.Address(bridge_iface, 10))
++    network.add_endpoint(Endpoint(bridge_iface, bytes([0x1e]), types=[0, 1], pool_size= 0x2))
++
+     return Sysnet(system, network)
+ 
+ @pytest.fixture
+diff --git a/tests/test_mctpd.py b/tests/test_mctpd.py
+index 53a9768..a3d9924 100644
+--- a/tests/test_mctpd.py
++++ b/tests/test_mctpd.py
+@@ -286,10 +286,12 @@ async def test_assign_endpoint_static(dbus, mctpd):
+     dev = mctpd.network.endpoints[0]
+     mctp = await mctpd_mctp_iface_obj(dbus, iface)
+     static_eid = 12
++    start_eid = 13
+ 
+     (eid, _, _, new) = await mctp.call_assign_endpoint_static(
+         dev.lladdr,
+-        static_eid
++        static_eid,
++        start_eid
+     )
+ 
+     assert eid == static_eid
+@@ -308,10 +310,12 @@ async def test_assign_endpoint_static_allocated(dbus, mctpd):
+     mctp = await mctpd_mctp_iface_obj(dbus, iface)
+     dev = mctpd.network.endpoints[0]
+     static_eid = 12
++    start_eid = 13
+ 
+     (eid, _, _, new) = await mctp.call_assign_endpoint_static(
+         dev.lladdr,
+         static_eid,
++        start_eid
+     )
+ 
+     assert eid == static_eid
+@@ -321,6 +325,7 @@ async def test_assign_endpoint_static_allocated(dbus, mctpd):
+     (eid, _, _, new) = await mctp.call_assign_endpoint_static(
+         dev.lladdr,
+         static_eid,
++        start_eid
+     )
+ 
+     assert eid == static_eid
+@@ -344,7 +349,7 @@ async def test_assign_endpoint_static_conflict(dbus, mctpd):
+ 
+     # try to assign dev2 with the dev1's existing EID
+     with pytest.raises(asyncdbus.errors.DBusError) as ex:
+-        await mctp.call_assign_endpoint_static(dev2.lladdr, eid)
++        await mctp.call_assign_endpoint_static(dev2.lladdr, eid, 14)
+ 
+     assert str(ex.value) == "Address in use"
+ 
+@@ -355,17 +360,19 @@ async def test_assign_endpoint_static_varies(dbus, mctpd):
+     dev = mctpd.network.endpoints[0]
+     mctp = await mctpd_mctp_iface_obj(dbus, iface)
+     static_eid = 12
++    start_eid = 13
+ 
+     (eid, _, _, new) = await mctp.call_assign_endpoint_static(
+         dev.lladdr,
+-        static_eid
++        static_eid,
++        start_eid
+     )
+ 
+     assert eid == static_eid
+     assert new
+ 
+     with pytest.raises(asyncdbus.errors.DBusError) as ex:
+-        await mctp.call_assign_endpoint_static(dev.lladdr, 13)
++        await mctp.call_assign_endpoint_static(dev.lladdr, 13, 14)
+ 
+     assert str(ex.value) == "Already assigned a different EID"
+ 
+@@ -455,3 +462,76 @@ async def test_query_message_types(dbus, mctpd):
+     query_types.sort()
+ 
+     assert ep_types == query_types
++
++""" Network1.LocalEIDs should reflect locally-assigned EID state """
++async def test_network_local_eids_single(dbus, mctpd):
++    iface = mctpd.system.interfaces[0]
++
++    net = await mctpd_mctp_network_obj(dbus, iface.net)
++    eids = list(await net.get_local_eids())
++
++    assert eids == [8]
++
++async def test_network_local_eids_multiple(dbus, mctpd):
++    iface = mctpd.system.interfaces[0]
++    await mctpd.system.add_address(mctpd.system.Address(iface, 9))
++
++    net = await mctpd_mctp_network_obj(dbus, iface.net)
++    eids = list(await net.get_local_eids())
++
++    assert eids == [8, 9]
++
++async def test_network_local_eids_none(dbus, mctpd):
++    iface = mctpd.system.interfaces[0]
++    await mctpd.system.del_address(mctpd.system.Address(iface, 8))
++
++    net = await mctpd_mctp_network_obj(dbus, iface.net)
++    eids = list(await net.get_local_eids())
++
++    assert eids == []
++""" Test that we allocate Eids to MCTP Bridge Endpoints"""
++async def test_endpoint_allocate_eid(dbus, mctpd):
++    bridge = mctpd.network.endpoints[1]
++    ep_types = [0, 1, 5]
++    bridge.types = ep_types
++    static_eid = 12
++    start_eid = 13
++
++    # mimicing MCTP Bridge by adding Bridg's Endpoints to same network and physcial address
++    for eid in range(start_eid, start_eid + bridge.pool_size + 1):
++        mctpd.network.add_endpoint(Endpoint(bridge.iface, bridge.lladdr, types = [0,1,2,3], eid= eid))
++
++    # first assign enpoint to MCTP Bridge and later involk allocate endpoint ids
++    # this will add Brige's enpoints routes and neigh and update dbus
++    mctp = await mctpd_mctp_iface_obj(dbus, bridge.iface)
++    (eid, _, path, _) = await mctp.call_assign_endpoint_static(
++        bridge.lladdr,
++        static_eid,
++        start_eid
++    )
++
++    # non blocking sleep for Allocate Eid timer expiry
++    await trio.sleep(5)
++    assert eid == static_eid
++    #  check if networks neighbours are reflecting the mctpd added bridge's neighbours
++    assert len(mctpd.system.neighbours) == (1 + bridge.pool_size)
++
++    neigh = mctpd.system.neighbours[0]
++    assert neigh.lladdr == bridge.lladdr
++    assert neigh.eid == static_eid
++
++    neigh = mctpd.system.neighbours[1]
++    assert neigh.lladdr == bridge.lladdr
++    assert neigh.eid == start_eid
++
++    neigh = mctpd.system.neighbours[2]
++    assert neigh.lladdr == bridge.lladdr
++    assert neigh.eid == start_eid + 1
++
++    # check one of Bridge's endpoint types per dbus property
++    path = path.rsplit('/endpoints', 1)[0]
++    path = path + f"/endpoints/{mctpd.network.endpoints[2].eid}"
++    ep = await mctpd_mctp_endpoint_common_obj(dbus, path)
++    query_types = list(await ep.get_supported_message_types())
++    print(mctpd.network.endpoints[2].types)
++    assert (query_types == mctpd.network.endpoints[2].types)
+-- 
+2.48.1
+

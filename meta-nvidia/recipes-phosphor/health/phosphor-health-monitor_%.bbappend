@@ -1,7 +1,7 @@
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 SRC_URI = "git://github.com/NVIDIA/phosphor-health-monitor;protocol=https;branch=develop"
-SRCREV = "a3927ef6a382b7fa7d7bb067fdc95c30bbc95bb3"
+SRCREV = "d43c6644cc64ba67419032c07ff10c751aa67b61"
 
 SRC_URI:append = " file://bmc_health_config.json"
 SRC_URI:append = " file://process_health_config.json"
@@ -11,8 +11,8 @@ SYSTEMD_SERVICE:${PN} = "phosphor-health-monitor.service phosphor-ipc-monitor.se
 
 do_install:append() {
   # Check if process_health_config.json exists and install it
-  if [ -e "${WORKDIR}/process_health_config.json" ]; then
+  if [ -e "${UNPACKDIR}/process_health_config.json" ]; then
     install -d ${D}${sysconfdir}/healthMon
-    install -m 0644 ${WORKDIR}/process_health_config.json ${D}${sysconfdir}/healthMon
+    install -m 0644 ${UNPACKDIR}/process_health_config.json ${D}${sysconfdir}/healthMon
   fi
 }

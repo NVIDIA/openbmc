@@ -23,5 +23,5 @@ SYSTEMD_SERVICE:${PN} = " \
 
 do_install:append() {
     install -d ${D}/${bindir}
-    install -m 0755 ${WORKDIR}/rf-log.sh ${D}/${bindir}/
+    install -m 0755 ${UNPACKDIR}/rf-log.sh ${D}/${bindir}/
 }

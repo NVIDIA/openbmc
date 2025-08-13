@@ -30,7 +30,7 @@ python link_nvidia_hgx_plugins() {
     for op_plugin in op_plugins:
         op_plugin_name = os.path.join(source_path, op_plugin)
         if op_plugin_name != "hgxretimerbootstate" and op_plugin_name != "hgxpcieaer" :
-            install_dreport_user_script(op_plugin_name, d)
+            install_dreport_user_script("dreport.conf", op_plugin_name, d)
 }
 
 NVIDIA_HGX_INSTALL_POSTFUNCS = "install_nvidia_hgx_plugins link_nvidia_hgx_plugins"

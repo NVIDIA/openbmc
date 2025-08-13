@@ -22,6 +22,6 @@ SYSTEMD_SERVICE:${PN} = " io-board-detect.service"
 
 do_install() {
     install -d ${D}/${bindir}
-    install -D ${WORKDIR}/io-board-detect.sh ${D}${bindir}/io-board-detect.sh
-    install -D ${WORKDIR}/io-board-detect.service ${D}${base_libdir}/systemd/system/io-board-detect.service
+    install -D ${UNPACKDIR}/io-board-detect.sh ${D}${bindir}/io-board-detect.sh
+    install -D ${UNPACKDIR}/io-board-detect.service ${D}${base_libdir}/systemd/system/io-board-detect.service
 }

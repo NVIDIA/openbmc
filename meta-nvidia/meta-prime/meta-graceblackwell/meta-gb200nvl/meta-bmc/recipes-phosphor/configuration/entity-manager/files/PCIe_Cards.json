@@ -116,6 +116,11 @@
                     "all_states",
                     "parent_device",
                     "/xyz/openbmc_project/state/PLDM_Sensor_5_105/Port_1"
+                ],
+                [
+                    "network_adapters",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/board/Riser_Slot$PCIE_LABEL_BlueField_3_Card"
                 ]
             ]
         }
@@ -277,6 +282,11 @@
                     "all_states",
                     "parent_device",
                     "/xyz/openbmc_project/state/PLDM_Sensor_5_106/Port_1"
+                ],
+                [
+                    "network_adapters",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/board/Riser_Slot$PCIE_LABEL_BlueField_3_Card"
                 ]
             ]
         }

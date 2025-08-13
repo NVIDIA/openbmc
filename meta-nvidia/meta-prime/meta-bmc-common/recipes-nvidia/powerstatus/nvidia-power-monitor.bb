@@ -13,9 +13,10 @@ DEPENDS += "libgpiod"
 DEPENDS += "systemd"
 RDEPENDS:${PN} = "nvidia-mc-lib nvidia-event-logs"
 
-S = "${WORKDIR}"
+FILESEXTRAPATHS:append := "${THISDIR}/files"
 
-FILESEXTRAPATHS:append := ":${THISDIR}/files"
+S = "${WORKDIR}/sources"
+UNPACKDIR = "${S}"
 
 SYSDSVCS = "nvidia-power-monitor.service \
             nvidia-shutdown-ok-monitor.service \
@@ -34,8 +35,8 @@ SYSTEMD_LINK_${PN} += "${@compose_list(d, 'FMT', 'PWRSTS_SERVICE')}"
 do_install() {
     install -d ${D}${bindir}
     install -d ${D}${systemd_system_unitdir}
-    install -m 0755 ${WORKDIR}/power_status_monitor.sh ${D}${bindir}/
-    install -m 0755 ${WORKDIR}/shutdown_ok_monitor.sh ${D}${bindir}/
-    install -m 0755 ${WORKDIR}/standby_power_status_monitor.sh ${D}${bindir}/
+    install -m 0755 ${UNPACKDIR}/power_status_monitor.sh ${D}${bindir}/
+    install -m 0755 ${UNPACKDIR}/shutdown_ok_monitor.sh ${D}${bindir}/
+    install -m 0755 ${UNPACKDIR}/standby_power_status_monitor.sh ${D}${bindir}/
 }
 

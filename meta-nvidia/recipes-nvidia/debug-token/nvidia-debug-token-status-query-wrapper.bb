@@ -14,5 +14,5 @@ RDEPENDS:${PN} = "bash"
 
 do_install() {
     install -d ${D}${bindir}
-    install -m 0755 ${WORKDIR}/mctp-vdm-util-token-status-query-wrapper.sh ${D}${bindir}/
+    install -m 0755 ${UNPACKDIR}/mctp-vdm-util-token-status-query-wrapper.sh ${D}${bindir}/
 }

@@ -8,5 +8,5 @@ SRC_URI:append = " file://shm_mapping.json \
                  "
 
 do_install:append() {
-    install -m 0644 ${WORKDIR}/shm_mapping.json ${D}${datadir}/nvshmem
+    install -m 0644 ${UNPACKDIR}/shm_mapping.json ${D}${datadir}/nvshmem
 }

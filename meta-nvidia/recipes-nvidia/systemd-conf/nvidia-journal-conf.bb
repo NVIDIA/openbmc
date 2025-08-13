@@ -20,5 +20,5 @@ FILES:${PN} += " \
 
 do_install:append() {
     install -d ${D}${sysconfdir}/systemd/journald.conf.d
-    install -m 0644 ${WORKDIR}/nvidia-journal.conf ${D}${sysconfdir}/systemd/journald.conf.d
+    install -m 0644 ${UNPACKDIR}/nvidia-journal.conf ${D}${sysconfdir}/systemd/journald.conf.d
 }

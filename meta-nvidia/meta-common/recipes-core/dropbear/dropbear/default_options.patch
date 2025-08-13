@@ -1,9 +1,9 @@
 Upstream-Status: Pending
 ---
-diff --git a/dbutil.c b/dbutil.c
+diff --git a/src/dbutil.c b/src/dbutil.c
 index bd66454..68ae13f 100644
---- a/dbutil.c
-+++ b/dbutil.c
+--- a/src/dbutil.c
++++ b/src/dbutil.c
 @@ -374,6 +374,10 @@ void run_shell_command(const char* cmd, unsigned int maxfd, char* usershell) {
  	unsigned int i;
  
@@ -16,9 +16,9 @@ index bd66454..68ae13f 100644
  	if (cmd != NULL) {
  		argv[0] = baseshell;
 
-diff --git a/default_options.h b/default_options.h
---- a/default_options.h
-+++ b/default_options.h
+diff --git a/src/default_options.h b/src/default_options.h
+--- a/src/default_options.h
++++ b/src/default_options.h
 @@ -338,7 +336,7 @@ be overridden at runtime with -I. 0 disables idle timeouts */
  #define DEFAULT_IDLE_TIMEOUT 0
 

@@ -60,25 +60,25 @@ SRC_URI += " \
     file://total_req_queue_check.py \
     "
 
-PROPS_JSON = "${WORKDIR}/oob_properties_vulcan.json"
-MANIFEST_JSON = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_vulcan.json"
-MANIFEST_JSON:skinnyjoe = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_skinnyjoe.json"
-MANIFEST_JSON:e4869     = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_e4869.json"
-MANIFEST_JSON:falcon    = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_falcon.json"
-MANIFEST_JSON:starship  = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_starship.json"
-MANIFEST_JSON:ranger    = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_ranger.json"
-MANIFEST_JSON:galaxy    = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_galaxy.json"
-MANIFEST_JSON:legocg1    = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_lego.json"
-MANIFEST_JSON:legoc1    = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_lego.json"
-MANIFEST_JSON:legoc2    = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_lego.json"
-MANIFEST_JSON:e4830-hgxb-hmc  = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_hgxb.json"
-MANIFEST_JSON:hgxb  = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_hgxb.json"
-MANIFEST_JSON:e4830-hgxb300-hmc  = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_hgxb300.json"
-MANIFEST_JSON:hgxb300  = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_hgxb300.json"
-MANIFEST_JSON:evb-ast2600-hgxb300  = "${WORKDIR}/${MACHINE}/oob_manifest_pcie_hgxb300.json"
+PROPS_JSON = "${UNPACKDIR}/oob_properties_vulcan.json"
+MANIFEST_JSON = "${UNPACKDIR}/${MACHINE}/oob_manifest_pcie_vulcan.json"
+MANIFEST_JSON:skinnyjoe = "${UNPACKDIR}/${MACHINE}/oob_manifest_pcie_skinnyjoe.json"
+MANIFEST_JSON:e4869     = "${UNPACKDIR}/${MACHINE}/oob_manifest_pcie_e4869.json"
+MANIFEST_JSON:falcon    = "${UNPACKDIR}/${MACHINE}/oob_manifest_pcie_falcon.json"
+MANIFEST_JSON:starship  = "${UNPACKDIR}/${MACHINE}/oob_manifest_pcie_starship.json"
+MANIFEST_JSON:ranger    = "${UNPACKDIR}/${MACHINE}/oob_manifest_pcie_ranger.json"
+MANIFEST_JSON:galaxy    = "${UNPACKDIR}/${MACHINE}/oob_manifest_pcie_galaxy.json"
+MANIFEST_JSON:legocg1    = "${UNPACKDIR}/${MACHINE}/oob_manifest_pcie_lego.json"
+MANIFEST_JSON:legoc1    = "${UNPACKDIR}/${MACHINE}/oob_manifest_pcie_lego.json"
+MANIFEST_JSON:legoc2    = "${UNPACKDIR}/${MACHINE}/oob_manifest_pcie_lego.json"
+MANIFEST_JSON:e4830-hgxb-hmc  = "${UNPACKDIR}/${MACHINE}/oob_manifest_pcie_hgxb.json"
+MANIFEST_JSON:hgxb  = "${UNPACKDIR}/${MACHINE}/oob_manifest_pcie_hgxb.json"
+MANIFEST_JSON:e4830-hgxb300-hmc  = "${UNPACKDIR}/${MACHINE}/oob_manifest_pcie_hgxb300.json"
+MANIFEST_JSON:hgxb300  = "${UNPACKDIR}/${MACHINE}/oob_manifest_pcie_hgxb300.json"
+MANIFEST_JSON:evb-ast2600-hgxb300  = "${UNPACKDIR}/${MACHINE}/oob_manifest_pcie_hgxb300.json"
 
 do_configure:prepend() {
-    PROP_COUNTS=`python3 ${WORKDIR}/total_req_queue_check.py ${PROPS_JSON} ${MANIFEST_JSON}`
+    PROP_COUNTS=`python3 ${UNPACKDIR}/total_req_queue_check.py ${PROPS_JSON} ${MANIFEST_JSON}`
     TOTAL_PROP_COUNT=`echo $PROP_COUNTS | awk '{print $1}'`
     PER_DEV_PROP_COUNT=`echo $PROP_COUNTS | awk '{print $2}'`
     if [ $TOTAL_PROP_COUNT -eq 0 ]
@@ -90,8 +90,8 @@ do_configure:prepend() {
 
 do_install:append() {
     install -d ${D}${datadir}/gpuoob
-    install -m 0644 ${WORKDIR}/*.json ${D}${datadir}/gpuoob/
-    [ -d ${WORKDIR}/${MACHINE} ] && install -m 0644 ${WORKDIR}/${MACHINE}/*.json ${D}${datadir}/gpuoob/
+    install -m 0644 ${UNPACKDIR}/*.json ${D}${datadir}/gpuoob/
+    [ -d ${UNPACKDIR}/${MACHINE} ] && install -m 0644 ${UNPACKDIR}/${MACHINE}/*.json ${D}${datadir}/gpuoob/
 }
 
 FILES:${PN}:append = " ${libdir}/libgpu${SOLIBS}"

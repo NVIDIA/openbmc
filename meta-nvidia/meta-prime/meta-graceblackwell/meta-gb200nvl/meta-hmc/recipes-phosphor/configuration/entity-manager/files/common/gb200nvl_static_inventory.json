@@ -7,7 +7,7 @@
     "xyz.openbmc_project.NsmDevice": {
       "DEVICE_TYPE": 3,
       "INSTANCE_NUMBER": 0,
-      "UUID": "STATIC:3:0"
+      "UUID": "STATIC:3:0:MCTP_EID:12"
     }
   },
   {
@@ -18,29 +18,7 @@
     "xyz.openbmc_project.NsmDevice": {
       "DEVICE_TYPE": 3,
       "INSTANCE_NUMBER": 1,
-      "UUID": "STATIC:3:1"
-    }
-  },
-  {
-    "Exposes": [],
-    "Name": "NSM_ERoT_FPGA_0",
-    "Probe": "TRUE",
-    "Type": "NSM_Configs",
-    "xyz.openbmc_project.NsmDevice": {
-      "DEVICE_TYPE": 4,
-      "INSTANCE_NUMBER": 1,
-      "UUID": "STATIC:4:1"
-    }
-  },
-  {
-    "Exposes": [],
-    "Name": "NSM_ERoT_FPGA_1",
-    "Probe": "TRUE",
-    "Type": "NSM_Configs",
-    "xyz.openbmc_project.NsmDevice": {
-      "DEVICE_TYPE": 4,
-      "INSTANCE_NUMBER": 2,
-      "UUID": "STATIC:4:2"
+      "UUID": "STATIC:3:1:MCTP_EID:20"
     }
   },
   {
@@ -51,7 +29,29 @@
     "xyz.openbmc_project.NsmDevice": {
       "DEVICE_TYPE": 4,
       "INSTANCE_NUMBER": 0,
-      "UUID": "STATIC:4:0"
+      "UUID": "STATIC:4:0:MCTP_EID:15"
+    }
+  },
+  {
+    "Exposes": [],
+    "Name": "NSM_ERoT_FPGA_0",
+    "Probe": "TRUE",
+    "Type": "NSM_Configs",
+    "xyz.openbmc_project.NsmDevice": {
+      "DEVICE_TYPE": 4,
+      "INSTANCE_NUMBER": 1,
+      "UUID": "STATIC:4:1:MCTP_EID:13"
+    }
+  },
+  {
+    "Exposes": [],
+    "Name": "NSM_ERoT_FPGA_1",
+    "Probe": "TRUE",
+    "Type": "NSM_Configs",
+    "xyz.openbmc_project.NsmDevice": {
+      "DEVICE_TYPE": 4,
+      "INSTANCE_NUMBER": 2,
+      "UUID": "STATIC:4:2:MCTP_EID:21"
     }
   },
   {
@@ -62,7 +62,7 @@
     "xyz.openbmc_project.NsmDevice": {
         "DEVICE_TYPE": 4,
         "INSTANCE_NUMBER": 3,
-        "UUID": "STATIC:4:3"
+        "UUID": "STATIC:4:3:MCTP_EID:16"
     }
   },
   {
@@ -73,7 +73,7 @@
     "xyz.openbmc_project.NsmDevice": {
         "DEVICE_TYPE": 4,
         "INSTANCE_NUMBER": 4,
-        "UUID": "STATIC:4:4"
+        "UUID": "STATIC:4:4:MCTP_EID:24"
     }
   },
   {

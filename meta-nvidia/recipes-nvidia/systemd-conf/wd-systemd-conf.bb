@@ -18,5 +18,5 @@ FILES:${PN} += " \
 
 do_install:append() {
     install -d ${D}${sysconfdir}/systemd/system.conf.d
-    install -m 0644 ${WORKDIR}/watchdog.conf ${D}${sysconfdir}/systemd/system.conf.d
+    install -m 0644 ${UNPACKDIR}/watchdog.conf ${D}${sysconfdir}/systemd/system.conf.d
 }

@@ -8,6 +8,8 @@ current state of the gpio at the startup. Allow user to specify
 
 "ExecuteAtStart": true
 
+Upstream-Status: Pending
+
 Signed-off-by: Radivoje (Ogi) Jovanovic <rjovanovic@nvidia.com>
 Change-Id: I9f8a7b5c6d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5g
 ---

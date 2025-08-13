@@ -3,9 +3,9 @@
       "Exposes": [
         {
           "Name": "ERoTMapping",
-          "Type": "NSM_GetInstanceIDByMctpUUID",
+          "Type": "NSM_GetInstanceIDByDeviceEID",
           "MappingArray": [
-            "ad4c836b-c54c-11eb-8529-0242ac130003"
+            10
           ]
         }
       ],

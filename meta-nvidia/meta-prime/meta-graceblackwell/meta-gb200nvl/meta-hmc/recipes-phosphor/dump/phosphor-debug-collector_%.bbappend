@@ -69,8 +69,8 @@ FILES:${PN}-manager +=  "${bindir}/nsm-dump-tool"
 FILES:${PN}-manager +=  "${datadir}/device_mctp_eid_c1g1.csv"
 
 do_install:append() {
-    install -m 755 ${WORKDIR}/fw_atts_dump.sh ${D}${bindir}/
-    install -m 755 ${WORKDIR}/hw_checkout_dump.sh ${D}${bindir}/
-    install -m 644 ${WORKDIR}/device_mctp_eid_c1g1.csv ${D}${datadir}/
+    install -m 755 ${UNPACKDIR}/fw_atts_dump.sh ${D}${bindir}/
+    install -m 755 ${UNPACKDIR}/hw_checkout_dump.sh ${D}${bindir}/
+    install -m 644 ${UNPACKDIR}/device_mctp_eid_c1g1.csv ${D}${datadir}/
 }
 

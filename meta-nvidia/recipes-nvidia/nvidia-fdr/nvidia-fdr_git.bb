@@ -13,7 +13,7 @@ SRC_URI = "git://github.com/NVIDIA/nvidia-fdr;protocol=https;branch=develop"
 
 # Modify these as desired
 #PV = "1.0+git${SRCPV}"
-SRCREV = "765057ed24288c131045f5e282d90f6d84d024e1"
+SRCREV = "632a0d37db40f4815b1873ec8597c3329f089ff9"
 
 S = "${WORKDIR}/git"
 
@@ -45,7 +45,9 @@ RDEPENDS:${PN} += "bash"
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SYSTEMD_PACKAGES = "${PN}"
-SYSTEMD_SERVICE:${PN} = "nvidia-fdr.service"
+#SYSTEMD_SERVICE:${PN} = "nvidia-fdr.service"
+
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI += " \
            file://nvidia-fdr.service \
@@ -59,6 +61,7 @@ FILES:${PN}:append = " ${systemd_system_unitdir}/nvidia-fdr.service"
 
 do_install:append() {
     install -d ${D}${systemd_system_unitdir}
-    install -m 0644 ${WORKDIR}/nvidia-*.service ${D}${systemd_system_unitdir}
-    install -m 0755 ${WORKDIR}/fdr_platforms.sh ${D}/${bindir}/
+    install -m 0644 ${THISDIR}/files/nvidia-fdr.service ${D}${systemd_system_unitdir}
+    install -m 0755 ${THISDIR}/files/fdr_platforms.sh ${D}${bindir}/
 }
+

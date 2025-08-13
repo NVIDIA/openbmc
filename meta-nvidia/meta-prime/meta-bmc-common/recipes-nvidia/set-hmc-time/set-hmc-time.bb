@@ -27,6 +27,6 @@ SYSTEMD_SERVICE:${PN} = " \
 
 do_install(){
     install -d ${D}/${bindir}
-    install -m 0755 ${WORKDIR}/${RTC_READY_SCRIPT} ${D}/${bindir}/set-hmc-time.sh
+    install -m 0755 ${UNPACKDIR}/${RTC_READY_SCRIPT} ${D}/${bindir}/set-hmc-time.sh
 }
 

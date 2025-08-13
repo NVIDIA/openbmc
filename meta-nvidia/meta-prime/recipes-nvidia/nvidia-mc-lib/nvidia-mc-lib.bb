@@ -9,7 +9,8 @@ RDEPENDS:${PN} = "bash nvidia-event-logs"
 
 FILESEXTRAPATHS:append := "${THISDIR}/files:"
 
-S = "${WORKDIR}"
+S = "${WORKDIR}/sources"
+UNPACKDIR = "${S}"
 
 SRC_URI = " \
 	file://gpio_check.sh \
@@ -22,11 +23,11 @@ SRC_URI = " \
 
 do_install() {
     install -d ${D}/${bindir}
-    install -m 0755 ${S}/gpio_check.sh ${D}/${bindir}/gpio_check.sh
-    install -m 0755 ${S}/gpio_tools.sh ${D}/${bindir}/gpio_tools.sh
-    install -m 0755 ${S}/filesystem_check.sh ${D}/${bindir}/filesystem_check.sh
-    install -m 0755 ${S}/mc_lib.sh ${D}/${bindir}/mc_lib.sh
-    install -m 0755 ${S}/system_state_files.sh ${D}/${bindir}/system_state_files.sh
-    install -m 0755 ${S}/banner_art.txt ${D}/${bindir}/banner_art.txt
+    install -m 0755 ${UNPACKDIR}/gpio_check.sh ${D}/${bindir}/gpio_check.sh
+    install -m 0755 ${UNPACKDIR}/gpio_tools.sh ${D}/${bindir}/gpio_tools.sh
+    install -m 0755 ${UNPACKDIR}/filesystem_check.sh ${D}/${bindir}/filesystem_check.sh
+    install -m 0755 ${UNPACKDIR}/mc_lib.sh ${D}/${bindir}/mc_lib.sh
+    install -m 0755 ${UNPACKDIR}/system_state_files.sh ${D}/${bindir}/system_state_files.sh
+    install -m 0755 ${UNPACKDIR}/banner_art.txt ${D}/${bindir}/banner_art.txt
 }
 

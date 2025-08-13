@@ -23,5 +23,5 @@ SYSTEMD_SERVICE:${PN} = "bmc-reset-check.service"
 
 do_install:append() {
     install -d ${D}/${bindir}
-    install -m 0755 ${WORKDIR}/bmc_reset_check.sh ${D}/${bindir}
+    install -m 0755 ${UNPACKDIR}/bmc_reset_check.sh ${D}/${bindir}
 }

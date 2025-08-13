@@ -24,13 +24,13 @@ FILES:${PN}:append = " ${datadir}/${PN}/mrd_PlatformEnvironmentMetrics.json \
                      
 do_install:append() {
     install -d ${D}${datadir}/${PN}/
-    install -m 0644 ${WORKDIR}/mrd_PlatformEnvironmentMetrics.json ${D}${datadir}/${PN}/
-    install -m 0644 ${WORKDIR}/mrd_MemoryMetrics.json ${D}${datadir}/${PN}/
-    install -m 0644 ${WORKDIR}/mrd_ProcessorMetrics.json ${D}${datadir}/${PN}/
-    install -m 0644 ${WORKDIR}/mrd_ProcessorGPMMetrics.json ${D}${datadir}/${PN}/
-    install -m 0644 ${WORKDIR}/mrd_ProcessorPortMetrics.json ${D}${datadir}/${PN}/
-    install -m 0644 ${WORKDIR}/mrd_ProcessorPortGPMMetrics.json ${D}${datadir}/${PN}/
-    install -m 0644 ${WORKDIR}/mrd_CpuProcessorMetrics.json ${D}${datadir}/${PN}/
-    install -m 0644 ${WORKDIR}/mrd_HealthMetrics.json ${D}${datadir}/${PN}/
-    install -m 0644 ${WORKDIR}/mrd_ProcessorResetMetrics.json ${D}${datadir}/${PN}/
+    install -m 0644 ${UNPACKDIR}/mrd_PlatformEnvironmentMetrics.json ${D}${datadir}/${PN}/
+    install -m 0644 ${UNPACKDIR}/mrd_MemoryMetrics.json ${D}${datadir}/${PN}/
+    install -m 0644 ${UNPACKDIR}/mrd_ProcessorMetrics.json ${D}${datadir}/${PN}/
+    install -m 0644 ${UNPACKDIR}/mrd_ProcessorGPMMetrics.json ${D}${datadir}/${PN}/
+    install -m 0644 ${UNPACKDIR}/mrd_ProcessorPortMetrics.json ${D}${datadir}/${PN}/
+    install -m 0644 ${UNPACKDIR}/mrd_ProcessorPortGPMMetrics.json ${D}${datadir}/${PN}/
+    install -m 0644 ${UNPACKDIR}/mrd_CpuProcessorMetrics.json ${D}${datadir}/${PN}/
+    install -m 0644 ${UNPACKDIR}/mrd_HealthMetrics.json ${D}${datadir}/${PN}/
+    install -m 0644 ${UNPACKDIR}/mrd_ProcessorResetMetrics.json ${D}${datadir}/${PN}/
 }

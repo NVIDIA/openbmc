@@ -6,4 +6,7 @@ SUBSYSTEM=="usb", ACTION=="add", \
 ATTR{bInterfaceClass}=="14", ATTR{bInterfaceSubClass}=="00", \
 PROGRAM="/usr/bin/sh -c 'echo %k | sed -e 's/\\./-/g' -e 's/:.*$//'", \
 TAG+="systemd", \
-ENV{SYSTEMD_WANTS}="mctp-usb-demux@%c.socket mctp-usb-demux@%c.service mctp-usb-ctrl@%c.service"
+ENV{SYSTEMD_WANTS}="mctp-usb-ctrl@%c.service"
+
+SUBSYSTEM=="net", ACTION=="add", KERNEL=="mctpusb*",NAME="%E{INTERFACE}", PROGRAM="/bin/bash -c 'echo %E{DEVPATH} | sed -E \"s|.*/([^/]+):.*|\\1|\"'", RUN+="/bin/sh -c '/usr/bin/mctp link set $env{INTERFACE} up;  /usr/sbin/ip link property add dev $env{INTERFACE} altname mctpusb%c'"
+SUBSYSTEM=="net", ACTION=="add", KERNEL=="mctpspi*",NAME="%E{INTERFACE}", RUN+="/bin/sh -c ' /usr/bin/mctp link set $env{INTERFACE} up'"

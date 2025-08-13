@@ -22,7 +22,8 @@ SYSTEMD_SERVICE:${PN} = " \
         cpu-boot-undone.service \
         "
 
-S = "${WORKDIR}"
+S = "${WORKDIR}/sources"
+UNPACKDIR = "${S}"
 
 SRC_URI = " \
       file://cpu-boot-handler.sh \
@@ -32,7 +33,7 @@ SRC_URI = " \
 
 do_install() {
     install -d ${D}${bindir}
-    install -m 0755 ${S}/cpu-boot-handler.sh ${D}/${bindir}/cpu-boot-handler.sh
+    install -m 0755 ${UNPACKDIR}/cpu-boot-handler.sh ${D}/${bindir}/cpu-boot-handler.sh
 
     install -d ${D}${systemd_system_unitdir}
 }

@@ -32,7 +32,7 @@ FILES:${PN}:append = " ${bindir}/redfish-mockup-server/*"
 
 do_install() {
     install -d ${D}${systemd_system_unitdir}
-    install -m 0644 ${WORKDIR}/redfish-mockup-server.service ${D}${systemd_system_unitdir}/
+    install -m 0644 ${UNPACKDIR}/redfish-mockup-server.service ${D}${systemd_system_unitdir}/
     install -d ${D}${bindir}
     install -d ${D}${bindir}/redfish-mockup-server
     install -m 0664 ${S}/*.py ${D}${bindir}/redfish-mockup-server/

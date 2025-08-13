@@ -12,8 +12,11 @@ PLDM_CONFIG_RW_DIR="/etc/default/pldm"
 EM_CONFIG_RO_DIR="/usr/share/entity-manager"
 EM_CONFIG_RW_DIR="/etc/default/entity-manager"
 
+BMCWEB_CONFIG_RO_DIR="/usr/share/bmcweb"
+BMCWEB_CONFIG_RW_DIR="/etc/default/bmcweb"
+
 # Create required directories if they don't exist
-for dir in "${CPLD_CONFIG_RW_DIR}" "${PLDM_CONFIG_RW_DIR}" "${EM_CONFIG_RW_DIR}"; do
+for dir in "${CPLD_CONFIG_RW_DIR}" "${PLDM_CONFIG_RW_DIR}" "${EM_CONFIG_RW_DIR}" "${BMCWEB_CONFIG_RW_DIR}"; do
     if ! mkdir -p "${dir}"; then
         echo "Error: Failed to create directory ${dir}"
         exit 1
@@ -97,6 +100,23 @@ copy_pldm_config() {
     echo "Copied ${config_file} to ${target}"
 }
 
+copy_bmcweb_config() {
+    local config_file="$1"
+    local source="${BMCWEB_CONFIG_RO_DIR}/${config_file}"
+    local target="${BMCWEB_CONFIG_RW_DIR}/mrd_PlatformEnvironmentMetrics.json"
+
+    if [ ! -f "${source}" ]; then
+        echo "Error: Source file ${source} not found"
+        return 1
+    fi
+
+    if ! cp -af "${source}" "${target}"; then
+        echo "Error: Failed to copy ${source} to ${target}"
+        return 1
+    fi
+    echo "Copied ${config_file} to ${target}"
+}
+
 # BP CPLDs locate on bus 17 and 29
 detect_io_board() {
     if check_bp_cpld 17 || check_bp_cpld 29; then
@@ -105,6 +125,7 @@ detect_io_board() {
         copy_pldm_config "fw_update_config_cx8.json"
         create_cpld_env_link "cpldmanager_cx8.env"
         copy_em_config "i2cPcieMapping_CX8.json"
+        copy_bmcweb_config "mrd_PlatformEnvironmentMetrics_CX8.json"
 
         echo "Holding SMA reset pin"
         gpioset `gpiofind MCU_RST_N-O`=0
@@ -115,6 +136,7 @@ detect_io_board() {
         copy_pldm_config "fw_update_config_cx7.json"
         create_cpld_env_link "cpldmanager_cx7.env"
         copy_em_config "i2cPcieMapping_CX7.json"
+        copy_bmcweb_config "mrd_PlatformEnvironmentMetrics_CX7.json"
     fi
 }
 

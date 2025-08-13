@@ -20,11 +20,14 @@ DEPENDS += "libmctp"
 DEPENDS += "nvidia-tal"
 DEPENDS += "googletest"
 
-#EXTRA_OEMESON = "-Dtests=disabled"
-EXTRA_OEMESON:hgxb += "-Dmctp-eid0-filtering=true"
+EXTRA_OEMESON:hgxb += "-Dmctp-eid-filtering=true"
+EXTRA_OEMESON += " \
+    -Denable-in-kernel-mctp=enabled \
+    -Dtests=disabled \
+"
 
 SRC_URI = "git://github.com/NVIDIA/nsmd;protocol=https;branch=develop"
-SRCREV = "624ab826991ca1d5d7ecd65487736acb2eed5cc0"
+SRCREV = "560e5544449af174c27e0deddf01b870d94d326c"
 S = "${WORKDIR}/git"
 
 SYSTEMD_SERVICE:${PN} = "nsmd.service"

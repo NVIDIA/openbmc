@@ -61,18 +61,19 @@ do_install:append() {
     rm -f ${D}${nonarch_base_libdir}/systemd/system/com.Nvidia.FWStatus.service
 
     install -d ${D}/${bindir}
-    install -m 0755 ${WORKDIR}/fw_status_precheck.sh ${D}/${bindir}/
+    install -m 0755 ${UNPACKDIR}/fw_status_precheck.sh ${D}/${bindir}/
 
     install -d ${D}${sysconfdir}/cpldupdate
-    install -m 0644 ${WORKDIR}/cpldmanager_cx7.env ${D}${sysconfdir}/cpldupdate/cpldmanager_cx7.env
-    install -m 0644 ${WORKDIR}/cpldmanager_cx8.env ${D}${sysconfdir}/cpldupdate/cpldmanager_cx8.env
+    install -m 0644 ${UNPACKDIR}/cpldmanager_cx7.env ${D}${sysconfdir}/cpldupdate/cpldmanager_cx7.env
+    install -m 0644 ${UNPACKDIR}/cpldmanager_cx8.env ${D}${sysconfdir}/cpldupdate/cpldmanager_cx8.env
 
-    install -m 0644 ${WORKDIR}/systemd/hmc-ready.service ${D}${nonarch_base_libdir}/systemd/system/
-    install -m 0644 ${WORKDIR}/systemd/hmc-notready.service ${D}${nonarch_base_libdir}/systemd/system/
-    install -m 0644 ${WORKDIR}/systemd/com.Nvidia.FWStatus.service ${D}${nonarch_base_libdir}/systemd/system/
+    install -m 0644 ${UNPACKDIR}/systemd/hmc-ready.service ${D}${nonarch_base_libdir}/systemd/system/
+    install -m 0644 ${UNPACKDIR}/systemd/hmc-notready.service ${D}${nonarch_base_libdir}/systemd/system/
+    install -m 0644 ${UNPACKDIR}/systemd/com.Nvidia.FWStatus.service ${D}${nonarch_base_libdir}/systemd/system/
 
     if ${@bb.utils.contains('DISTRO_FEATURES', 'erotless-bmc', 'true', 'false', d)}; then
          install -m 0644 ${S}/services/com.Nvidia.MTD.Updater.bmc.service ${D}${systemd_unitdir}/system/
          install -m 0644 ${S}/services/mtd-update@.service ${D}${systemd_unitdir}/system/
     fi
+
 }

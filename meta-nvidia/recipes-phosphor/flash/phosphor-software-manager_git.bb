@@ -8,6 +8,7 @@ DEPENDS += " \
     phosphor-logging \
     ${PYTHON_PN}-sdbus++-native \
     sdbusplus \
+    libpldm \
 "
 PACKAGECONFIG[verify_signature] = "-Dverify-signature=enabled, -Dverify-signature=disabled"
 PACKAGECONFIG[sync_bmc_files] = "-Dsync-bmc-files=enabled, -Dsync-bmc-files=disabled"
@@ -41,7 +42,7 @@ SYSTEMD_SERVICE:${PN}-updater += " \
     usr-local.mount \
 "
 
-SYSTEMD_SERVICE:${PN}-download-mgr +=  " \
+SYSTEMD_SERVICE:${PN}-download-mgr += " \
     scp-transfer.service \
     http-download.service \
 "
@@ -91,6 +92,7 @@ FILES:${PN}-updater += " \
     ${bindir}/obmc-flash-bmc \
     /usr/local \
     "
+FILES:${PN}-updater += "${systemd_system_unitdir}/xyz.openbmc_project.Software.BMC.Updater.service"
 FILES:${PN}-sync += " \
     ${bindir}/phosphor-sync-software-manager \
     ${sysconfdir}/synclist \

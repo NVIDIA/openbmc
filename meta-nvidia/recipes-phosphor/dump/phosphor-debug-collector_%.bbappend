@@ -1,7 +1,7 @@
 # Use NVIDIA gitlab Phosphor Debug Collector
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 SRC_URI = "git://github.com/NVIDIA/phosphor-debug-collector;protocol=https;branch=develop"
-SRCREV = "1265135cee2068f1c64ce354728a89a5fa4ca5e0"
+SRCREV = "df0fdfed3e7f6ba9109d84ba3b46aa71e17c3292"
 
 SRC_URI += "file://create-dump-dbus.service"
 SRC_URI += "file://xyz.openbmc_project.Dump.Manager.service"
@@ -39,8 +39,8 @@ SRC_URI += "file://coretemp.conf"
 
 do_install:append() {
     install -d ${D}${exec_prefix}/lib/tmpfiles.d
-    install -m 644 ${WORKDIR}/coretemp.conf ${D}${exec_prefix}/lib/tmpfiles.d/
+    install -m 644 ${UNPACKDIR}/coretemp.conf ${D}${exec_prefix}/lib/tmpfiles.d/
     install -m 755 -d ${D}/usr/local/bin/nvidia
     ln -s -r ${D}${bindir}/create-dump-dbus ${D}/usr/local/bin/nvidia/create-dump-dbus
-    install -m 644 ${WORKDIR}/xyz.openbmc_project.Dump.Manager.service ${D}${systemd_system_unitdir}/
+    install -m 644 ${UNPACKDIR}/xyz.openbmc_project.Dump.Manager.service ${D}${systemd_system_unitdir}/
 }

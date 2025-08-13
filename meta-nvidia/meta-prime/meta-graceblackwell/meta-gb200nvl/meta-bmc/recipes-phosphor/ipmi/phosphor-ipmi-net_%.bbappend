@@ -15,5 +15,5 @@ SYSTEMD_SERVICE:${PN}:append:gb200nvl-bmc-ut3 = " \
 do_install:append(){
 	rm ${D}${systemd_system_unitdir}/phosphor-ipmi-net@.service
 
-	install -m 0644 ${WORKDIR}/phosphor-ipmi-net@.service  ${D}${systemd_system_unitdir}/phosphor-ipmi-net@.service
+	install -m 0644 ${UNPACKDIR}/phosphor-ipmi-net@.service  ${D}${systemd_system_unitdir}/phosphor-ipmi-net@.service
 }

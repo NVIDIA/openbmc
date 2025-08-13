@@ -17,5 +17,5 @@ S = "${WORKDIR}/git"
 #TO DO
 do_install() {
     install -d ${D}/${bindir}
-    install -m 0755 ${WORKDIR}/build/cperparse ${D}/${bindir}/cperparse
+    install -m 0755 ${UNPACKDIR}/build/cperparse ${D}/${bindir}/cperparse
 }

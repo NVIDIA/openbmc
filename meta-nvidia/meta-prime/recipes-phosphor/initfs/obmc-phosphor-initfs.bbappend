@@ -6,10 +6,10 @@ FILES:${PN}:append = " ${@bb.utils.contains('BUILD_TYPE', 'prod', '/init-options
 FILES:${PN}:append = " ${@bb.utils.contains('BUILD_TYPE', 'debug', '/init-options-overlay', '', d)}"
 
 do_install:append() {
-    install -m 0644 ${WORKDIR}/init-options ${D}/init-options
+    install -m 0644 ${UNPACKDIR}/init-options ${D}/init-options
     ISPROD="${@bb.utils.contains("BUILD_TYPE", "prod", "1", "0", d)}"
     ISDEBUG="${@bb.utils.contains("BUILD_TYPE", "debug", "1", "0", d)}"
     if [ "${ISPROD}" = "1" ] ||  [ "${ISDEBUG}" = "1" ]; then
-        install -m 0644 ${WORKDIR}/init-options-overlay ${D}/init-options-overlay
+        install -m 0644 ${UNPACKDIR}/init-options-overlay ${D}/init-options-overlay
     fi
 }

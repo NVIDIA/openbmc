@@ -21,13 +21,13 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 DEPENDS += "jq-native perl-native socsec-native xxd-native"
-RDEPENDS:${PN} += "aspeed-app"
 RDEPENDS:${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'otp-provisioning', 'socsec', '', d)}"
 
 RPROVIDES:${PN} += "nvidia-otp-monitor"
 FILES:${PN}:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'otp-provisioning', '${base_libdir}/systemd/system/otp-provisioning.service', '', d)}  \"
 
-S = "${WORKDIR}"
+S = "${WORKDIR}/sources"
+UNPACKDIR = "${S}"
 
 inherit ${@bb.utils.contains('DISTRO_FEATURES', 'otp-provisioning', 'setuptools3', '', d)}
 
@@ -42,11 +42,11 @@ do_install() {
 	install -d ${D}${OTP_BASE_DIR}
 	install -d ${D}${OTP_STATUS_FILE_DIR}
 
-	install -m 0755 ${WORKDIR}/otp-monitor.sh ${D}/${bindir}/
-	install -m 0755 ${WORKDIR}/otp-bus.sh ${D}/${bindir}/
+	install -m 0755 ${UNPACKDIR}/otp-monitor.sh ${D}/${bindir}/
+	install -m 0755 ${UNPACKDIR}/otp-bus.sh ${D}/${bindir}/
 
 	install -d ${D}${base_libdir}/systemd/system/
-	install -m 644 ${S}/otp-monitor.service ${D}${base_libdir}/systemd/system/
+	install -m 644 ${UNPACKDIR}/otp-monitor.service ${D}${base_libdir}/systemd/system/
 	install -m 755 -d ${D}/etc/systemd/system/multi-user.target.wants
 	ln -s -r ${D}${base_libdir}/systemd/system/otp-monitor.service ${D}/etc/systemd/system/multi-user.target.wants/otp-monitor.service
 	mkdir -p ${D}/etc/sysconfig
@@ -56,11 +56,11 @@ do_install() {
 	echo "OTP_STATUS_FILE_DIR=${OTP_STATUS_FILE_DIR}" >> ${D}/etc/sysconfig/otp-conf
 
 	printf 'OTP_CONFIGURATIONS="' >> ${D}/etc/sysconfig/otp-conf
-	for CONF in ${WORKDIR}/conf/*/otp_config_*.json; do
-		jq 'del(.data_region.key, .data_region.user_data)' ${CONF} > ${WORKDIR}/$(basename ${CONF})
-		OUT=${WORKDIR}/otp-image-$(basename ${CONF%.*})
+	for CONF in ${UNPACKDIR}/conf/*/otp_config_*.json; do
+		jq 'del(.data_region.key, .data_region.user_data)' ${CONF} > ${UNPACKDIR}/$(basename ${CONF})
+		OUT=${UNPACKDIR}/otp-image-$(basename ${CONF%.*})
 		mkdir -p ${OUT}
-		otptool make_otp_image --output_folder ${OUT} ${WORKDIR}/$(basename ${CONF})
+		otptool make_otp_image --output_folder ${OUT} ${UNPACKDIR}/$(basename ${CONF})
 		perl -e 'open F,shift; do { read(F,$a,4); print scalar reverse($a);} while(!eof(F));' ${OUT}/otp-conf.bin > ${OUT}/otp-conf-rev.bin
 		CONF_NAME="$(basename $(dirname ${CONF}) | tr [:lower:] [:upper:])"
 		CONF_VAL="$(xxd -p ${OUT}/otp-conf-rev.bin | tr -d " \n" | head -c 32)"
@@ -76,8 +76,8 @@ do_install() {
 				OTP_KEY_TYPE="debug"
 			fi
 		fi
-		CONF_DIR="${WORKDIR}/conf/${OTP_KEY_TYPE}"
-		KEY_DIR="${WORKDIR}/keys/${OTP_KEY_TYPE}"
+		CONF_DIR="${UNPACKDIR}/conf/${OTP_KEY_TYPE}"
+		KEY_DIR="${UNPACKDIR}/keys/${OTP_KEY_TYPE}"
 
 		bbwarn "OTP provisioning used in ${OTP_KEY_TYPE} mode"
 
@@ -102,8 +102,8 @@ do_install() {
 
 		install -m 0644 ${CONF_DIR}/* ${D}${OTP_BASE_DIR}/conf/
 
-		install -m 0755 ${WORKDIR}/otp-user-area.py ${D}/${bindir}/
-		install -m 0755 ${WORKDIR}/otp-provisioning.sh ${D}/${bindir}/
+		install -m 0755 ${UNPACKDIR}/otp-user-area.py ${D}/${bindir}/
+		install -m 0755 ${UNPACKDIR}/otp-provisioning.sh ${D}/${bindir}/
 
 		install -m 644 ${S}/otp-provisioning.service ${D}${base_libdir}/systemd/system/
 		ln -s -r ${D}${base_libdir}/systemd/system/otp-provisioning.service ${D}/etc/systemd/system/multi-user.target.wants/otp-provisioning.service

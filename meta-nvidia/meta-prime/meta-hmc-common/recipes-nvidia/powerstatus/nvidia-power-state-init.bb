@@ -11,7 +11,8 @@ inherit obmc-phosphor-systemd
 
 DEPENDS += "systemd"
 
-S = "${WORKDIR}"
+S = "${WORKDIR}/sources"
+UNPACKDIR = "${S}"
 
 FILESEXTRAPATHS:append := ":${THISDIR}/files"
 

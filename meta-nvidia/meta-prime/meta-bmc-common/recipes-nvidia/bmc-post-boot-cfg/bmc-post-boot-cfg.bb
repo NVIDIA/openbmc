@@ -25,6 +25,6 @@ SYSTEMD_SERVICE:${PN} = " \
 
 do_install() {
     install -d ${D}/etc/default/
-    install -m 0755 ${WORKDIR}/common_platform_var.conf ${D}/etc/default/platform_var.conf
+    install -m 0755 ${UNPACKDIR}/common_platform_var.conf ${D}/etc/default/platform_var.conf
 }
 

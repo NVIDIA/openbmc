@@ -11,6 +11,8 @@ Reason:
 * Oberon hardware does not have a 'hotplug detect' pin, which is usually required
 * This WAR allows the MCU to ignore HPD and pipe video out to the DP port
 
+Upstream-Status: Pending
+
 Fixes jira https://jirasw.nvidia.com/browse/DGXOPENBMC-10518
 
 Signed-off-by: Aushim Nagarkatti <anagarkatti@nvidia.com>

@@ -10,6 +10,8 @@ upstream community OS JTAG driver are supported.
 
 Tested on an Ampere dual socket Mt. Jade system with an AST2500 BMC
 
+Upstream-Status: Pending
+
 Change-Id: I4e3866fe3b3d5c09628e3c900ca36874504fe6c0
 Signed-off-by: Daniel Goehring <dgoehrin@os.amperecomputing.com>
 Signed-off-by: Curtis Chuang <shengchihc@nvidia.com>

@@ -1,0 +1,30 @@
+From 1f7b739aca42a9d5bcc009fed9145b994397e374 Mon Sep 17 00:00:00 2001
+From: Santosh Puranik <puranik@localhost.localdomain>
+Date: Mon, 31 Mar 2025 22:47:09 +0530
+Subject: [PATCH] Fix Compile Error
+
+Newer GCC treats no-implicit-function-definition warning as an error.
+Fix that by temporarily ignoring that warning.
+
+Upstream-Status: Pending
+
+Signed-off-by: Santosh Puranik <puranik@localhost.localdomain>
+---
+ Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Makefile b/Makefile
+index e1fa881b2a..ee2efc9c2e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -636,6 +636,7 @@ endif
+ endif
+ 
+ KBUILD_CFLAGS += $(call cc-option,-Wno-format-nonliteral)
++KBUILD_CFLAGS += $(call cc-option,-Wno-implicit-function-declaration)
+ KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+ 
+ ifeq ($(cc-name),clang)
+-- 
+2.39.5
+

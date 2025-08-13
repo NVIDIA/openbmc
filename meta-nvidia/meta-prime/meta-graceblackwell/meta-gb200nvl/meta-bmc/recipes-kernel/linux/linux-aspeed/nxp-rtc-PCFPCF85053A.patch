@@ -1,5 +1,7 @@
 Add support for NXP's PCF85053A RTC chip.
 
+Upstream-Status: Pending
+
 Signed-off-by: Carlos Menin <menin@carlosaurelio.net>
 Reviewed-by: Sergio Prado <sergio.prado@e-labworks.com>
 ---

@@ -5,5 +5,5 @@ SRC_URI += " \
     "
 
 do_install:append() {
-    install -D ${WORKDIR}/hw_checkout.sh ${D}/${bindir}/
+    install -D ${UNPACKDIR}/hw_checkout.sh ${D}/${bindir}/
 }

@@ -9,7 +9,8 @@ RDEPENDS:${PN} = "bash"
 
 FILESEXTRAPATHS:append := "${THISDIR}/files:"
 
-S = "${WORKDIR}"
+S = "${WORKDIR}/sources"
+UNPACKDIR = "${S}"
 
 SRC_URI = " \
 	file://gpio_pins.sh \
@@ -17,5 +18,5 @@ SRC_URI = " \
 
 do_install() {
     install -d ${D}/${bindir}
-    install -m 0755 ${S}/gpio_pins.sh ${D}/${bindir}/gpio_pins.sh
+    install -m 0755 ${UNPACKDIR}/gpio_pins.sh ${D}/${bindir}/gpio_pins.sh
 }

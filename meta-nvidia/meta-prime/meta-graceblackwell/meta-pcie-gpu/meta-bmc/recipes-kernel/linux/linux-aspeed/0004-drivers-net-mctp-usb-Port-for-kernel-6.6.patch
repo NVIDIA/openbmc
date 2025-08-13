@@ -1,0 +1,70 @@
+From 7799da963ba71e496cfcbd1f1a3b88c8f488d701 Mon Sep 17 00:00:00 2001
+From: Santosh Puranik <spuranik@nvidia.com>
+Date: Wed, 19 Mar 2025 23:04:26 +0530
+Subject: [PATCH 4/4] drivers: net: mctp: usb: Port for kernel 6.6
+
+Fix the way the mctp usb binding driver records netdev stats.
+Fix the netdev register call.
+Upstream-Status: Backport
+
+Signed-off-by: Santosh Puranik <spuranik@nvidia.com>
+---
+ drivers/net/mctp/mctp-usb.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/mctp/mctp-usb.c b/drivers/net/mctp/mctp-usb.c
+index e8d4b01c3f34..0c293d6d3607 100644
+--- a/drivers/net/mctp/mctp-usb.c
++++ b/drivers/net/mctp/mctp-usb.c
+@@ -48,16 +48,17 @@ static void mctp_usb_out_complete(struct urb *urb)
+ 	case -ECONNRESET:
+ 	case -ESHUTDOWN:
+ 	case -EPROTO:
+-		dev_dstats_tx_dropped(netdev);
++        netdev->stats.tx_dropped++;
+ 		break;
+ 	case 0:
+-		dev_dstats_tx_add(netdev, skb->len);
++        netdev->stats.tx_packets++;
++        netdev->stats.tx_bytes += skb->len;
+ 		netif_wake_queue(netdev);
+ 		consume_skb(skb);
+ 		return;
+ 	default:
+ 		netdev_dbg(netdev, "unexpected tx urb status: %d\n", status);
+-		dev_dstats_tx_dropped(netdev);
++        netdev->stats.tx_dropped++;
+ 	}
+ 
+ 	kfree_skb(skb);
+@@ -105,7 +106,7 @@ static netdev_tx_t mctp_usb_start_xmit(struct sk_buff *skb,
+ 	return NETDEV_TX_OK;
+ 
+ err_drop:
+-	dev_dstats_tx_dropped(dev);
++    dev->stats.tx_dropped++;
+ 	kfree_skb(skb);
+ 	return NETDEV_TX_OK;
+ }
+@@ -223,7 +224,8 @@ static void mctp_usb_in_complete(struct urb *urb)
+ 			skb_trim(skb, pkt_len);
+ 		}
+ 
+-		dev_dstats_rx_add(netdev, skb->len);
++		netdev->stats.rx_packets++;
++        netdev->stats.rx_bytes += skb->len;
+ 
+ 		skb->protocol = htons(ETH_P_MCTP);
+ 		skb_reset_network_header(skb);
+@@ -340,7 +342,7 @@ static int mctp_usb_probe(struct usb_interface *intf,
+ 
+ 	INIT_DELAYED_WORK(&dev->rx_retry_work, mctp_usb_rx_retry_work);
+ 
+-	rc = mctp_register_netdev(netdev, NULL, MCTP_PHYS_BINDING_USB);
++	rc = mctp_register_netdev(netdev, NULL);
+ 	if (rc)
+ 		goto err_free_urbs;
+ 
+-- 
+2.48.1
+

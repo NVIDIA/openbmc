@@ -511,7 +511,14 @@
                         ]
                     },
                    "HGX_FW_CPU_0": {
-                        "component_id": 56
+                        "component_id": 56,
+                        "associations": [
+                            {
+                                "forward": "inventory",
+                                "reverse": "activation",
+                                "endpoint": "/xyz/openbmc_project/inventory/system/component/HGX_CPU_0"
+                            }
+                        ]
                     }
                 },
                 "update": {
@@ -572,7 +579,14 @@
                         ]
                     },
                    "HGX_FW_CPU_1": {
-                        "component_id": 56
+                        "component_id": 56,
+                        "associations": [
+                            {
+                                "forward": "inventory",
+                                "reverse": "activation",
+                                "endpoint": "/xyz/openbmc_project/inventory/system/component/HGX_CPU_1"
+                            }
+                        ]
                     }
                 },
                 "update": {

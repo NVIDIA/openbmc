@@ -26,7 +26,7 @@ SVC_NAME = "nvidia-monitor-eventing"
 # You could change the passphase to empty by 'ssh-keygen -p -f ~/.ssh/<your_gitlab_id_file>'
 # This issue will be solved when we upstream all codes to github.
 SRC_URI += "git://github.com/NVIDIA/nvidia-monitor-eventing;protocol=https;branch=develop"
-SRCREV = "01d0871b73814f2e6d0cc3061a9b819169920017"
+SRCREV = "410738c95140abdb3bec7a73eef80163de8745ea"
 S = "${WORKDIR}/git"
 
 FILES:${PN}:append = " ${bindir}/monitor-eventingd"
@@ -51,9 +51,9 @@ SRC_URI += " \
 
 do_install:append() {
     install -d ${D}${systemd_system_unitdir}
-    install -m 0644 ${WORKDIR}/nvidia-*.service ${D}${systemd_system_unitdir}/
-    install -m 0755 ${WORKDIR}/mctp-vdm-util-wrapper ${D}${bindir}/
-    install -m 0755 ${WORKDIR}/fpga_regtbl ${D}${bindir}/
+    install -m 0644 ${UNPACKDIR}/nvidia-*.service ${D}${systemd_system_unitdir}/
+    install -m 0755 ${UNPACKDIR}/mctp-vdm-util-wrapper ${D}${bindir}/
+    install -m 0755 ${UNPACKDIR}/fpga_regtbl ${D}${bindir}/
 }
 
 python do_validate_json() {

@@ -11,10 +11,10 @@ SRC_URI:append = " file://update-user-settings.sh"
 
 do_install:append() {
     install -d ${D}${libexecdir}
-    install -m 0755 ${WORKDIR}/update-user-settings.sh ${D}${libexecdir}/
+    install -m 0755 ${UNPACKDIR}/update-user-settings.sh ${D}${libexecdir}/
 
     install -d ${D}${systemd_system_unitdir}/xyz.openbmc_project.User.Manager.service.d
-    install -m 0644 ${WORKDIR}/update-user-settings.conf ${D}${systemd_system_unitdir}/xyz.openbmc_project.User.Manager.service.d/
+    install -m 0644 ${UNPACKDIR}/update-user-settings.conf ${D}${systemd_system_unitdir}/xyz.openbmc_project.User.Manager.service.d/
 
     mkdir -p ${D}/etc/sysconfig
     echo "BUILTIN_USERS=\"${BUILTIN_USERS}\"" >> ${D}/etc/sysconfig/update-user-settings

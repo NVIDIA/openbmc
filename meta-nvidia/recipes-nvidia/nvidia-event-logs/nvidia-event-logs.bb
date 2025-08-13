@@ -26,6 +26,6 @@ SYSTEMD_SERVICE:${PN} = ""
 
 do_install:append() {
     install -d ${D}/etc/default/
-    install -m 0755 ${WORKDIR}/nvidia_event_logging.sh ${D}/etc/default/
+    install -m 0755 ${UNPACKDIR}/nvidia_event_logging.sh ${D}/etc/default/
 }
 

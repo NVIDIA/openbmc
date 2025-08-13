@@ -39,12 +39,12 @@ SYSTEMD_SERVICE:${PN} = " \
 
 do_install:append() {
     install -d ${D}${sysconfdir}/systemd/network
-    install -m 0644 ${WORKDIR}/00-bmc-hmcusb0.network ${D}${sysconfdir}/systemd/network
-    install -m 0644 ${WORKDIR}/00-bmc-hostusb0.network ${D}${sysconfdir}/systemd/network
+    install -m 0644 ${UNPACKDIR}/00-bmc-hmcusb0.network ${D}${sysconfdir}/systemd/network
+    install -m 0644 ${UNPACKDIR}/00-bmc-hostusb0.network ${D}${sysconfdir}/systemd/network
 
     install -d ${D}${sysconfdir}/udev/rules.d
-    install -m 0644 ${WORKDIR}/90-hmc-net.rules ${D}${sysconfdir}/udev/rules.d
-    install -m 0644 ${WORKDIR}/90-bmc-host-net.rules ${D}${sysconfdir}/udev/rules.d
+    install -m 0644 ${UNPACKDIR}/90-hmc-net.rules ${D}${sysconfdir}/udev/rules.d
+    install -m 0644 ${UNPACKDIR}/90-bmc-host-net.rules ${D}${sysconfdir}/udev/rules.d
 }
 
 do_install:append:gb200nvl-bmc-ut3() {

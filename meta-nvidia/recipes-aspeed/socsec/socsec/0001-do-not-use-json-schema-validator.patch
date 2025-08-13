@@ -7,6 +7,8 @@ openbmc moved recently to json schema validator 4.21.1.
 this version pulls in rpds, but openbmc does not build
 nor uses rust. due to this otptool is no longer functional.
 
+Upstream-Status: Pending
+
 Signed-off-by: Radivoje (Ogi) Jovanovic <rjovanovic@nvidia.com>
 ---
  socsec/otptool.py | 2 --

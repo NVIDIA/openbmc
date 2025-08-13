@@ -13,6 +13,6 @@ FILES:${PN} += "/usr/share/misc/iana-enterprise-numbers"
 do_compile:prepend() {
     # copy the SRC_URI version of enterprise-numbers
     # to the build dir to prevent a fetch
-    mkdir -p "${WORKDIR}/build"
-    cp "${WORKDIR}/iana-enterprise-numbers" "${WORKDIR}/build/iana-enterprise-numbers"
+    mkdir -p "${UNPACKDIR}/build"
+    cp "${UNPACKDIR}/iana-enterprise-numbers" "${UNPACKDIR}/build/iana-enterprise-numbers"
 }

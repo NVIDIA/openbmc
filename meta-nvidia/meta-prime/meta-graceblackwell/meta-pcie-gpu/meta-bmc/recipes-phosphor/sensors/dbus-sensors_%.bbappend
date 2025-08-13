@@ -64,8 +64,8 @@ do_install:append() {
     mkdir -p ${D}${base_libdir}/systemd/system/xyz.openbmc_project.nvmesensor.service.d
     mkdir -p ${D}${base_libdir}/systemd/system/xyz.openbmc_project.nvmestatus.service.d
     
-    install -m 0644 ${WORKDIR}/xyz.openbmc_project.nvmesensor.conf \
+    install -m 0644 ${UNPACKDIR}/xyz.openbmc_project.nvmesensor.conf \
                     ${D}${systemd_system_unitdir}/xyz.openbmc_project.nvmesensor.service.d/
-    install -m 0644 ${WORKDIR}/xyz.openbmc_project.nvmestatus.conf \
+    install -m 0644 ${UNPACKDIR}/xyz.openbmc_project.nvmestatus.conf \
                     ${D}${systemd_system_unitdir}/xyz.openbmc_project.nvmestatus.service.d/
 }

@@ -37,15 +37,15 @@ SYSTEMD_SERVICE:${PN} = " \
 do_install() {
     install -d ${D}/${bindir}
     install -d ${D}/etc/default/
-    install -m 0755 ${WORKDIR}/fpga_power_sequence.sh ${D}/${bindir}/
-    install -m 0755 ${WORKDIR}/multi_module_detection.sh ${D}/${bindir}/
-    install -m 0755 ${WORKDIR}/hmc_ready.sh ${D}/${bindir}/
-    install -m 0755 ${WORKDIR}/i2c-slave-config.sh ${D}/${bindir}/
-    install -m 0755 ${WORKDIR}/i2c-boot-progress.sh ${D}/${bindir}/
-    install -m 0755 ${WORKDIR}/bind_expanders.sh ${D}/${bindir}/
+    install -m 0755 ${UNPACKDIR}/fpga_power_sequence.sh ${D}/${bindir}/
+    install -m 0755 ${UNPACKDIR}/multi_module_detection.sh ${D}/${bindir}/
+    install -m 0755 ${UNPACKDIR}/hmc_ready.sh ${D}/${bindir}/
+    install -m 0755 ${UNPACKDIR}/i2c-slave-config.sh ${D}/${bindir}/
+    install -m 0755 ${UNPACKDIR}/i2c-boot-progress.sh ${D}/${bindir}/
+    install -m 0755 ${UNPACKDIR}/bind_expanders.sh ${D}/${bindir}/
 
-    install -m 0755 ${WORKDIR}/common_platform_var.conf ${D}/etc/default/platform_var.conf
+    install -m 0755 ${UNPACKDIR}/common_platform_var.conf ${D}/etc/default/platform_var.conf
 
-    install -m 0755 ${WORKDIR}/cg1_set_module_temp_sensor_threshold.sh ${D}/${bindir}/set_module_temp_sensor_threshold.sh
+    install -m 0755 ${UNPACKDIR}/cg1_set_module_temp_sensor_threshold.sh ${D}/${bindir}/set_module_temp_sensor_threshold.sh
 }
 

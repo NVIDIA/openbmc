@@ -24,7 +24,7 @@ EXTRA_OEMESON += "-Dtests=disabled"
 # This issue will be solved when we upstream all codes to github.
 
 SRC_URI += "git://github.com/NVIDIA/software-error-injection;protocol=https;branch=develop"
-SRCREV = "a524705237933fe21a0f771e6473b9cc431a87d7"
+SRCREV = "3a20445723cc4ecbc28a5f10fa808474cfee556c"
 
 S = "${WORKDIR}/git"
 
@@ -49,7 +49,7 @@ do_install:append() {
     install -d ${D}${datadir}/sw-einj
     ${S}/generate_injector_tar_file.sh --no-build-tools --no-ssh-deploy
     install -d ${D}${systemd_system_unitdir}
-    install -m 0644 ${WORKDIR}/nvidia-sw-einj.service ${D}${systemd_system_unitdir}/
+    install -m 0644 ${UNPACKDIR}/nvidia-sw-einj.service ${D}${systemd_system_unitdir}/
     TAR_FILE=$(ls ${S}/deploy/*)
     install -m 0644 ${TAR_FILE} ${D}${datadir}/sw-einj
 }

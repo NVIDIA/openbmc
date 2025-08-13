@@ -38,8 +38,7 @@ EXTRA_OECONF = "--disable-doxygen-html --disable-werror --enable-libgpiod --enab
 
 do_install:append() {
     rm -f ${D}${datadir}/openocd/scripts/interface/jtag_driver.cfg
-    install -m 0644 ${WORKDIR}/jtag_driver.cfg  ${D}${datadir}/openocd/scripts/interface/
-    install -m 0644 ${WORKDIR}/grace.cfg  ${D}${datadir}/openocd/scripts/target/
-    install -m 0644 ${WORKDIR}/grace-c2.cfg  ${D}${datadir}/openocd/scripts/board/grace-system.cfg
-    install -m 0644 ${WORKDIR}/test.cfg  ${D}${datadir}/openocd/scripts/board/
+    install -m 0644 ${UNPACKDIR}/jtag_driver.cfg  ${D}${datadir}/openocd/scripts/interface/
+    install -m 0644 ${UNPACKDIR}/grace.cfg  ${D}${datadir}/openocd/scripts/target/
+    install -m 0644 ${UNPACKDIR}/grace-c2.cfg  ${D}${datadir}/openocd/scripts/board/grace-system.cfg
 }

@@ -4,7 +4,7 @@
       {
         "Name": "HGX_IRoT_GPU_0",
         "Type": "NSM_Chassis",
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "SlotCount": 2,
         "DeviceType": "0",
         "Chassis": {
@@ -84,7 +84,7 @@
       {
         "Name": "HGX_IRoT_GPU_1",
         "Type": "NSM_Chassis",
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:19",
         "SlotCount": 2,
         "DeviceType": "0",
         "Chassis": {
@@ -164,7 +164,7 @@
       {
         "Name": "HGX_IRoT_GPU_2",
         "Type": "NSM_Chassis",
-        "UUID": "STATIC:0:2",
+        "UUID": "STATIC:0:2:MCTP_EID:26",
         "SlotCount": 2,
         "DeviceType": "0",
         "Chassis": {
@@ -244,7 +244,7 @@
       {
         "Name": "HGX_IRoT_GPU_3",
         "Type": "NSM_Chassis",
-        "UUID": "STATIC:0:3",
+        "UUID": "STATIC:0:3:MCTP_EID:27",
         "SlotCount": 2,
         "DeviceType": "0",
         "Chassis": {

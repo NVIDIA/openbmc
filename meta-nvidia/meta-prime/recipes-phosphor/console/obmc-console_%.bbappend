@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI = "git://github.com/NVIDIA/obmc-console;protocol=https;branch=develop"
-SRCREV = "68ea948d67634b40a3fb061b46752f9e0c092da6"
+SRCREV = "7d4a727403027f331c3ec53b2e2feaba43471810"
 
 CONSOLE_SERVER_CONF_FMT = "file://server.{0}.conf"
 CONSOLE_CLIENT_CONF_FMT = "file://client.{0}.conf"
@@ -41,17 +41,10 @@ do_install:append() {
     USBTTYS="ttyUSB1 ttyUSB4 ttyUSB5"
     for USBTTY in $USBTTYS; do
         install -d ${D}${systemd_system_unitdir}/obmc-console-${USBTTY}@.service.d
-        install -m 0644 ${WORKDIR}/systemd/obmc-console-${USBTTY}.socket ${D}${systemd_system_unitdir}/
-        install -m 0644 ${WORKDIR}/image/usr/lib/systemd/system/obmc-console-ssh@.service ${D}${systemd_system_unitdir}/obmc-console-${USBTTY}@.service
-        install -m 0644 ${WORKDIR}/systemd/use-socket-${USBTTY}.conf ${D}${systemd_system_unitdir}/obmc-console-${USBTTY}@.service.d/
+        install -m 0644 ${UNPACKDIR}/systemd/obmc-console-${USBTTY}.socket ${D}${systemd_system_unitdir}/
+        install -m 0644 ${UNPACKDIR}/systemd/use-socket-${USBTTY}.conf ${D}${systemd_system_unitdir}/obmc-console-${USBTTY}@.service.d/
     done
-    install -m 0644 ${WORKDIR}/server.*.conf ${D}${sysconfdir}/${BPN}/
-    install -m 0644 ${WORKDIR}/client.*.conf ${D}${sysconfdir}/${BPN}/
-
-    if [ "${BUILD_TYPE}" = "prod" ]; then
-        install -m 0755 -d ${D}/usr/local/bin/nvidia
-        ln -s -r ${D}${bindir}/obmc-console-client ${D}/usr/local/bin/nvidia/obmc-console-client
-    fi
-
+    install -m 0644 ${UNPACKDIR}/server.*.conf ${D}${sysconfdir}/${BPN}/
+    install -m 0644 ${UNPACKDIR}/client.*.conf ${D}${sysconfdir}/${BPN}/
 }
 

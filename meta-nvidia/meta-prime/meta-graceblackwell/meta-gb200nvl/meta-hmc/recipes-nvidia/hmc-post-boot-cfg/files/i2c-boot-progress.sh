@@ -189,13 +189,6 @@ function update_service_status_all()
     # Additional Service Status in extended register 
     service_status=0x00
     service_status=$(update_service_status 'xyz.openbmc_project.Dump.Manager' "$service_status" 0)
-    #Avoid updating for inkenrel mctp
-    if ! zcat /proc/config.gz | grep -q "CONFIG_MCTP_TRANSPORT_USB=y"; then
-        service_status=$(update_service_status 'mctp-usb-demux' "$service_status" 1)
-    fi
-    if ! zcat /proc/config.gz | grep -q "CONFIG_MCTP_TRANSPORT_SPI=y"; then
-        service_status=$(update_service_status 'mctp-spi0-demux' "$service_status" 2)
-    fi
     data_array[14]=$service_status
 }
 

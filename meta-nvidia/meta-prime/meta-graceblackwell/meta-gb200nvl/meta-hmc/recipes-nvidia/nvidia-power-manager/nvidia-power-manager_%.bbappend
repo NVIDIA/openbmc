@@ -13,8 +13,8 @@ EXTRA_OEMESON:append = " -Dplatform_prefix="HGX_" \
 "
 
 do_install:append() {
+        install -D ${UNPACKDIR}/files/cpld_config.json ${D}${datadir}/${PN}/cpld_config.json
         rm -f ${D}${nonarch_base_libdir}/systemd/system/nvidia-psu-monitor.service
         rm -f ${D}${nonarch_base_libdir}/systemd/system/nvidia-power-manager.service
-        install -D ${WORKDIR}/files/cpld_config.json ${D}${datadir}/${PN}/cpld_config.json
-        install -D ${WORKDIR}/files/cpldi2ccmd.sh ${D}${bindir}/cpldi2ccmd.sh
+        install -D ${UNPACKDIR}/files/cpldi2ccmd.sh ${D}${bindir}/cpldi2ccmd.sh
 }

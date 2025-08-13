@@ -23,4 +23,6 @@ SYSTEMD_SERVICE:${PN} += "spdmd.service"
 EXTRA_OEMESON = " \
         -Dtests=disabled \
         -Dfetch_serialnumber_from_responder=26 \
+        -Dcsm_service_enabled=disabled \
+        -Denable-in-kernel-mctp=enabled \
         "

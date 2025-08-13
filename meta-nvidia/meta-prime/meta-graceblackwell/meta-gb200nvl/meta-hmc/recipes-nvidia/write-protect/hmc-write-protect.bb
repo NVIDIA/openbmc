@@ -36,5 +36,5 @@ SYSTEMD_SERVICE:${PN} = " \
 FILES:${PN} = "${systemd_system_unitdir}/* ${bindir}/*"
 do_install() {
     install -d ${D}${bindir}
-    install -m 0755 ${WORKDIR}/hmc-fru-wp.sh ${D}${bindir}/
+    install -m 0755 ${UNPACKDIR}/hmc-fru-wp.sh ${D}${bindir}/
 }

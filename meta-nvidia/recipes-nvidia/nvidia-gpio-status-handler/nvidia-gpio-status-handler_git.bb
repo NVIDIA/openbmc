@@ -21,7 +21,7 @@ DEPENDS += "libgpiod"
 # You could change the passphase to empty by 'ssh-keygen -p -f ~/.ssh/<your_gitlab_id_file>'
 # This issue will be solved when we upstream all codes to github.
 SRC_URI += "git://github.com/NVIDIA/nvidia-gpio-status-handler;protocol=https;branch=develop"
-SRCREV = "6cc4352df6e2c5bd00d3d4d2d6d52d8a0352eb22"
+SRCREV = "df860bce3ba47e73aa2ba785947a7bc99a327a4d"
 S = "${WORKDIR}/git"
 
 SVC_NAME = "gpio-status-handler.service"
@@ -37,7 +37,7 @@ SRC_URI:append = " file://${SVC_NAME}"
 
 do_install:append() {
     install -d ${D}${systemd_system_unitdir}
-    install -m 0644 ${WORKDIR}/${SVC_NAME} ${D}${systemd_system_unitdir}/
+    install -m 0644 ${UNPACKDIR}/${SVC_NAME} ${D}${systemd_system_unitdir}/
 }
 
 

@@ -15,5 +15,5 @@ RDEPENDS:${PN} = "bash"
 
 do_install() {
     install -d ${D}/${bindir}
-    install -m 0755 ${WORKDIR}/hmc_checker.sh ${D}/${bindir}/
+    install -m 0755 ${UNPACKDIR}/hmc_checker.sh ${D}/${bindir}/
 }

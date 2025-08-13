@@ -25,6 +25,6 @@ SYSTEMD_SERVICE:${PN} = " \
 
 do_install() {
     install -d ${D}/${bindir}
-    install -m 0755 ${WORKDIR}/hmc-temp-sensor.sh ${D}/${bindir}/
+    install -m 0755 ${UNPACKDIR}/hmc-temp-sensor.sh ${D}/${bindir}/
 }
 

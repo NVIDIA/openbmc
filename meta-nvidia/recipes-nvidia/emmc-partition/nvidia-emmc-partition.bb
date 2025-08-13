@@ -43,33 +43,33 @@ SYSTEMD_SERVICE:${PN} = " \
 
 do_install:append() {
     install -d ${D}/${bindir}
-    install -m 0755 ${WORKDIR}/emmc-partition-format.sh ${D}/${bindir}/
+    install -m 0755 ${UNPACKDIR}/emmc-partition-format.sh ${D}/${bindir}/
     mkdir -p ${D}/usr/share/emmc/
 }
 
 do_install:append:hgx() {
-    install -m 0755 ${WORKDIR}/hgx/create-partition.sh ${D}/${bindir}/
-    install -m 0644 ${WORKDIR}/hgx/emmc-mount.conf ${D}/usr/share/emmc/
+    install -m 0755 ${UNPACKDIR}/hgx/create-partition.sh ${D}/${bindir}/
+    install -m 0644 ${UNPACKDIR}/hgx/emmc-mount.conf ${D}/usr/share/emmc/
 }
 
 do_install:append:hgxb() {
-    install -m 0755 ${WORKDIR}/hgxb/create-partition.sh ${D}/${bindir}/
-    install -m 0644 ${WORKDIR}/hgxb/emmc-mount.conf ${D}/usr/share/emmc/
+    install -m 0755 ${UNPACKDIR}/hgxb/create-partition.sh ${D}/${bindir}/
+    install -m 0644 ${UNPACKDIR}/hgxb/emmc-mount.conf ${D}/usr/share/emmc/
 }
 
 do_install:append:hgxb300() {
-    install -m 0755 ${WORKDIR}/hgxb300/create-partition.sh ${D}/${bindir}/
-    install -m 0644 ${WORKDIR}/hgxb300/emmc-mount.conf ${D}/usr/share/emmc/
+    install -m 0755 ${UNPACKDIR}/hgxb300/create-partition.sh ${D}/${bindir}/
+    install -m 0644 ${UNPACKDIR}/hgxb300/emmc-mount.conf ${D}/usr/share/emmc/
 }
 
 do_install:append:skinnyjoe() {
-    install -m 0755 ${WORKDIR}/gh/create-partition.sh ${D}/${bindir}/
-    install -m 0644 ${WORKDIR}/gh/emmc-mount.conf ${D}/usr/share/emmc/
+    install -m 0755 ${UNPACKDIR}/gh/create-partition.sh ${D}/${bindir}/
+    install -m 0644 ${UNPACKDIR}/gh/emmc-mount.conf ${D}/usr/share/emmc/
 }
 
 do_install:append:mgx-3809() {
-    install -m 0755 ${WORKDIR}/mgx-3809/create-partition.sh ${D}/${bindir}/
-    install -m 0644 ${WORKDIR}/mgx-3809/emmc-mount.conf ${D}/usr/share/emmc/
+    install -m 0755 ${UNPACKDIR}/mgx-3809/create-partition.sh ${D}/${bindir}/
+    install -m 0644 ${UNPACKDIR}/mgx-3809/emmc-mount.conf ${D}/usr/share/emmc/
 }
 
 do_install:append:igx-3809() {

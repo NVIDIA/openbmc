@@ -27,6 +27,6 @@ SYSTEMD_SERVICE:${PN} = " \
 
 do_install(){
     install -d ${D}/${bindir}
-    install -m 0755 ${WORKDIR}/${CPU_DIAG_STATUS_SCRIPT} ${D}/${bindir}/cpu-diag-status.sh
+    install -m 0755 ${UNPACKDIR}/${CPU_DIAG_STATUS_SCRIPT} ${D}/${bindir}/cpu-diag-status.sh
 }
 

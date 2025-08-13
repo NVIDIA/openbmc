@@ -23,7 +23,8 @@ FILES:${PN} = " ${bindir}/delete-hi-user.sh \
 SYSTEMD_PACKAGES = "${PN}"
 SYSTEMD_SERVICE:${PN} = "cpu-boot-done.service cpu-boot-undone.service"
 
-S = "${WORKDIR}"
+S = "${WORKDIR}/sources"
+UNPACKDIR = "${S}"
 
 SRC_URI = " \
       file://delete-hi-user.sh \

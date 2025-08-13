@@ -12,7 +12,8 @@ RDEPENDS:${PN} = "bash nvidia-mc-lib"
 
 FILESEXTRAPATHS:append := "${THISDIR}/files:"
 
-S = "${WORKDIR}"
+S = "${WORKDIR}/sources"
+UNPACKDIR = "${S}"
 
 SRC_URI = " \
       file://powerctrl.sh \
@@ -114,5 +115,5 @@ do_install() {
 }
 
 do_install:append:gb200nvl-bmc-dgx() {
-    install -m 0644 ${WORKDIR}/gb200nvl-bmc-dgx/${PWRON_SERVICE} ${D}/${systemd_system_unitdir}/
+    install -m 0644 ${UNPACKDIR}/gb200nvl-bmc-dgx/${PWRON_SERVICE} ${D}/${systemd_system_unitdir}/
 }

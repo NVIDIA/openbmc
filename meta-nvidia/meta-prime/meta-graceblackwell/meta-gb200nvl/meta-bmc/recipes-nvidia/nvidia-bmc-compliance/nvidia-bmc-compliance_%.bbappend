@@ -8,5 +8,5 @@ SRC_URI += " \
 INSANE_SKIP:${PN} += "already-stripped"
 
 do_install:append() {
-    install -D ${WORKDIR}/jtag_test ${D}/${bindir}/
+    install -D ${UNPACKDIR}/jtag_test ${D}/${bindir}/
 }

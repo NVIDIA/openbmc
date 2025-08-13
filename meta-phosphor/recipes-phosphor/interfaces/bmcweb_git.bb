@@ -1,19 +1,20 @@
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=175792518e4ac015ab6696d16c4f607e"
 DEPENDS = " \
-    openssl \
-    zlib \
     boost \
-    libpam \
-    sdbusplus \
+    cli11 \
     gtest \
-    nlohmann-json \
+    libpam \
     libtinyxml2 \
     nghttp2 \
+    nlohmann-json \
+    openssl \
+    sdbusplus \
+    zlib \
     ${@bb.utils.contains('PTEST_ENABLED', '1', 'gtest', '', d)} \
     ${@bb.utils.contains('PTEST_ENABLED', '1', 'gmock', '', d)} \
 "
-SRCREV = "1b5eb497fc9aeb6486deced6627e70ebd092a896"
+SRCREV = "ab00bd8b43cbfba82c0baf5afe9f4c52ae934ca1"
 PV = "1.0+git${SRCPV}"
 
 SRC_URI = "git://github.com/openbmc/bmcweb.git;branch=master;protocol=https"

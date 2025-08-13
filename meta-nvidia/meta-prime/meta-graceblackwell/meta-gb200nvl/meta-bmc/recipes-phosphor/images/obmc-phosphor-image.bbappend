@@ -44,8 +44,8 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " libmctp \
                                     libnvme \
                                     nvidia-nvme-manager \
                                     nvidia-nvme-cpld \
-                                    mstflint-flint \
                                     nsmd \
+                                    mctp \
                                   "
 
 OBMC_IMAGE_EXTRA_INSTALL:append = " phosphor-gpio-monitor "

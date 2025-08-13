@@ -1,9 +1,9 @@
 Upstream-Status: Pending
 ---
-diff --git a/scp.c b/scp.c
+diff --git a/src/scp.c b/src/scp.c
 index 72e04f8..77614b6 100644
---- a/scp.c
-+++ b/scp.c
+--- a/src/scp.c
++++ b/src/scp.c
 @@ -603,8 +603,8 @@ source(int argc, char **argv)
  	BUF *bp;
  	off_t i, amt, statbytes;

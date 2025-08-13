@@ -18,5 +18,5 @@ FILES:${PN} += " \
 do_install:append() {
     install -d ${D}${sysconfdir}/systemd/network
     install -d ${D}${sysconfdir}/systemd/system/systemd-networkd-wait-online.service.d
-    install -m 0644 ${WORKDIR}/systemd-networkd-wait-online-override.conf ${D}${sysconfdir}/systemd/system/systemd-networkd-wait-online.service.d/override.conf
+    install -m 0644 ${UNPACKDIR}/systemd-networkd-wait-online-override.conf ${D}${sysconfdir}/systemd/system/systemd-networkd-wait-online.service.d/override.conf
 }

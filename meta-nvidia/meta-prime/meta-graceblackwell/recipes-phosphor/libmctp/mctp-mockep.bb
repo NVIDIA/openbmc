@@ -20,7 +20,7 @@ SRC_URI = "git://github.com/NVIDIA/libmctp;protocol=https;branch=develop \
             file://mctp-mockep-demux.service \
             file://mctp-mockep-ctrl.service"
 
-SRCREV = "d5b3402611c88ef6ca2eca6844341d6eb362afdf"
+SRCREV = "b30b22203165a87d7c6d5210f57da33027818d25"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
@@ -34,8 +34,8 @@ SYSTEMD_SERVICE:${PN} = "mctp-mockep-demux.service \
 
 do_install:append() {
     install -d ${D}${nonarch_base_libdir}/systemd/system
-    install -m 0644 ${WORKDIR}/mctp-mockep-demux.service ${D}${nonarch_base_libdir}/systemd/system
-    install -m 0644 ${WORKDIR}/mctp-mockep-ctrl.service ${D}${nonarch_base_libdir}/systemd/system
+    install -m 0644 ${UNPACKDIR}/mctp-mockep-demux.service ${D}${nonarch_base_libdir}/systemd/system
+    install -m 0644 ${UNPACKDIR}/mctp-mockep-ctrl.service ${D}${nonarch_base_libdir}/systemd/system
 
     rm -f ${D}${nonarch_base_libdir}/systemd/system/mctp-spi-ctrl.service
     rm -f ${D}${nonarch_base_libdir}/systemd/system/mctp-spi-demux.service

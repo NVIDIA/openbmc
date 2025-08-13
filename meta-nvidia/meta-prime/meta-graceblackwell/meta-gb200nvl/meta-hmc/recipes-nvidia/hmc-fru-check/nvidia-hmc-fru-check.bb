@@ -18,5 +18,5 @@ RDEPENDS:${PN} = "bash busybox"
 
 do_install() {
     install -d ${D}/${bindir}
-    install -m 0755 ${WORKDIR}/hmc_fru_checker.sh ${D}${bindir}/
+    install -m 0755 ${UNPACKDIR}/hmc_fru_checker.sh ${D}${bindir}/
 }

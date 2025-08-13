@@ -6,7 +6,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 SRCREV="e7869067a0e39367293ec55be21ba4c1baf6df95"
 SRC_URI = "git://github.com/NVIDIA/u-boot;protocol=https;branch=v2019.04-aspeed-openbmc \
            file://0001-Set-drive-strengths-to-600Mv.patch \
-           file://0001-Update-Winbond-chip-id-string-to-match-exact-variant.patch \
+           file://0001-Fix-Compile-Error.patch \
            "
 SRC_URI:append = " file://u-boot.cfg"
 SRC_URI += "file://oem_dss_4096_0.pem;sha256sum=98112defd6bbfaf0ced07349b86efb2ba09c766a19e53bc34ea3e990ace16bc7"

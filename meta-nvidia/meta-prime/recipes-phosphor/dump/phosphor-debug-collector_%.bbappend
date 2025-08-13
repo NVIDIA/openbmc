@@ -55,12 +55,10 @@ RDEPENDS:${PN} += "i2c-tools"
 SYSTEMD_OVERRIDE:${PN}-manager += "dump.fs_dep.conf:xyz.openbmc_project.Dump.Manager.service.d/dump.fs_dep.conf"
 
 do_install:append() {
-    install -m 755 ${WORKDIR}/fpga_dump.sh ${D}${bindir}/
-    install -m 755 ${WORKDIR}/fpga_register_table_info.csv ${D}${datadir}/
-    install -m 755 ${WORKDIR}/selftest_dump.sh ${D}${bindir}/
-    install -m 755 ${WORKDIR}/erot_dump.sh ${D}${bindir}/
-    install -m 755 ${WORKDIR}/sma_dump.sh ${D}${bindir}/
-    install -m 755 ${WORKDIR}/glacier_i2c_log_dl.sh ${D}${bindir}/
+    install -m 755 ${UNPACKDIR}/fpga_dump.sh ${D}${bindir}/
+    install -m 755 ${UNPACKDIR}/fpga_register_table_info.csv ${D}${datadir}/
+    install -m 755 ${UNPACKDIR}/selftest_dump.sh ${D}${bindir}/
+    install -m 755 ${UNPACKDIR}/erot_dump.sh ${D}${bindir}/
 }
 
 install_nvidia_plugins() {
@@ -74,7 +72,7 @@ python link_nvidia_plugins() {
     op_plugins = os.listdir(source_path)
     for op_plugin in op_plugins:
         op_plugin_name = os.path.join(source_path, op_plugin)
-        install_dreport_user_script(op_plugin_name, d)
+        install_dreport_user_script("dreport.conf", op_plugin_name, d)
 }
 
 NVIDIA_INSTALL_POSTFUNCS = "install_nvidia_plugins link_nvidia_plugins"

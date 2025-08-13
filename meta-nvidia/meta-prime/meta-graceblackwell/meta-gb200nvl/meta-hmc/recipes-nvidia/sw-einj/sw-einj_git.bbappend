@@ -7,7 +7,7 @@ SRC_URI:append = " \
     "
 
 do_install:append() {
-    install -m 0644 ${WORKDIR}/gpu_nsm_maptbl_platform.conf ${D}${datadir}/sw-einj
+    install -m 0644 ${UNPACKDIR}/gpu_nsm_maptbl_platform.conf ${D}${datadir}/sw-einj
 }
 
 

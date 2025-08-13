@@ -15,14 +15,14 @@ DEPENDS += "phosphor-logging"
 DEPENDS += "nvidia-shmem"
 
 SRC_URI = "git://github.com/NVIDIA/nvidia-tal;protocol=https;branch=develop"
-SRCREV = "3acd8da18f4ea47eb23834b35d160edcfc46a697"
+SRCREV = "250b3097b02ddc5ddd9e071a052e3da8b855bb10"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}:"
 SRC_URI += "file://smbus-telemetry-config/smbus-telemetry-config.csv" 
 
 do_install:append() {
     install -d ${D}${datadir}/smbus-telemetry-target
-    install -m 0644 ${WORKDIR}/smbus-telemetry-config/smbus-telemetry-config.csv ${D}${datadir}/smbus-telemetry-target/
+    install -m 0644 ${UNPACKDIR}/smbus-telemetry-config/smbus-telemetry-config.csv ${D}${datadir}/smbus-telemetry-target/
 }
 
 FILES:${PN} += " /usr/share"

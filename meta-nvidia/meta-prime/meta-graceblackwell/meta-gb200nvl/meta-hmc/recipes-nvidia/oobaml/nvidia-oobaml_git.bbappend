@@ -19,15 +19,15 @@ SRC_URI:append = " \
 RDEPENDS:${PN}:append = " bash"
 do_install:append() {
     install -d ${D}${datadir}/oobaml
-    install -m 0644 ${WORKDIR}/dat.json ${D}${datadir}/oobaml/
+    install -m 0644 ${UNPACKDIR}/dat.json ${D}${datadir}/oobaml/
 
-    install -m 0644 ${WORKDIR}/event_info.json ${D}${datadir}/oobaml/
-    install -m 0644 ${WORKDIR}/device_mctp_eid.csv ${D}${datadir}/
-    install -m 0644 ${WORKDIR}/device_id_map.csv ${D}${datadir}/
-    install -m 0755 ${WORKDIR}/check_backenderror ${D}${bindir}/
-    install -m 0755 ${WORKDIR}/single-device-mctp-error-detection ${D}${bindir}/
-    install -m 0755 ${WORKDIR}/sysvr-deviceid-wrapper ${D}${bindir}/
-    install -m 0755 ${WORKDIR}/hsc_alert_wrapper ${D}${bindir}/
+    install -m 0644 ${UNPACKDIR}/event_info.json ${D}${datadir}/oobaml/
+    install -m 0644 ${UNPACKDIR}/device_mctp_eid.csv ${D}${datadir}/
+    install -m 0644 ${UNPACKDIR}/device_id_map.csv ${D}${datadir}/
+    install -m 0755 ${UNPACKDIR}/check_backenderror ${D}${bindir}/
+    install -m 0755 ${UNPACKDIR}/single-device-mctp-error-detection ${D}${bindir}/
+    install -m 0755 ${UNPACKDIR}/sysvr-deviceid-wrapper ${D}${bindir}/
+    install -m 0755 ${UNPACKDIR}/hsc_alert_wrapper ${D}${bindir}/
 
 
     sed -i "s|DEV_EID_PROFILE=\"device_mctp_eid.csv\"|DEV_EID_PROFILE=\"${datadir}/device_mctp_eid.csv\"|" ${D}${bindir}/mctp-vdm-util-wrapper
@@ -43,7 +43,7 @@ FILES:${PN}:append = " ${datadir}/gpio-config.json"
 
 do_install:append() {
     install -d ${D}/${datadir}
-    install -m 0644 ${WORKDIR}/gpio-config.json ${D}/${datadir}/
+    install -m 0644 ${UNPACKDIR}/gpio-config.json ${D}/${datadir}/
 }
 
 #

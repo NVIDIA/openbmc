@@ -28,7 +28,6 @@ EXTRA_OEMESON:append = " -Dnic-configuration-update=disabled"
 EXTRA_OEMESON:append = " -Ddhcp-configuration-update=disabled"
 EXTRA_OEMESON:append = " -Dnvidia-oem-gb200nvl-properties=enabled"
 EXTRA_OEMESON:append = " -Dplatform-gpu-name-prefix=GPU_ "
-EXTRA_OEMESON:append = " -Dplatform-bmc-id=HGX_BMC_0"
 EXTRA_OEMESON:append = " -Dnvidia-bootentryid=enabled"
 EXTRA_OEMESON:append = " -Dnvidia-uuid-from-platform-chassis-name=enabled"
 EXTRA_OEMESON += "-Dnvidia-oem-fw-update-staging=enabled"
@@ -44,16 +43,13 @@ EXTRA_OEMESON:append = " -Dnvidia-oem-device-status-from-file=enabled"
 EXTRA_OEMESON:append = " -Dhealth-rollup-alternative=disabled"
 
 # Enable Processor Debug Capabilities
-EXTRA_OEMESON:append = " -Denable-debug-interface=enabled"
+EXTRA_OEMESON:append = " -Ddebug-interface-support=enabled"
 
 # Enable manufacturing test API for provisioning image
 EXTRA_OEMESON:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'otp-provisioning', '-Dmanufacturing-test=enabled', '', d)}"
 
 # Enable http (insecure), it may also help using Redfish Listener if there is SSL problem
 EXTRA_OEMESON:append = " -Dinsecure-push-style-notification=enabled"
-
-# Force event notification by http (insecure) as there is a SSL bug
-EXTRA_OEMESON:append = " -Dforce-insecure-event-notification=enabled"
 
 # Enable fdr support
 EXTRA_OEMESON:append = " -Dredfish-fdr-log=enabled"
@@ -89,13 +85,13 @@ FILES:${PN}:append = " \
 
 do_install:append() {
     install -d ${D}${datadir}/${PN}/
-    install -m 0644 ${WORKDIR}/fw_uuid_mapping.json ${D}${datadir}/${PN}/
-    install -m 0644 ${WORKDIR}/rot_chassis_properties_allowlist.json ${D}${datadir}/${PN}/
-    install -m 0644 ${WORKDIR}/mrd_ProcessorPortMetrics.json ${D}${datadir}/${PN}/
+    install -m 0644 ${UNPACKDIR}/fw_uuid_mapping.json ${D}${datadir}/${PN}/
+    install -m 0644 ${UNPACKDIR}/rot_chassis_properties_allowlist.json ${D}${datadir}/${PN}/
+    install -m 0644 ${UNPACKDIR}/mrd_ProcessorPortMetrics.json ${D}${datadir}/${PN}/
 
     install -d ${D}${systemd_system_unitdir}/bmcweb.service.d
-    install -m 0644 ${WORKDIR}/bmcweb-gb200nvl-hmc.conf ${D}${systemd_system_unitdir}/bmcweb.service.d/
+    install -m 0644 ${UNPACKDIR}/bmcweb-gb200nvl-hmc.conf ${D}${systemd_system_unitdir}/bmcweb.service.d/
     install -d ${D}${systemd_system_unitdir}/bmcweb.socket.d
-    install -m 0644 ${WORKDIR}/bmcweb-socket-gb200nvl-hmc.conf ${D}${systemd_system_unitdir}/bmcweb.socket.d/
+    install -m 0644 ${UNPACKDIR}/bmcweb-socket-gb200nvl-hmc.conf ${D}${systemd_system_unitdir}/bmcweb.socket.d/
 }
 

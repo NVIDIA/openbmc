@@ -21,7 +21,9 @@ PACKAGECONFIG:append = " nvmesensor \
                          nvmestatus \
                          leakdetectsensor \
                          writeprotectsensor \
-                         synthesizedsensor "
+                         synthesizedsensor \
+                         mctpreactor \ 
+                         mctpheartbeat "
 
 SYSTEMD_SERVICE:${PN} += "${@bb.utils.contains('PACKAGECONFIG', 'nvmesensor', \
                                                'xyz.openbmc_project.nvmesensor.service', \
@@ -64,8 +66,8 @@ do_install:append() {
     mkdir -p ${D}${base_libdir}/systemd/system/xyz.openbmc_project.nvmesensor.service.d
     mkdir -p ${D}${base_libdir}/systemd/system/xyz.openbmc_project.nvmestatus.service.d
     
-    install -m 0644 ${WORKDIR}/xyz.openbmc_project.nvmesensor.conf \
+    install -m 0644 ${UNPACKDIR}/xyz.openbmc_project.nvmesensor.conf \
                     ${D}${systemd_system_unitdir}/xyz.openbmc_project.nvmesensor.service.d/
-    install -m 0644 ${WORKDIR}/xyz.openbmc_project.nvmestatus.conf \
+    install -m 0644 ${UNPACKDIR}/xyz.openbmc_project.nvmestatus.conf \
                     ${D}${systemd_system_unitdir}/xyz.openbmc_project.nvmestatus.service.d/
 }

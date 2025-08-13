@@ -24,6 +24,11 @@
                             "forward": "inventory",
                             "reverse": "associated_ROT",
                             "endpoint": "/xyz/openbmc_project/inventory/system/bmc/BMC_0"
+                        },
+                        {
+                            "forward": "inventory_chassis",
+                            "reverse": "associated_chassis",
+                            "endpoint": "/xyz/openbmc_project/inventory/system/chassis/ERoT_BMC_0"
                         }
                     ]
                 },
@@ -164,6 +169,11 @@
                        "forward": "inventory",
                        "reverse": "associated_ROT",
                        "endpoint": "/xyz/openbmc_project/inventory/system/board/Riser_Slot1_BlueField_3_Card"
+                    },
+                    {
+                       "forward": "inventory_chassis",
+                       "reverse": "associated_chassis",
+                       "endpoint": "/xyz/openbmc_project/inventory/system/chassis/IRoT_BF3_0"
                     }
                  ]
               }
@@ -217,7 +227,7 @@
                         {
                            "forward":"inventory",
                            "reverse":"activation",
-                           "endpoint":"/xyz/openbmc_project/inventory/system/board/IO_Board_0"
+                           "endpoint":"/xyz/openbmc_project/inventory/system/networkadapter/IO_Board_0_CX8_0"
                         }
                      ]
                   }
@@ -258,7 +268,7 @@
                         {
                            "forward":"inventory",
                            "reverse":"activation",
-                           "endpoint":"/xyz/openbmc_project/inventory/system/board/IO_Board_0"
+                           "endpoint":"/xyz/openbmc_project/inventory/system/networkadapter/IO_Board_0_CX8_1"
                         }
                      ]
                   }
@@ -299,7 +309,7 @@
                         {
                            "forward":"inventory",
                            "reverse":"activation",
-                           "endpoint":"/xyz/openbmc_project/inventory/system/board/IO_Board_1"
+                           "endpoint":"/xyz/openbmc_project/inventory/system/networkadapter/IO_Board_1_CX8_0"
                         }
                      ]
                   }
@@ -340,7 +350,7 @@
                         {
                            "forward":"inventory",
                            "reverse":"activation",
-                           "endpoint":"/xyz/openbmc_project/inventory/system/board/IO_Board_1"
+                           "endpoint":"/xyz/openbmc_project/inventory/system/networkadapter/IO_Board_1_CX8_1"
                         }
                      ]
                   }

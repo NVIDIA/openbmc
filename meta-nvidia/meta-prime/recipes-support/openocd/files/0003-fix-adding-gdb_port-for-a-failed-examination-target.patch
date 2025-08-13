@@ -6,6 +6,8 @@ Subject: [PATCH] fix adding gdb_port for a failed examination target
 In LegoCG1, core0 got failed of the examination but set a gdb target.
 which causes the connection drop if gdb tries to connect.
 
+Upstream-Status: Pending
+
 Signed-off-by: Curtis Chuang <shengchihc@nvidia.com>
 ---
  src/target/target.c | 3 ++-

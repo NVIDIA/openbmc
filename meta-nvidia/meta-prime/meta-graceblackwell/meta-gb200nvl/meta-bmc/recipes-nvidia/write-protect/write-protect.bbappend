@@ -10,5 +10,5 @@ WRITE_PROTECT_SCRIPT = "write-protect.sh"
 
 do_install(){
     install -d ${D}/${bindir}
-    install -m 0755 ${WORKDIR}/${WRITE_PROTECT_SCRIPT} ${D}/${bindir}/write-protect.sh
+    install -m 0755 ${UNPACKDIR}/${WRITE_PROTECT_SCRIPT} ${D}/${bindir}/write-protect.sh
 }

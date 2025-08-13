@@ -11,7 +11,8 @@ inherit obmc-phosphor-systemd
 DEPENDS += "libgpiod"
 DEPENDS += "systemd"
 
-S = "${WORKDIR}"
+S = "${WORKDIR}/sources"
+UNPACKDIR = "${S}"
 
 FILESEXTRAPATHS:append := ":${THISDIR}/files"
 
@@ -38,13 +39,13 @@ SYSTEMD_SERVICE:${PN} = "${SYSDSVC}"
 do_install() {
     install -d ${D}${bindir}
     install -d ${D}${systemd_system_unitdir}
-    install -m 0755 ${WORKDIR}/${BIN} ${D}${bindir}/
+    install -m 0755 ${UNPACKDIR}/${BIN} ${D}${bindir}/
 
-    install -m 0644 ${S}/${FPGA_RDY_SVC} ${D}${systemd_system_unitdir}/
-    install -m 0644 ${S}/${FPGA_NOT_RDY_SVC} ${D}${systemd_system_unitdir}/
+    install -m 0644 ${UNPACKDIR}/${FPGA_RDY_SVC} ${D}${systemd_system_unitdir}/
+    install -m 0644 ${UNPACKDIR}/${FPGA_NOT_RDY_SVC} ${D}${systemd_system_unitdir}/
 
-    install -m 0644 ${S}/${FPGA_RDY_TARGET} ${D}${systemd_system_unitdir}/
-    install -m 0644 ${S}/${FPGA_NOT_RDY_TARGET} ${D}${systemd_system_unitdir}/
+    install -m 0644 ${UNPACKDIR}/${FPGA_RDY_TARGET} ${D}${systemd_system_unitdir}/
+    install -m 0644 ${UNPACKDIR}/${FPGA_NOT_RDY_TARGET} ${D}${systemd_system_unitdir}/
 }
 
 FILES:${PN}:append = " ${bindir}/${BIN}"

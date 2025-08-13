@@ -52,7 +52,7 @@
         "Parent_Chassis":  "/xyz/openbmc_project/inventory/system/chassis/Chassis_0",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Manufacturer": "$BOARD_MANUFACTURER",
-            "Model": "GB200 NVL",
+            "Model": "GB BMC",
             "PartNumber": "$BOARD_PART_NUMBER",
             "SerialNumber": "$BOARD_SERIAL_NUMBER",
 	    "SKU": ""

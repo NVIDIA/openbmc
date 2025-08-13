@@ -24,5 +24,5 @@ SYSTEMD_SERVICE:${PN} = " \
 
 do_install(){
     install -d ${D}/${bindir}
-    install -m 0755 ${WORKDIR}/rtc-detection.sh ${D}/${bindir}/
+    install -m 0755 ${UNPACKDIR}/rtc-detection.sh ${D}/${bindir}/
 }

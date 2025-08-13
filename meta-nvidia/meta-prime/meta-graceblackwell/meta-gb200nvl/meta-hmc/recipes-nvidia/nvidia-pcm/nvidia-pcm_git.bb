@@ -15,8 +15,6 @@ DEPENDS += "sdbusplus ${PYTHON_PN}-sdbus++-native"
 DEPENDS += "phosphor-logging"
 DEPENDS += "nlohmann-json"
 
-RDEPENDS:${PN} += " bash"
-
 SRC_URI += "git://github.com/NVIDIA/nvidia-pcm;protocol=https;branch=develop"
 SRCREV = "a4ae63d8a2710f09b65806d5954eb327e0d0f9e0"
 S = "${WORKDIR}/git"
@@ -27,6 +25,8 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 FILES:${PN}:append = " ${bindir}/pcmd"
 FILES:${PN}:append = " ${libdir}/libpcm${SOLIBS}"
+
+RDEPENDS:${PN} += "bash"
 
 SRC_URI += " \ 
     file://nvidia-pcm.service \
@@ -42,11 +42,11 @@ FILES:${PN}:append = " ${systemd_system_unitdir}/nvidia-*.service"
 
 do_install:append() {
     install -d ${D}${systemd_system_unitdir}
-    install -m 0644 ${WORKDIR}/nvidia-*.service ${D}${systemd_system_unitdir}/
+    install -m 0644 ${UNPACKDIR}/nvidia-*.service ${D}${systemd_system_unitdir}/
 
     install -d ${D}${datadir}/nvidia-pcm/platform-configuration-files/
-    install -m 0644 ${WORKDIR}/platform-configuration-files/plat_config_GB200.json ${D}${datadir}/nvidia-pcm/platform-configuration-files/
-    install -m 0644 ${WORKDIR}/default_platform_configuration.json ${D}${datadir}/nvidia-pcm/
-    install -m 0755 ${WORKDIR}/nvidia-pcm-pre.sh ${D}/${bindir}/nvidia-pcm-pre.sh
+    install -m 0644 ${UNPACKDIR}/platform-configuration-files/plat_config_GB200.json ${D}${datadir}/nvidia-pcm/platform-configuration-files/
+    install -m 0644 ${UNPACKDIR}/default_platform_configuration.json ${D}${datadir}/nvidia-pcm/
+    install -m 0755 ${UNPACKDIR}/nvidia-pcm-pre.sh ${D}/${bindir}/nvidia-pcm-pre.sh
 }
 

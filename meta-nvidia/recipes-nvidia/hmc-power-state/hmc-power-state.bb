@@ -13,7 +13,8 @@ DEPENDS += "systemd"
 
 RDEPENDS:${PN} = "bash"
 
-S = "${WORKDIR}"
+S = "${WORKDIR}/sources"
+UNPACKDIR = "${S}"
 
 FILESEXTRAPATHS:append := ":${THISDIR}/files"
 
@@ -28,5 +29,5 @@ SYSTEMD_LINK_${PN} += "${@compose_list(d, 'FMT', 'PWRSTS_SERVICE')}"
 
 do_install () {
         install -d ${D}${bindir}
-        install -m 0755 ${S}/hmc-power-state ${D}${bindir}/
+        install -m 0755 ${UNPACKDIR}/hmc-power-state ${D}${bindir}/
 }

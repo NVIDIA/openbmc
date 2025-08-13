@@ -1,9 +1,10 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/pldm;protocol=https;branch=develop"
-SRCREV = "10cfcc1fbf76474dbea694cf9c5af42b9695e6df"
+SRCREV = "839d40c619de47215bb85ecf0a467697703edd3e"
 
 DEPENDS += "nvidia-tal"
 DEPENDS += "libmctp"
+DEPENDS += "libpldm"
 
 EXTRA_OEMESON += " \
     -Dlibpldmresponder=disabled \

@@ -1,5 +1,5 @@
 SRC_URI = "git://github.com/NVIDIA/smbios-mdr;protocol=https;branch=develop"
-SRCREV = "27c0b0bc2e1379cdcc5c3f1df4c129cf3eabda83"
+SRCREV = "310cf2e276ec3d876f9b5e07e8943efc4e695114"
 
 # cpuinfo collects CPU information through the Intel PECI interface
 PACKAGECONFIG:remove = " cpuinfo"
@@ -9,5 +9,4 @@ EXTRA_OEMESON:append = " -Dnvidia='true'"
 EXTRA_OEMESON:append = " -Dexpose-inventory=true"
 EXTRA_OEMESON:append = " -Dfirmware-component-name-bmc='BMC Firmware'"
 EXTRA_OEMESON:append = " -Dfirmware-component-name-bios='System ROM'"
-EXTRA_OEMESON:append = " -Dfirmware-component-name-nic='Full FW Image'"
 EXTRA_OEMESON:append = " -Dfirmware-component-name-fpga='HGX_FW_FPGA'"

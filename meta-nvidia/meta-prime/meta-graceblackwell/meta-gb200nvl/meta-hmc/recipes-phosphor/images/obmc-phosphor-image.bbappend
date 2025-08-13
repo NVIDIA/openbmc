@@ -29,8 +29,8 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " \
                                     i2c-dump-server \
                                     hmc-write-protect \
                                     nvidia-hmc-fru-check \
-                                    ${@bb.utils.contains('DISTRO_FEATURES', 'mctp-inkernel', 'mctp', '', d)} \
-                                    ${@bb.utils.contains('DISTRO_FEATURES', 'mctp-inkernel', 'tcpdump', '', d)} \
+                                    mctp \
+                                    tcpdump \
                                   "
 
 OBMC_IMAGE_EXTRA_INSTALL:append = "curl mctp-mockep"

@@ -29,7 +29,7 @@ EXTRA_OECONF += "--enable-sensor-prefix"
 # You could change the passphase to empty by 'ssh-keygen -p -f ~/.ssh/<your_gitlab_id_file>'
 # This issue will be solved when we upstream all codes to github.
 SRC_URI = "git://github.com/NVIDIA/nvidia-gpu-manager;protocol=https;branch=develop"
-SRCREV = "04b932d5807e87a06690655aa2b8b9059bee8b1e"
+SRCREV = "1ca83bc7df0a785b013883ad52858b92c208b425"
 S = "${WORKDIR}/git"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
@@ -138,10 +138,10 @@ do_install:append() {
     install -m 0644 ${S}/systemd/nvidia-pcie-link-mgnt.service ${D}${systemd_system_unitdir}/
     install -m 0644 ${S}/systemd/nvidia-fru-manager.service ${D}${systemd_system_unitdir}/
     install -d ${D}${datadir}/nvidia-ist-manager
-    install -m 0644 ${WORKDIR}/ist-config.json ${D}${datadir}/nvidia-ist-manager/
+    install -m 0644 ${UNPACKDIR}/ist-config.json ${D}${datadir}/nvidia-ist-manager/
     install -m 0644 ${S}/systemd/nvidia-ist-mode-manager.service ${D}${systemd_system_unitdir}/
     install -d ${D}${datadir}/gpuoob
-    install -m 0644 ${WORKDIR}/device.json ${D}${datadir}/gpuoob/
+    install -m 0644 ${UNPACKDIR}/device.json ${D}${datadir}/gpuoob/
     install -m 0644 ${ERR_HANDLER_JSON_SRC} ${D}${datadir}/gpuoob/
 }
 
@@ -149,93 +149,93 @@ do_install:append:dgx() {
     install -d ${D}/${bindir}
     install -m 0664 ${S}/systemd/nvidia-fpga-ready-handler-bind.service ${D}${systemd_system_unitdir}/
     install -m 0664 ${S}/systemd/nvidia-fpga-ready-handler-unbind.service ${D}${systemd_system_unitdir}/
-    install -m 0755 ${WORKDIR}/dgx/fpga_ready_sense.sh ${D}/${bindir}/
-    install -m 0644 ${WORKDIR}/dgx/nvidia-gpu-manager-dgx.conf \
+    install -m 0755 ${UNPACKDIR}/dgx/fpga_ready_sense.sh ${D}/${bindir}/
+    install -m 0644 ${UNPACKDIR}/dgx/nvidia-gpu-manager-dgx.conf \
                     ${D}${systemd_system_unitdir}/nvidia-gpu-manager.service.d/
 }
 do_install:append:dgx-a100-dp() {
     install -d ${D}/${bindir}
     install -m 0664 ${S}/systemd/nvidia-fpga-ready-handler-bind.service ${D}${systemd_system_unitdir}/
     install -m 0664 ${S}/systemd/nvidia-fpga-ready-handler-unbind.service ${D}${systemd_system_unitdir}/
-    install -m 0755 ${WORKDIR}/dgx-a100-dp/fpga_ready_sense.sh ${D}/${bindir}/
-    install -m 0644 ${WORKDIR}/dgx-a100-dp/nvidia-gpu-manager-dgx.conf \
+    install -m 0755 ${UNPACKDIR}/dgx-a100-dp/fpga_ready_sense.sh ${D}/${bindir}/
+    install -m 0644 ${UNPACKDIR}/dgx-a100-dp/nvidia-gpu-manager-dgx.conf \
                     ${D}${systemd_system_unitdir}/nvidia-gpu-manager.service.d/
 }
 do_install:append:e4830() {
     install -d ${D}/${bindir}
     install -m 0664 ${S}/systemd/nvidia-fpga-ready-handler-bind.service ${D}${systemd_system_unitdir}/
     install -m 0664 ${S}/systemd/nvidia-fpga-ready-handler-unbind.service ${D}${systemd_system_unitdir}/
-    install -m 0755 ${WORKDIR}/dgx-a100-dp/fpga_ready_sense.sh ${D}/${bindir}/
-    install -m 0644 ${WORKDIR}/dgx-a100-dp/nvidia-gpu-manager-dgx.conf \
+    install -m 0755 ${UNPACKDIR}/dgx-a100-dp/fpga_ready_sense.sh ${D}/${bindir}/
+    install -m 0644 ${UNPACKDIR}/dgx-a100-dp/nvidia-gpu-manager-dgx.conf \
                     ${D}${systemd_system_unitdir}/nvidia-gpu-manager.service.d/
 }
 do_install:append:e4830-bmc() {
     install -d ${D}/${bindir}
     install -m 0664 ${S}/systemd/nvidia-fpga-ready-handler.service ${D}${systemd_system_unitdir}/
-    install -m 0755 ${WORKDIR}/e4830-bmc/fpga_ready_sense.sh ${D}/${bindir}/
-    install -m 0644 ${WORKDIR}/hgx/nvidia-gpu-manager-hgx.conf \
+    install -m 0755 ${UNPACKDIR}/e4830-bmc/fpga_ready_sense.sh ${D}/${bindir}/
+    install -m 0644 ${UNPACKDIR}/hgx/nvidia-gpu-manager-hgx.conf \
                     ${D}${systemd_system_unitdir}/nvidia-gpu-manager.service.d/
 }
 do_install:append:evb() {
     install -d ${D}/${bindir}
     install -m 0664 ${S}/systemd/nvidia-fpga-ready-handler-bind.service ${D}${systemd_system_unitdir}/
     install -m 0664 ${S}/systemd/nvidia-fpga-ready-handler-unbind.service ${D}${systemd_system_unitdir}/
-    install -m 0755 ${WORKDIR}/dgx-a100-dp/fpga_ready_sense.sh ${D}/${bindir}/
-    install -m 0644 ${WORKDIR}/dgx-a100-dp/nvidia-gpu-manager-dgx.conf \
+    install -m 0755 ${UNPACKDIR}/dgx-a100-dp/fpga_ready_sense.sh ${D}/${bindir}/
+    install -m 0644 ${UNPACKDIR}/dgx-a100-dp/nvidia-gpu-manager-dgx.conf \
                     ${D}${systemd_system_unitdir}/nvidia-gpu-manager.service.d/
 }
 do_install:append:hgx() {
     install -d ${D}/${bindir}
-    install -m 0644 ${WORKDIR}/hgx/nvidia-gpu-manager-hgx.conf \
+    install -m 0644 ${UNPACKDIR}/hgx/nvidia-gpu-manager-hgx.conf \
                     ${D}${systemd_system_unitdir}/nvidia-gpu-manager.service.d/
         mkdir ${D}${datadir}/nvidia-fru-manager/
-    install -D ${WORKDIR}/hgx/fru_manager.json ${D}${datadir}/nvidia-fru-manager/
-    install -m 0755   ${WORKDIR}/hgx/eeprom-write.sh ${D}/${bindir}/
+    install -D ${UNPACKDIR}/hgx/fru_manager.json ${D}${datadir}/nvidia-fru-manager/
+    install -m 0755   ${UNPACKDIR}/hgx/eeprom-write.sh ${D}/${bindir}/
 }
 do_install:append:e4830-hmc() {
     install -d ${D}/${bindir}
     install -m 0664 ${S}/systemd/nvidia-fpga-ready-handler.service ${D}${systemd_system_unitdir}/
-    install -m 0755 ${WORKDIR}/e4830-hmc/fpga_ready_sense.sh ${D}/${bindir}/
-    install -m 0644 ${WORKDIR}/hgx/nvidia-gpu-manager-hgx.conf \
+    install -m 0755 ${UNPACKDIR}/e4830-hmc/fpga_ready_sense.sh ${D}/${bindir}/
+    install -m 0644 ${UNPACKDIR}/hgx/nvidia-gpu-manager-hgx.conf \
                     ${D}${systemd_system_unitdir}/nvidia-gpu-manager.service.d/
 }
 do_install:append:e4830-hgxb-hmc() {
     install -d ${D}/${bindir}
     install -m 0664 ${S}/systemd/nvidia-fpga-ready-handler.service ${D}${systemd_system_unitdir}/
-    install -m 0755 ${WORKDIR}/e4830-hgxb-hmc/fpga_ready_sense.sh ${D}/${bindir}/
-    install -m 0644 ${WORKDIR}/hgxb/nvidia-gpu-manager-hgx.conf \
+    install -m 0755 ${UNPACKDIR}/e4830-hgxb-hmc/fpga_ready_sense.sh ${D}/${bindir}/
+    install -m 0644 ${UNPACKDIR}/hgxb/nvidia-gpu-manager-hgx.conf \
                     ${D}${systemd_system_unitdir}/nvidia-gpu-manager.service.d/
 }
 do_install:append:e4830-hgxb-bmc() {
     install -d ${D}/${bindir}
     install -m 0664 ${S}/systemd/nvidia-fpga-ready-handler.service ${D}${systemd_system_unitdir}/
-    install -m 0755 ${WORKDIR}/e4830-hgxb-bmc/fpga_ready_sense.sh ${D}/${bindir}/
-    install -m 0644 ${WORKDIR}/hgxb/nvidia-gpu-manager-hgx.conf \
+    install -m 0755 ${UNPACKDIR}/e4830-hgxb-bmc/fpga_ready_sense.sh ${D}/${bindir}/
+    install -m 0644 ${UNPACKDIR}/hgxb/nvidia-gpu-manager-hgx.conf \
                     ${D}${systemd_system_unitdir}/nvidia-gpu-manager.service.d/
 }
 do_install:append:hgxb() {
     install -d ${D}/${bindir}
-    install -m 0644 ${WORKDIR}/hgxb/nvidia-gpu-manager-hgx.conf \
+    install -m 0644 ${UNPACKDIR}/hgxb/nvidia-gpu-manager-hgx.conf \
                     ${D}${systemd_system_unitdir}/nvidia-gpu-manager.service.d/
 	mkdir ${D}${datadir}/nvidia-fru-manager/
-    install -D ${WORKDIR}/hgxb/fru_manager.json ${D}${datadir}/nvidia-fru-manager/
-    install -m 0755   ${WORKDIR}/hgxb/eeprom-write.sh ${D}/${bindir}/
+    install -D ${UNPACKDIR}/hgxb/fru_manager.json ${D}${datadir}/nvidia-fru-manager/
+    install -m 0755   ${UNPACKDIR}/hgxb/eeprom-write.sh ${D}/${bindir}/
 }
 do_install:append:hgxb300() {
     install -d ${D}/${bindir}
-    install -m 0644 ${WORKDIR}/hgxb300/nvidia-gpu-manager-hgx.conf \
+    install -m 0644 ${UNPACKDIR}/hgxb300/nvidia-gpu-manager-hgx.conf \
                     ${D}${systemd_system_unitdir}/nvidia-gpu-manager.service.d/
 	mkdir ${D}${datadir}/nvidia-fru-manager/
-    install -D ${WORKDIR}/hgxb300/fru_manager.json ${D}${datadir}/nvidia-fru-manager/
-    install -m 0755   ${WORKDIR}/hgxb300/eeprom-write.sh ${D}/${bindir}/
+    install -D ${UNPACKDIR}/hgxb300/fru_manager.json ${D}${datadir}/nvidia-fru-manager/
+    install -m 0755   ${UNPACKDIR}/hgxb300/eeprom-write.sh ${D}/${bindir}/
 }
 
 do_install:append:evb-ast2600-hgxb300() {
     install -d ${D}/${bindir}
-    install -m 0644 ${WORKDIR}/evb-ast2600-hgxb300/nvidia-gpu-manager-hgx.conf \
+    install -m 0644 ${UNPACKDIR}/evb-ast2600-hgxb300/nvidia-gpu-manager-hgx.conf \
                     ${D}${systemd_system_unitdir}/nvidia-gpu-manager.service.d/
 	mkdir ${D}${datadir}/nvidia-fru-manager/
-    install -D ${WORKDIR}/evb-ast2600-hgxb300/fru_manager.json ${D}${datadir}/nvidia-fru-manager/
-    install -m 0755   ${WORKDIR}/evb-ast2600-hgxb300/eeprom-write.sh ${D}/${bindir}/
+    install -D ${UNPACKDIR}/evb-ast2600-hgxb300/fru_manager.json ${D}${datadir}/nvidia-fru-manager/
+    install -m 0755   ${UNPACKDIR}/evb-ast2600-hgxb300/eeprom-write.sh ${D}/${bindir}/
 }
 

@@ -5,6 +5,6 @@ SRC_URI:append = " \
                  "
 
 do_install:append() {
-    install -m 0755 ${WORKDIR}/emmc-utils/create-partition.sh ${D}/${bindir}/
-    install -m 0644 ${WORKDIR}/emmc-utils/emmc-mount.conf ${D}/usr/share/emmc/
+    install -m 0755 ${UNPACKDIR}/emmc-utils/create-partition.sh ${D}/${bindir}/
+    install -m 0644 ${UNPACKDIR}/emmc-utils/emmc-mount.conf ${D}/usr/share/emmc/
 }

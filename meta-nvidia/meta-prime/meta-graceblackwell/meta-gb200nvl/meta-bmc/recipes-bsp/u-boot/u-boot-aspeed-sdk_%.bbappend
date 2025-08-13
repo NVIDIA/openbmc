@@ -10,7 +10,7 @@ SRC_URI:append:gb200nvl-bmc-ut3 = " file://ut3-Power-on-standby-power-for-UT3-MB
 
 SRC_URI += "file://spl_images/prod/u-boot-spl.bin;sha256sum=6f7f2d73a9053699e3e111de1ba5a16d4f1091e01c2aa4acc5effd9cedc57f24"
 
-SPL_PROD_BINARY = "${WORKDIR}/spl_images/prod/u-boot-spl.bin"
+SPL_PROD_BINARY = "${UNPACKDIR}/spl_images/prod/u-boot-spl.bin"
 
 do_deploy:append() {
     rm -f ${DEPLOYDIR}/${SPL_IMAGE}

@@ -4,7 +4,9 @@ PACKAGECONFIG[plx-temp] = "-Dplx-temp=disabled, -Dplx-temp=disabled"
 PACKAGECONFIG[ipmbstatus] = "-Dipmbstatus=enabled, -Dipmbstatus=disabled"
 PACKAGECONFIG[presence-detect] = "-Dpresence-detect=enabled, -Dpresence-detect=disabled"
 PACKAGECONFIG = " hwmontempsensor \
-                  presence-detect "
+                  presence-detect \
+                  mctpreactor \
+                  mctpheartbeat "
 
 SYSTEMD_SERVICE:${PN} += "${@bb.utils.contains('PACKAGECONFIG', 'presence-detect', \
                                                'xyz.openbmc_project.presence-detect.service', \

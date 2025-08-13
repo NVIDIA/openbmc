@@ -10,7 +10,33 @@ PACKAGECONFIG:openbmc-phosphor:class-target = ""
 #
 #https://github.com/openbmc/docs/blob/master/cpp-style-and-conventions.md#boost
 #
-BOOST_LIBS:openbmc-phosphor:class-target = "chrono thread context coroutine url"
+BOOST_LIBS:openbmc-phosphor:class-target = " \
+    chrono \
+    context \
+    coroutine \
+    date_time \
+    process \
+    thread \
+    url \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'ptest', 'serialization', '', d)} \
+"
+# When libcereal is compiled with ptest, it needs boost to support
+# 'serialization'.
 
+
+# Openbmc applications should be setting BOOST_SYSTEM_NO_DEPRECATED
+# For whatever reason, boost 1.87 has decided to install this library
+# unconditionally.  It's not clear why, but just ignore it for now
+# by categorizing it as a dev dependency
+FILES:${PN}-dev:append = " \
+    ${libdir}/libboost_system*.so.* \
+"
+
+BJAM_OPTS:append = " boost.process.fs=std"
+
+# etcd requires some additional support.
 BOOST_LIBS:openbmc-phosphor:class-target:append:df-etcd = " \
-             random system filesystem atomic date_time regex"
+    random \
+    regex \
+    system \
+"

@@ -25,6 +25,6 @@ SYSTEMD_SERVICE:${PN} = " \
 
 do_install() {
     install -d ${D}/${bindir}
-    install -m 0755 ${WORKDIR}/i2c-dump-server.sh ${D}/${bindir}/
+    install -m 0755 ${UNPACKDIR}/i2c-dump-server.sh ${D}/${bindir}/
 }
 

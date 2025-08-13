@@ -13,10 +13,10 @@ RDEPENDS:${PN} += "bash phosphor-gpio-monitor-monitor "
 
 do_install:append() {
         mkdir -p ${D}/usr/share/phosphor-gpio-monitor/
-        install -m 0644 ${WORKDIR}/phosphor-multi-gpio-monitor.json ${D}/usr/share/phosphor-gpio-monitor/phosphor-multi-gpio-monitor.json
+        install -m 0644 ${UNPACKDIR}/phosphor-multi-gpio-monitor.json ${D}/usr/share/phosphor-gpio-monitor/phosphor-multi-gpio-monitor.json
 
         install -d ${D}${base_libdir}/systemd/system
-        install -m 0644 ${WORKDIR}/phosphor-multi-gpio-monitor.service ${D}${base_libdir}/systemd/system/phosphor-multi-gpio-monitor.service
+        install -m 0644 ${UNPACKDIR}/phosphor-multi-gpio-monitor.service ${D}${base_libdir}/systemd/system/phosphor-multi-gpio-monitor.service
 }
 
 FILES:${PN}-monitor:append= " \

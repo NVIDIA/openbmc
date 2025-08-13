@@ -18,5 +18,5 @@ FILES:${PN} += " \
 
 do_install:append() {
     install -d ${D}${sysconfdir}/systemd/coredump.conf.d
-    install -m 0644 ${WORKDIR}/systemd-coredump.conf ${D}${sysconfdir}/systemd/coredump.conf.d
+    install -m 0644 ${UNPACKDIR}/systemd-coredump.conf ${D}${sysconfdir}/systemd/coredump.conf.d
 }

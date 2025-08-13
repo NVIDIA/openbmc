@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/phosphor-user-manager;protocol=https;branch=develop"
 SRC_URI += "file://upgrade_hostconsole_group.sh"
-SRCREV = "92ec85754db1ef75050d9eb704bb2ea554c9fcdb"
+SRCREV = "54f67b25e55ef525d3a2d3fa56edd5885f32509d"
 
 DEPENDS += "libpwquality"
 DEPENDS += "libpam"
@@ -12,7 +12,7 @@ FILES:${PN}:append = " ${systemd_system_unitdir}/xyz.openbmc_project.User.Manage
 SYSTEMD_OVERRIDE:${PN} += "phosphor-user-manager-dropbearkey.conf:xyz.openbmc_project.User.Manager.service.d/phosphor-user-manager-dropbearkey.conf"
 do_install:append() {
     install -d ${D}${systemd_system_unitdir}/xyz.openbmc_project.User.Manager.service.d
-    install -m 0644 ${WORKDIR}/phosphor-user-manager-dropbearkey.conf ${D}${systemd_system_unitdir}/xyz.openbmc_project.User.Manager.service.d/
+    install -m 0644 ${UNPACKDIR}/phosphor-user-manager-dropbearkey.conf ${D}${systemd_system_unitdir}/xyz.openbmc_project.User.Manager.service.d/
 }
 
 def get_oeconf(d, filename, policy_var, search_key):

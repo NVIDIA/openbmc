@@ -4,7 +4,7 @@
       {
         "Name": "HGX_GPU_0",
         "Type": "NSM_Chassis",
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "DeviceType": "0",
         "Chassis": {
           "Type": "NSM_Chassis",
@@ -38,7 +38,7 @@
         "ChassisName": "HGX_GPU_0",
         "Name": "Assembly0",
         "Type": "NSM_ChassisAssembly",
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "AssemblyType": "Board",
         "Area": {
           "Type": "NSM_Area",
@@ -62,7 +62,7 @@
         "ChassisName": "HGX_GPU_0",
         "Name": "Assembly1",
         "Type": "NSM_ChassisAssembly",
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "AssemblyType": "Device",
         "Area": {
           "Type": "NSM_Area",
@@ -86,7 +86,7 @@
         "ChassisName": "HGX_GPU_0",
         "Name": "GPU_0",
         "Type": "NSM_ChassisPCIeDevice",
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "DEVICE_UUID": "$DEVICE_UUID",
         "Asset": {
           "Type": "NSM_Asset",
@@ -148,7 +148,7 @@
             "Value": -0.05
           }
         ],
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "PhysicalContext": "GPU",
         "Implementation": "Synthesized",
         "ReadingBasis": "Headroom",
@@ -184,7 +184,7 @@
             "Value": 105.0
           }
         ],
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "PhysicalContext": "GPU",
         "Aggregated": true,
         "SensorId": 1,
@@ -212,7 +212,7 @@
             "Value": 87.0
           }
         ],
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "PhysicalContext": "GPU",
         "Aggregated": true,
         "SensorId": 0,
@@ -238,7 +238,7 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/dimm/GPU 0 DRAM_0"
           }
         ],
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "PhysicalContext": "GPU",
         "Aggregated": true,
         "SensorId": 1,
@@ -269,7 +269,7 @@
           "Aggregated": true,
           "Priority": false
         },
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "PhysicalContext": "GPU",
         "MaxAllowableOperatingValue": 1020.0,
         "Aggregated": true,
@@ -292,7 +292,7 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/accelerator/GPU 0"
           }
         ],
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "PhysicalContext": "GPU",
         "Aggregated": true,
         "SensorId": 0,
@@ -313,7 +313,7 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/accelerator/GPU 0"
           }
         ],
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "PhysicalContext": "GPU",
         "Aggregated": true,
         "SensorId": 0,
@@ -334,20 +334,20 @@
             "AbsolutePath": "/xyz/openbmc_project/software"
           }
         ],
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "Manufacturer": "NVIDIA"
       },
       {
         "Name": "GlobalEventSetting",
         "Type": "NSM_EventSetting",
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "EventGenerationSetting": 2
       },
       {
         "Name": "deviceCapabilityDiscoveryEventSetting",
         "Type": "NSM_EventConfig",
         "MessageType": 0,
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "SubscribedEventIDs": [
           1,
           2
@@ -358,7 +358,7 @@
         "Name": "PlatformEnvironmentEventSetting",
         "Type": "NSM_EventConfig",
         "MessageType": 3,
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "SubscribedEventIDs": [
           0,
           1
@@ -367,7 +367,7 @@
       {
         "Name": "XIDEventSetting",
         "Type": "NSM_Event_XID",
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_0",
         "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
         "Severity": "Critical",
@@ -381,7 +381,7 @@
       {
         "Name": "ResetRequiredEventSetting",
         "Type": "NSM_Event_Reset_Required",
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_0",
         "MessageId": "Base.1.13.ResetRequired",
         "Severity": "Warning",
@@ -396,7 +396,7 @@
       {
         "Name": "RediscoveryEventSetting",
         "Type": "NSM_Event_Rediscovery",
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_0",
         "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
         "Severity": "Informational",
@@ -413,7 +413,7 @@
         "Type": "NSM_NVLink",
         "ParentObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0",
         "DeviceType": "0",
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "Priority": false,
         "Count": 18
       },
@@ -429,7 +429,7 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU 0"
           }
         ],
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "ClockMode": "com.nvidia.ClockMode.Mode.MaximumPerformance",
         "Priority": false
       },
@@ -437,7 +437,7 @@
         "Name": "GPU_0 ProcessorModule",
         "Type": "NSM_ModulePowerControl",
         "Priority": false,
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "Index": 0
       },
       {
@@ -460,7 +460,7 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU 0 DRAM_0"
           }
         ],
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "DEVICE_UUID": "$DEVICE_UUID",
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0",
         "MNNVLTopology": {
@@ -603,7 +603,7 @@
         ],
         "ErrorCorrection": "xyz.openbmc_project.Inventory.Item.Dimm.Ecc.SingleBitECC",
         "DeviceType": "xyz.openbmc_project.Inventory.Item.Dimm.DeviceType.HBM",
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "Priority": false,
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/dimm/GPU_0",
         "RowRemapping": {
@@ -622,7 +622,7 @@
       {
         "Name": "GPU_0 PCIe_0",
         "Type": "NSM_GPU_PCIe_0",
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0",
         "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK",
         "ChasisPowerState": "xyz.openbmc_project.State.Chassis.PowerState.On",
@@ -638,7 +638,7 @@
       {
         "Name": "GPU_0 GPM_Aggregated_Metrics",
         "Type": "NSM_GPMMetrics",
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0",
         "RetrievalSource": 1,
         "GpuInstance": 255,
@@ -678,7 +678,7 @@
       {
         "Name": "GPU_0 GPM_Port_Metrics",
         "Type": "NSM_GPMPortMetrics",
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "Priority": false,
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0",
         "RetrievalSource": 0,
@@ -716,7 +716,7 @@
         "Name": "NetworkPortEventSetting",
         "Type": "NSM_EventConfig",
         "MessageType": 1,
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "SubscribedEventIDs": [
           0
         ],
@@ -725,7 +725,7 @@
       {
         "Name": "ThresholdEventSetting",
         "Type": "NSM_Event_Threshold",
-        "UUID": "STATIC:0:0",
+        "UUID": "STATIC:0:0:MCTP_EID:18",
         "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_0",
         "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
         "Severity": "Critical",
@@ -768,7 +768,7 @@
       {
         "Name": "HGX_GPU_1",
         "Type": "NSM_Chassis",
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "DeviceType": "0",
         "Chassis": {
           "Type": "NSM_Chassis",
@@ -802,7 +802,7 @@
         "ChassisName": "HGX_GPU_1",
         "Name": "Assembly0",
         "Type": "NSM_ChassisAssembly",
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "AssemblyType": "Board",
         "Area": {
           "Type": "NSM_Area",
@@ -826,7 +826,7 @@
         "ChassisName": "HGX_GPU_1",
         "Name": "Assembly1",
         "Type": "NSM_ChassisAssembly",
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "AssemblyType": "Device",
         "Area": {
           "Type": "NSM_Area",
@@ -850,7 +850,7 @@
         "ChassisName": "HGX_GPU_1",
         "Name": "GPU_1",
         "Type": "NSM_ChassisPCIeDevice",
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "DEVICE_UUID": "$DEVICE_UUID",
         "Asset": {
           "Type": "NSM_Asset",
@@ -912,7 +912,7 @@
             "Value": -0.05
           }
         ],
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "PhysicalContext": "GPU",
         "Implementation": "Synthesized",
         "ReadingBasis": "Headroom",
@@ -948,7 +948,7 @@
             "Value": 105.0
           }
         ],
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "PhysicalContext": "GPU",
         "Aggregated": true,
         "SensorId": 1,
@@ -976,7 +976,7 @@
             "Value": 87.0
           }
         ],
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "PhysicalContext": "GPU",
         "Aggregated": true,
         "SensorId": 0,
@@ -1002,7 +1002,7 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/dimm/GPU 1 DRAM_0"
           }
         ],
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "PhysicalContext": "GPU",
         "Aggregated": true,
         "SensorId": 1,
@@ -1033,7 +1033,7 @@
           "Aggregated": true,
           "Priority": false
         },
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "PhysicalContext": "GPU",
         "MaxAllowableOperatingValue": 1020.0,
         "Aggregated": true,
@@ -1056,7 +1056,7 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/accelerator/GPU 1"
           }
         ],
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "PhysicalContext": "GPU",
         "Aggregated": true,
         "SensorId": 0,
@@ -1077,7 +1077,7 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/accelerator/GPU 1"
           }
         ],
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "PhysicalContext": "GPU",
         "Aggregated": true,
         "SensorId": 0,
@@ -1098,20 +1098,20 @@
             "AbsolutePath": "/xyz/openbmc_project/software"
           }
         ],
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "Manufacturer": "NVIDIA"
       },
       {
         "Name": "GlobalEventSetting",
         "Type": "NSM_EventSetting",
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "EventGenerationSetting": 2
       },
       {
         "Name": "deviceCapabilityDiscoveryEventSetting",
         "Type": "NSM_EventConfig",
         "MessageType": 0,
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "SubscribedEventIDs": [
           1,
           2
@@ -1122,7 +1122,7 @@
         "Name": "PlatformEnvironmentEventSetting",
         "Type": "NSM_EventConfig",
         "MessageType": 3,
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "SubscribedEventIDs": [
           0,
           1
@@ -1131,7 +1131,7 @@
       {
         "Name": "XIDEventSetting",
         "Type": "NSM_Event_XID",
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_1",
         "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
         "Severity": "Critical",
@@ -1145,7 +1145,7 @@
       {
         "Name": "ResetRequiredEventSetting",
         "Type": "NSM_Event_Reset_Required",
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_1",
         "MessageId": "Base.1.13.ResetRequired",
         "Severity": "Warning",
@@ -1160,7 +1160,7 @@
       {
         "Name": "RediscoveryEventSetting",
         "Type": "NSM_Event_Rediscovery",
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_1",
         "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
         "Severity": "Informational",
@@ -1177,7 +1177,7 @@
         "Type": "NSM_NVLink",
         "ParentObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1",
         "DeviceType": "0",
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "Priority": false,
         "Count": 18
       },
@@ -1193,7 +1193,7 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU 1"
           }
         ],
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "ClockMode": "com.nvidia.ClockMode.Mode.MaximumPerformance",
         "Priority": false
       },
@@ -1201,7 +1201,7 @@
         "Name": "GPU_1 ProcessorModule",
         "Type": "NSM_ModulePowerControl",
         "Priority": false,
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "Index": 0
       },
       {
@@ -1224,7 +1224,7 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU 1 DRAM_0"
           }
         ],
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "DEVICE_UUID": "$DEVICE_UUID",
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1",
         "MNNVLTopology": {
@@ -1367,7 +1367,7 @@
         ],
         "ErrorCorrection": "xyz.openbmc_project.Inventory.Item.Dimm.Ecc.SingleBitECC",
         "DeviceType": "xyz.openbmc_project.Inventory.Item.Dimm.DeviceType.HBM",
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "Priority": false,
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/dimm/GPU_1",
         "RowRemapping": {
@@ -1386,7 +1386,7 @@
       {
         "Name": "GPU_1 PCIe_0",
         "Type": "NSM_GPU_PCIe_0",
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1",
         "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK",
         "ChasisPowerState": "xyz.openbmc_project.State.Chassis.PowerState.On",
@@ -1402,7 +1402,7 @@
       {
         "Name": "GPU_1 GPM_Aggregated_Metrics",
         "Type": "NSM_GPMMetrics",
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1",
         "RetrievalSource": 1,
         "GpuInstance": 255,
@@ -1442,7 +1442,7 @@
       {
         "Name": "GPU_1 GPM_Port_Metrics",
         "Type": "NSM_GPMPortMetrics",
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "Priority": false,
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1",
         "RetrievalSource": 0,
@@ -1480,7 +1480,7 @@
         "Name": "NetworkPortEventSetting",
         "Type": "NSM_EventConfig",
         "MessageType": 1,
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "SubscribedEventIDs": [
           0
         ],
@@ -1489,7 +1489,7 @@
       {
         "Name": "ThresholdEventSetting",
         "Type": "NSM_Event_Threshold",
-        "UUID": "STATIC:0:1",
+        "UUID": "STATIC:0:1:MCTP_EID:26",
         "OriginOfCondition": "/redfish/v1/Chassis/HGX_GPU_1",
         "MessageId": "ResourceEvent.1.0.ResourceErrorsDetected",
         "Severity": "Critical",

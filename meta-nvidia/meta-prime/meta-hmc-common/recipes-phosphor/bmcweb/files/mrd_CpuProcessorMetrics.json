@@ -11,6 +11,7 @@
         "/redfish/v1/Systems/HGX_Baseboard_0/Processors/CPU_{CpuId}/ProcessorMetrics#/Oem/Nvidia/PowerBreakPerformanceState",
         "/redfish/v1/Systems/HGX_Baseboard_0/Processors/CPU_{CpuId}/ProcessorMetrics#/Oem/Nvidia/MemorySpareChannelPresence",
         "/redfish/v1/Systems/HGX_Baseboard_0/Processors/CPU_{CpuId}/Ports/ProcessorModule_{ProcessorId}_PCIeBus_0_PCIeLink_{PCIeLinkId}#/Status/State",
-        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/CPU_{CpuId}/Ports/ProcessorModule_{ProcessorId}_SysBus_0_NVLink_{NvlinkId}#/Status/State"
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/CPU_{CpuId}/Ports/ProcessorModule_{ProcessorId}_SysBus_0_NVLink_{NvlinkId}#/Status/State",
+	"/redfish/v1/Systems/HGX_Baseboard_0/Processors/CPU_{CpuId}/Ports/ProcessorModule_{ProcessorId}_SysBus_0_NVLink_{NvlinkId}#/Status/Health"
     ]
 }

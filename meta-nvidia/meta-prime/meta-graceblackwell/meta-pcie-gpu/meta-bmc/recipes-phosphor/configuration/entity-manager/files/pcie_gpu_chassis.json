@@ -546,8 +546,8 @@
           "Type": "NSM_MemCapacityUtil",
           "Priority": false
         },
-        "ReconfigPermissions": {
-          "Type": "NSM_ReconfigPermissions",
+        "InbandReconfigPermissions": {
+          "Type": "NSM_InbandReconfigPermissions",
           "Priority": false,
           "Features": [
             "InSystemTest",

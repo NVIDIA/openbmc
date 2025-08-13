@@ -9,5 +9,5 @@ SRC_URI:append = " file://TelemetryReady.json \
 FILES:${PN}-csm:append= " ${datadir}/configurable-state-manager/MctpReady.json "
 
 do_install:append() {
-        install -m 0644 ${WORKDIR}/MctpReady.json ${D}${datadir}/configurable-state-manager/
+        install -m 0644 ${UNPACKDIR}/MctpReady.json ${D}${datadir}/configurable-state-manager/
 }

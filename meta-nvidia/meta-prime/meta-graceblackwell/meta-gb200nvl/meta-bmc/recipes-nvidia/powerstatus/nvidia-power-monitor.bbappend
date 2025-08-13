@@ -1,4 +1,3 @@
-S = "${WORKDIR}"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
@@ -11,5 +10,5 @@ SRC_URI += " \
 SYSTEMD_SERVICE:${PN}:append = " check_cpu_boot_status.service "
 
 do_install:append() {
-    install -m 0755 ${WORKDIR}/check_cpu_boot_status.sh ${D}${bindir}/
+    install -m 0755 ${UNPACKDIR}/check_cpu_boot_status.sh ${D}${bindir}/
 }
