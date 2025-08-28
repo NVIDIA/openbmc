@@ -2,6 +2,8 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI += "file://fru.conf"
 
+SRC_URI:append:gb300nvl-bmc-ast2700-a1 += "file://gb300nvl-bmc-ast2700-a1/fru.conf"
+
 FRU_CONF = "fru.conf"
 
 do_install:append() {

@@ -1,0 +1,238 @@
+#!/usr/bin/env bash
+
+# Copyright (c) 2025, NVIDIA CORPORATION.  All rights reserved.
+#
+#  NVIDIA CORPORATION and its licensors retain all intellectual property
+#  and proprietary rights in and to this software, related documentation
+#  and any modifications thereto.  Any use, reproduction, disclosure or
+#  distribution of this software and related documentation without an express
+#  license agreement from NVIDIA CORPORATION is strictly prohibited.
+
+set -o pipefail
+
+appname=mcu_error_injector
+appver=0.1
+
+# Debug flag - only enable with --dbg or -D
+DEBUG_FLAG=0
+
+err() { echo "${appname}[E]$@" >&2; return 0;}
+info() { echo "${appname}[I]$@"; return 0; }
+help() { echo "$@" >&2; return 0; }
+debug() { [ "$DEBUG_FLAG" -eq 1 ] && echo "${appname}[D][${FUNCNAME[1]:-main}:${BASH_LINENO[0]}]$@" >&2; return 0; }
+
+show_help() {
+    help "MCU Error Injector, ver=$appver" >&2
+    help "Usage: $appname [OPTIONS] <err_id> <dev_id>" >&2
+    help "Options:" >&2
+    help "  -D, --debug    Enable debug output" >&2
+    help "  -h, --help     Show this help message" >&2
+    help >&2
+    help "Examples:" >&2
+    help "  $appname GPU_SMA_DISCONNECTON_USB SXM_SMA_0" >&2
+    help "  $appname --debug GPU_SMA_DISCONNECTON_USB SXM_SMA_0" >&2
+    help "  $appname CX_SMA_NOT_PROVISIONED ConnectX_SMA_1 -D" >&2
+    exit 250
+}
+
+# MCU Vendor and Product IDs
+declare -A mcu_info_list=(
+    [hgxb300]="1fc9:0158"
+)
+
+USB_UTIL="/usr/bin/udevadm"
+USB_ACTION="trigger --action"
+
+declare -A einj_cmds=(
+    [USB_REMOVE]="$USB_UTIL $USB_ACTION=remove"
+    [USB_ADD]="$USB_UTIL $USB_ACTION=add"
+)
+
+find_profile()
+{
+    local profile="mcu.profile"
+    local profile_dir="
+        ./
+        /tmp
+        /usr/share
+        "
+    local dir
+    for dir in $profile_dir; do
+        [ -f "$dir/$profile" ] && echo "$dir/$profile" && return 0
+    done
+    return 1
+}
+
+list_devices()
+{
+    cat $mcu_profile | grep _usb_tree | cut -d'=' -f1 | sed 's/_usb_tree//g'
+}
+
+get_platform_info()
+{
+    local platform_info=$(cat /etc/os-release | grep "OPENBMC_TARGET_MACHINE" | cut -d'=' -f2)
+    # Remove quotes from the platform info
+    platform_info=${platform_info//\"/}
+    platform_info=${platform_info//\'/}
+
+    echo "$platform_info"
+    return 0
+}
+
+get_mcu_vid_pid()
+{
+    local platform_info=$(get_platform_info)
+    [ -z "$platform_info" ] && { err "Failed to get platform info"; return 1; }
+
+    local mcu_info="${mcu_info_list[$platform_info]}"
+    [ -z "$mcu_info" ] && { err "Platform $platform_info not found"; return 1; }
+
+    # Extract VID and PID from the format "1fc9:0158"
+    local mcu_vid=$(echo "$mcu_info" | cut -d':' -f1)
+    local mcu_pid=$(echo "$mcu_info" | cut -d':' -f2)
+
+    # Validate that both VID and PID were extracted
+    [ -z "$mcu_vid" ] && { err "Failed to get Vendor ID"; return 1; }
+    [ -z "$mcu_pid" ] && { err "Failed to get Product ID"; return 1; }
+
+    # Return VID and PID in parseable format
+    echo "$mcu_vid,$mcu_pid"
+    return 0
+}
+
+device_to_devpath() # (device)
+{
+    local device=$1;shift
+
+    [ -z "$device" ] && { err "Device parameter is empty"; return 1; }
+
+    local devpath
+    devpath=$(cat "$mcu_profile" | grep "^${device}_usb_tree=" | cut -d= -f2)
+
+    [ -z "$devpath" ] && { err "Device $device not found in profile"; return 1; }
+
+    devpath=${devpath//\"/} # remove double quotes
+    devpath=${devpath//\'/} # remove single quotes
+
+    echo "$devpath"
+    return 0
+}
+
+get_einj_cmd() {
+    local err_id=$1 dev_id=$2
+
+    # Get MCU VID and PID
+    local vid_pid=$(get_mcu_vid_pid) || return 1
+    IFS=',' read -r vid pid <<< "$vid_pid"
+
+    # Get device path
+    local devpath=$(device_to_devpath "$dev_id") || return 1
+    local usb_devpath="/sys/bus/usb/devices/${devpath}"
+
+    local cmd=""
+    case "$err_id" in
+        *SMA_DISCONNECT_ON_USB*)
+            cmd="${einj_cmds[USB_REMOVE]} $usb_devpath"
+            ;;
+        *SMA_NOT_PROVISIONED*)
+            cmd="${einj_cmds[USB_ADD]} $usb_devpath --attr-match=idVendor=$vid --attr-match=idProduct=$pid"
+            ;;
+        *)
+            err "Unsupported error id: $err_id"
+            return 1
+            ;;
+    esac
+
+    echo "$cmd"
+    return 0
+}
+
+inject_error() # (error_id, device_id)
+{
+    local error_id=$1;shift
+    local device_id=$1;shift
+
+    debug "Injecting error $error_id on device $device_id..."
+
+    einj_cmd=$(get_einj_cmd "$error_id" "$device_id") || return 1
+
+    help "$einj_cmd"
+
+    eval "$einj_cmd" || return 1
+    return 0
+}
+
+parse_options()
+{
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            -D|--debug)
+                DEBUG_FLAG=1
+                shift
+                ;;
+            -h|--help)
+                show_help
+                ;;
+            *)
+                # Check if this is a function call
+                if grep "^$1()" $(which $0) &> /dev/null; then
+                    func=$1
+                    shift
+                    $func "$@"
+                    exit $?
+                fi
+                if [ $# -eq 2 ]; then
+                    break
+                elif [ $# -gt 2 ]; then
+                    args=()
+                    for arg in "$@"; do
+                        case "$arg" in
+                            -D|--debug|-h|--help)
+                                if [ "$arg" = "-D" ] || [ "$arg" = "--debug" ]; then
+                                    DEBUG_FLAG=1
+                                elif [ "$arg" = "-h" ] || [ "$arg" = "--help" ]; then
+                                    show_help
+                                fi
+                                ;;
+                            *)
+                                args+=("$arg")
+                                ;;
+                        esac
+                    done
+                    set -- "${args[@]}"
+                    break
+                else
+                    show_help
+                fi
+                ;;
+        esac
+    done
+}
+
+## MAIN ##
+mcu_profile=$(find_profile)
+[ $? -ne 0 ] && err "mcu profile file $mcu_profile not found" && exit 249
+
+[ $# -ne 0 ] && if grep "^$1()" $(which $0) &> /dev/null; then func=$1;shift;$func "$@";exit $?; fi
+
+[ "$#" -lt 2 ] && show_help
+
+# Parse options and arguments
+parse_options "$@"
+
+errorid=$1;shift
+deviceid=$1;shift
+
+[ -z "$errorid" ] && { err "errorid is empty"; exit 1; }
+[ -z "$deviceid" ] && { err "deviceid is empty"; exit 1; }
+
+debug "errorid=$errorid, deviceid=$deviceid"
+
+rc=0
+
+inject_error "$errorid" "$deviceid" || rc=$?
+[ "$rc" -ne 0 ] && err "FAILED: inject error $errorid on $deviceid, rc=$rc!" && exit $rc
+
+debug "SUCCESS: injected error $errorid on $deviceid"
+exit 0
+

@@ -57,6 +57,7 @@ SRC_URI += " \
     file://e4830-hgxb-hmc/ \
     file://hgxb300/ \
     file://evb-ast2600-hgxb300/ \
+    file://hgxr/ \
     file://total_req_queue_check.py \
     "
 

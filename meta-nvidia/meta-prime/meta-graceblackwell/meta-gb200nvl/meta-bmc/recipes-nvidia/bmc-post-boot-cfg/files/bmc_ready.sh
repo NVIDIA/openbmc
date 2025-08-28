@@ -278,7 +278,7 @@ bind_i2c_muxes()
         if [[ $rc -ne 0 ]]; then
             echo "[ERROR] Failed to bind IO Expander 5-0071 to pca9546 driver"
         else
-            echo -2 > /sys/bus/i2c/drivers/pca954x/5-0071/idle_state
+            echo -1 > /sys/bus/i2c/drivers/pca954x/5-0071/idle_state
             echo "IO Expander 5-0071 has been bound to /sys/bus/i2c/drivers/pca954x"
         fi
     fi
@@ -290,7 +290,7 @@ bind_i2c_muxes()
         if [[ $rc -ne 0 ]]; then
             echo "[ERROR] Failed to bind IO Expander 5-0072 to pca9546 driver"
         else
-            echo -2 > /sys/bus/i2c/drivers/pca954x/5-0072/idle_state
+            echo -1 > /sys/bus/i2c/drivers/pca954x/5-0072/idle_state
             echo "IO Expander 5-0072 has been bound to /sys/bus/i2c/drivers/pca954x"
         fi
     fi

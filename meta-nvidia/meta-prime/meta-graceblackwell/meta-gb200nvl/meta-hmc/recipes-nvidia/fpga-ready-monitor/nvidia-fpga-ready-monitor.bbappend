@@ -12,6 +12,7 @@ SRC_URI:append = " file://${BIN} \
                    file://systemd/nvidia-fpga1-ready.service \
                    file://systemd/nvidia-fpga1-notready.service \
                    file://systemd/nvidia-fpga-usb-monitor.service \
+                   file://systemd/nvidia-set-fpga-on.conf \
                  "
 
 SYSTEMD_SERVICE:${PN}:remove = " nvidia-fpga-ready-monitor.service"
@@ -23,6 +24,7 @@ SYSTEMD_SERVICE:${PN}:append = " nvidia-fpga-usb-monitor.service"
 
 SYSTEMD_OVERRIDE:${PN}:append = "systemd/nvidia-fpga-ready.conf:nvidia-fpga-ready.target.d/nvidia-fpga-ready.conf "
 SYSTEMD_OVERRIDE:${PN}:append = "systemd/nvidia-fpga-notready.conf:nvidia-fpga-notready.target.d/nvidia-fpga-notready.conf "
+SYSTEMD_OVERRIDE:${PN}:append = "systemd/nvidia-set-fpga-on.conf:nvidia-set-fpga-on.service.d/nvidia-set-fpga-on.conf "
 
 do_install:append() {
     install -d ${D}/${bindir}

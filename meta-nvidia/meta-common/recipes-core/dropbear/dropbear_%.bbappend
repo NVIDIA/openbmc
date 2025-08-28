@@ -3,6 +3,7 @@ SRC_URI += "file://password-change-client.patch \
             file://password-change-server.patch \
             ${@bb.utils.contains('DISTRO_FEATURES', 'nvidia-secure-shell', "file://default_options.patch", '', d)} \
             ${@bb.utils.contains('DISTRO_FEATURES', 'nvidia-secure-shell', "file://disable-pubkey-auth.patch", '', d)} \
+            ${@bb.utils.contains('DISTRO_FEATURES', 'nvidia-secure-shell', "file://disable-scp-S-option.patch", '', d)} \
             ${@bb.utils.contains('DISTRO_FEATURES', 'nvidia-secure-shell', "file://scp-path-restriction.patch", '', d)} \
             ${@bb.utils.contains('DISTRO_FEATURES', 'nvidia-secure-shell', "file://pam.d/dropbear-secure-shell", 'file://pam.d/dropbear-non-secure-shell', d)} \
             ${@bb.utils.contains('DISTRO_FEATURES', 'nvidia-secure-shell-debug-token-login-enable', "file://pam.d/dropbear-secure-shell-debug-token-login-enable", '', d)} \

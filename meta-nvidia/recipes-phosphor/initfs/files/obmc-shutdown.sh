@@ -32,10 +32,7 @@ get_fw_env_var() {
 	fi
 }
 
-optfile=/run/initramfs/init-options
-get_fw_env_var openbmconce >> $optfile
-
-if grep -w complete-reset $optfile
+if get_fw_env_var openbmconce | grep -w complete-reset
 then
 	echo "Complete reset requested."
 	rwfs=$(findmtd rwfs) 

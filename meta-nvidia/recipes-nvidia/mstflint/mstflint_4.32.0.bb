@@ -13,7 +13,7 @@ PV = "4.32.0-1"
 
 FILESPATH = "${THISDIR}/files"
 SRC_URI = "git://github.com/Mellanox/mstflint.git;protocol=https;branch=master"
-SRCREV = "40b3fd760d8253e0e374bf6a519fc0b569b804a6"
+SRCREV = "d431e08e226be6c04a86e08854ee9062d9127778"
 
 PACKAGES =+ "${PN}-flint"
 

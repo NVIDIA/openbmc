@@ -142,17 +142,12 @@
         },
         {
            "match":{
-              "Interface":"xyz.openbmc_project.Inventory.Decorator.I2CDevice",
+              "Interface":"xyz.openbmc_project.MCTP.Endpoint",
               "Properties":[
                  {
-                    "Name":"Address",
-                    "Type":"u",
-                    "Value":50
-                 },
-                 {
-                    "Name":"Bus",
-                    "Type":"u",
-                    "Value":14
+                    "Name":"EID",
+                    "Type":"y",
+                    "Value":105
                  }
               ]
            },
@@ -198,17 +193,12 @@
         },
         {
            "match":{
-              "Interface":"xyz.openbmc_project.Inventory.Decorator.I2CDevice",
+              "Interface":"xyz.openbmc_project.MCTP.Endpoint",
               "Properties":[
                  {
-                    "Name":"Address",
-                    "Type":"u",
-                    "Value":50
-                 },
-                 {
-                    "Name":"Bus",
-                    "Type":"u",
-                    "Value":15
+                    "Name":"EID",
+                    "Type":"y",
+                    "Value":106
                  }
               ]
            },
@@ -254,17 +244,12 @@
         },
         {
             "match":{
-               "Interface":"xyz.openbmc_project.Inventory.Decorator.I2CDevice",
+               "Interface":"xyz.openbmc_project.MCTP.Endpoint",
                "Properties":[
                   {
-                     "Name":"Address",
-                     "Type":"u",
-                     "Value":50
-                  },
-                  {
-                     "Name":"Bus",
-                     "Type":"u",
-                     "Value":16
+                     "Name":"EID",
+                     "Type":"y",
+                     "Value":101
                   }
                ]
             },
@@ -310,17 +295,12 @@
          },
          {
             "match":{
-               "Interface":"xyz.openbmc_project.Inventory.Decorator.I2CDevice",
+               "Interface":"xyz.openbmc_project.MCTP.Endpoint",
                "Properties":[
                   {
-                     "Name":"Address",
-                     "Type":"u",
-                     "Value":50
-                  },
-                  {
-                     "Name":"Bus",
-                     "Type":"u",
-                     "Value":18
+                     "Name":"EID",
+                     "Type":"y",
+                     "Value":102
                   }
                ]
             },

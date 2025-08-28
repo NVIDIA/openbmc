@@ -100,6 +100,23 @@ do
     ((Count++))
 done
 
+# Clear the watchdog status bit
+# Read the current value of the registers
+controller1=$(i2cget -y -f 6 0x20 0x0)
+controller2=$(i2cget -y -f 6 0x23 0x0)
+controller3=$(i2cget -y -f 6 0x2c 0x0)
+controller4=$(i2cget -y -f 6 0x2f 0x0)
+# Use bitwise AND to clear the watchdog status bit
+controller1=$((controller1 & 0xfe))
+controller2=$((controller2 & 0xfe))
+controller3=$((controller3 & 0xfe))
+controller4=$((controller4 & 0xfe))
+# Write the new value back to the register
+i2cset -y -f 6 0x20 0x0 $controller1
+i2cset -y -f 6 0x23 0x0 $controller2
+i2cset -y -f 6 0x2c 0x0 $controller3
+i2cset -y -f 6 0x2f 0x0 $controller4
+
 # A detected tray will put the fans on dbus. If a tray wasn't detected over all this time, then alert the user and set the fans to 100%
 if [ $Count -gt 30 ]; then
     echo "Tray detection failed. PDB FRU EEPROM missing, unprogrammed, or not recognized. Running all fans at 100%."

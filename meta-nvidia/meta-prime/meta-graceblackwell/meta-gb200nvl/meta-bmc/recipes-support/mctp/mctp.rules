@@ -1,3 +1,5 @@
 # This rules file contains mctp devices related rules needed to work in hand with mctpd
 
 SUBSYSTEM=="net", ACTION=="add", KERNEL=="mctpspi*",NAME="%E{INTERFACE}", RUN+="/bin/sh -c ' /usr/bin/mctp link set $env{INTERFACE} up;  /usr/bin/mctp addr add 9 dev $env{INTERFACE}; /usr/sbin/modprobe /usr/lib/modules/*/kernel/drivers/spi/fmc_spi.ko '"
+
+SUBSYSTEM=="net", ACTION=="add", KERNEL=="mctpi2c*", NAME="%E{INTERFACE}", RUN+="/bin/sh -c ' /usr/bin/mctp link set $env{INTERFACE} up; /usr/bin/mctp addr add 11 dev $env{INTERFACE}'"

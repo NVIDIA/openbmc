@@ -2,7 +2,7 @@
 
 for i in {1..60}
 do
-    ObjpathPresent=$(busctl tree xyz.openbmc_project.FruDevice | grep "/xyz/openbmc_project/FruDevice/PG548")
+    ObjpathPresent=$(busctl tree xyz.openbmc_project.FruDevice | grep -E "/xyz/openbmc_project/FruDevice/PG548|/xyz/openbmc_project/FruDevice/P4129")
     if [ -n "$ObjpathPresent" ]; then
         exit 0
     fi

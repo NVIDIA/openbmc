@@ -180,8 +180,6 @@
                 "MTUDiscard",
                 "LinkErrorRecoveryCounter",
                 "LinkDownCount",
-                "RXRemotePhysicalErrorPkts",
-                "QP1DroppedPkts",
                 "BitErrorRate",
                 "TXWait",
                 "EffectiveError",

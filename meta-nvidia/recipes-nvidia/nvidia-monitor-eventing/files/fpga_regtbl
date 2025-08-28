@@ -120,6 +120,33 @@ dump_fpga_regtbl()
 
     echo $cur_data > $REGT_CACHE
 
+    # Check if secondary FPGA register table is defined
+    if [ -n "$SEC_REGTBL_BUS" ]; then
+        dbg "Dumping secondary FPGA regtbl on bus $SEC_REGTBL_BUS"
+        local sec_data
+        if [ -f "$regtbl_einj" ]; then
+            # For EINJ and UT, check for secondary regtbl cache
+            if [ -f "${regtbl_einj}.2nd" ]; then
+                sec_data=$(cat ${regtbl_einj}.2nd)
+            else
+                # Fall back to primary data if secondary EINJ cache doesn't exist
+                sec_data=$(cat $regtbl_einj)
+            fi
+        else
+            # Dump secondary FPGA regtbl
+            local page
+            for page in $(seq 0 $(($REGTBL_PAGES-1))); do
+                local cmd="i2ctransfer -y $SEC_REGTBL_BUS w2@$REGTBL_SADDR 0x00 $page r256"
+                local s_data;s_data=$($cmd | sed 's/0x//g');rc=$?
+                [ "$rc" -ne 0 ] && err "Secondary i2c failed, rc=$rc!" && return $rc
+                sec_data="$sec_data $s_data"
+            done
+            sec_data=${sec_data:1} # remove the leading ' '
+        fi
+
+        echo $sec_data > ${REGT_CACHE}.2nd
+    fi
+
     echo $cur_data
     return 0
 }
@@ -134,6 +161,13 @@ get_regtbl()
     cat $REGT_CACHE
 }
 
+clear_alert_cache()
+{
+    dbg "clear_alert_cache()"
+    rm -rf ${alert_cache}/*
+    return 0
+}
+
 dump_all_alerts()
 {
     dbg "dump_all_alerts()"
@@ -142,6 +176,13 @@ dump_all_alerts()
     # Dump FPGA regtbl as a byte stream
     local cur_data;cur_data=$(dump_fpga_regtbl);rc=$?
     [ "$rc" -ne 0 ] && err "dump_fpga_regtbl failed, rc=$rc!" && return $rc
+
+    # Check if secondary cache exists
+    local sec_data=""
+    if [ -f "${REGT_CACHE}.2nd" ]; then
+        sec_data=$(cat ${REGT_CACHE}.2nd)
+        dbg "Secondary FPGA regtbl cache found"
+    fi
 
     # Loop thru all alerts to find out the asserted ones
     local reg
@@ -153,30 +194,56 @@ dump_all_alerts()
         reg=($reg)
 
         # "reg" Format,
-        #   reg_name, byte_off, byte_len, bit_mask(hex), byte_range, bit_range
+        #   reg_name, byte_off, byte_len, bit_mask(hex), byte_range, bit_range, dev_per_module
         local reg_name=${reg[0]}
         local byte_off=${reg[1]}
         local byte_len=${reg[2]}
         local bit_mask=${reg[3]}
         local bit_range=${reg[5]}
+        # Calculate default dev_per_module from bit_range if not specified
+        # it support both cases,
+        # 1. bit_range format is "start-end" (e.g., "0-7")
+        # 2. bit_range format is single bit (e.g., "0")
+        local start_bit=${bit_range%-*}
+        local end_bit=${bit_range#*-}
+        local default_dev_per_module=1
+        default_dev_per_module=$((end_bit - start_bit + 1))
 
+        local dev_per_module=${reg[6]:-$default_dev_per_module}
+
+        # Get register bytes from primary cache
         local reg_bytes=${cur_data:$byte_off:$byte_len}
-
         local b
         local reg_value= # must keep '=' to init an empty string
         for b in $reg_bytes; do # in hex, little endian
             reg_value=${b}${reg_value}
         done
+        local primary_reg_value=$((0x$reg_value & $bit_mask))
 
-        local reg_value=$((0x$reg_value & $bit_mask))
+        # Get register bytes from secondary cache if available
+        local secondary_reg_value=0
+        if [ -n "$sec_data" ]; then
+            local sec_reg_bytes=${sec_data:$byte_off:$byte_len}
+            local sec_reg_value= # must keep '=' to init an empty string
+            for b in $sec_reg_bytes; do # in hex, little endian
+                sec_reg_value=${b}${sec_reg_value}
+            done
+            secondary_reg_value=$((0x$sec_reg_value & $bit_mask))
+        fi
 
-        dbg "reg($reg_name)_value[raw]: 0x$(printf "%04x" $reg_value), bit_mask: $bit_mask"
-        # Move the valid bit to 0-based for dev_id-based query
-        while [ $(($bit_mask & 1)) -eq  0 ]; do
-            bit_mask=$(($bit_mask>>1))
-            reg_value=$(($reg_value>>1))
+        dbg "reg($reg_name) primary_value[raw]: 0x$(printf "%04x" $primary_reg_value), secondary_value[raw]: 0x$(printf "%04x" $secondary_reg_value), bit_mask: $bit_mask, dev_per_module: $dev_per_module"
+
+        # Move the valid bits to 0-based for dev_id-based query
+        local working_mask=$bit_mask
+        local primary_shifted=$primary_reg_value
+        local secondary_shifted=$secondary_reg_value
+        while [ $(($working_mask & 1)) -eq 0 ]; do
+            working_mask=$(($working_mask>>1))
+            primary_shifted=$(($primary_shifted>>1))
+            secondary_shifted=$(($secondary_shifted>>1))
         done
-        dbg "reg($reg_name)_value[dev_id($dev_id)]: 0x$(printf "%04x" $reg_value)"
+
+        dbg "reg($reg_name) primary_value[shifted]: 0x$(printf "%04x" $primary_shifted), secondary_value[shifted]: 0x$(printf "%04x" $secondary_shifted)"
 
         # Check all devices and create/remove alert file accordingly
         dbg "Removing all existing caches for($reg_name)."
@@ -184,15 +251,34 @@ dump_all_alerts()
 
         # Loop thru all dev ids supported by this alert for caching
         local dev_id=0
-        while [ "$reg_value" -gt 0 ]; do
+        local primary_work=$primary_shifted
+        local secondary_work=$secondary_shifted
+
+        # Process primary cache devices (dev_id < dev_per_module)
+        while [ "$primary_work" -gt 0 ] && [ "$dev_id" -lt "$dev_per_module" ]; do
             local alert_file="${alert_cache}/${reg_name}_${dev_id}"
-            if [ "$((reg_value & 1))" -ne 0 ]; then
-                err "Caching alert: $alert_file"
+            if [ "$((primary_work & 1))" -ne 0 ]; then
+                err "Caching alert: $alert_file (from primary)"
                 touch $alert_file
             fi
             dev_id=$((dev_id + 1))
-            reg_value=$((reg_value >> 1))
+            primary_work=$((primary_work >> 1))
         done
+
+        # Process secondary cache devices (dev_id >= dev_per_module) if secondary cache exists
+        if [ -n "$sec_data" ] && [ "$secondary_work" -gt 0 ]; then
+            local sec_dev_id=0  # Reset device ID for secondary cache (starts from bit 0)
+            while [ "$secondary_work" -gt 0 ]; do
+                local actual_dev_id=$((dev_per_module + sec_dev_id))
+                local alert_file="${alert_cache}/${reg_name}_${actual_dev_id}"
+                if [ "$((secondary_work & 1))" -ne 0 ]; then
+                    err "Caching alert: $alert_file (from secondary)"
+                    touch $alert_file
+                fi
+                sec_dev_id=$((sec_dev_id + 1))
+                secondary_work=$((secondary_work >> 1))
+            done
+        fi
     done
     return 0
 }
@@ -305,12 +391,18 @@ einj_start()
     # Create all deassert dummy FPGA regtbl
     mkdir -p ${regtbl_einj%/*}
     printf "00 %.0s" {1..1024} > "$regtbl_einj"
+
+    # Create secondary EINJ cache if secondary FPGA is configured
+    if [ -n "$SEC_REGTBL_BUS" ]; then
+        printf "00 %.0s" {1..1024} > "${regtbl_einj}.2nd"
+    fi
     return 0
 }
 
 einj_stop()
 {
     rm -rf "$regtbl_einj" &>/dev/null
+    rm -rf "${regtbl_einj}.2nd" &>/dev/null
     return 0
 }
 
@@ -601,7 +693,7 @@ start_ut_multi()
 
         local dev_id=${line[0]}
         local error_id=${line[1]}
-        
+
         local rslt;rslt=$(get_alert_status "$error_id" "$dev_id");rc=$?
         local tcase=${error_id}_${dev_id}
         # Test result evaluation

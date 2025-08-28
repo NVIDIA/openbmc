@@ -109,7 +109,7 @@ if [ "$ACTION" == "add" ]; then
     fi
 elif [ "$ACTION" == "remove" ]; then
     err "$errid on $devid"
-    errid="SMA_REMOVED_FROM_USB"
+    errid="SMA_DISCONNECT_ON_USB"
 else
     err "Unknown ACTION [$ACTION]"
     exit 5

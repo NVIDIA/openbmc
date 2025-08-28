@@ -1,7 +1,7 @@
 {
     "Namespace": "CpuProcessorMetrics",
     "MetricProperties": [
-        "/redfish/v1/Chassis/HGX_CPU_{CpuId}/Sensors/ProcessorModule_{ProcessorId}_CPU_{CpuId}_CoreUtil_{CoreId}",
+        "/redfish/v1/Chassis/HGX_CPU_{CpuId}/Sensors/ProcessorModule_{ProcessorId}_CPU_0_CoreUtil_{CoreId}",
         "/redfish/v1/Chassis/HGX_CPU_{CpuId}/Sensors/ProcessorModule_{ProcessorId}_MemCntl_0_Freq_0",
         "/redfish/v1/Chassis/HGX_CPU_{CpuId}/Sensors/ProcessorModule_{ProcessorId}_CPU_0_CpuFreq_0",
         "/redfish/v1/Chassis/HGX_CPU_{CpuId}/Sensors/ProcessorModule_{ProcessorId}_Vreg_0_CpuVoltage_0",

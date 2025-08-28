@@ -1,0 +1,24 @@
+[Unit]
+Description=MCTP CX7 Static Endpoints
+After=mctpd.service obmc-chassis-poweron@0.target
+Requires=mctpd.service
+Conflicts=obmc-chassis-poweroff@0.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh -c ' \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/interfaces/mctpi2c16 au.com.codeconstruct.MCTP.BusOwner1 AssignEndpointStatic ayyyay 1 0x32 101 0 0 && \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/interfaces/mctpi2c18 au.com.codeconstruct.MCTP.BusOwner1 AssignEndpointStatic ayyyay 1 0x32 102 0 0 && \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/interfaces/mctpi2c14 au.com.codeconstruct.MCTP.BusOwner1 AssignEndpointStatic ayyyay 1 0x32 105 0 0 && \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/interfaces/mctpi2c15 au.com.codeconstruct.MCTP.BusOwner1 AssignEndpointStatic ayyyay 1 0x32 106 0 0 && \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/interfaces/mctpi2c8 au.com.codeconstruct.MCTP.BusOwner1 AssignEndpointStatic ayyyay 1 0x1D 210 0 0'
+ExecStop=/bin/sh -c ' \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/101 au.com.codeconstruct.MCTP.Endpoint1 Remove || true && \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/102 au.com.codeconstruct.MCTP.Endpoint1 Remove || true && \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/105 au.com.codeconstruct.MCTP.Endpoint1 Remove || true && \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/106 au.com.codeconstruct.MCTP.Endpoint1 Remove || true && \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/210 au.com.codeconstruct.MCTP.Endpoint1 Remove || true'
+
+[Install]
+WantedBy=obmc-chassis-poweron@0.target

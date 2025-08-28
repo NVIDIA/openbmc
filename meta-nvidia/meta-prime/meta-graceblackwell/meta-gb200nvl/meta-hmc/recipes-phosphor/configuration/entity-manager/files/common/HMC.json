@@ -33,7 +33,7 @@
         },
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Manufacturer": "NVIDIA",
-            "Model": "GB200 NVL",
+            "Model": "GB HMC",
             "PartNumber": "N/A",
             "SerialNumber": "N/A",
             "SKU": "N/A"

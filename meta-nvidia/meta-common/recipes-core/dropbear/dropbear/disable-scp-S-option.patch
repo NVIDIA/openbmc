@@ -1,0 +1,15 @@
+Upstream-Status: Pending
+---
+diff --git a/src/scp.c b/src/scp.c
+index 72e04f8..a5cf354 100644
+--- a/src/scp.c
++++ b/src/scp.c
+@@ -361,7 +361,7 @@ main(int argc, char **argv)
+ 			iamrecursive = 1;
+ 			break;
+ 		case 'S':
+-			ssh_program = xstrdup(optarg);
++			fprintf(stderr, "Note: -S option is disabled in this version of scp");
+ 			break;
+ 		case 'v':
+ 			addargs(&args, "-v");

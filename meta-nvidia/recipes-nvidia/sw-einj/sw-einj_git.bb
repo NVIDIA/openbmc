@@ -24,7 +24,7 @@ EXTRA_OEMESON += "-Dtests=disabled"
 # This issue will be solved when we upstream all codes to github.
 
 SRC_URI += "git://github.com/NVIDIA/software-error-injection;protocol=https;branch=develop"
-SRCREV = "3a20445723cc4ecbc28a5f10fa808474cfee556c"
+SRCREV = "755bd99e8a36d1cd89015886c5462bd07452a6cf"
 
 S = "${WORKDIR}/git"
 
