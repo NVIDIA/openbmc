@@ -1,8 +1,0 @@
-#%PAM-1.0
-
-auth     [success=ok default=die] pam_succeed_if.so user ingroup ssh-users
-auth     [success=ok default=1] pam_succeed_if.so quiet user = root
-auth     required pam_exec.so /usr/bin/secure-shell-debug-token-root-enable.sh
-auth     include  common-auth
-account  include  common-account
-password include  common-password

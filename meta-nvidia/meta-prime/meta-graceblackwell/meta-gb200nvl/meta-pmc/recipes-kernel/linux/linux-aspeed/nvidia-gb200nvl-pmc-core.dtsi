@@ -1,7 +1,0 @@
-// SPDX-License-Identifier: GPL-2.0+
-/dts-v1/;
-
-#include "aspeed/aspeed-g6.dtsi"
-#include <dt-bindings/gpio/aspeed-gpio.h>
-
-

@@ -2,14 +2,14 @@
     "entries": [
         {
             "match": {
-                "Interface":"xyz.openbmc_project.Common.UUID",
-                "Properties":[
-                    {
-                        "Name":"UUID",
-                        "Type":"s",
-                        "Value":"ad4c836b-c54c-11eb-8529-0242ac130003"
-                    }
-                ]
+              "Interface":"xyz.openbmc_project.MCTP.Endpoint",
+              "Properties":[
+                 {
+                    "Name":"EID",
+                    "Type":"y",
+                    "Value":10
+                 }
+              ]
             },
             "device_inventory": {
                 "create": {

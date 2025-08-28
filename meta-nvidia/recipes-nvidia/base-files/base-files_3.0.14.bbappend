@@ -1,1 +1,0 @@
-FILESEXTRAPATHS:prepend := "${@bb.utils.contains('DISTRO_FEATURES', 'nvidia-secure-shell', '${THISDIR}/${BPN}:', '', d)}"
