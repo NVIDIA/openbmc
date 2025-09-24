@@ -3,7 +3,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI += " git://github.com/NVIDIA/phosphor-host-ipmid;protocol=https;branch=develop;name=override;"
 SRCREV_FORMAT = "override"
 
-SRCREV_override = "48034f71b2b0e05800a16750cc8d4c6554985bb3"
+SRCREV_override = "fad3cf5aabcc88a89f9e82384bc32ec513fb2dc0"
 
 SRC_URI += "file://host-ipmid-whitelist_nvidia.conf"
 SRC_URI += "file://master_write_read_white_list.json"

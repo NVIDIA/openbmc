@@ -1,3 +1,3 @@
 SRC_URI = "git://github.com/NVIDIA/phosphor-time-manager;protocol=https;branch=develop"
-SRCREV = "69b79f8224cd2ce7c3ec34171f4a99fe209c6a54"
+SRCREV = "827ce5bc0f3fc1c567d4e5c018af0bd2b1f5037b"
 DEPENDS += "libmctp"

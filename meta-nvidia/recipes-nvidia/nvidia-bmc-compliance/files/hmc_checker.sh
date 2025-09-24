@@ -1944,7 +1944,7 @@ is_fpga_gpio_fpga_ready_set() {
     sleep 1
     output=$(_log_ gpioget `gpiofind "$fpga_ready"`); [ "$output" = "1" ] && echo "yes" || echo "no"
     sleep 1
-    systemctl start nvidia-fpga-ready-monitor.service >/dev/null 2>&1get_mcu_usb_port_hierarchy
+    systemctl start nvidia-fpga-ready-monitor.service >/dev/null 2>&1
 }
 
 # HMC-FPGA-I2C-01
@@ -5904,6 +5904,1099 @@ eid=${eid:-17} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x8
     local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
 }
 
+# HMC-NVLink_EROT-MCTP_VDM-01
+# Function to get the enumrated MCTP EID, NVLink ERoT SPI
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid "17"
+get_nvlink_erot_mctp_eid_spi() {
+local nvlink_erot_spi_eid="$1"
+
+# default EID to 17, NVLink MCTP ERoT SPI
+# get MCTP EID
+# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid=${nvlink_erot_spi_eid:-17} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
+}
+
+# HMC-NVLink_EROT-MCTP_VDM-02
+# Function to get the enumrated MCTP EID, NVLink ERoT I2C
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid "21"
+get_nvlink_erot_mctp_eid_i2c() {
+local nvlink_erot_i2c_eid="$1"
+
+# default EID to 21, Umbriel NVLink MCTP ERoT I2C
+# get MCTP EID
+# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid=${nvlink_erot_i2c_eid:-21} && eid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 02" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
+}
+
+# HMC-NVLink_EROT-MCTP_VDM-03
+# Function to get the MCTP UUID for NVLink ERoT SPI
+# Arguments:
+#   $1: MCTP EID to verify the UUID to get from
+# Returns:
+#   valid UUID according to FPGA IAS
+get_nvlink_erot_mctp_uuid_spi() {
+local nvlink_erot_spi_eid="$1"
+
+# default EID to 17, NVLink MCTP ERoT SPI
+# get MCTP UUID
+# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid=${nvlink_erot_spi_eid:-17} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
+}
+
+# HMC-NVLink_EROT-MCTP_VDM-04
+# Function to get the MCTP UUID for NVLink ERoT I2C
+# Arguments:
+#   $1: MCTP EID to verify the UUID to get from
+# Returns:
+#   valid UUID according to FPGA IAS
+get_nvlink_erot_mctp_uuid_i2c() {
+local nvlink_erot_i2c_eid="$1"
+
+# default EID to 21, NVLink MCTP ERoT I2C
+# get MCTP UUID
+# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid=${nvlink_erot_i2c_eid:-21} && uuid_rt=$(_log_ mctp-pcie-ctrl -s "00 80 03" -t 2 -b "02 00 00 00 00 01" -e "${eid}" -i 9 -p 12 -x 13 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
+}
+
+# HMC-NVLink_EROT-MCTP_VDM-05
+# Function to get the enumrated MCTP EID, NVLink ERoT SPI USB
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid "17"
+get_nvlink_erot_mctp_eid_spi_usb() {
+# default EID to 17, NVLink MCTP ERoT SPI
+local eid="${1:-17}"
+local usb_port="${2:-1-1.4}"
+# get MCTP EID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid_rt=$(_log_ mctp-usb-ctrl -s "00 80 02" -b "00" -t 3 -e "${eid}" -w "${usb_port}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
+}
+
+# HMC-NVLink_EROT-MCTP_VDM-06
+# Function to get the enumrated MCTP EID, NVLink ERoT I2C USB
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid "21"
+get_nvlink_erot_mctp_eid_i2c_usb() {
+local eid="${1:-21}"
+local usb_port="${2:-1-1.4}"
+
+# default EID to 21, Umbriel NVLink MCTP ERoT I2C USB
+# get MCTP EID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid_rt=$(_log_ mctp-usb-ctrl -s "00 80 02" -b "00" -t 3 -e "${eid}" -w "${usb_port}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5) && printf "%d\n" 0x$eid_rt
+}
+
+
+# HMC-NVLink_EROT-MCTP_VDM-07
+# Function to get the MCTP UUID for NVLink ERoT SPI USB
+# Arguments:
+#   $1: MCTP EID to verify the UUID to get from
+# Returns:
+#   valid UUID according to FPGA IAS
+get_nvlink_erot_mctp_uuid_spi_usb() {
+local eid="${1:-17}"
+local usb_port="${2:-1-1.4}"
+
+# default EID to 17, NVLink MCTP ERoT SPI USB
+# get MCTP UUID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+uuid_rt=$(_log_ mctp-usb-ctrl -s "00 80 03" -b "00" -t 3 -e "${eid}" -w "${usb_port}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
+}
+
+# HMC-NVLink_EROT-MCTP_VDM-08
+# Function to get the MCTP UUID for NVLink ERoT I2C USB
+# Arguments:
+#   $1: MCTP EID to verify the UUID to get from
+# Returns:
+#   valid UUID according to FPGA IAS
+get_nvlink_erot_mctp_uuid_i2c_usb() {
+local eid="${1:-21}"
+local usb_port="${2:-1-1.4}"
+
+# default EID to 21, NVLink MCTP ERoT I2C USB
+# get MCTP UUID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+uuid_rt=$(_log_ mctp-usb-ctrl -s "00 80 03" -b "00" -t 3 -e "${eid}" -w "${usb_port}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 5-) && echo $uuid_rt
+}
+
+
+## NVLink: Base Protocol
+
+# HMC-NVLink_EROT-PLDM_T0-01
+# Function to get PLDM base GetTID of NVLink ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid TID
+get_nvlink_erot_pldm_tid() {
+local nvlink_eid="$1"
+eid=${nvlink_eid:-17} && output=$(_log_ pldmtool base GetTID -m "$eid" | grep -o -e 'TID.*' | cut -d ':' -f 2 | tr -d ' ') && echo $output
+}
+
+# HMC-NVLink_EROT-PLDM_T0-02
+# Function to get PLDM base GetPLDMTypes of NVLink ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid PLDM Types
+get_nvlink_erot_pldm_pldmtypes() {
+local nvlink_eid="$1"
+eid=${nvlink_eid:-17} && output=$(_log_ pldmtool base GetPLDMTypes -m "$eid" | grep -o 'PLDM Type Code.*' | cut -d ':' -f 2 | tr -d ' '); echo $output
+}
+
+# HMC-NVLink_EROT-PLDM_T0-03
+# Function to get PLDM base GetPLDMVersion T0 of NVLink ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid PLDM Version
+get_nvlink_erot_pldm_t0_pldmversion() {
+local nvlink_eid="$1"
+eid=${nvlink_eid:-17} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" -t 0 | grep -o -e 'Response.*' | cut -d ':' -f 2 | tr -d ' "') && echo $output
+}
+
+# HMC-NVLink_EROT-PLDM_T0-04
+# Function to get PLDM base GetPLDMVersion T5 of NVLink ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid PLDM Version
+get_nvlink_erot_pldm_t5_pldmversion() {
+local nvlink_eid="$1"
+eid=${nvlink_eid:-17} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" -t 5 | grep -o -e 'Response.*' | cut -d ':' -f 2 | tr -d ' "') && echo $output
+}
+
+# HMC-NVLink-PLDM_T0-01
+# Function to get PLDM base GetTID of NVLink
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid TID
+get_nvlink_pldm_tid() {
+local nvlink_eid="$1"
+eid=${nvlink_eid:-24} && output=$(_log_ pldmtool base GetTID -m "$eid" | grep -o -e 'TID.*' | cut -d ':' -f 2 | tr -d ' ') && echo $output
+}
+
+# HMC-NVLink-PLDM_T0-02
+# Function to get PLDM base GetPLDMTypes of NVLink
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid PLDM Types
+get_nvlink_pldm_pldmtypes() {
+local nvlink_eid="$1"
+eid=${nvlink_eid:-24} && output=$(_log_ pldmtool base GetPLDMTypes -m "$eid" | grep -o 'PLDM Type Code.*' | cut -d ':' -f 2 | tr -d ' '); echo $output
+}
+
+# HMC-NVLink-PLDM_T0-03
+# Function to get PLDM base GetPLDMVersion T0 of NVLink
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid PLDM Version
+get_nvlink_pldm_t0_pldmversion() {
+local nvlink_eid="$1"
+eid=${nvlink_eid:-24} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" -t 0 | grep -o -e 'Response.*' | cut -d ':' -f 2 | tr -d ' "') && echo $output
+}
+
+# HMC-NVLink-PLDM_T0-04
+# Function to get PLDM base GetPLDMVersion T2 of NVLink
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid PLDM Version
+get_nvlink_pldm_t2_pldmversion() {
+local nvlink_eid="$1"
+eid=${nvlink_eid:-24} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" -t 2 | grep -o -e 'Response.*' | cut -d ':' -f 2 | tr -d ' "') && echo $output
+}
+
+# HMC-NVLink-PLDM_T0-05
+# Function to get PLDM base GetPLDMVersion T5 of NVLink
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid PLDM Version
+get_nvlink_pldm_t5_pldmversion() {
+local nvlink_eid="$1"
+eid=${nvlink_eid:-24} && output=$(_log_ pldmtool base GetPLDMVersion -m "$eid" -t 5 | grep -o -e 'Response.*' | cut -d ':' -f 2 | tr -d ' "') && echo $output
+}
+
+# HMC-NVLink-NSM_T0-01
+# Function to verify if NSM PING functional via MCTP VDM
+# Arguments:
+#   $1: MCTP EID to verify the NSM
+# Returns:
+#   valid "yes", "no" otherwise
+is_nvlink_mctp_vdm_nsm_ping_operational() {
+local nvlink_eid="$1"
+local cmd=00
+
+# default EID to 24, NVLink MCTP EID
+# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid=${nvlink_eid:-24} && [[ "00" = $(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f8) ]] && echo "yes" || echo "no"
+}
+
+# HMC-NVLink-NSM_T0-02
+# Function to verify if NSM PING functional using nsmtool
+# Arguments:
+#   $1: MCTP EID to verify the NSM
+# Returns:
+#   valid "yes", "no" otherwise
+is_nvlink_mctp_nsmtool_ping_operational() {
+local nvlink_eid="$1"
+local cmd=0x00
+
+# default EID to 24, NVLink MCTP EID
+# the 'nsmtool' outputs to journal log
+eid=${nvlink_eid:-24} && [[ "00" = $(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '7p') ]] && echo "yes" || echo "no"
+}
+
+# HMC-NVLink-NSM_T0-03
+# Function to verify NSM Get Supported Message Types via MCTP VDM
+# Arguments:
+#   $1: MCTP EID to verify the NSM
+# Returns:
+#   valid "0x3b", fault otherwise
+get_nvlink_mctp_vdm_nsm_supported_message_types() {
+local nvlink_eid="$1"
+local cmd=01
+
+# default EID to 24, NVLink MCTP EID
+# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+eid=${nvlink_eid:-24} && output=$(_log_ mctp-pcie-ctrl -s "7e 10 de 80 89 00 $cmd 00" -t 2 -e "${eid}" -i 9 -p 12 -m 0 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f13) && echo "$output"
+}
+
+# HMC-NVLink-NSM_T0-04
+# Function to verify NSM Get Supported Message Types using nsmtool
+# Arguments:
+#   $1: MCTP EID to verify the NSM
+# Returns:
+#   valid "0x3b", fault otherwise
+get_nvlink_mctp_nsmtool_supported_message_types() {
+local nvlink_eid="$1"
+local cmd=0x01
+
+# default EID to 24, NVLink MCTP EID
+# the 'nsmtool' outputs to journal log
+eid=${nvlink_eid:-24} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
+}
+
+
+# HMC-NVLink-NSM_T0-05
+# Function to verify NSM Get Supported Message Types via MCTP VDM USB
+# Arguments:
+#   $1: MCTP EID to verify the NSM
+# Returns:
+#   valid "0x3b", fault otherwise
+get_nvlink_mctp_vdm_nsm_supported_message_types_usb() {
+local eid="${1:-24}"
+local usb_port="${2:-1-1.4}"
+local cmd=01
+
+# default EID to 24, NVLink MCTP EID
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+output=$(_log_ mctp-usb-ctrl -s "7e 10 de 80 89 00 $cmd 00" -b "00" -t 3 -e "${eid}" -w "${usb_port}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f13) && echo "$output"
+}
+
+
+## NVLink: Firmware Update Protocol
+
+# HMC-NVLink_EROT-Version-01
+# Function to get NVLink ERoT FW version from PLDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid ERoT FW version
+get_nvlink_erot_fw_version_pldm() {
+local eid="$1"
+local output
+# default EID to 17, NVLink ERoT SPI
+eid=${eid:-17} && output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep 'ActiveComponentVersionString' | sed 's/.*"\(.*\)".*/\1/' | awk 'NR==1') && echo $output
+}
+
+# HMC-NVLink_EROT-Version-02
+# Function to get NVLink ERoT FW version from PLDM dbus
+# Arguments:
+#   $1: Software ID
+# Returns:
+#   valid ERoT FW version
+get_nvlink_erot_fw_version_pldm_dbus() {
+local sw_id="$1"
+# default HGX_FW_ERoT_PCIeSwitch_0
+id=${sw_id:-HGX_FW_ERoT_NVLinkManagementNIC_0} && _log_ busctl get-property xyz.openbmc_project.PLDM /xyz/openbmc_project/software/"$id" xyz.openbmc_project.Software.Version Version | cut -d ' ' -f 2 | tr -d '"'
+}
+
+# HMC-NVLink_EROT-Version-03
+# Function to get NVLink ERoT FW Build Type
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid ERoT FW Build Type
+get_nvlink_erot_fw_build_type() {
+local nvlink_erot_eid="$1"
+# default EID to 17, NVLink ERoT SPI
+# 0: rel, 1: dev
+eid=${nvlink_erot_eid:-17} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
+
+# older EC FW does not support the selftest
+if [ ${#output[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${output[0]}" == "00" ]]; then
+    rev_build=${output[8]}
+    result=$(( (16#$rev_build & 0x01) ))
+
+    case "$result" in
+        0) echo "rel" ;;
+        1) echo "dev" ;;
+        *) echo "" ;;
+    esac
+else
+    # Invalid
+    echo ""
+fi
+}
+
+# HMC-NVLink_EROT-Version-04
+# Function to get NVLink ERoT FW Keyset
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid ERoT FW Keyset
+get_nvlink_erot_fw_keyset() {
+local nvlink_erot_eid="$1"
+# default EID to 17, NVLink ERoT SPI
+# 0: s1, 1: s2, 2: s3, 3: s4, 4: s5
+eid=${nvlink_erot_eid:-17} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
+
+# older EC FW does not support the selftest
+if [ ${#output[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${output[0]}" == "00" ]]; then
+    rev_build=${output[8]}
+    result=$(( (16#$rev_build >> 1) & 0x07 ))
+
+    case "$result" in
+        0) echo "s1" ;;
+        1) echo "s2" ;;
+        2) echo "s3" ;;
+        3) echo "s4" ;;
+        4) echo "s5" ;;
+        5) echo "s6" ;;
+        *) echo "" ;;
+    esac
+else
+    # Invalid
+    echo ""
+fi
+}
+
+# HMC-NVLink_EROT-Version-05
+# Function to get NVLink ERoT FW Chip Rev
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid ERoT FW Chip Rev
+get_nvlink_erot_fw_chiprev() {
+local nvlink_erot_eid="$1"
+# default EID to 17, NVLink ERoT SPI
+# 0: revA, 1:revB
+eid=${nvlink_erot_eid:-17} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
+
+# older EC FW does not support the selftest
+if [ ${#output[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${output[0]}" == "00" ]]; then
+    rev_build=${output[8]}
+    result=$(( (16#$rev_build >> 4) & 0x03 ))
+
+    case "$result" in
+        0) echo "revA" ;;
+        1) echo "revB" ;;
+        2) echo "revC" ;;
+        *) echo "" ;;
+    esac
+else
+    # Invalid
+    echo ""
+fi
+}
+
+# HMC-NVLink_EROT-Version-06
+# Function to get NVLink ERoT FW Boot Slot
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid ERoT FW Boot Slot
+get_nvlink_erot_fw_boot_slot() {
+local nvlink_erot_eid="$1"
+# default EID to 17, NVLink ERoT SPI
+eid=${nvlink_erot_eid:-17} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
+
+# older EC FW does not support the selftest
+if [ ${#output[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${output[0]}" == "00" ]]; then
+    result=$(( (16#${output[8]} >> 6) & 0x01 ))
+    echo "$result"
+else
+    # Invalid
+    echo ""
+fi
+}
+
+# HMC-NVLink_EROT-Version-07
+# Function to get NVLink ERoT FW EC Identical
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid ERoT FW EC Identical
+get_nvlink_erot_fw_ec_identical() {
+local nvlink_erot_eid="$1"
+# default 17 to NVLink ERoT EID
+# 0: identical, 1: not identical
+eid=${nvlink_erot_eid:-17} && output=($(_log_ mctp-vdm-util -t ${eid} -c selftest 2 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-18))
+
+# older EC FW does not support the selftest
+if [ ${#output[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${output[0]}" == "00" ]]; then
+    rev_build=${output[8]}
+    result=$(( (16#$rev_build >> 7) & 0x01 ))
+    if [[ "$result" == "0" ]]; then
+        echo "identical"
+    elif [[ "$result" == "1" ]]; then
+        echo "not identical"
+    else
+        echo ""
+    fi
+else
+    # Invalid
+    echo ""
+fi
+}
+
+# HMC-NVLink_EROT-PLDM_T5-01
+# Function to get PLDM fw_update version of NVLink_EROT SPI
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid ERoT FW version
+get_nvlink_erot_pldm_version() {
+local eid="$1"
+# default EID to 17, NVLink SPI ERoT
+eid=${eid:-17} && output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep 'ActiveComponentVersionString' | sed 's/.*"\(.*\)".*/\1/' | awk 'NR==1') && echo $output
+}
+
+# HMC-NVLink_EROT-PLDM_T5-02
+# Function to get PLDM fw_update version of NVLink
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid FW version
+get_nvlink_erot_pldm_version_string() {
+local eid="$1"
+# default EID to 17, NVLink SPI ERoT
+eid=${eid:-17} && output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep 'ActiveComponentVersionString' | sed 's/.*"\(.*\)".*/\1/' | awk 'NR==2') && echo $output
+}
+
+# HMC-NVLink_EROT-PLDM_T5-05
+# Function to get PLDM fw_update AP_SKU ID of NVLink
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid AP_SKU ID
+get_nvlink_erot_pldm_apsku_id() {
+local sku_eid="$1"
+# default EID to 17, NVLink SPI ERoT
+eid=${sku_eid:-17} && key=${sku_key:-APSKU} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
+}
+
+# HMC-NVLink_EROT-PLDM_T5-06
+# Function to get PLDM fw_update EC_SKU ID of NVLink ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid AP_SKU ID
+get_nvlink_erot_pldm_ecsku_id() {
+local sku_eid="$1"
+# default EID to 17, NVLink SPI ERoT
+eid=${sku_eid:-17} && key=${sku_key:-ECSKU} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
+}
+
+# HMC-NVLink_EROT-PLDM_T5-07
+# Function to get PLDM fw_update GLACIERDSD of NVLink ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid AP_SKU ID
+get_nvlink_erot_pldm_glacier_id() {
+local sku_eid="$1"
+# default EID to 17, NVLink SPI ERoT
+eid=${sku_eid:-17} && key=${sku_key:-GLACIERDSD} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
+}
+
+# HMC-NVLink_EROT-PLDM_T5-08
+# Function to get PLDM fw_update PCI Vendor ID of NVLink ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Vendor" ID
+get_nvlink_erot_pldm_pci_vendor_id() {
+local sku_eid="$1"
+# default EID to 17, NVLink ERoT
+eid=${sku_eid:-17} && key=${sku_key:-"PCI Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-NVLink_EROT-PLDM_T5-09
+# Function to get PLDM fw_update PCI Device ID of NVLink ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Device" ID
+get_nvlink_erot_pldm_pci_device_id() {
+local sku_eid="$1"
+# default EID to 17, NVLink ERoT
+eid=${sku_eid:-17} && key=${sku_key:-"PCI Device ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-NVLink_EROT-PLDM_T5-10
+# Function to get PLDM fw_update PCI Subsystem Vendor ID of NVLink ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem Vendor" ID
+get_nvlink_erot_pldm_pci_subsys_vendor_id() {
+local sku_eid="$1"
+# default EID to 17, NVLink ERoT
+eid=${sku_eid:-17} && key=${sku_key:-"PCI Subsystem Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-NVLink_EROT-PLDM_T5-11
+# Function to get PLDM fw_update PCI Subsystem ID of NVLink ERoT
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem" ID
+get_nvlink_erot_pldm_pci_subsys_id() {
+local sku_eid="$1"
+# default EID to 17, NVLink ERoT
+eid=${sku_eid:-17} && key=${sku_key:-"PCI Subsystem ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-NVLink_EROT-DBUS-08
+# Function to get PLDM DBus software inventory version of NVLink ERoT
+# Arguments:
+#   $1: PLDM Inventory ID
+# Returns:
+#   valid ERoT FW version
+get_dbus_pldm_nvlink_erot_version() {
+local nvlink_pldm_erot_id="$1"
+erot_id=${nvlink_pldm_erot_id:-HGX_FW_ERoT_NVLinkManagementNIC_0} && output=$(_log_ busctl introspect xyz.openbmc_project.PLDM /xyz/openbmc_project/software/"$erot_id" | grep '^\.Version' | grep -o '"[^"]*"' | tr -d '"') && echo $output
+}
+
+## NVLink: Telemetry Protocol
+
+# HMC-NVLink-PLDM_T2-02
+# Function to disable PLDM T2 sensor polling
+# Arguments:
+#   n/a
+# Returns:
+#   valid "done", "failed" otherwise
+_disable_nvlink_sensor_polling() {
+local output
+_log_ busctl set-property xyz.openbmc_project.PLDM /xyz/openbmc_project/pldm/sensor_polling xyz.openbmc_project.Object.Enable Enabled b false
+output=$(_log_ busctl get-property xyz.openbmc_project.PLDM /xyz/openbmc_project/pldm/sensor_polling xyz.openbmc_project.Object.Enable Enabled | grep -o "false"); [[ $output = "false" ]] && echo "done" || echo "failed"
+}
+
+# HMC-NVLink-PLDM_T2-03
+# Function to enable PLDM T2 sensor polling
+# Arguments:
+#   n/a
+# Returns:
+#   valid "done", "failed" otherwise
+enable_nvlink_sensor_polling() {
+local output
+_log_ busctl set-property xyz.openbmc_project.PLDM /xyz/openbmc_project/pldm/sensor_polling xyz.openbmc_project.Object.Enable Enabled b true
+output=$(_log_ busctl get-property xyz.openbmc_project.PLDM /xyz/openbmc_project/pldm/sensor_polling xyz.openbmc_project.Object.Enable Enabled | grep -o "true"); [[ $output = "true" ]] && echo "done" || echo "failed"
+}
+
+# HMC-NVLink-PLDM_T2-04
+# Function to dump NVLink PDR in JSON format
+# Arguments:
+#   NVLink EID
+# Returns:
+#   valid "done", "failed" otherwise
+dump_nvlink_pdr_json() {
+local nvlink_eid="$1"
+local jsonfile=/tmp/"$FUNCNAME"_output.json
+# default EID to 24, NVLink I2C
+eid=${nvlink_eid:-24} && logfile=${jsonfile:-"/tmp/func_output.json"} && _log_ pldmtool platform getpdr -m "$eid" -a > "$logfile" && [ $(wc -c < $logfile) -gt 10 ] && : || rm $logfile && [ -f "$logfile" ] && echo "done" || echo "failed"
+}
+
+# HMC-NVLink-PLDM_T2-05
+# Function to get NVLink Numeric Sensor IDs
+# Arguments:
+#   NVLink EID
+# Returns:
+#   Numeric Sesnor ID
+get_nvlink_numeric_sensor_id() {
+local nvlink_eid="$1"
+# default EID to 24, NVLink I2C
+eid=${nvlink_eid:-24} && output=$(_log_ pldmtool platform getpdr -m "$eid" -a 2>/dev/null | grep -A5 'Numeric Sensor PDR' | awk -F': ' '/"sensorID":/ {print $2}' | tr -d ',' | sort -n | uniq | awk '{printf "%s ", $0} END {print ""}'); echo "$output"
+}
+
+# HMC-NVLink-PLDM_T2-06
+# Function to verify if NVLink Numeric Sensor ID is accessible
+# Arguments:
+#   NVLink EID
+# Returns:
+#   valid "yes", "no" otherwise
+is_nvlink_numeric_sensor_accessible() {
+    local nvlink_eid="$1"
+    # default EID to 24, NVLink I2C
+    eid=${nvlink_eid:-24} && sensor_ids=$(_log_ pldmtool platform getpdr -m "$eid" -a | grep -A5 'Numeric Sensor PDR' | awk -F': ' '/"sensorID":/ {print $2}' | tr -d ',' | sort -n | uniq | awk '{printf "%s ", $0} END {print ""}')
+    [ -z "$sensor_ids" ] && echo 'no' && return
+
+    # Convert the string into an array
+    IFS=' ' read -ra sensor_array <<< "$sensor_ids"
+
+    # Get the last sensord readout
+    [[ "00" = $(_log_ pldmtool raw -m "$eid" -v -d 0x80 0x02 0x11 0x$(printf "%x" ${sensor_array[-1]}) 0x00 0x0 0x0 | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '4p') ]] && echo "yes" || echo "no"
+}
+
+# HMC-NVLink-PLDM_T2-07
+# Function to get NVLink State Sensor IDs
+# Arguments:
+#   NVLink EID
+# Returns:
+#   Numeric Sesnor ID
+get_nvlink_state_sensor_id() {
+local nvlink_eid="$1"
+# default EID to 24, NVLink I2C
+eid=${nvlink_eid:-24} && output=$(_log_ pldmtool platform getpdr -m "$eid" -a 2>/dev/null | grep -A5 'State Sensor PDR' | awk -F': ' '/"sensorID":/ {print $2}' | tr -d ',' | sort -n | uniq | awk '{printf "%s ", $0} END {print ""}'); echo "$output"
+}
+
+# HMC-NVLink-PLDM_T2-08
+# Function to verify if all NVLink State Sensor ID is accessible
+# Arguments:
+#   NVLink EID
+# Returns:
+#   valid "yes", "no" otherwise
+is_nvlink_state_sensor_accessible() {
+    local nvlink_eid="$1"
+    # default EID to 24, NVLink I2C
+    eid=${nvlink_eid:-24} && state_ids=$(_log_ pldmtool platform getpdr -m "$eid" -a | grep -A5 'State Sensor PDR' | awk -F': ' '/"sensorID":/ {print $2}' | tr -d ',' | sort -n | uniq | awk '{printf "%s ", $0} END {print ""}')
+    [ -z "$state_ids" ] && echo 'no' && return
+
+    # Convert the string into an array
+    IFS=' ' read -ra sensor_array <<< "$state_ids"
+
+    # Get the last sensord readout
+    [[ "00" = $(_log_ pldmtool raw -m "$eid" -v -d 0x80 0x02 0x21 0x$(printf "%x" ${sensor_array[-1]}) 0x00 0x0 0x0 | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '4p') ]] && echo "yes" || echo "no"
+}
+
+## NVLink: Security Protocol
+
+# HMC-NVLink_EROT-Key-01
+# Function to get EC key revoke policy via I2C
+# Arguments:
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
+# Returns:
+#   valid revoke policy
+get_nvlink_erot_key_revoke_policy_i2c() {
+local i2c_addr="${1:-0x74}"
+local i2c_addr_dest="${2:-0x52}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
+local output
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke policy", cmd=0x1d, arg=0x00, read length=20
+response=$(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x1d 0x00 20)
+
+output=${response:90:4}
+
+case $output in
+0x00) echo "not set";;
+0x01) echo "auto";;
+0x02) echo "decoupled";;
+*) echo "unknown";;
+esac
+}
+
+# HMC-NVLink_EROT-Key-02
+# Function to get EC key revoke policy via VDM
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid revoke policy
+get_nvlink_erot_key_revoke_policy_vdm() {
+# default EID to 17, NVLink MCTP ERoT SPI
+local eid="${1:-17}"
+
+# the 'mctp-pcie-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+output=$(_log_ mctp-pcie-ctrl -s "7f 00 00 16 47 80 01 1d 01 00" -t 2 -e "${eid}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 11)
+
+case $output in
+00) echo "not set";;
+01) echo "auto";;
+02) echo "decoupled";;
+*) echo "unknown";;
+esac
+}
+
+# HMC-NVLink_EROT-Key-03
+# Function to get EC key revoke state via I2C
+# Arguments:
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
+# Returns:
+#   valid EC key revoke state
+get_nvlink_erot_ec_key_revoke_state_i2c() {
+local i2c_addr="${1:-0x74}"
+local i2c_addr_dest="${2:-0x52}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
+local output
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke", selftest cmd=0x08, arg=0x08, read length=61
+response=($(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x08 0x08 61))
+
+# EC Key Revoke state
+echo ${response[35]}
+}
+
+# HMC-NVLink_EROT-Key-04
+# Function to get EC key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC key revoke state
+get_nvlink_erot_ec_key_revoke_state_vdm() {
+local nvlink_erot_eid="$1"
+local eid
+local response
+local output
+# default 17 to NVLink ERoT EID
+eid=${nvlink_erot_eid:-17} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[18]}
+else
+    # Invalid
+    output=""
+fi
+
+# EC Key Revoke state
+echo $output
+}
+
+# HMC-NVLink_EROT-Key-05
+# Function to get AP key revoke state via I2C
+# Arguments:
+#   $1: I2C Bus
+#   $2: EROT I2C Address
+#   $3: DEST I2C Address
+#   $4: FPGA SMBPBI I2C Address
+# Returns:
+#   valid EC key revoke state
+get_nvlink_erot_ap_key_revoke_state_i2c() {
+local i2c_addr="${1:-0x74}"
+local i2c_addr_dest="${2:-0x52}"
+local i2c_addr_fpga_smbpbi="${3:-0x60}"
+local i2c_bus="${4:-0}"
+local response
+local output
+
+_log_ echo ${FUNCNAME[0]} >/dev/null
+# query "key revoke", selftest cmd=0x08, arg=0x08, read length=61
+response=($(_ec_send_message $i2c_bus $i2c_addr $i2c_addr_dest $i2c_addr_fpga_smbpbi 0x08 0x08 61))
+
+# AP Key Revoke state
+output=${response[@]:52:8}
+echo $output
+}
+
+# HMC-NVLink_EROT-Key-06
+# Function to get AP key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC key revoke state
+get_nvlink_erot_ap_key_revoke_state_vdm() {
+local nvlink_erot_eid="$1"
+local eid
+local response
+local output
+# default 17 to NVLink ERoT EID
+eid=${nvlink_erot_eid:-17} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[@]:35:8}
+else
+    # Invalid
+    output=""
+fi
+
+# EC Key Revoke state
+echo $output
+}
+
+# HMC-NVLink_EROT-Key-07
+# Function to get EC RBP key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC RBP key revoke state
+get_nvlink_erot_ec_rbp_key_revoke_state_vdm() {
+local nvlink_erot_eid="$1"
+local eid
+local response
+local output
+# default 17 to NVLink ERoT EID
+eid=${nvlink_erot_eid:-17} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[@]:2:16}
+else
+    # Invalid
+    output=""
+fi
+
+# EC RBP Key Revoke state
+echo $output
+}
+
+# HMC-NVLink_EROT-Key-08
+# Function to get AP RBP key revoke state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid AP RBP key revoke state
+get_nvlink_erot_ap_rbp_key_revoke_state_vdm() {
+local nvlink_erot_eid="$1"
+local eid
+local response
+local output
+# default 17 to NVLink ERoT EID
+eid=${nvlink_erot_eid:-17} && response=($(_log_ mctp-vdm-util -t ${eid} -c selftest 8 0 0 0 | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-61))
+
+# older EC FW does not support the selftest
+if [ ${#response[@]} -lt 9 ]; then
+    # Invalid
+    echo ""
+    return 1
+fi
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[@]:19:16}
+else
+    # Invalid
+    output=""
+fi
+
+# AP RBP Key Revoke state
+echo $output
+}
+
+# HMC-NVLink_EROT-Key-09
+# Function to get EC key revoke policy via USB VDM
+# Arguments:
+#   $1: MCTP EID to verify the EID to get from
+# Returns:
+#   valid revoke policy
+get_nvlink_erot_key_revoke_policy_vdm_usb() {
+# default EID to 17, NVLink MCTP ERoT SPI
+local eid="${1:-17}"
+local usb_port_path="${2:-"1-1.4"}"
+
+# the 'mctp-usb-ctrl -v 1' outputs 'mctp_resp_msg' to stderr
+output=$(_log_ mctp-usb-ctrl -s "7f 00 00 16 47 80 01 1d 01 00" -t 3 -e "${eid}" -w "${usb_port_path}" -i 9 -v 1 | grep mctp_resp_msg | sed 's/.*mctp_resp_msg.*> //' | cut -d ' ' -f 11)
+
+case $output in
+00) echo "not set";;
+01) echo "auto";;
+02) echo "decoupled";;
+*) echo "unknown";;
+esac
+}
+
+# HMC-NVLink_EROT-Security-01
+# Function to get EC background copy progress state via VDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid EC background copy progress state
+get_nvlink_erot_background_copy_progress_state_vdm() {
+local nvlink_erot_eid="$1"
+local eid
+local response
+local output
+# default 17 to FPGA ERoT EID
+eid=${nvlink_erot_eid:-17} && response=($(_log_ mctp-vdm-util -t ${eid} -c background_copy_query_progress | grep -o 'RX: [0-9a-fA-F ]*' | sed 's/RX: //' | cut -d ' ' -f 9-11))
+
+# completion code="00", successful
+if [[ "${response[0]}" == "00" ]]; then
+    output=${response[1]}
+else
+    # Invalid
+    output=""
+fi
+
+case $output in
+01) echo "copy not in progress";;
+02) echo "copy in progress";;
+*) echo "unknown";;
+esac
+}
+
+# HMC-NVLink_EROT-SPDM-06
+# Function to get SPDM NVDA Certificate count using spdmtool
+# Arguments:
+#   $1: EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate count
+get_nvlink_erot_spdm_certificate_count_spdmtool_nvda() {
+local input_eid="$1"
+local slot_id="$2"
+# default EID to 17, NVLink ERoT; slot to 0, NVDA cert chain
+eid=${input_eid:-17} && slot=${slot_id:-0} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
+}
+
+# HMC-NVLink_EROT-SPDM-07
+# Function to get SPDM MCHP Certificate count using spdmtool
+# Arguments:
+#   $1: EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate count
+get_nvlink_erot_spdm_certificate_count_spdmtool_mchp() {
+local input_eid="$1"
+local slot_id="$2"
+# default EID to 17, NVLink ERoT; slot to 1, MCHP cert chain
+eid=${input_eid:-17} && slot=${slot_id:-1} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
+}
+
+# HMC-NVLink_EROT-NSM-01
+# Function to get Active Component Security Version Number (SVN) NVLink ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Active Component Security Version Number (SVN) of NVLink ERoT
+get_nvlink_erot_nsm_svn() {
+local eid="$1"
+eid=${eid:-17} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xbc 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 12th and 13th bytes and convert to little endian integer
+    local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
+}
+
+# HMC-NVLink_EROT-NSM-02
+# Function to get Pending Component Security Version Number (SVN) NVLink ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Pending Component Security Version Number (SVN) of NVLink ERoT
+get_nvlink_erot_nsm_pending_svn() {
+local eid="$1"
+eid=${eid:-17} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xbc 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 14th and 15th bytes and convert to little endian integer
+    local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
+}
+
+# HMC-NVLink_EROT-NSM-03
+# Function to get Active Component Minimum Security Version Number (MIN_SVN) NVLink ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Active Component Minimum Security Version Number (MIN_SVN) of NVLink ERoT
+get_nvlink_erot_nsm_min_svn() {
+local eid="$1"  
+eid=${eid:-17} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xbc 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 16th and 17th bytes and convert to little endian integer
+    local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
+}
+
+# HMC-NVLink_EROT-NSM-04
+# Function to get Pending Component Minimum Security Version Number (MIN_SVN) NVLink ERoT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Pending Component Minimum Security Version Number (MIN_SVN) of NVLink ERoT
+get_nvlink_erot_nsm_pending_min_svn() {
+local eid="$1"  
+eid=${eid:-17} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0xbc 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 18th and 19th bytes and convert to little endian integer
+    local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
+}
+
 # Component-Level Category: CX8 #
 ## CX8: Firmware Update Protocol
 
@@ -6045,6 +7138,146 @@ local eid="${1:-41}"
 key=${sku_key:-"PCI Subsystem ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
 }
 
+# Component-Level Category: ConnectX #
+## ConnectX: Firmware Update Protocol
+
+# HMC-ConnectX-Version-01
+# Function to get ConnectX FW version from PLDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid FW version
+get_connectx_fw_version_pldm() {
+local eid="${1:-69}"
+# default EID to 69, ConnectX
+output=$(_log_ pldmtool fw_update GetFWParams -m "$eid" | grep 'ActiveComponentVersionString' | sed 's/.*"\(.*\)".*/\1/' | awk 'NR==1') && echo $output
+}
+
+# HMC-ConnectX-PLDM_T5-01
+# Function to get PLDM fw_update AP_SKU ID of ConnectX
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid AP_SKU ID
+get_connectx_pldm_apsku_id() {
+local eid="${1:-69}"
+# default EID to 69, ConnectX
+key=${sku_key:-APSKU} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -o "\"$key\": [^,]*" | sed -e "s/\"$key\": //" -e 's/"//g') && echo $output
+}
+
+# HMC-ConnectX-PLDM_T5-02
+# Function to get PLDM fw_update PCI Vendor ID of ConnectX
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Vendor" ID
+get_connectx_pldm_pci_vendor_id() {
+local eid="${1:-69}"
+# default EID to 69, ConnectX
+key=${sku_key:-"PCI Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-ConnectX-PLDM_T5-03
+# Function to get PLDM fw_update PCI Deivce ID of ConnectX
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Device" ID
+get_connectx_pldm_pci_device_id() {
+local eid="${1:-69}"
+# default EID to 69, ConnectX
+key=${sku_key:-"PCI Device ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-ConnectX-PLDM_T5-04
+# Function to get PLDM fw_update PCI Subsystem Vendor ID of ConnectX
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem Vendor" ID
+get_connectx_pldm_pci_subsys_vendor_id() {
+local eid="${1:-69}"
+# default EID to 69, ConnectX
+key=${sku_key:-"PCI Subsystem Vendor ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
+
+# HMC-ConnectX-IROT-NSM-01
+# Function to get Active Component Security Version Number (SVN) ConnectX IROT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Active Component Security Version Number (SVN) of ConnectX IROT
+get_connectx_irot_nsm_svn() { 
+local eid="$1"
+eid=${eid:-69} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x01 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 12th and 13th bytes and convert to little endian integer
+    local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
+} 
+
+# HMC-ConnectX-IROT-NSM-02
+# Function to get Pending Component Security Version Number (SVN) ConnectX IROT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Pending Component Security Version Number (SVN) of ConnectX IROT   
+get_connectx_irot_nsm_pending_svn() {
+local eid="$1"
+eid=${eid:-69} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x01 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 14th and 15th bytes and convert to little endian integer
+    local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
+}
+
+# HMC-ConnectX-IROT-NSM-03
+# Function to get Active Component Minimum Security Version Number (MIN_SVN) ConnectX IROT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Active Component Minimum Security Version Number (MIN_SVN) of ConnectX IROT    
+get_connectx_irot_nsm_min_svn() {
+local eid="$1"
+eid=${eid:-69} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x01 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 16th and 17th bytes and convert to little endian integer
+    local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
+} 
+
+# HMC-ConnectX-IROT-NSM-04
+# Function to get Pending Component Minimum Security Version Number (MIN_SVN) ConnectX IROT using nsmtool 
+# Arguments:
+#   $1: EID
+# Returns:
+#   valid Pending Component Minimum Security Version Number (MIN_SVN) of ConnectX IROT   
+get_connectx_irot_nsm_pending_min_svn() {    
+local eid="$1"
+eid=${eid:-69} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x01 0x00 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 18th and 19th bytes and convert to little endian integer
+    local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
+}
+
+# HMC-ConnectX-SPDM-01
+# Function to get SPDM Certificate Count of ConnectX IROT
+# Arguments:
+#   $1: MCTP EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate Count
+get_connectx_spdm_certificate_count() {
+local input_eid="$1"
+local slot_id="$2"
+# default EID to 69, ConnectX SPDM; slot to 0, MCHP cert chain
+eid=${input_eid:-54} && slot=${slot_id:-0} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
+}
+
+# HMC-ConnectX-PLDM_T5-05
+# Function to get PLDM fw_update PCI Subsystem ID of ConnectX
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem" ID
+get_connectx_pldm_pci_subsys_id() {
+local eid="${1:-69}"
+# default EID to 69, ConnectX
+key=${sku_key:-"PCI Subsystem ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
+}
 
 # Component-Level Category: NVSWITCH #
 ## NVSWITCH: Transport Protocol

@@ -1,7 +1,8 @@
 SRC_URI = "git://github.com/NVIDIA/phosphor-host-postd;protocol=https;branch=develop"
-SRCREV = "fbf5c69723706e398063858137b0d77a0507de9c"
+SRCREV = "dc8e0c93e317df24366c993e258f521ee6a755ab"
 
 DEPENDS += "phosphor-logging"
+DEPENDS += "libusb1"
 
 EXTRA_OEMESON:append = " -Dsystemd-target=multi-user.target"
 EXTRA_OEMESON:append = " -Dsystemd-after-service=xyz.openbmc_project.State.Host.service"

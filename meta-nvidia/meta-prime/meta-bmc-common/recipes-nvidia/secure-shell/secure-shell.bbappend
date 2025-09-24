@@ -1,3 +1,7 @@
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+
+SRC_URI:append = " file://hostconsole-login.sh "
+
 FILES:${PN} += " \
     ${LOCAL_BIN_DIR}/ssh \
     "

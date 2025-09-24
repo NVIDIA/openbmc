@@ -29,7 +29,7 @@ do_install:append() {
 }
 
 do_install:append:gb200nvl-bmc-ut3() {
-		install -m 0644 ${WORKDIR}/phosphor-multi-gpio-monitor-ut3.json ${D}/usr/share/phosphor-gpio-monitor/phosphor-multi-gpio-monitor.json
+		install -m 0644 ${UNPACKDIR}/phosphor-multi-gpio-monitor-ut3.json ${D}/usr/share/phosphor-gpio-monitor/phosphor-multi-gpio-monitor.json
 }
 
 

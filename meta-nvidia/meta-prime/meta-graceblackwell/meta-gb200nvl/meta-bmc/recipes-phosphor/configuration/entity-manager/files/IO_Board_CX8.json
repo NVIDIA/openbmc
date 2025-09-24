@@ -5,7 +5,8 @@
                 "Name": "IO_Board_0_CX8_0",
                 "Type": "I2CDeviceAssociation",
                 "Bus": 16,
-                "Address": 50
+                "Address": 50,
+                "EID": 101
             },
             {
                 "Name": "IO_Board_0_CX8_0_Temp",
@@ -35,7 +36,8 @@
                 "Name": "IO_Board_0_CX8_1",
                 "Type": "I2CDeviceAssociation",
                 "Bus": 18,
-                "Address": 50
+                "Address": 50,
+                "EID": 102
             },
             {
                 "Name": "IO_Board_0_CX8_1_Temp",
@@ -216,7 +218,8 @@
                 "Name": "IO_Board_1_CX8_0",
                 "Type": "I2CDeviceAssociation",
                 "Bus": 28,
-                "Address": 50
+                "Address": 50,
+                "EID": 103
             },
             {
                 "Name": "IO_Board_1_CX8_0_Temp",
@@ -246,7 +249,8 @@
                 "Name": "IO_Board_1_CX8_1",
                 "Type": "I2CDeviceAssociation",
                 "Bus": 30,
-                "Address": 50
+                "Address": 50,
+                "EID": 104
             },
             {
                 "Name": "IO_Board_1_CX8_1_Temp",

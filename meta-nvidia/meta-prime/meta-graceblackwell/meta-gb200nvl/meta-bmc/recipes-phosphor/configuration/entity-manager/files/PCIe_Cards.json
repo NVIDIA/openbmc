@@ -38,8 +38,9 @@
             {
                 "Name": "BF3_Slot_$PCIE_LABEL",
                 "Type": "I2CDeviceAssociation",
-                "Bus": "$BUS",
-                "Address": "50"
+                "Bus": "14",
+                "Address": "50",
+                "EID": 105
             },
             {
                 "Name": "BF3_Slot_$PCIE_LABEL_Temp",
@@ -204,8 +205,9 @@
             {
                 "Name": "BF3_Slot_$PCIE_LABEL",
                 "Type": "I2CDeviceAssociation",
-                "Bus": "$BUS",
-                "Address": "50"
+                "Bus": "15",
+                "Address": "50",
+                "EID": 106
             },
             {
                 "Name": "BF3_Slot_$PCIE_LABEL_Temp",

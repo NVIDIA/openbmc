@@ -276,7 +276,7 @@ do_shutdown_request()
     set_gpio SHDN_REQ_L-O 0
 
     #
-    # 0.5 second of request assertion
+    # 1 second of request assertion
     #
     sleep 0.5
 
@@ -438,12 +438,3 @@ if [ $bmc_ready != "active" ]; then
 fi
 
 $*
-
-opt=$1
-update_rc_options=("power_on" "power_off" "grace_off" "power_cycle" "reset")
-if [[ " ${update_rc_options[@]} " =~ " ${opt} " ]]; then
-    # Update RestartCause property
-    busctl set-property xyz.openbmc_project.State.Host \
-    /xyz/openbmc_project/state/host0 xyz.openbmc_project.State.Host RestartCause s \
-    xyz.openbmc_project.State.Host.RestartCause.RemoteCommand
-fi

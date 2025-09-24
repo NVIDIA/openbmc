@@ -40,21 +40,10 @@
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:0:0:MCTP_EID:18",
         "AssemblyType": "Board",
-        "Area": {
-          "Type": "NSM_Area",
-          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
-        },
-        "Asset": {
-          "Type": "NSM_Asset",
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
           "Name": "GPU_0 Board Assembly",
-          "Vendor": "NVIDIA"
-        },
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
-        },
-        "Location": {
-          "Type": "NSM_Location",
+          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU",
           "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
         }
       },
@@ -64,21 +53,10 @@
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:0:0:MCTP_EID:18",
         "AssemblyType": "Device",
-        "Area": {
-          "Type": "NSM_Area",
-          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
-        },
-        "Asset": {
-          "Type": "NSM_Asset",
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
           "Name": "GPU_0 Device Assembly",
-          "Vendor": "NVIDIA"
-        },
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
-        },
-        "Location": {
-          "Type": "NSM_Location",
+          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU",
           "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
         }
       },
@@ -88,10 +66,9 @@
         "Type": "NSM_ChassisPCIeDevice",
         "UUID": "STATIC:0:0:MCTP_EID:18",
         "DEVICE_UUID": "$DEVICE_UUID",
-        "Asset": {
-          "Type": "NSM_Asset",
-          "Name": "HGX_GPU_0",
-          "Manufacturer": "NVIDIA"
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
+          "Name": "HGX_GPU_0"
         },
         "Associations": [
           {
@@ -100,16 +77,8 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_0"
           }
         ],
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
-        },
         "PCIeDevice": {
-          "Type": "NSM_PCIeDevice",
-          "DeviceType": "SingleFunction",
-          "Functions": [
-            0
-          ]
+          "Type": "NSM_PCIeDevice"
         },
         "ClockOutputEnableState": {
           "Type": "NSM_ClockOutputEnableState",
@@ -604,19 +573,9 @@
         "ErrorCorrection": "xyz.openbmc_project.Inventory.Item.Dimm.Ecc.SingleBitECC",
         "DeviceType": "xyz.openbmc_project.Inventory.Item.Dimm.DeviceType.HBM",
         "UUID": "STATIC:0:0:MCTP_EID:18",
-        "Priority": false,
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/dimm/GPU_0",
-        "RowRemapping": {
-          "Type": "NSM_RowRemapping",
-          "Priority": false
-        },
-        "ECCMode": {
-          "Type": "NSM_ECC",
-          "Priority": false
-        },
-        "MemCapacityUtil": {
-          "Type": "NSM_MemCapacityUtil",
-          "Priority": false
+        "MemoryAttributes": {
+          "Type": "NSM_Memory_Attributes"
         }
       },
       {
@@ -815,21 +774,10 @@
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:0:1:MCTP_EID:19",
         "AssemblyType": "Board",
-        "Area": {
-          "Type": "NSM_Area",
-          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
-        },
-        "Asset": {
-          "Type": "NSM_Asset",
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
           "Name": "GPU_1 Board Assembly",
-          "Vendor": "NVIDIA"
-        },
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
-        },
-        "Location": {
-          "Type": "NSM_Location",
+          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU",
           "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
         }
       },
@@ -839,21 +787,10 @@
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:0:1:MCTP_EID:19",
         "AssemblyType": "Device",
-        "Area": {
-          "Type": "NSM_Area",
-          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
-        },
-        "Asset": {
-          "Type": "NSM_Asset",
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
           "Name": "GPU_1 Device Assembly",
-          "Vendor": "NVIDIA"
-        },
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
-        },
-        "Location": {
-          "Type": "NSM_Location",
+          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU",
           "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
         }
       },
@@ -863,10 +800,9 @@
         "Type": "NSM_ChassisPCIeDevice",
         "UUID": "STATIC:0:1:MCTP_EID:19",
         "DEVICE_UUID": "$DEVICE_UUID",
-        "Asset": {
-          "Type": "NSM_Asset",
-          "Name": "HGX_GPU_1",
-          "Manufacturer": "NVIDIA"
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
+          "Name": "HGX_GPU_1"
         },
         "Associations": [
           {
@@ -875,16 +811,8 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_1"
           }
         ],
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
-        },
         "PCIeDevice": {
-          "Type": "NSM_PCIeDevice",
-          "DeviceType": "SingleFunction",
-          "Functions": [
-            0
-          ]
+          "Type": "NSM_PCIeDevice"
         },
         "ClockOutputEnableState": {
           "Type": "NSM_ClockOutputEnableState",
@@ -1379,19 +1307,9 @@
         "ErrorCorrection": "xyz.openbmc_project.Inventory.Item.Dimm.Ecc.SingleBitECC",
         "DeviceType": "xyz.openbmc_project.Inventory.Item.Dimm.DeviceType.HBM",
         "UUID": "STATIC:0:1:MCTP_EID:19",
-        "Priority": false,
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/dimm/GPU_1",
-        "RowRemapping": {
-          "Type": "NSM_RowRemapping",
-          "Priority": false
-        },
-        "ECCMode": {
-          "Type": "NSM_ECC",
-          "Priority": false
-        },
-        "MemCapacityUtil": {
-          "Type": "NSM_MemCapacityUtil",
-          "Priority": false
+        "MemoryAttributes": {
+          "Type": "NSM_Memory_Attributes"
         }
       },
       {
@@ -1590,21 +1508,10 @@
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:0:2:MCTP_EID:26",
         "AssemblyType": "Board",
-        "Area": {
-          "Type": "NSM_Area",
-          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
-        },
-        "Asset": {
-          "Type": "NSM_Asset",
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
           "Name": "GPU_2 Board Assembly",
-          "Vendor": "NVIDIA"
-        },
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
-        },
-        "Location": {
-          "Type": "NSM_Location",
+          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU",
           "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
         }
       },
@@ -1614,21 +1521,10 @@
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:0:2:MCTP_EID:26",
         "AssemblyType": "Device",
-        "Area": {
-          "Type": "NSM_Area",
-          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
-        },
-        "Asset": {
-          "Type": "NSM_Asset",
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
           "Name": "GPU_2 Device Assembly",
-          "Vendor": "NVIDIA"
-        },
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
-        },
-        "Location": {
-          "Type": "NSM_Location",
+          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU",
           "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
         }
       },
@@ -1638,10 +1534,9 @@
         "Type": "NSM_ChassisPCIeDevice",
         "UUID": "STATIC:0:2:MCTP_EID:26",
         "DEVICE_UUID": "$DEVICE_UUID",
-        "Asset": {
-          "Type": "NSM_Asset",
-          "Name": "HGX_GPU_2",
-          "Manufacturer": "NVIDIA"
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
+          "Name": "HGX_GPU_2"
         },
         "Associations": [
           {
@@ -1650,16 +1545,8 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_2"
           }
         ],
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
-        },
         "PCIeDevice": {
-          "Type": "NSM_PCIeDevice",
-          "DeviceType": "SingleFunction",
-          "Functions": [
-            0
-          ]
+          "Type": "NSM_PCIeDevice"
         },
         "ClockOutputEnableState": {
           "Type": "NSM_ClockOutputEnableState",
@@ -2154,19 +2041,9 @@
         "ErrorCorrection": "xyz.openbmc_project.Inventory.Item.Dimm.Ecc.SingleBitECC",
         "DeviceType": "xyz.openbmc_project.Inventory.Item.Dimm.DeviceType.HBM",
         "UUID": "STATIC:0:2:MCTP_EID:26",
-        "Priority": false,
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/dimm/GPU_2",
-        "RowRemapping": {
-          "Type": "NSM_RowRemapping",
-          "Priority": false
-        },
-        "ECCMode": {
-          "Type": "NSM_ECC",
-          "Priority": false
-        },
-        "MemCapacityUtil": {
-          "Type": "NSM_MemCapacityUtil",
-          "Priority": false
+        "MemoryAttributes": {
+          "Type": "NSM_Memory_Attributes"
         }
       },
       {
@@ -2365,21 +2242,10 @@
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:0:3:MCTP_EID:27",
         "AssemblyType": "Board",
-        "Area": {
-          "Type": "NSM_Area",
-          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
-        },
-        "Asset": {
-          "Type": "NSM_Asset",
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
           "Name": "GPU_3 Board Assembly",
-          "Vendor": "NVIDIA"
-        },
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
-        },
-        "Location": {
-          "Type": "NSM_Location",
+          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU",
           "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
         }
       },
@@ -2389,21 +2255,10 @@
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:0:3:MCTP_EID:27",
         "AssemblyType": "Device",
-        "Area": {
-          "Type": "NSM_Area",
-          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU"
-        },
-        "Asset": {
-          "Type": "NSM_Asset",
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
           "Name": "GPU_3 Device Assembly",
-          "Vendor": "NVIDIA"
-        },
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
-        },
-        "Location": {
-          "Type": "NSM_Location",
+          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPU",
           "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
         }
       },
@@ -2413,10 +2268,9 @@
         "Type": "NSM_ChassisPCIeDevice",
         "UUID": "STATIC:0:3:MCTP_EID:27",
         "DEVICE_UUID": "$DEVICE_UUID",
-        "Asset": {
-          "Type": "NSM_Asset",
-          "Name": "HGX_GPU_3",
-          "Manufacturer": "NVIDIA"
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
+          "Name": "HGX_GPU_3"
         },
         "Associations": [
           {
@@ -2425,16 +2279,8 @@
             "AbsolutePath": "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_3"
           }
         ],
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
-        },
         "PCIeDevice": {
-          "Type": "NSM_PCIeDevice",
-          "DeviceType": "SingleFunction",
-          "Functions": [
-            0
-          ]
+          "Type": "NSM_PCIeDevice"
         },
         "ClockOutputEnableState": {
           "Type": "NSM_ClockOutputEnableState",
@@ -2929,19 +2775,9 @@
         "ErrorCorrection": "xyz.openbmc_project.Inventory.Item.Dimm.Ecc.SingleBitECC",
         "DeviceType": "xyz.openbmc_project.Inventory.Item.Dimm.DeviceType.HBM",
         "UUID": "STATIC:0:3:MCTP_EID:27",
-        "Priority": false,
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/dimm/GPU_3",
-        "RowRemapping": {
-          "Type": "NSM_RowRemapping",
-          "Priority": false
-        },
-        "ECCMode": {
-          "Type": "NSM_ECC",
-          "Priority": false
-        },
-        "MemCapacityUtil": {
-          "Type": "NSM_MemCapacityUtil",
-          "Priority": false
+        "MemoryAttributes": {
+          "Type": "NSM_Memory_Attributes"
         }
       },
       {

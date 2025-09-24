@@ -13,7 +13,7 @@ UPDATE_CONDITIONAL = "${@bb.utils.contains('DISTRO_FEATURES', 'password-policy-u
 UPDATE_UNIVERSAL = "${@bb.utils.contains('DISTRO_FEATURES', 'password-policy-update-universal', '1', '0', d)}"
 
 do_install:append() {
-  if [ -e "${WORKDIR}/pwquality.conf" ]; then
+  if [ -e "${UNPACKDIR}/pwquality.conf" ]; then
     install -d ${TOPDIR}/password-policy
     install -m 0644 ${UNPACKDIR}/pwquality.conf ${TOPDIR}/password-policy/pwquality.conf
   fi

@@ -48,5 +48,5 @@ do_install:append() {
 }
 
 do_install:append:gb200nvl-bmc-ut3() {
-    install -m 0644 ${WORKDIR}/91-bmc-ut3-usbnet.rules ${D}${sysconfdir}/udev/rules.d
+    install -m 0644 ${UNPACKDIR}/91-bmc-ut3-usbnet.rules ${D}${sysconfdir}/udev/rules.d
 }

@@ -25,24 +25,17 @@
         "Name": "Assembly",
         "Type": "NSM_ChassisAssembly",
         "UUID": "STATIC:3:0",
-        "Area": {
-          "Type": "NSM_Area",
-          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPUSubsystem"
-        },
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
-        },
-        "Location": {
-          "Type": "NSM_Location",
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
+          "PhysicalContext": "xyz.openbmc_project.Inventory.Decorator.Area.PhysicalContextType.GPUSubsystem",
           "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
         }
       },
       {
-	      "Name": "HGX_Module_0_SPI",
-	      "Type": "NSM_SPI",
-	      "UUID": "STATIC:3:0",
-	      "InventoryObjPath": "/xyz/openbmc_project/inventory/system/"
+        "Name": "HGX_Module_0_SPI",
+        "Type": "NSM_SPI",
+        "UUID": "STATIC:3:0",
+        "InventoryObjPath": "/xyz/openbmc_project/inventory/system/"
       },
       {
         "ChassisName": "HGX_Chassis_0",

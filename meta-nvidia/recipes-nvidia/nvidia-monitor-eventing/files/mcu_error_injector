@@ -29,16 +29,11 @@ show_help() {
     help "  -h, --help     Show this help message" >&2
     help >&2
     help "Examples:" >&2
-    help "  $appname GPU_SMA_DISCONNECTON_USB SXM_SMA_0" >&2
-    help "  $appname --debug GPU_SMA_DISCONNECTON_USB SXM_SMA_0" >&2
+    help "  $appname GPU_SMA_DISCONNECT_ON_USB SXM_SMA_0" >&2
+    help "  $appname --debug GPU_SMA_DISCONNECT_ON_USB SXM_SMA_0" >&2
     help "  $appname CX_SMA_NOT_PROVISIONED ConnectX_SMA_1 -D" >&2
     exit 250
 }
-
-# MCU Vendor and Product IDs
-declare -A mcu_info_list=(
-    [hgxb300]="1fc9:0158"
-)
 
 USB_UTIL="/usr/bin/udevadm"
 USB_ACTION="trigger --action"
@@ -68,36 +63,15 @@ list_devices()
     cat $mcu_profile | grep _usb_tree | cut -d'=' -f1 | sed 's/_usb_tree//g'
 }
 
-get_platform_info()
+
+get_mcu_vid_pid() # (mcu_vid_pid_name)
 {
-    local platform_info=$(cat /etc/os-release | grep "OPENBMC_TARGET_MACHINE" | cut -d'=' -f2)
-    # Remove quotes from the platform info
-    platform_info=${platform_info//\"/}
-    platform_info=${platform_info//\'/}
+    local mcu_vid_pid=$(grep "^${mcu_vid_pid_name}=" "$mcu_profile" | cut -d'=' -f2 | tr -d '"'"'")
+    [ -z "$mcu_vid_pid" ] && { err "mcu vid:pid not found in profile"; return 1; }
 
-    echo "$platform_info"
-    return 0
-}
-
-get_mcu_vid_pid()
-{
-    local platform_info=$(get_platform_info)
-    [ -z "$platform_info" ] && { err "Failed to get platform info"; return 1; }
-
-    local mcu_info="${mcu_info_list[$platform_info]}"
-    [ -z "$mcu_info" ] && { err "Platform $platform_info not found"; return 1; }
-
-    # Extract VID and PID from the format "1fc9:0158"
-    local mcu_vid=$(echo "$mcu_info" | cut -d':' -f1)
-    local mcu_pid=$(echo "$mcu_info" | cut -d':' -f2)
-
-    # Validate that both VID and PID were extracted
-    [ -z "$mcu_vid" ] && { err "Failed to get Vendor ID"; return 1; }
-    [ -z "$mcu_pid" ] && { err "Failed to get Product ID"; return 1; }
-
-    # Return VID and PID in parseable format
-    echo "$mcu_vid,$mcu_pid"
-    return 0
+    # Extract and validate VID:PID format
+    [[ "$mcu_vid_pid" =~ ^([^:]+):([^:]+)$ ]] || { err "Invalid mcu vid:pid format: $mcu_vid_pid"; return 1; }
+    echo "${BASH_REMATCH[1]},${BASH_REMATCH[2]}"
 }
 
 device_to_devpath() # (device)
@@ -121,10 +95,6 @@ device_to_devpath() # (device)
 get_einj_cmd() {
     local err_id=$1 dev_id=$2
 
-    # Get MCU VID and PID
-    local vid_pid=$(get_mcu_vid_pid) || return 1
-    IFS=',' read -r vid pid <<< "$vid_pid"
-
     # Get device path
     local devpath=$(device_to_devpath "$dev_id") || return 1
     local usb_devpath="/sys/bus/usb/devices/${devpath}"
@@ -135,6 +105,10 @@ get_einj_cmd() {
             cmd="${einj_cmds[USB_REMOVE]} $usb_devpath"
             ;;
         *SMA_NOT_PROVISIONED*)
+            # Get MCU VID/PID for NOT PROVISIONED error
+            local mcu_vid_pid_name="mcu_not_provisioned_vid_pid"
+            local vid_pid=$(get_mcu_vid_pid "$mcu_vid_pid_name") || return 1
+            IFS=',' read -r vid pid <<< "$vid_pid"
             cmd="${einj_cmds[USB_ADD]} $usb_devpath --attr-match=idVendor=$vid --attr-match=idProduct=$pid"
             ;;
         *)
