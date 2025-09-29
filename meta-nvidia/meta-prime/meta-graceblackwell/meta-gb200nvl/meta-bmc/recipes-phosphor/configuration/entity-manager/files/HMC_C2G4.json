@@ -1044,7 +1044,7 @@
       }
     ],
     "Name": "HMC_0",
-    "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?2GPU .*'})",
+    "Probe": "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200( MaxQ)? 1CPU: ?2GPU .*'})",
     "Type": "BMC"
   }
 ]

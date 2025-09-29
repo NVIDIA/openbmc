@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/:"
 SRC_URI = "git://github.com/NVIDIA/mctp;protocol=https;branch=develop \
            "
-SRCREV = "252cea6c6b2107c2f27ea6cf31276eafbd2393e6"
+SRCREV = "3acff9e4c5e5a615951f73d35b79ac1965f0ccd6"
 SRC_URI:append = "file://mctp.rules \
                   file://mctpd.service "
 

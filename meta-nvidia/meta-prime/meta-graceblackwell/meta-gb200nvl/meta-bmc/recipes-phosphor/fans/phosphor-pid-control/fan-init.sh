@@ -90,7 +90,7 @@ echo 6-002f > /sys/bus/i2c/drivers/max31790/bind
 # Tray Detection
 # Wait until Entity Manager has started putting configs on dbus
 Count=0
-until [[ $Count -gt 30 ]]
+until [[ $Count -gt 60 ]]
 do
     if [ `busctl tree xyz.openbmc_project.EntityManager |grep /xyz/openbmc_project/inventory/system/chassis/Chassis_0/Chassis_0_FAN | wc -l` == 0 ]; then
         sleep 1
@@ -118,7 +118,7 @@ i2cset -y -f 6 0x2c 0x0 $controller3
 i2cset -y -f 6 0x2f 0x0 $controller4
 
 # A detected tray will put the fans on dbus. If a tray wasn't detected over all this time, then alert the user and set the fans to 100%
-if [ $Count -gt 30 ]; then
+if [ $Count -gt 60 ]; then
     echo "Tray detection failed. PDB FRU EEPROM missing, unprogrammed, or not recognized. Running all fans at 100%."
     phosphor_log "Tray detection failed. PDB FRU EEPROM missing, unprogrammed, or not recognized. Running all fans at 100%." $sevErr
     fan-manual-speed.sh 100
