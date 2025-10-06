@@ -27,28 +27,13 @@
           "Type": "NSM_Chassis",
           "DEVICE_UUID": "$DEVICE_UUID"
         },
-        "Asset": {
-          "Type": "NSM_Asset",
-          "Manufacturer": "NVIDIA",
-          "SKU": "8675302"
-        },
-        "Location": {
-          "Type": "NSM_Location",
-          "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
-        },
-        "ChassisType": {
-          "Type": "NSM_ChassisType",
-          "ChassisType": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
-        },
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
-        },
-        "ResetMetrics": {
-          "Type": "NSM_ResetMetrics"
-        },
-        "ErrorInjectionPayload": {
-          "Type": "NSM_ChassisErrorInjectionPayload"
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
+          "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded",
+          "AssetInformationAvailable": true,
+          "ChassisType": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component",
+          "ResetMetricsSupported": true,
+          "ErrorInjectionSupported": true
         }
       },
       {

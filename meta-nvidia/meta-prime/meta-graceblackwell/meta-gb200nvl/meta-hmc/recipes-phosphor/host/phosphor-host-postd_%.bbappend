@@ -1,5 +1,5 @@
 SRC_URI = "git://github.com/NVIDIA/phosphor-host-postd;protocol=https;branch=develop"
-SRCREV = "dc8e0c93e317df24366c993e258f521ee6a755ab"
+SRCREV = "d5d212e52e32a38c8a93648d921da3b019101c14"
 
 DEPENDS += "phosphor-logging"
 DEPENDS += "libusb1"

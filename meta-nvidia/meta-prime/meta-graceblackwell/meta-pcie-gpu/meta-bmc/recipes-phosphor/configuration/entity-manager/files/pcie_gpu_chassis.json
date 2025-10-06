@@ -10,36 +10,15 @@
           "Type": "NSM_Chassis",
           "DEVICE_UUID": "$DEVICE_UUID"
         },
-        "Asset": {
-          "Type": "NSM_Asset",
-          "Manufacturer": "NVIDIA"
-        },
-        "Dimension": {
-          "Type": "NSM_Dimension"
-        },
-        "Location": {
-          "Type": "NSM_Location",
-          "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
-        },
-        "LocationCode": {
-          "Type": "NSM_LocationCode",
-          "LocationCode": "GPU$INSTANCE_NUMBER"
-        },
-        "ChassisType": {
-          "Type": "NSM_ChassisType",
-          "ChassisType": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
-        },
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
-        },
-        "PowerLimit": {
-          "Type": "NSM_PowerLimit",
-          "Priority": false
-        },
-        "PrettyName": {
-          "Type": "NSM_PrettyName",
-          "Name": "GPU_$INSTANCE_NUMBER"
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
+          "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded",
+          "AssetInformationAvailable": true,
+          "DimensionSupported": true,
+          "LocationCode": "GPU$INSTANCE_NUMBER",
+          "ChassisType": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component",
+          "PowerLimitSupported": true,
+          "PrettyNameForChassis": "GPU_$INSTANCE_NUMBER"
         }
       },
       {
@@ -437,44 +416,26 @@
         "UUID": "$UUID",
         "DEVICE_UUID": "$DEVICE_UUID",
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/processors/GPU_$INSTANCE_NUMBER",
-        "Asset": {
-          "Type": "NSM_Asset",
-          "Manufacturer": "NVIDIA"
-        },
-        "Location": {
-          "Type": "NSM_Location",
-          "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
-        },
-        "LocationCode": {
-          "Type": "NSM_LocationCode",
-          "LocationCode": "GPU$INSTANCE_NUMBER"
-        },
-        "MIGMode": {
-          "Type": "NSM_MIG",
-          "Priority": false
-        },
-        "ECCMode": {
-          "Type": "NSM_ECC",
-          "Priority": false
-        },
-        "EDPpScalingFactor": {
-          "Type": "NSM_EDPp",
-          "Priority": false
+        "ProcessorAttributes": {
+          "Type": "NSM_Processor_Attributes",
+          "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded",
+          "LocationCode": "GPU$INSTANCE_NUMBER",
+          "MIGModeSupported": true,
+          "ECCModeSupported": true,
+          "EDPpScalingFactorSupported": true,
+          "PowerSmoothingSupported": true,
+          "CpuOperatingConfigSupported": true,
+          "MemCapacityUtilSupported": true,
+          "TotalNvLinksCountSupported": true
         },
         "PowerCap": {
           "Type": "NSM_PowerCap",
-          "Priority": false,
           "CompositeNumericSensors": [
             "/xyz/openbmc_project/inventory/system/chassis/power/control/TotalGPU_Power_0"
           ]
         },
-        "PowerSmoothing": {
-          "Type": "NSM_PowerSmoothing",
-          "Priority": false
-        },
         "WorkloadPowerProfile": {
           "Type": "NSM_WorkloadPowerProfile",
-          "Priority": false,
           "ProfileIdMap": [
             "UNKNOWN",
             "UNKNOWN",
@@ -498,26 +459,15 @@
         },
         "PCIe": {
           "Type": "NSM_PCIe",
-          "Priority": false,
           "DeviceId": 0,
           "Count": 1
         },
-        "CpuOperatingConfig": {
-          "Type": "NSM_CpuOperatingConfig",
-          "Priority": false
-        },
         "ProcessorPerformance": {
           "Type": "NSM_ProcessorPerformance",
-          "Priority": false,
           "DeviceId": 0
-        },
-        "MemCapacityUtil": {
-          "Type": "NSM_MemCapacityUtil",
-          "Priority": false
         },
         "InbandReconfigPermissions": {
           "Type": "NSM_InbandReconfigPermissions",
-          "Priority": false,
           "Features": [
             "InSystemTest",
             "FusingMode",
@@ -542,10 +492,6 @@
             "PowerSmoothingPrivilegeLevel1",
             "PowerSmoothingPrivilegeLevel2"
           ]
-        },
-        "TotalNvLinksCount": {
-          "Type": "NSM_TotalNvLinksCount",
-          "Priority": false
         }
       },
       {

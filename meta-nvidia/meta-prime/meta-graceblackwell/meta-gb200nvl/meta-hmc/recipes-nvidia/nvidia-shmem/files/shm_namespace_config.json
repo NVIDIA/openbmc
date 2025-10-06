@@ -3,17 +3,23 @@
         {
             "Namespace": "PlatformEnvironmentMetrics",
             "ObjectpathKeywords": "sensors/temperature",
-            "PropertyList": ["Value"]
+            "PropertyList": [
+                "Value"
+            ]
         },
         {
             "Namespace": "PlatformEnvironmentMetrics",
             "ObjectpathKeywords": "sensors/power",
-            "PropertyList": ["Value"]
+            "PropertyList": [
+                "Value"
+            ]
         },
         {
             "Namespace": "PlatformEnvironmentMetrics",
             "ObjectpathKeywords": "sensors/energy",
-            "PropertyList": ["Value"]
+            "PropertyList": [
+                "Value"
+            ]
         },
         {
             "Namespace": "NVSwitchMetrics",
@@ -61,7 +67,7 @@
                 "ceCount",
                 "ueCount",
                 "RowRemappingFailureState",
-		"RowRemappingPendingState",
+                "RowRemappingPendingState",
                 "ceRowRemappingCount",
                 "ueRowRemappingCount",
                 "CapacityUtilizationPercent",
@@ -79,7 +85,7 @@
                 "ceCount",
                 "ueCount",
                 "OperatingSpeed",
-		"isThresholdExceeded",
+                "isThresholdExceeded",
                 "Utilization",
                 "State",
                 "L0ToRecoveryCount",
@@ -102,16 +108,16 @@
                 "ThermalLimitThrottleDuration",
                 "ThrottleReason",
                 "SMUtilization",
-		"PowerSmoothingEnabled",
+                "PowerSmoothingEnabled",
                 "ImmediateRampDownEnabled",
                 "LifeTimeRemaining",
                 "TMPFloorPercent",
                 "RampDownHysteresis",
                 "RampDownRate",
                 "RampUpRate",
-		"AllowFLRPersistentConfig",
-		"AllowOneShotConfig",
-		"AllowPersistentConfig"
+                "AllowFLRPersistentConfig",
+                "AllowOneShotConfig",
+                "AllowPersistentConfig"
             ]
         },
         {
@@ -177,7 +183,6 @@
                 "VL15DroppedPkts",
                 "VL15TXPkts",
                 "VL15TXData",
-                "MTUDiscard",
                 "LinkErrorRecoveryCounter",
                 "LinkDownCount",
                 "BitErrorRate",
@@ -236,7 +241,7 @@
                 "Status",
                 "MemorySpareChannelPresence",
                 "LinkState",
-		"LinkStatus"
+                "LinkStatus"
             ]
         },
         {
@@ -254,7 +259,7 @@
                 "HealthRollup"
             ]
         },
-	{
+        {
             "Namespace": "HealthMetrics",
             "ObjectpathKeywords": "inventory_software",
             "PropertyList": [

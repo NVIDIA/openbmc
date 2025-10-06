@@ -2,7 +2,7 @@
   {
     "Exposes": [],
     "Name": "Mapping",
-    "Probe": "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB[2-3]00 1CPU: ?2GPU .*'})",
+    "Probe": "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB[2-3]00( MaxQ)? 1CPU: ?2GPU .*'})",
     "Type": "NSM_Configs",
     "xyz.openbmc_project.Configuration.NSMReady": {
       "C1G2_Mapping_Ready": "Enabled"

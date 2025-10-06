@@ -22,6 +22,7 @@
         "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/NVLinkErrors/TrainingError",
         "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/LinkDownReasonCode",
         "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/EffectiveBER",
+        "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/EffectiveError",
         "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/SymbolErrors",
         "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/TotalRawBER",
         "/redfish/v1/Systems/HGX_Baseboard_0/Processors/GPU_{GpuId}/Ports/NVLink_{NvlinkId}/Metrics#/Oem/Nvidia/IntentionalLinkDownCount",

@@ -10,7 +10,7 @@ inherit meson systemd pkgconfig
 S = "${WORKDIR}/git"
 
 SRC_URI = "git://github.com/NVIDIA/nvidia-power-manager;protocol=https;branch=develop"
-SRCREV = "39418a653017b7b3fba0bc4623bc9b57b20a6a44"
+SRCREV = "f6bd68157f6487820618599d67e774eea5750909"
 
 DEPENDS = " \
          phosphor-logging \

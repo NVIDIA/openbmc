@@ -46,10 +46,10 @@ bmc_reset_reason=$(fw_printenv | grep reset_reason | cut -d "=" -f 2 | sed 's/_/
 wdt=$(echo $bmc_reset_reason | awk '{print $1}')
 reset_mode=$(echo $bmc_reset_reason | awk '{print $2}')
 
-if [[ -n "$check_if_kernel_panic_occurred" ]]; then
-    phosphor_log "BMC kernel panic occurred" $sevErr
-elif [[ -n "$check_if_kernel_wdt_timeout_occurred" ]]; then
+if [[ -n "$check_if_kernel_wdt_timeout_occurred" ]]; then
     phosphor_log "BMC kernel watchdog timeout occurred" $sevErr
+elif [[ -n "$check_if_kernel_panic_occurred" ]]; then
+    phosphor_log "BMC kernel panic occurred" $sevErr
 elif [[ -n "$bmc_reset_reason" ]]; then
     if [[ $bmc_reset_reason == "Power On" ]]; then
         phosphor_log "BMC power-on reset" $sevNot

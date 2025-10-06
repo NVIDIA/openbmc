@@ -11,13 +11,10 @@
           "Type": "NSM_Chassis",
           "DEVICE_UUID": "STATIC:3:0:MCTP_EID:12"
         },
-        "ChassisType": {
-          "Type": "NSM_ChassisType",
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
+          "AssetInformationAvailable": false,
           "ChassisType": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Zone"
-        },
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
         }
       },
       {
@@ -54,17 +51,9 @@
           "Type": "NSM_Chassis",
           "DEVICE_UUID": "STATIC:3:0:MCTP_EID:12"
         },
-        "Asset": {
-          "Type": "NSM_FPGA_Asset",
-          "Manufacturer": "NVIDIA"
-        },
-        "ChassisType": {
-          "Type": "NSM_ChassisType",
+        "ChassisAttributes": {
+          "Type": "NSM_FPGA_Attributes",
           "ChassisType": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
-        },
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
         }
       },
       {
@@ -248,8 +237,7 @@
           "InventoryObjPaths": [
             "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_0",
             "/xyz/openbmc_project/inventory/system/accelerator/GPU_0"
-          ],
-          "Priority": false
+          ]
         }
       },
       {
@@ -263,8 +251,7 @@
           "InventoryObjPaths": [
             "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_1",
             "/xyz/openbmc_project/inventory/system/accelerator/GPU_1"
-          ],
-          "Priority": false
+          ]
         }
       },
       {
@@ -313,12 +300,11 @@
           "Type": "NSM_Chassis",
           "DEVICE_UUID": "STATIC:3:0:MCTP_EID:12"
         },
-        "ChassisType": {
-          "Type": "NSM_ChassisType",
-          "ChassisType": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Module"
-        },
-        "WriteProtect": {
-          "Type": "NSM_WriteProtect"
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
+          "ChassisType": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Module",
+          "AssetInformationAvailable": false,
+          "WriteProtectSupported": true
         }
       },
       {
@@ -349,7 +335,7 @@
     "Probe": [
       "FOUND('NSM_DEV_FPGA_0')",
       "AND",
-      "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?2GPU .*'})"
+      "xyz.openbmc_project.FruDevice({'BUS': 1, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200( MaxQ)? 1CPU: ?2GPU .*'})"
     ],
     "Name": "HGX_FPGA_0",
     "Type": "Component",
@@ -389,17 +375,9 @@
           "Type": "NSM_Chassis",
           "DEVICE_UUID": "STATIC:3:1:MCTP_EID:20"
         },
-        "Asset": {
-          "Type": "NSM_FPGA_Asset",
-          "Manufacturer": "NVIDIA"
-        },
-        "ChassisType": {
-          "Type": "NSM_ChassisType",
+        "ChassisAttributes": {
+          "Type": "NSM_FPGA_Attributes",
           "ChassisType": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
-        },
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
         }
       },
       {
@@ -530,8 +508,7 @@
           "InventoryObjPaths": [
             "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_2",
             "/xyz/openbmc_project/inventory/system/accelerator/GPU_2"
-          ],
-          "Priority": false
+          ]
         }
       },
       {
@@ -545,8 +522,7 @@
           "InventoryObjPaths": [
             "/xyz/openbmc_project/inventory/system/chassis/HGX_GPU_3",
             "/xyz/openbmc_project/inventory/system/accelerator/GPU_3"
-          ],
-          "Priority": false
+          ]
         }
       },
       {
@@ -595,12 +571,11 @@
           "Type": "NSM_Chassis",
           "DEVICE_UUID": "STATIC:3:1:MCTP_EID:20"
         },
-        "ChassisType": {
-          "Type": "NSM_ChassisType",
-          "ChassisType": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Module"
-        },
-        "WriteProtect": {
-          "Type": "NSM_WriteProtect"
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
+          "ChassisType": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Module",
+          "AssetInformationAvailable": false,
+          "WriteProtectSupported": true
         }
       },
       {
@@ -631,7 +606,7 @@
     "Probe": [
       "FOUND('NSM_DEV_FPGA_1')",
       "AND",
-      "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200 1CPU: ?2GPU .*'})"
+      "xyz.openbmc_project.FruDevice({'BUS': 2, 'ADDRESS': 80, 'PRODUCT_PRODUCT_NAME': 'GB200( MaxQ)? 1CPU: ?2GPU .*'})"
     ],
     "Name": "HGX_FPGA_1",
     "Type": "Component",

@@ -10,28 +10,14 @@
           "Type": "NSM_Chassis",
           "DEVICE_UUID": "$DEVICE_UUID"
         },
-        "Asset": {
-          "Type": "NSM_Asset",
-          "Manufacturer": "NVIDIA"
-        },
-        "Dimension": {
-          "Type": "NSM_Dimension"
-        },
-        "ChassisType": {
-          "Type": "NSM_ChassisType",
-          "ChassisType": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
-        },
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
-        },
-        "PowerLimit": {
-          "Type": "NSM_PowerLimit",
-          "Priority": false
-        },
-        "PrettyName": {
-          "Type": "NSM_PrettyName",
-          "Name": "GPU_0"
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
+          "AssetInformationAvailable": true,
+          "DimensionSupported": true,
+          "DEVICE_UUID": "$DEVICE_UUID",
+          "ChassisType": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component",
+          "PowerLimitSupported": true,
+          "PrettyNameForChassis": "GPU_0"
         }
       },
       {
@@ -432,46 +418,27 @@
         "UUID": "STATIC:0:0:MCTP_EID:18",
         "DEVICE_UUID": "$DEVICE_UUID",
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_0",
-        "MNNVLTopology": {
-          "Type": "NSM_MNNVLTopology"
-        },
-        "Asset": {
-          "Type": "NSM_Asset",
-          "Manufacturer": "NVIDIA",
-          "PartNumber": "$BOARD_PART_NUMBER",
-          "SerialNumber": "$SERIAL_NUMBER",
-          "Model": "$BOARD_PRODUCT_NAME"
-        },
-        "PortDisableFuture": {
-          "Type": "NSM_PortDisableFuture",
-          "Priority": false
-        },
-        "MIGMode": {
-          "Type": "NSM_MIG",
-          "Priority": false
-        },
-        "ECCMode": {
-          "Type": "NSM_ECC",
-          "Priority": false
-        },
-        "EDPpScalingFactor": {
-          "Type": "NSM_EDPp",
-          "Priority": false
+        "ProcessorAttributes": {
+          "Type": "NSM_Processor_Attributes",
+          "MIGModeSupported": true,
+          "PortDisableFutureSupported": true,
+          "ECCModeSupported": true,
+          "EDPpScalingFactorSupported": true,
+          "PowerSmoothingSupported": true,
+          "CpuOperatingConfigSupported": true,
+          "MemCapacityUtilSupported": true,
+          "TotalNvLinksCountSupported": true,
+          "EGMModeSupported": true,
+          "MNNVLTopologySupported": true
         },
         "PowerCap": {
           "Type": "NSM_PowerCap",
-          "Priority": false,
           "CompositeNumericSensors": [
             "/xyz/openbmc_project/inventory/system/chassis/power/control/TotalGPU_Power_0"
           ]
         },
-        "PowerSmoothing": {
-          "Type": "NSM_PowerSmoothing",
-          "Priority": false
-        },
         "WorkloadPowerProfile": {
           "Type": "NSM_WorkloadPowerProfile",
-          "Priority": false,
           "ProfileIdMap": [
             "UNKNOWN",
             "UNKNOWN",
@@ -493,22 +460,12 @@
             "MIG"
           ]
         },
-        "CpuOperatingConfig": {
-          "Type": "NSM_CpuOperatingConfig",
-          "Priority": false
-        },
         "ProcessorPerformance": {
           "Type": "NSM_ProcessorPerformance",
-          "Priority": false,
           "DeviceId": 0
-        },
-        "MemCapacityUtil": {
-          "Type": "NSM_MemCapacityUtil",
-          "Priority": false
         },
         "ReconfigPermissions": {
           "Type": "NSM_ReconfigPermissions",
-          "Priority": false,
           "Features": [
             "InSystemTest",
             "FusingMode",
@@ -535,14 +492,6 @@
             "EGMMode",
             "InfoROMFileSystemRecreate"
           ]
-        },
-        "TotalNvLinksCount": {
-          "Type": "NSM_TotalNvLinksCount",
-          "Priority": false
-        },
-        "EGMMode": {
-          "Type": "NSM_EGM",
-          "Priority": false
         }
       },
       {
@@ -733,28 +682,13 @@
           "Type": "NSM_Chassis",
           "DEVICE_UUID": "$DEVICE_UUID"
         },
-        "Asset": {
-          "Type": "NSM_Asset",
-          "Manufacturer": "NVIDIA"
-        },
-        "Dimension": {
-          "Type": "NSM_Dimension"
-        },
-        "ChassisType": {
-          "Type": "NSM_ChassisType",
-          "ChassisType": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
-        },
-        "Health": {
-          "Type": "NSM_Health",
-          "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
-        },
-        "PowerLimit": {
-          "Type": "NSM_PowerLimit",
-          "Priority": false
-        },
-        "PrettyName": {
-          "Type": "NSM_PrettyName",
-          "Name": "GPU_1"
+        "ChassisAttributes": {
+          "Type": "NSM_Chassis_Attributes",
+          "AssetInformationAvailable": true,
+          "DimensionSupported": true,
+          "ChassisType": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component",
+          "PowerLimitSupported": true,
+          "PrettyNameForChassis": "GPU_1"
         }
       },
       {
@@ -1155,46 +1089,27 @@
         "UUID": "STATIC:0:1:MCTP_EID:26",
         "DEVICE_UUID": "$DEVICE_UUID",
         "InventoryObjPath": "/xyz/openbmc_project/inventory/system/accelerator/GPU_1",
-        "MNNVLTopology": {
-          "Type": "NSM_MNNVLTopology"
-        },
-        "Asset": {
-          "Type": "NSM_Asset",
-          "Manufacturer": "NVIDIA",
-          "PartNumber": "$BOARD_PART_NUMBER",
-          "SerialNumber": "$SERIAL_NUMBER",
-          "Model": "$BOARD_PRODUCT_NAME"
-        },
-        "PortDisableFuture": {
-          "Type": "NSM_PortDisableFuture",
-          "Priority": false
-        },
-        "MIGMode": {
-          "Type": "NSM_MIG",
-          "Priority": false
-        },
-        "ECCMode": {
-          "Type": "NSM_ECC",
-          "Priority": false
-        },
-        "EDPpScalingFactor": {
-          "Type": "NSM_EDPp",
-          "Priority": false
+        "ProcessorAttributes": {
+          "Type": "NSM_Processor_Attributes",
+          "MIGModeSupported": true,
+          "PortDisableFutureSupported": true,
+          "ECCModeSupported": true,
+          "EDPpScalingFactorSupported": true,
+          "PowerSmoothingSupported": true,
+          "CpuOperatingConfigSupported": true,
+          "MemCapacityUtilSupported": true,
+          "TotalNvLinksCountSupported": true,
+          "EGMModeSupported": true,
+          "MNNVLTopologySupported": true
         },
         "PowerCap": {
           "Type": "NSM_PowerCap",
-          "Priority": false,
           "CompositeNumericSensors": [
             "/xyz/openbmc_project/inventory/system/chassis/power/control/TotalGPU_Power_0"
           ]
         },
-        "PowerSmoothing": {
-          "Type": "NSM_PowerSmoothing",
-          "Priority": false
-        },
         "WorkloadPowerProfile": {
           "Type": "NSM_WorkloadPowerProfile",
-          "Priority": false,
           "ProfileIdMap": [
             "UNKNOWN",
             "UNKNOWN",
@@ -1216,22 +1131,12 @@
             "MIG"
           ]
         },
-        "CpuOperatingConfig": {
-          "Type": "NSM_CpuOperatingConfig",
-          "Priority": false
-        },
         "ProcessorPerformance": {
           "Type": "NSM_ProcessorPerformance",
-          "Priority": false,
           "DeviceId": 0
-        },
-        "MemCapacityUtil": {
-          "Type": "NSM_MemCapacityUtil",
-          "Priority": false
         },
         "ReconfigPermissions": {
           "Type": "NSM_ReconfigPermissions",
-          "Priority": false,
           "Features": [
             "InSystemTest",
             "FusingMode",
@@ -1258,14 +1163,6 @@
             "EGMMode",
             "InfoROMFileSystemRecreate"
           ]
-        },
-        "TotalNvLinksCount": {
-          "Type": "NSM_TotalNvLinksCount",
-          "Priority": false
-        },
-        "EGMMode": {
-          "Type": "NSM_EGM",
-          "Priority": false
         }
       },
       {
