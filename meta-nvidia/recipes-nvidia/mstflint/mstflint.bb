@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 SRC_URI = " \
     git://github.com/Mellanox/mstflint.git;protocol=https;branch=master_devel \
     "
-SRCREV = "b9b1dec1930e4daba3dcdeed54a524204825ff68"
+SRCREV = "95f3ac64a1d5360ffd708bd4fb903d4fb7d125da"
 
 PACKAGES =+ "${PN}-flint"
 

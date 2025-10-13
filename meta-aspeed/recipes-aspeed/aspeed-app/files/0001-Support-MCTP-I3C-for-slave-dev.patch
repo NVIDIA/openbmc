@@ -1,3 +1,5 @@
+Upstream-Status: Pending
+
 diff --git a/mctp-i3c/mctp-i3c.c b/mctp-i3c/mctp-i3c.c
 index ed67d99..61b96fe 100644
 --- a/mctp-i3c/mctp-i3c.c

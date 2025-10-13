@@ -1,0 +1,5 @@
+/xyz/openbmc_project/control/host0/auto_reboot:
+    - Interface: xyz.openbmc_project.Control.Boot.RebootPolicy
+      Properties:
+          AutoReboot:
+              Default: 'false'

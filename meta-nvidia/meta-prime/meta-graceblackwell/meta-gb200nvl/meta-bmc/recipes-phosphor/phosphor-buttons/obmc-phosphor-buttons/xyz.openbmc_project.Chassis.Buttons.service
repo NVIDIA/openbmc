@@ -1,0 +1,16 @@
+[Unit]
+Description=Phosphor Buttons
+Requires=bmc-boot-complete.service
+After=bmc-boot-complete.service
+
+[Service]
+Restart=always
+RestartSec=3
+ExecStartPre=/usr/bin/env /usr/bin/update-button-config.sh
+ExecStart=/usr/bin/buttons
+SyslogIdentifier=buttons
+Type=dbus
+BusName=xyz.openbmc_project.Chassis.Buttons
+
+[Install]
+WantedBy=multi-user.target

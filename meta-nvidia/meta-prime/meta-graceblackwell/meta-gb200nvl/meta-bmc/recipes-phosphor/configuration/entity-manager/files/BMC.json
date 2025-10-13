@@ -10,7 +10,7 @@
             {
                 "Address": "0x48",
                 "Bus": 10,
-                "Name": "BMC_0_DCSCM_Temp_0",
+                "Name": "BMC_0_Temp_0",
                 "Thresholds": [
                     {
                         "Direction": "greater than",
@@ -55,14 +55,14 @@
             "Model": "GB BMC",
             "PartNumber": "$BOARD_PART_NUMBER",
             "SerialNumber": "$BOARD_SERIAL_NUMBER",
-	    "SKU": ""
+            "SKU": ""
         },
         "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
             "Bus": "$bus",
             "Address": "$address",
             "Name": "BMC_FRU"
         },
-	"xyz.openbmc_project.Inventory.Item.ManagementService": {},
+        "xyz.openbmc_project.Inventory.Item.ManagementService": {},
         "xyz.openbmc_project.Inventory.Item.Chassis": {
             "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Module"
         },

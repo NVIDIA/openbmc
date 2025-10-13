@@ -143,8 +143,8 @@
 };
 
 &sgpiom0 {
-	status="okay";
-	ngpios = <128>;
+    status="okay";
+    ngpios = <128>;
 
     gpio-line-names =
 "",
@@ -409,10 +409,10 @@
 &i2c4 {
     // Module 0, Expander @0x21
     exp4: pca9555@21 {
- 		compatible = "nxp,pca9555";
- 		reg = <0x21>;
-		gpio-controller;
-		#gpio-cells = <2>;
+        compatible = "nxp,pca9555";
+        reg = <0x21>;
+        gpio-controller;
+        #gpio-cells = <2>;
 
         #address-cells = <1>;
         #size-cells = <0>;
@@ -438,17 +438,17 @@
             "",
             "",
             "";
- 	};
+    };
 };
 
-// I2C9 GPIO Expanders
+// I2C10 GPIO Expanders
 &i2c9 {
     // Module 0, Expander @0x20
     exp0: pca9555@20 {
- 		compatible = "nxp,pca9555";
- 		reg = <0x20>;
-		gpio-controller;
-		#gpio-cells = <2>;
+        compatible = "nxp,pca9555";
+        reg = <0x20>;
+        gpio-controller;
+        #gpio-cells = <2>;
 
         #address-cells = <1>;
         #size-cells = <0>;
@@ -474,14 +474,14 @@
             "SGPIO_EN_L-O",
             "B2B_IOEXP_INT_L-I",
             "I2C_BUS_MUX_RESET_L-O";
- 	};
+    };
 
     // Module 1, Expander @0x21
     exp1: pca9555@21 {
- 		compatible = "nxp,pca9555";
- 		reg = <0x21>;
-		gpio-controller;
-		#gpio-cells = <2>;
+        compatible = "nxp,pca9555";
+        reg = <0x21>;
+        gpio-controller;
+        #gpio-cells = <2>;
 
         #address-cells = <1>;
         #size-cells = <0>;
@@ -507,14 +507,14 @@
             "",
             "",
             "SEC_I2C_BUS_MUX_RESET_L-O";
- 	};
+    };
 
     // HMC Expander @0x27
     exp2: pca9555@27 {
- 		compatible = "nxp,pca9555";
- 		reg = <0x27>;
-		gpio-controller;
-		#gpio-cells = <2>;
+        compatible = "nxp,pca9555";
+        reg = <0x27>;
+        gpio-controller;
+        #gpio-cells = <2>;
 
         #address-cells = <1>;
         #size-cells = <0>;
@@ -540,13 +540,13 @@
             "",
             "",
             "";
- 	};
+    };
     // HMC Expander @0x74
     exp3: pca9555@74 {
         compatible = "nxp,pca9555";
         reg = <0x74>;
-		gpio-controller;
-		#gpio-cells = <2>;
+        gpio-controller;
+        #gpio-cells = <2>;
 
         #address-cells = <1>;
         #size-cells = <0>;
@@ -557,22 +557,55 @@
         interrupts = <ASPEED_GPIO(B, 6) IRQ_TYPE_LEVEL_LOW>;
 
         gpio-line-names =
-            "IOB_PRSNT_L",
-            "IOB_DP_HPD",
-            "IOX_BMC_RESET",
-            "IOB_IOEXP_INT_L",
-            "IOB_UID_LED_L",
-            "IOB_UID_BTN_L",
-            "IOB_SYS_RST_BTN_L",
-            "IOB_PWR_LED_L",
-            "IOB_PWR_BTN_L",
-            "IOB_PHY_RST",
-            "CPLD_JTAG_MUX_SEL",
+            "IOB_PRSNT_L-I",
+            "",
+            "IOX_BMC_RESET-O",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "CPLD_JTAG_MUX_SEL-O",
             "",
             "",
             "",
             "",
             "";
+    };
+
+    exp5: pca9539@76 {
+        compatible = "nxp,pca9539";
+        reg = <0x76>;
+        gpio-controller;
+        #gpio-cells = <2>;
+
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        interrupt-controller;
+        #interrupt-cells = <2>;
+        interrupt-parent = <&gpio1>;
+        interrupts = <ASPEED_GPIO(B, 6) IRQ_TYPE_LEVEL_LOW>;
+
+        gpio-line-names =
+            "DC_SCM_PRSNT-I",
+            "DC_SCM_DP_HPD-O",
+            "DC_SCM_BMC_RESET-O",
+            "",
+            "DC_SCM_UID_LED_L-O",
+            "DC_SCM_UID_BTN_L-I",
+            "",
+            "DC_SCM_PWR_LED_L-O",
+            "DC_SCM_PWR_BTN_L-I",
+            "DC_SCM_PHY_RST_L-O",
+            "",
+            "STATUS_AMBER_LED_N-O",
+            "P3V3_AUX_IOX_EN-O",
+            "",
+            "I2C4_TMP_ALERT_L-O",
+            "USB_PORT_OC_L-I";
     };
 };
 

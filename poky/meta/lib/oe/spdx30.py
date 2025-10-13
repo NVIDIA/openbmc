@@ -5061,7 +5061,7 @@ class security_VexAffectedVulnAssessmentRelationship(security_VexVulnAssessmentR
             "security_actionStatement",
             StringProp(),
             iri="https://spdx.org/rdf/3.0.1/terms/Security/actionStatement",
-            min_count=1,
+            min_count=0,
             compact="security_actionStatement",
         )
         # Records the time when a recommended action was communicated in a VEX statement

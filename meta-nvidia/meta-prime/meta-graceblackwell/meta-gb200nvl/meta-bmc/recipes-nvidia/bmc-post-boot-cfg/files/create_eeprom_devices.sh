@@ -39,6 +39,12 @@ create_eeprom_devices(){
     echo 24c02 0x54 > /sys/class/i2c-dev/i2c-2/device/new_device
     echo 24c02 0x55 > /sys/class/i2c-dev/i2c-2/device/new_device
 
+    # I2C-3 DC-SCM FRU EEPROM, this only exists on DC-SCM variant
+    i2cdetect -y 3 | grep 57 > /dev/null
+    if [ $? -eq 0 ]; then
+        echo "DC-SCM FRU EEPROM detected"
+        echo 24c128 0x57 > /sys/class/i2c-dev/i2c-3/device/new_device
+    fi
 
     # IC2-4
     # Module 0 Aux EEPROM

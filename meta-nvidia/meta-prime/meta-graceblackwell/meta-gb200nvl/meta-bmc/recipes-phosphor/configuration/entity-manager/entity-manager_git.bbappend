@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:append := "${THISDIR}/files:"
 
-SRC_URI:append = " file://GB200NVL_DCSCM.json \
+SRC_URI:append = " file://BMC.json \
                    file://Processor_Module.json \
                    file://HMC_FRU.json \
                    file://HMC_C2G2.json \
@@ -20,6 +20,7 @@ SRC_URI:append = " file://GB200NVL_DCSCM.json \
                    file://IO_Board_CX7.json \
                    file://IO_Board_CX8.json \
                    file://FIO_Board.json \
+                   file://DCSCM_FIO_Board.json \
                    file://Chassis_1RU.json \
                    file://Chassis_2RU.json \
                    file://gb200nvl_gpio_recovery_configuration.json \
@@ -41,7 +42,7 @@ DEPENDS += "nvidia-tal"
 
 do_install:append() {
      # Other files are already being removed in meta-prime
-     install -m 0444 ${UNPACKDIR}/GB200NVL_DCSCM.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${UNPACKDIR}/BMC.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${UNPACKDIR}/Processor_Module.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${UNPACKDIR}/HMC_FRU.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${UNPACKDIR}/HMC_C2G2.json ${D}/usr/share/entity-manager/configurations
@@ -52,6 +53,7 @@ do_install:append() {
      install -m 0444 ${UNPACKDIR}/IO_Board_CX7.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${UNPACKDIR}/IO_Board_CX8.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${UNPACKDIR}/FIO_Board.json ${D}/usr/share/entity-manager/configurations
+     install -m 0444 ${UNPACKDIR}/DCSCM_FIO_Board.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${UNPACKDIR}/PCIe_Cards.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${UNPACKDIR}/PDB_NVIDIA.json ${D}/usr/share/entity-manager/configurations
      install -m 0444 ${UNPACKDIR}/PDB_Quanta.json ${D}/usr/share/entity-manager/configurations

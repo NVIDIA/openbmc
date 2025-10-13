@@ -4,6 +4,7 @@
 #include "nvidia-gb200nvl-bmc-core.dtsi"
 #include <dt-bindings/leds/common.h>
 #include <dt-bindings/i2c/i2c.h>
+#include <dt-bindings/leds/leds-pca955x.h>
 
 / {
     model = "AST2600 GB200NVL BMC";
@@ -93,6 +94,18 @@
         // * Any non-leds should be added below this line.
         bmc_ready_noled {
             gpios = <&gpio0 ASPEED_GPIO(Z, 0) (GPIO_ACTIVE_HIGH|GPIO_TRANSITORY)>;
+        };
+    };
+
+    // DC-SCM LEDs that must be declared separately or it will prevent any other LEDs in
+    // the same group from loading if the GPIO pins are not present.
+    dc_scm_leds {
+        compatible = "gpio-leds";
+        dc_scm_uid_led {
+                gpios = <&exp5 4 GPIO_ACTIVE_LOW>;
+        };
+        dc_scm_power_led {
+                gpios = <&exp5 7 GPIO_ACTIVE_LOW>;
         };
     };
 
@@ -309,8 +322,43 @@
 };
 
 // I2C4
+// BMC DC-SCM Variant. Carrier board FRU EERPOM, FIO board, and temp sensor
 &i2c3 {
-    status = "disabled";
+    status = "okay";
+    clock-frequency = <400000>;
+    multi-master;
+    i2c-scl-clk-low-timeout-us = <32000>;
+    i2c-tck-thddat-config = <0x0099EC00>;
+
+    pca9553@62 {
+        compatible = "nxp,pca9553";
+        reg = <0x62>;
+        gpio-controller;
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        led@0 {
+            label = "dcscm_fio:NVLINK_AMBER_N";
+            reg = <0>;
+            type = <PCA955X_TYPE_LED>;
+        };
+        led@1 {
+            label = "dcscm_fio:NVLINK_GREEN_N";
+            reg = <1>;
+            type = <PCA955X_TYPE_LED>;
+        };
+        led@2 {
+            label = "dcscm_fio:unused_2";
+            reg = <2>;
+            type = <PCA955X_TYPE_NONE>;
+        };
+        led@3 {
+            label = "dcscm_fio:unused_3";
+            reg = <3>;
+            type = <PCA955X_TYPE_NONE>;
+        };
+    };
+
 };
 
 // I2C5

@@ -7,7 +7,8 @@ After=xyz.openbmc_project.State.Boot.PostCode@0.service
 
 [Service]
 Restart=always
-ExecStart=/usr/bin/env power-led-controller --config /usr/share/phosphor-led-manager/power-led-config.json
+ExecStartPre=/usr/bin/env /usr/bin/update-power-led-config.sh
+ExecStart=/usr/bin/env power-led-controller --config /etc/phosphor-led-manager/power-led-config.json
 
 [Install]
 WantedBy=multi-user.target

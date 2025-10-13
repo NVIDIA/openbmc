@@ -8,8 +8,8 @@ fi
 
 gpio_value=`get_run_power_pg`
 if [ "$gpio_value" -eq 1 ]; then
-    echo "Setting CPLD_JTAG_MUX_SEL = 1"
-    gpioset `gpiofind CPLD_JTAG_MUX_SEL`=1
+    echo "Setting CPLD_JTAG_MUX_SEL-O = 1"
+    gpioset `gpiofind CPLD_JTAG_MUX_SEL-O`=1
     sleep 1
     exit 0
 else

@@ -841,9 +841,9 @@
                 "ILimitMax": 100.0,
                 "ILimitMin": 30.0,
                 "Inputs": [
-                    "BF3_Slot_1_NIC_Temp_0"
+                    "BF3_Slot_1_Temp"
                 ],
-                "Name": "PID_BF3_Slot_1_NIC_0",
+                "Name": "PID_BF3_Slot_1",
                 "NegativeHysteresis": 0.0,
                 "OutLimitMax": 100.0,
                 "OutLimitMin": 30.0,
@@ -1018,7 +1018,7 @@
                 "ILimitMax": 100.0,
                 "ILimitMin": 30.0,
                 "Inputs": [
-                    "BMC_0_DCSCM_Temp_0"
+                    "BMC_0_Temp_0"
                 ],
                 "Name": "PID_BMC_TEMP",
                 "NegativeHysteresis": 0.0,
@@ -1424,9 +1424,9 @@
                 "ILimitMax": 100.0,
                 "ILimitMin": 30.0,
                 "Inputs": [
-                    "BF3_Slot_2_NIC_Temp_0"
+                    "BF3_Slot_2_Temp"
                 ],
-                "Name": "PID_BF3_Slot_2_NIC_0",
+                "Name": "PID_BF3_Slot_2",
                 "NegativeHysteresis": 0.0,
                 "OutLimitMax": 100.0,
                 "OutLimitMin": 30.0,

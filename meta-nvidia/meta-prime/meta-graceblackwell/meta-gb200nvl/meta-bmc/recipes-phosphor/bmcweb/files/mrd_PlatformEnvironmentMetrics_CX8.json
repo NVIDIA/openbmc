@@ -1,7 +1,7 @@
 {
     "Namespace": "PlatformEnvironmentMetrics",
     "MetricProperties": [
-        "/redfish/v1/Chassis/BMC_0/Sensors/BMC_0_DCSCM_Temp_0",
+        "/redfish/v1/Chassis/BMC_0/Sensors/BMC_0_Temp_0",
         "/redfish/v1/Chassis/Chassis_0/Sensors/{BSWild}",
         "/redfish/v1/Chassis/IO_Board_{IWild}/Sensors/IO_Board_{IWild}_CX8_0_Temp",
         "/redfish/v1/Chassis/IO_Board_{IWild}/Sensors/IO_Board_{IWild}_CX8_1_Temp",

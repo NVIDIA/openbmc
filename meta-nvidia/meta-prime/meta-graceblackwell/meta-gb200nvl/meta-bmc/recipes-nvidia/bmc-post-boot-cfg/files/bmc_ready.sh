@@ -522,6 +522,17 @@ bind_gpio_expanders()
         fi
     fi
 
+    # DC-SCM GPIO Expander that may or may not be present.
+    # I2C bus 9 0x76
+    if [[ ! -z "$(i2cdetect -y 9 | grep "76")" ]]; then
+        echo "Detected unbound DC-SCM GPIO Expander on I2C bus 9, manually binding PCA driver"
+        echo "9-0076" > /sys/bus/i2c/drivers/pca953x/bind
+        rc=$?
+        if [[ $rc -ne 0 ]]; then
+            echo "[ERROR] Failed to bind IO Expander 9-0076 to pca953x driver"
+        fi
+    fi
+
     return 0
 }
 
