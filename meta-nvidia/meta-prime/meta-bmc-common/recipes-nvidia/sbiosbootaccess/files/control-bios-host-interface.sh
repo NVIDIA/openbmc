@@ -10,11 +10,13 @@ if [ "$argument" = "boot-done" ]; then
     echo "BIOS Host Interface setting from bios attribute" $value
     if [ "$value" = "Disabled" ]; then
         echo "Disabling BIOS Host interface nic" $host_interface_nic
-        ifconfig $host_interface_nic down
+        ip link set "$host_interface_nic" down
     fi
+    busctl set-property xyz.openbmc_project.State.Host0 /xyz/openbmc_project/state/host0 xyz.openbmc_project.State.OperatingSystem.Status OperatingSystemState s xyz.openbmc_project.State.OperatingSystem.Status.OSStatus.Standby
 elif [ "$argument" = "boot-undone" ]; then
     echo "Enabling BIOS Host Interface" $host_interface_nic
-    ifconfig $host_interface_nic up
+    ip link set "$host_interface_nic" up
+    busctl set-property xyz.openbmc_project.State.Host0 /xyz/openbmc_project/state/host0 xyz.openbmc_project.State.OperatingSystem.Status OperatingSystemState s xyz.openbmc_project.State.OperatingSystem.Status.OSStatus.Inactive
 else
     echo "Invalid argument passed to host interface control script"
 fi

@@ -277,7 +277,7 @@
             }
         ],
         "Name": "PDB_0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-(24975-(0[034]00|2000|3[01]00)|24974-0000|24059-(1000|3[01]00|3101|31[14]0|4100|4101)|24132-0000).*'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-(24975-(0000|0300|0400|2000|3000|3100)|24974-0000|24059-(1000|1010|3000|3100|3101|3110|3120|3140|3150|3160|4100|4101)|24132-0000).*'})",
         "Type": "Board",
         "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Chassis_0/Chassis_0",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
@@ -319,7 +319,7 @@
     },
     {
         "Name": "PDB_0 Chassis FRU Assembly0",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-(24975-(0[034]00|2000|3[01]00)|24974-0000|24059-(1000|3[01]00|3101|31[14]0|4100|4101)|24132-0000).*'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-(24975-(0000|0300|0400|2000|3000|3100)|24974-0000|24059-(1000|1010|3000|3100|3101|3110|3120|3140|3150|3160|4100|4101)|24132-0000).*'})",
         "Type": "Assembly",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "PartNumber": "$CHASSIS_PART_NUMBER",
@@ -334,7 +334,7 @@
     },
     {
         "Name": "PDB_0 Board FRU Assembly1",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-(24975-(0[034]00|2000|3[01]00)|24974-0000|24059-(1000|3[01]00|3101|31[14]0|4100|4101)|24132-0000).*'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-(24975-(0000|0300|0400|2000|3000|3100)|24974-0000|24059-(1000|1010|3000|3100|3101|3110|3120|3140|3150|3160|4100|4101)|24132-0000).*'})",
         "Type": "Assembly",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Model": "$BOARD_PRODUCT_NAME",
@@ -352,7 +352,7 @@
     },
     {
         "Name": "PDB_0 Product FRU Assembly2",
-        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-(24975-(0[034]00|2000|3[01]00)|24974-0000|24059-(1000|3[01]00|3101|31[14]0|4100|4101)|24132-0000).*'})",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA', 'CHASSIS_PART_NUMBER': '675-(24975-(0000|0300|0400|2000|3000|3100)|24974-0000|24059-(1000|1010|3000|3100|3101|3110|3120|3140|3150|3160|4100|4101)|24132-0000).*'})",
         "Type": "Assembly",
         "xyz.openbmc_project.Inventory.Decorator.Asset": {
             "Model": "$PRODUCT_PRODUCT_NAME",

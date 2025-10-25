@@ -2,11 +2,43 @@
 
 #include "transporthandler.hpp"
 
+#include <ipmid/utils.hpp>
+#include <phosphor-logging/lg2.hpp>
+
 using phosphor::logging::level;
 using phosphor::logging::log;
 
 namespace ipmi {
 namespace transport {
+
+// LAN Handler specific response codes
+constexpr Cc ccParamNotSupported = 0x80;
+constexpr Cc ccParamSetLocked = 0x81;
+constexpr Cc ccParamReadOnly = 0x82;
+constexpr Cc ccWriteReadParameter = 0x82;
+
+// Common IPMI response codes
+constexpr Cc ccResponseError = 0x01;
+
+static inline auto responseParamNotSupported()
+{
+    return response(ccParamNotSupported);
+}
+
+static inline auto responseParamSetLocked()
+{
+    return response(ccParamSetLocked);
+}
+
+static inline auto responseParamReadOnly()
+{
+    return response(ccParamReadOnly);
+}
+
+static inline auto responseWriteReadParameter()
+{
+    return response(ccWriteReadParameter);
+}
 
 constexpr auto transportLinkSpeedParameter = 206;
 constexpr auto transportLinkSpeedPath = "/sys/class/net/eth0/speed";

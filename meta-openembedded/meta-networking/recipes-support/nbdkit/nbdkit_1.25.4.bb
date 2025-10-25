@@ -9,8 +9,7 @@ HOMEPAGE = "https://github.com/libguestfs/nbdkit"
 LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=f9dcc2d8acdde215fa4bd6ac12bb14f0"
 
-SRC_URI = "git://github.com/libguestfs/nbdkit.git;protocol=https \
-"
+SRC_URI = "git://github.com/libguestfs/nbdkit.git;protocol=https;nobranch=1"
 
 SRCREV = "7b04baeb1858fa04f5f4e0d6f2d23bef706e80da"
 

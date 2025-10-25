@@ -1,6 +1,6 @@
 
 SRC_URI = "git://github.com/NVIDIA/entity-manager;protocol=https;branch=develop file://blocklist.json"
-SRCREV = "98877c51b4fa3c08346bee3988904b79dd5e62c6"
+SRCREV = "343719c7c286ed77648dc5d60cf59f5cabfd62a3"
 
 RDEPENDS:${PN} = " \
         fru-device \

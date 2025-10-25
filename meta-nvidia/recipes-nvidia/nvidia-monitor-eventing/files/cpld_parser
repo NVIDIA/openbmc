@@ -1,0 +1,455 @@
+#!/usr/bin/env bash
+
+# Copyright (c) 2025, NVIDIA CORPORATION.  All rights reserved.
+#
+#  NVIDIA CORPORATION and its licensors retain all intellectual property
+#  and proprietary rights in and to this software, related documentation
+#  and any modifications thereto.  Any use, reproduction, disclosure or
+#  distribution of this software and related documentation without an express
+#  license agreement from NVIDIA CORPORATION is strictly prohibited.
+
+# CPLD Parser - Handle CPLD power failure events
+
+set -o pipefail
+
+app_name="cpld_parser"
+app_ver="0.1"
+
+app_tmp="/tmp/${app_name}.tmp"
+
+# CPLD-specific configuration
+CPLD_CONF_FILE="cpld_platform.conf"
+
+err() #msg
+{
+    echo "$app_name:[E]$*" >&2
+}
+
+info() #msg
+{
+    echo "$app_name:[I]$*" >&2
+}
+
+show_help()
+{
+    echo "Version: $app_ver"
+    echo "Usage:"
+    echo " $app_name [cpld_id]"
+    echo
+    echo "Description:"
+    echo " A tool to handle CPLD power failure alerts."
+    echo
+    echo "Parameters:"
+    echo " cpld_id - CPLD ID to process (required)"
+    echo
+    echo "Examples:"
+    echo " $app_name CPLD_0"
+    echo
+}
+
+find_conf_file() # (file_name)
+{
+    local conf_file=$1;shift
+    local conf_dir="
+        ./
+        /tmp
+        /usr/share
+        "
+    local dir
+    for dir in $conf_dir; do
+        [ -f "$dir/$conf_file" ] && echo "$dir/$conf_file" && return 0
+    done
+    return 1
+}
+
+regtbl_bus=""
+regtbl_saddr=""
+regtbl_pages=""
+regtbl_page_size=""
+
+get_cpld_config() #(cpld_id)
+{
+    local cpld_id="$1"
+    [ -z "$cpld_id" ] && err "CPLD instance is required" && return 1
+
+    if [ -n "$regtbl_bus" ] && [ -n "$regtbl_saddr" ] && [ -n "$regtbl_pages" ] && [ -n "$regtbl_page_size" ]; then
+        info "CPLD configuration - $cpld_id: Bus=$regtbl_bus, SADDR=$regtbl_saddr, Pages=$regtbl_pages, PageSize=$regtbl_page_size"
+        return 0
+    fi
+
+    local cpld_config
+    # Get CPLD configuration from CPLD_CONFIGS array
+    for cpld_config in "${CPLD_CONFIGS[@]}"; do
+        [ -z "$cpld_config" ] || [ "${cpld_config::1}" = "#" ] && continue
+
+        local field=(${cpld_config//:/ })
+        if [ "${field[0]}" = "$cpld_id" ]; then
+            regtbl_bus="${field[1]}"
+            regtbl_saddr="${field[2]}"
+            regtbl_pages="${field[3]}"
+            regtbl_page_size="${field[4]}"
+            info "CPLD configuration - $cpld_id: Bus=$regtbl_bus, SADDR=$regtbl_saddr, Pages=$regtbl_pages, PageSize=$regtbl_page_size"
+            return 0
+        fi
+    done
+
+    err "Failed to get CPLD configuration for $cpld_id"
+    return 1
+}
+
+dump_regtbl()
+{
+    # For EINJ and UT, return cached data if available
+    [ -n "$regtbl_einj" ] && [ -f "$regtbl_einj" ] && cat "$regtbl_einj" && return 0
+
+    # Read all CPLD regtbl pages and combine them as one
+    local cur_data=""
+    for page in $(seq 0 $(($regtbl_pages-1))); do
+        local s_data
+        s_data=$(i2ctransfer -y $regtbl_bus w2@$regtbl_saddr 0x00 $page r$regtbl_page_size | sed 's/0x//g') || return $?
+        cur_data="$cur_data $s_data"
+    done
+    echo "${cur_data:1}"  # remove the leading space
+}
+
+get_reg_data() #(byte_off, byte_len, bit_mask, regtbl_data)
+{
+    local byte_off=$1;shift
+    local byte_len=$1;shift
+    local bit_mask=$1;shift
+    local regtbl_data="$*"
+
+    # Get reg data from regblt per its position info
+    local reg_bytes=${regtbl_data:$byte_off:$byte_len}
+
+    local b
+    local reg_value
+    # reg may cross multiple bytes, combine them as one
+    for b in ${reg_bytes}; do
+        reg_value=${b}${reg_value}
+    done
+
+    # Get the reg value per its bit_mask
+    local reg_value=$((0x$reg_value & $bit_mask))
+
+    # Account for any bit offsets in the masked reg data
+    while [ $(($bit_mask & 1)) -eq  0 ];do
+        bit_mask=$(($bit_mask>>1))
+        reg_value=$(($reg_value>>1))
+    done
+
+    echo $reg_value
+
+    return 0
+}
+
+# Get all CPLD pwrfail registers (full function with I2C read)
+get_all_pwrfail()
+{
+    local rc=0
+    # Dump CPLD regtbl
+    local regtbl_data;regtbl_data=$(dump_regtbl);rc=$?
+    [ "$rc" -ne 0 ] && err "Failed to dump CPLD register table, rc=$rc" && return $rc
+
+    # Get all pwrfail registers
+    local output
+    # Loop through all pwrfail regs to check if asserted
+    local line
+    for line in "${pf_reg[@]}"; do
+        [ -z "$line" ] && continue
+
+        local field=(${line//,/ })
+        local value;value=$(get_reg_data "${field[1]}" "${field[2]}" "${field[3]}" "$regtbl_data");rc=$?
+        [ "$rc" -ne 0 ] && return $rc
+
+        # if reg not assert, skip
+        [ "$value" == "0" ] && continue
+
+        # otherwise, prepare the output string
+        output="${output};${field[0]}{$(printf "0x%x" $value)}"
+    done
+
+    echo ${output:1} # remove the leading ";" and return out
+    return 0
+}
+
+# Show list of supported power failure registers
+show_pwrfail_list()
+{
+    local format="%-40s%-10s%-10s%-15s%-10s%-10s"
+    printf "$format\n" "RegName" "ByteOff" "ByteLen" "Bitmask(Hex)" "ByteRange" "BitRange"
+    printf "================================================================================\n"
+    local reg
+    for reg in "${pf_reg[@]}"; do
+        [ -z "$reg" ] && continue  # skip empty line.
+        [ "${reg::1}" = "#" ] && continue  # skip line commented by leading '#'.
+        printf "$format\n" ${reg//,/ }
+    done
+}
+
+# EINJ capability
+regtbl_dev=""
+regtbl_einj=""
+
+einj_cap()
+{
+    echo "list_errors"
+    echo "list_devices"
+    grep -E "^einj_*()" $(which $0) | cut -d'(' -f1 2>/dev/null
+
+    return 0
+}
+
+list_errors()
+{
+    local reg
+    for reg in "${pf_reg[@]}"; do
+        echo ${reg%%,*}
+    done
+
+    return 0
+}
+
+list_devices()
+{
+    echo "$regtbl_dev"
+}
+
+show_regtbl() #(regtbl_dummy)
+{
+    xxd -r -p "$1" | xxd -g 1 -c 16
+}
+
+einj_start()
+{
+    # Set regtbl_dev and regtbl_einj dynamically
+    if [ -z "$regtbl_dev" ]; then
+        regtbl_dev="CPLD_0"
+    fi
+    regtbl_einj="$app_tmp/$regtbl_dev/regtbl.einj"
+
+    # Validate configuration variables
+    [ -z "$regtbl_pages" ] && err "regtbl_pages not set" && return 1
+    [ -z "$regtbl_page_size" ] && err "regtbl_page_size not set" && return 1
+
+    # Create all deassert dummy CPLD regtbl
+    mkdir -p ${regtbl_einj%/*}
+    local regtbl_size=$((regtbl_pages * regtbl_page_size))
+    printf "00 %.0s" $(seq 1 $regtbl_size) > "$regtbl_einj"
+    return 0
+}
+
+einj_stop()
+{
+    rm -rf "$regtbl_einj" &>/dev/null
+    return 0
+}
+
+einj_is_running()
+{
+    [ -f "$regtbl_einj" ]
+}
+
+einj_error() #(dev_id, errors[])
+{
+    local dev_id=$1;shift
+    local pf_reg_name=$*
+
+    # Load or dump regtbl
+    local regtbl_data;regtbl_data=$(cat "$regtbl_einj" 2>/dev/null)
+    if [ $? -ne 0 -o -z "$regtbl_data" ]; then
+        local regtbl_size=$((regtbl_pages * regtbl_page_size))
+        regtbl_data=$(printf "00 %.0s" {1..$regtbl_size})
+    fi
+    local regtbl=($regtbl_data)
+
+    # Create indexed lookup array for O(1) access
+    local -A pf_reg_index=()
+    for line in "${pf_reg[@]}"; do
+        [ -z "$line" ] && continue
+        [ "${line::1}" = "#" ] && continue
+
+        local field=(${line//,/ })
+        local reg_name="${field[0]}"
+        pf_reg_index["$reg_name"]="$line"
+    done
+
+    # Determine which registers to inject
+    local reg_list=()
+    if [ "$pf_reg_name" = "all" ] || [ -z "$pf_reg_name" ]; then
+        # Inject all errors
+        for line in "${pf_reg[@]}"; do
+            [ -z "$line" ] && continue
+            [ "${line::1}" = "#" ] && continue
+            local field=(${line//,/ })
+            reg_list+=("${field[0]}")
+        done
+    else
+        # Inject specific errors
+        reg_list=($pf_reg_name)
+    fi
+
+    # Inject errors
+    for reg_name in "${reg_list[@]}"; do
+        local idx_line="${pf_reg_index[$reg_name]}"
+        [ -z "$idx_line" ] && continue
+
+        local field=(${idx_line//,/ })
+        local name=${field[0]}
+        local byte_range=${field[4]}
+        local byte="0x${regtbl[$byte_range]}"
+        local mask="${field[3]}"
+
+        echo "Injecting: $name"
+        regtbl[$byte_range]=$(printf "%02x" $((byte | mask)))
+    done
+
+    echo ${regtbl[*]} > $regtbl_einj
+    return 0
+}
+
+einj_error_all() #(dev_id)
+{
+    einj_error "$1" "all"
+    return $?
+}
+
+einj_clear_all() #(dev_id)
+{
+    einj_start
+    return $?
+}
+
+# UT
+start_ut() #(cpld_id)
+{
+    local cpld_id="${1:CPLD_0}"
+    local rc=0
+
+    info "Starting unit test for CPLD ID: $cpld_id"
+    regtbl_dev=$cpld_id
+
+    # Load CPLD configuration (needed for einj_start)
+    get_cpld_config "$cpld_id";rc=$?
+    [ "$rc" -ne 0 ] && err "Failed to get CPLD configuration for $cpld_id, rc=$rc" && return $rc
+
+    # Initialize EINJ with the configuration
+    einj_start
+
+    local pass=0
+    local fail=0
+    ## Single EINJ Test
+    echo "## CPLD Single Injection Test ##"
+    echo "----------------------------"
+
+    # Test each register individually using indexed lookup
+    for line in "${pf_reg[@]}";do
+        [ -z "$line" ] && continue
+        [ "${line::1}" = "#" ] && continue
+
+        local field=(${line//,/ })
+        local reg="${field[0]}"
+        local mask="${field[3]}"
+        while [ $((mask & 1)) -eq 0 ]; do mask=$((mask>>1)); done # Move any position bitmask to bit0
+        local exp="${reg}{$(printf "0x%x" $mask)}"
+
+        # Clear all previous injections first
+        einj_clear_all "$regtbl_dev" >/dev/null
+
+        # Do injection
+        einj_error "$regtbl_dev" $reg >/dev/null
+
+        # Get pwrfail messages (the test target)
+        local rc=0
+        local rslt;rslt=$(get_all_pwrfail);rc=$?
+
+        # Test result evaluation
+        if [ "$rc" -ne "0" ]; then
+            echo -e "Test [$exp] rc=$rc: \e[1;31mFAIL\e[0m"
+            fail=$((fail+1))
+            continue
+        fi
+
+        if [ "${exp}" != "${rslt}" ]; then
+            echo -e "Test [$exp] mismatch with [$rslt]: \e[1;31mFAIL\e[0m"
+            fail=$((fail+1))
+            continue
+        fi
+
+        echo -e "Test [$exp] match with [$rslt]: \e[1;92mPASS\e[0m"
+        pass=$((pass+1))
+    done
+    echo
+
+    ## Multi-EINJ Test
+    echo "## Multi-Injection Test ##"
+    echo "----------------------------"
+
+    local i
+    for i in 1; do
+        # Clear all previous injections first
+        einj_clear_all "$regtbl_dev" >/dev/null
+
+        # Do Injection
+        einj_error "$regtbl_dev" PWRSEQ_GPU_FAIL_STATE PWR_FAIL_GPU2_PS_HBMVPP PWR_FAIL_CPU_THERM_OVERT >/dev/null
+        local exp="PWRSEQ_GPU_FAIL_STATE{0xf};PWR_FAIL_GPU2_PS_HBMVPP{0x1};PWR_FAIL_CPU_THERM_OVERT{0x3}"
+
+        # Get pwrfail messages (the test target)
+        local rc=0
+        local rslt;rslt=$(get_all_pwrfail);rc=$?
+
+        # Test result evaluation
+        if [ "$rc" -ne "0" ]; then
+            echo -e "Test [$exp] rc=$rc: \e[1;31mFAIL\e[0m"
+            fail=$((fail+1))
+            continue
+        fi
+
+        if [ "${exp}" != "${rslt}" ]; then
+            echo -e "Test [$exp] mismatch with [$rslt]: \e[1;31mFAIL\e[0m"
+            fail=$((fail+1))
+            continue
+        fi
+
+        echo -e "Test [$exp] match with [$rslt]: \e[1;92mPASS\e[0m"
+        pass=$((pass+1))
+    done
+
+    einj_stop
+
+    # Test summary
+    echo "==================================="
+    local total=$((fail + pass))
+    local pass_rate=0
+    [ "$total" -gt 0 ] && pass_rate=$((pass * 100 / total))
+    echo "Pass: $pass, Fail: $fail, Pass Rate: ${pass_rate}%"
+    echo "==================================="
+
+    return $fail
+}
+
+## MAIN ##
+# Source CPLD platform configuration
+cpld_platform_conf=$(find_conf_file "$CPLD_CONF_FILE")
+[ $? -ne 0 ] && err "No valid CPLD platform configuration file found" && exit 249
+source "$cpld_platform_conf"
+
+[ $# -ne 0 ] && if grep "^$1()" $(which $0) &> /dev/null; then func=$1;shift;$func "$@";exit $?; fi
+
+[ "$1" == "--help" ] && show_help && exit 0
+[ "$1" == "show_pwrfail_list" ] && show_pwrfail_list && exit 0
+[ "$#" -ne 1 ] && show_help && exit 1
+
+# parameters provided: cpld_id
+cpld_id="$1";shift
+
+# Load CPLD configuration
+get_cpld_config "$cpld_id";rc=$?
+[ "$rc" -ne 0 ] && err "Failed to get configuration for $cpld_id, rc=$rc" && exit $rc
+
+info "Processing CPLD alerts for $cpld_id"
+# Get all CPLD Alerts
+get_all_pwrfail;rc=$?
+[ "$rc" -ne 0 ] && err "Failed to get CPLD alerts, rc=$rc" && exit $rc
+
+exit 0

@@ -1,7 +1,7 @@
 # Use NVIDIA gitlab Phosphor Debug Collector
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 SRC_URI = "git://github.com/NVIDIA/phosphor-debug-collector;protocol=https;branch=develop"
-SRCREV = "4976e64c47ce37b2f89e5e422ebea23132321572"
+SRCREV = "8b03911962fffff4bd6ba3188ed8155ac2e4e4aa"
 
 SRC_URI += "file://create-dump-dbus.service"
 SRC_URI += "file://xyz.openbmc_project.Dump.Manager.service"

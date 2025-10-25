@@ -1,5 +1,5 @@
 SUMMARY = "Delete Host Interface User Service"
-DESCRIPTION= "This service will monitor the bmcweb.service, if the bmcweb.service reset, then it will delete the host interfaces users on the BMC."
+DESCRIPTION = "This service will monitor the bmcweb.service, if the bmcweb.service reset, then it will delete the host interfaces users on the BMC."
 PR = "r1"
 PV = "0.1"
 

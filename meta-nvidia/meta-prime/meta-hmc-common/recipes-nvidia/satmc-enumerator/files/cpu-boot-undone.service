@@ -1,7 +1,8 @@
 [Unit]
 Description=CPU boot undone service
+Requires=xyz.openbmc_project.State.Host@0.service
+After=xyz.openbmc_project.State.Host@0.service
 
 [Service]
 Type=oneshot
 ExecStart=/bin/sh -c 'cpu-boot-handler.sh boot-undone'
-ExecStart=busctl set-property xyz.openbmc_project.State.Host /xyz/openbmc_project/state/host0 xyz.openbmc_project.State.OperatingSystem.Status OperatingSystemState s "xyz.openbmc_project.State.OperatingSystem.Status.OSStatus.Inactive"

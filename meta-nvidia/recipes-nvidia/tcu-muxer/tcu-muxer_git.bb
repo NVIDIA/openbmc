@@ -21,9 +21,7 @@ SRCREV = "f536c843e365f654b4e4bf9b6ff9f37f6672d4d1"
 
 S = "${WORKDIR}/git"
 
-inherit systemd obmc-phosphor-systemd autotools pkgconfig gettext
-
-DEPENDS = "systemd"
+inherit pkgconfig gettext
 
 EXTRA_OEMAKE = "CC='${CC} ${LDFLAGS}' -C '${S}' CFLAGS='${CFLAGS}'"
 FILES:${PN} = "${bindir}/tcu_muxer"

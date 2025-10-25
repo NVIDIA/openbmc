@@ -1,5 +1,5 @@
 SRC_URI = "git://github.com/NVIDIA/bmcweb;protocol=https;branch=develop"
-SRCREV = "c33b58894a5495b061f29648a0e9cbe013862bde"
+SRCREV = "2e6c03bc0759dd963a69d509223f8b7619194f4f"
 
 EXTRA_OEMESON:append = " -Dnvidia-oem-pmc=enabled"
 EXTRA_OEMESON:append = " -Dbmcweb-logging=error"

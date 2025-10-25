@@ -9,6 +9,8 @@ DEPENDS += " \
     ${PYTHON_PN}-sdbus++-native \
     sdbusplus \
     libpldm \
+    libgpiod \
+    i2c-tools \
 "
 PACKAGECONFIG[verify_signature] = "-Dverify-signature=enabled, -Dverify-signature=disabled"
 PACKAGECONFIG[sync_bmc_files] = "-Dsync-bmc-files=enabled, -Dsync-bmc-files=disabled"
@@ -104,6 +106,13 @@ FILES:${PN}-usb += "\
 FILES:${PN}-side-switch += "\
     ${bindir}/phosphor-bmc-side-switch \
     "
+FILES:${PN} += " \
+    ${systemd_system_unitdir}/xyz.openbmc_project.Software.EEPROMDevice.service \
+    ${systemd_system_unitdir}/xyz.openbmc_project.Software.CPLD.service \
+    ${systemd_system_unitdir}/xyz.openbmc_project.Software.I2CVR.service \
+    ${systemd_system_unitdir}/xyz.openbmc_project.Software.Manager.service \
+    ${systemd_system_unitdir}/xyz.openbmc_project.Software.BIOS.service \
+"
 
 require ${BPN}.inc
 

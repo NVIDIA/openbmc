@@ -48,6 +48,11 @@
 			compatible = "ramoops";
 			reg = <0xa0000000 0x100000>; /* 1MB */
 			record-size = <0x10000>; /* 64KB */
+
+			console-size = <0x8000>;    /* 32kB */
+			pmsg-size = <0x1000>;
+			ftrace-size = <0x2000>;
+			ecc-size = <16>;
 			max-reason = <2>; /* KMSG_DUMP_OOPS */
 		};
 

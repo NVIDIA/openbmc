@@ -94,7 +94,7 @@
         "Name": "HGX_GPU_0_Power_0",
         "PollRate": 1,
         "MinValue": 0,
-        "MaxValue": 1023,
+        "MaxValue": 1400,
         "ValueType": "Raw",
         "Type": "Satellite"
       },
@@ -107,7 +107,7 @@
         "Name": "HGX_GPU_1_Power_0",
         "PollRate": 1,
         "MinValue": 0,
-        "MaxValue": 1023,
+        "MaxValue": 1400,
         "ValueType": "Raw",
         "Type": "Satellite"
       },
@@ -120,7 +120,7 @@
         "Name": "HGX_GPU_2_Power_0",
         "PollRate": 1,
         "MinValue": 0,
-        "MaxValue": 1023,
+        "MaxValue": 1400,
         "ValueType": "Raw",
         "Type": "Satellite"
       },
@@ -133,7 +133,7 @@
         "Name": "HGX_GPU_3_Power_0",
         "PollRate": 1,
         "MinValue": 0,
-        "MaxValue": 1023,
+        "MaxValue": 1400,
         "ValueType": "Raw",
         "Type": "Satellite"
       },

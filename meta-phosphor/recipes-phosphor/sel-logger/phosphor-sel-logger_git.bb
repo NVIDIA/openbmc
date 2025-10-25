@@ -15,7 +15,7 @@ DEPENDS += " \
   systemd \
   phosphor-dbus-interfaces \
   "
-SRCREV = "b07851c5c5dc97e7ee19b66e3e4a630952ac222c"
+SRCREV = "46b5b66db9781695beccda0cdfde0a5928c0dd43"
 PACKAGECONFIG ??= ""
 PACKAGECONFIG[log-threshold] = "-Dlog-threshold=true,-Dlog-threshold=false,"
 PACKAGECONFIG[log-pulse] = "-Dlog-pulse=true,-Dlog-pulse=false,"

@@ -1,24 +1,48 @@
 [Unit]
 Description=MCTP CX7 Static Endpoints
-After=mctpd.service obmc-chassis-poweron@0.target
+After=mctpd.service cpu-boot-done.service
 Requires=mctpd.service
-Conflicts=obmc-chassis-poweroff@0.target
+Conflicts=obmc-power-off@0.target
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
+#Environment="MCTP_VERBOSE=1"
 ExecStart=/bin/sh -c ' \
-    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/interfaces/mctpi2c16 au.com.codeconstruct.MCTP.BusOwner1 AssignEndpointStatic ayyyay 1 0x32 101 0 0 && \
-    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/interfaces/mctpi2c18 au.com.codeconstruct.MCTP.BusOwner1 AssignEndpointStatic ayyyay 1 0x32 102 0 0 && \
-    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/interfaces/mctpi2c14 au.com.codeconstruct.MCTP.BusOwner1 AssignEndpointStatic ayyyay 1 0x32 105 0 0 && \
-    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/interfaces/mctpi2c15 au.com.codeconstruct.MCTP.BusOwner1 AssignEndpointStatic ayyyay 1 0x32 106 0 0 && \
-    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/interfaces/mctpi2c8 au.com.codeconstruct.MCTP.BusOwner1 AssignEndpointStatic ayyyay 1 0x1D 210 0 0'
+    retry_busctl() { \
+        local max_attempts=3; \
+        local attempt=1; \
+        while [ $attempt -le $max_attempts ]; do \
+            [ -n "$MCTP_VERBOSE" ] && echo "Attempt $attempt for: busctl $@" >&2; \
+            if busctl "$@"; then \
+                [ -n "$MCTP_VERBOSE" ] && echo "Success on attempt $attempt" >&2; \
+                return 0; \
+            fi; \
+            [ -n "$MCTP_VERBOSE" ] && echo "Failed attempt $attempt" >&2; \
+            if [ $attempt -lt $max_attempts ]; then \
+                sleep 1; \
+            fi; \
+            attempt=$((attempt + 1)); \
+        done; \
+        [ -n "$MCTP_VERBOSE" ] && echo "All 3 attempts failed, continuing anyway" >&2; \
+        return 0; \
+    }; \
+    sleep 4; \
+    retry_busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/interfaces/mctpi2c16 au.com.codeconstruct.MCTP.BusOwner1 AssignEndpointStatic ayyyay 1 0x32 101 0 0; \
+    sleep 1; \
+    retry_busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/interfaces/mctpi2c18 au.com.codeconstruct.MCTP.BusOwner1 AssignEndpointStatic ayyyay 1 0x32 102 0 0; \
+    sleep 1; \
+    retry_busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/interfaces/mctpi2c14 au.com.codeconstruct.MCTP.BusOwner1 AssignEndpointStatic ayyyay 1 0x32 105 0 0; \
+    sleep 1; \
+    retry_busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/interfaces/mctpi2c15 au.com.codeconstruct.MCTP.BusOwner1 AssignEndpointStatic ayyyay 1 0x32 106 0 0; \
+    sleep 1; \
+    retry_busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/interfaces/mctpi2c8 au.com.codeconstruct.MCTP.BusOwner1 AssignEndpointStatic ayyyay 1 0x1D 210 0 0'
 ExecStop=/bin/sh -c ' \
-    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/101 au.com.codeconstruct.MCTP.Endpoint1 Remove || true && \
-    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/102 au.com.codeconstruct.MCTP.Endpoint1 Remove || true && \
-    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/105 au.com.codeconstruct.MCTP.Endpoint1 Remove || true && \
-    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/106 au.com.codeconstruct.MCTP.Endpoint1 Remove || true && \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/101 au.com.codeconstruct.MCTP.Endpoint1 Remove || true; \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/102 au.com.codeconstruct.MCTP.Endpoint1 Remove || true; \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/105 au.com.codeconstruct.MCTP.Endpoint1 Remove || true; \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/106 au.com.codeconstruct.MCTP.Endpoint1 Remove || true; \
     busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/210 au.com.codeconstruct.MCTP.Endpoint1 Remove || true'
 
 [Install]
-WantedBy=obmc-chassis-poweron@0.target
+WantedBy=cpu-boot-done.service obmc-power-on@0.target

@@ -38,6 +38,7 @@ curl \
 OBMC_IMAGE_EXTRA_INSTALL:append = " \
 phosphor-ipmi-ssif \
 nvidia-ipmi-oem \
+phosphor-ipmi-net \
 "
 
 OBMC_IMAGE_EXTRA_INSTALL:append = " libmctp \

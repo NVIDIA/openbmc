@@ -32,9 +32,8 @@ nvidia-hmc-fru-check \
 tcpdump \
 "
 
-OBMC_IMAGE_EXTRA_INSTALL:append = "curl mctp-mockep"
+OBMC_IMAGE_EXTRA_INSTALL:append = "curl "
 
-OBMC_IMAGE_EXTRA_INSTALL:append = " phosphor-post-code-manager phosphor-host-postd "
 
 IMAGE_FEATURES:remove = " \
 obmc-fru-ipmi \
