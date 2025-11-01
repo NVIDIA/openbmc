@@ -5,5 +5,6 @@ After=xyz.openbmc_project.State.Host@0.service
 
 [Service]
 Type=oneshot
+ExecStartPre=/bin/sh -c 'touch /run/bmc-state/CPU_BOOT_DONE-I'
 ExecStart=/bin/sh -c 'cpu-boot-done.sh'
 

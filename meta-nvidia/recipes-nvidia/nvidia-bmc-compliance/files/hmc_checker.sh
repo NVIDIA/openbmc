@@ -2407,6 +2407,8 @@ local cmd=0x01
 eid=${fpga_bridge_eid:-12} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x00 $cmd 0x00 -m "${eid}" -v | grep -o 'Rx.*' | grep -o '[0-9a-fA-F]\+'| sed -n '12p') && [[ $output ]] && echo "$output" || echo ""
 }
 
+## SMA Base Testcases
+
 # HMC-SMA-Security-03
 # Function to get ActiveKeySet from the response of Get RoT State Information
 # Arguments:
@@ -2543,6 +2545,118 @@ get_sma_nsm_signing_key_index_nsmtool() {
     fi
 }
 
+# HMC-SMA-IROT-NSM-01   
+# Function to get Active Component Security Version Number (SVN) SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Active Component Security Version Number (SVN) of SMA IROT
+get_sma_irot_nsm_svn() {
+    local sma_eid="$1"
+    eid=${sma_eid:-60} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 12th and 13th bytes and convert to little endian integer
+    local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
+}
+
+# HMC-SMA-IROT-NSM-02
+# Function to get Pending Component Security Version Number (SVN) SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Pending Component Security Version Number (SVN) of SMA IROT
+get_sma_irot_nsm_pending_svn() {
+    local sma_eid="$1"
+    eid=${sma_eid:-60} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 14th and 15th bytes and convert to little endian integer
+    local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
+}
+
+
+# HMC-SMA-IROT-NSM-03
+# Function to get Active Component Minimum Security Version Number (MIN_SVN) SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Active Component Minimum Security Version Number (MIN_SVN) of SMA IROT
+get_sma_irot_nsm_min_svn() {
+    local sma_eid="$1"
+    eid=${sma_eid:-60} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 16th and 17th bytes and convert to little endian integer
+    local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
+}
+
+# HMC-SMA-IROT-NSM-04
+# Function to get Pending Component Minimum Security Version Number (MIN_SVN) SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Pending Component Minimum Security Version Number (MIN_SVN) of SMA IROT
+get_sma_irot_nsm_pending_min_svn() {
+    local sma_eid="$1"
+    eid=${sma_eid:-60} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
+    # Extract 18th and 19th bytes and convert to little endian integer
+    local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
+}
+
+# HMC-SMA-SPDM-01
+# Function to get SPDM Certificate Count of SMA
+# Arguments:
+#   $1: MCTP EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate Count
+get_sma_spdm_certificate_count() {
+local input_eid="$1"
+local slot_id="$2"
+# default EID to 73, SMA; slot to 0, MCHP cert chain
+eid=${input_eid:-73} && slot=${slot_id:-0} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
+}
+
+## SXM_SMA Testcases
+# HMC-SXM-SMA-Security-03
+# Function to get ActiveKeySet from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid ActiveKeySet - Key Set Size (1 Byte)
+get_sxm_sma_nsm_active_key_set_nsmtool() {
+    local sxm_sma_eid="$1"
+    echo $(_log_ get_sma_nsm_active_key_set_nsmtool $sxm_sma_eid)
+}
+
+# HMC-SXM-SMA-Security-09
+# Function to get BuildType from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid  (BuildType) (0 Development, 1 Release) - Build Type Size (1 Byte)
+get_sxm_sma_nsm_build_type_nsmtool() {  
+    local sxm_sma_eid="$1"
+    echo $(_log_ get_sma_nsm_build_type_nsmtool $sxm_sma_eid)
+}
+
+# HMC-SXM-SMA-Security-10
+# Function to get SigningType from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid  (SigningType) (0 Debug, 1 Production, 2 External, 3 DOT) - Signing Type Size (1 Byte)
+get_sxm_sma_nsm_signing_type_nsmtool() {
+    local sxm_sma_eid="$1"
+    echo $(_log_ get_sma_nsm_signing_type_nsmtool $sxm_sma_eid)
+}
+
+# HMC-SXM-SMA-Security-14
+# Function to get SigningKeyIndex from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid  (SigningKeyIndex)  (Index key used to sign fw) - Key Index Size (2 Bytes)
+get_sxm_sma_nsm_signing_key_index_nsmtool() {
+    local sxm_sma_eid="$1"
+    echo $(_log_ get_sma_nsm_signing_key_index_nsmtool $sxm_sma_eid)
+}
+
 # HMC-SXM-SMA-IROT-NSM-01       
 # Function to get Active Component Security Version Number (SVN) SXM SMA IROT using nsmtool
 # Arguments:
@@ -2551,9 +2665,7 @@ get_sma_nsm_signing_key_index_nsmtool() {
 #   valid Active Component Security Version Number (SVN) of SXM SMA IROT
 get_sxm_sma_irot_nsm_svn() {
     local sxm_sma_eid="$1"
-    eid=${sxm_sma_eid:-60} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
-    # Extract 12th and 13th bytes and convert to little endian integer
-    local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
+    echo $(_log_ get_sma_irot_nsm_svn $sxm_sma_eid)
 }
 
 # HMC-SXM-SMA-IROT-NSM-02
@@ -2564,9 +2676,7 @@ get_sxm_sma_irot_nsm_svn() {
 #   valid Pending Component Security Version Number (SVN) of SXM SMA IROT
 get_sxm_sma_irot_nsm_pending_svn() {
     local sxm_sma_eid="$1"
-    eid=${sxm_sma_eid:-60} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
-    # Extract 14th and 15th bytes and convert to little endian integer
-    local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
+    echo $(_log_ get_sma_irot_nsm_pending_svn $sxm_sma_eid)
 }   
 
 # HMC-SXM-SMA-IROT-NSM-03
@@ -2577,76 +2687,19 @@ get_sxm_sma_irot_nsm_pending_svn() {
 #   valid Active Component Minimum Security Version Number (MIN_SVN) of SXM SMA IROT
 get_sxm_sma_irot_nsm_min_svn() {
     local sxm_sma_eid="$1"
-    eid=${sxm_sma_eid:-60} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
-    # Extract 16th and 17th bytes and convert to little endian integer
-    local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
+    echo $(_log_ get_sma_irot_nsm_min_svn $sxm_sma_eid)
 }       
 
-# HMC-SXM-SMA-IROT-NSM-04
-# Function to get Pending Component Minimum Security Version Number (MIN_SVN) SXM SMA IROT using nsmtool
+# HMC-SMA-IROT-NSM-04
+# Function to get Pending Component Minimum Security Version Number (MIN_SVN) SMA IROT using nsmtool
 # Arguments:
 #   $1: MCTP EID
 # Returns:
 #   valid Pending Component Minimum Security Version Number (MIN_SVN) of SXM SMA IROT
 get_sxm_sma_irot_nsm_pending_min_svn() {
     local sxm_sma_eid="$1"
-    eid=${sxm_sma_eid:-60} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
-    # Extract 18th and 19th bytes and convert to little endian integer
-    local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
+    echo $(_log_ get_sma_irot_nsm_pending_min_svn $sxm_sma_eid)
 }
-
-# HMC-CX8-SMA-IROT-NSM-01
-# Function to get Active Component Security Version Number (SVN) CX8 SMA IROT using nsmtool 
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid Active Component Security Version Number (SVN) of CX8 SMA IROT
-get_cx8_sma_irot_nsm_svn() {
-    local cx8_sma_eid="$1"
-    eid=${cx8_sma_eid:-40} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
-    # Extract 12th and 13th bytes and convert to little endian integer
-    local svn_dec=$((16#$(echo "$output" | awk '{print $13$12}'))) && echo "$svn_dec"
-}
-
-# HMC-CX8-SMA-IROT-NSM-02
-# Function to get Pending Component Security Version Number (SVN) CX8 SMA IROT using nsmtool 
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid Pending Component Security Version Number (SVN) of CX8 SMA IROT   
-get_cx8_sma_irot_nsm_pending_svn() {
-    local cx8_sma_eid="$1"
-    eid=${cx8_sma_eid:-40} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
-    # Extract 14th and 15th bytes and convert to little endian integer
-    local pending_svn_dec=$((16#$(echo "$output" | awk '{print $15$14}'))) && echo "$pending_svn_dec"
-}   
-
-# HMC-CX8-SMA-IROT-NSM-03
-# Function to get Active Component Minimum Security Version Number (MIN_SVN) CX8 SMA IROT using nsmtool
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid Active Component Minimum Security Version Number (MIN_SVN) of CX8 SMA IROT
-get_cx8_sma_irot_nsm_min_svn() {
-    local cx8_sma_eid="$1"
-    eid=${cx8_sma_eid:-40} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
-    # Extract 16th and 17th bytes and convert to little endian integer
-    local min_svn_dec=$((16#$(echo "$output" | awk '{print $17$16}'))) && echo "$min_svn_dec"
-}   
-
-# HMC-CX8-SMA-IROT-NSM-04
-# Function to get Pending Component Minimum Security Version Number (MIN_SVN) CX8 SMA IROT using nsmtool
-# Arguments:
-#   $1: MCTP EID
-# Returns:
-#   valid Pending Component Minimum Security Version Number (MIN_SVN) of CX8 SMA IROT
-get_cx8_sma_irot_nsm_pending_min_svn() {
-    local cx8_sma_eid="$1"
-    eid=${cx8_sma_eid:-40} && output=$(_log_ _nmstool_raw_retry nsmtool raw -d 0x10 0xde 0x80 0x89 0x06 0x05 0x05 0x0a 0x00 0x02 0xFF 0x00 -m "${eid}" -v | grep -o 'Rx.*' | sed 's/Rx: //')
-    # Extract 18th and 19th bytes and convert to little endian integer
-    local pending_min_svn_dec=$((16#$(echo "$output" | awk '{print $19$18}'))) && echo "$pending_min_svn_dec"
-}
-
 
 # HMC-SXM-SMA-SPDM-01
 # Function to get SPDM Certificate Count of SXM SMA
@@ -2656,24 +2709,316 @@ get_cx8_sma_irot_nsm_pending_min_svn() {
 # Returns:
 #   valid SPDM Certificate Count
 get_sxm_sma_spdm_certificate_count() {
-local input_eid="$1"
-local slot_id="$2"
-# default EID to 73, SXM SMA; slot to 0, MCHP cert chain
-eid=${input_eid:-73} && slot=${slot_id:-0} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
+    local input_eid="$1"
+    local slot_id="$2"
+    echo $(_log_ get_sma_spdm_certificate_count $input_eid $slot_id)
 }
 
-# HMC-CX8-SMA-SPDM-01
-# Function to get SPDM Certificate Count of CX8 SMA
+## ConnectX_SMA Testcases
+# HMC-ConnectX-SMA-Security-03
+# Function to get ActiveKeySet from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid ActiveKeySet - Key Set Size (1 Byte)
+get_connectx_sma_nsm_active_key_set_nsmtool() {
+    local connectx_sma_eid="$1"
+    echo $(_log_ get_sma_nsm_active_key_set_nsmtool $connectx_sma_eid)
+}
+
+# HMC-ConnectX-SMA-Security-09
+# Function to get BuildType from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid  (BuildType) (0 Development, 1 Release) - Build Type Size (1 Byte)
+get_connectx_sma_nsm_build_type_nsmtool() {
+    local connectx_sma_eid="$1"
+    echo $(_log_ get_sma_nsm_build_type_nsmtool $connectx_sma_eid)
+}
+
+# HMC-ConnectX-SMA-Security-10
+# Function to get SigningType from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid  (SigningType) (0 Debug, 1 Production, 2 External, 3 DOT) - Signing Type Size (1 Byte)
+get_connectx_sma_nsm_signing_type_nsmtool() {
+    local connectx_sma_eid="$1"
+    echo $(_log_ get_sma_nsm_signing_type_nsmtool $connectx_sma_eid)
+}
+
+# HMC-ConnectX-SMA-Security-14
+# Function to get SigningKeyIndex from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid  (SigningKeyIndex)  (Index key used to sign fw) - Key Index Size (2 Bytes)
+get_connectx_sma_nsm_signing_key_index_nsmtool() {
+    local connectx_sma_eid="$1"
+    echo $(_log_ get_sma_nsm_signing_key_index_nsmtool $connectx_sma_eid)
+}
+
+# HMC-ConnectX-SMA-IROT-NSM-01
+# Function to get Active Component Security Version Number (SVN) ConnectX SMA IROT using nsmtool 
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Active Component Security Version Number (SVN) of ConnectX SMA IROT
+get_connectx_sma_irot_nsm_svn() {
+    local connectx_sma_eid="$1"
+    echo $(_log_ get_sma_irot_nsm_svn $connectx_sma_eid)
+}
+
+# HMC-ConnectX-SMA-IROT-NSM-02
+# Function to get Pending Component Security Version Number (SVN) ConnectX SMA IROT using nsmtool 
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Pending Component Security Version Number (SVN) of ConnectX SMA IROT   
+get_connectx_sma_irot_nsm_pending_svn() {
+    local connectx_sma_eid="$1"
+    echo $(_log_ get_sma_irot_nsm_pending_svn $connectx_sma_eid)
+}   
+
+# HMC-ConnectX-SMA-IROT-NSM-03
+# Function to get Active Component Minimum Security Version Number (MIN_SVN) ConnectX SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Active Component Minimum Security Version Number (MIN_SVN) of ConnectX SMA IROT
+get_connectx_sma_irot_nsm_min_svn() {
+    local connectx_sma_eid="$1"
+    echo $(_log_ get_sma_irot_nsm_min_svn $connectx_sma_eid)
+}   
+
+# HMC-ConnectX-SMA-IROT-NSM-04
+# Function to get Pending Component Minimum Security Version Number (MIN_SVN) ConnectX SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Pending Component Minimum Security Version Number (MIN_SVN) of ConnectX SMA IROT
+get_connectx_sma_irot_nsm_pending_min_svn() {
+    local connectx_sma_eid="$1"
+    echo $(_log_ get_sma_irot_nsm_pending_min_svn $connectx_sma_eid)
+}
+
+
+# HMC-ConnectX-SMA-SPDM-01
+# Function to get SPDM Certificate Count of ConnectX SMA
 # Arguments:
 #   $1: MCTP EID
 #   $2: Slot ID
 # Returns:
 #   valid SPDM Certificate Count
-get_cx8_sma_spdm_certificate_count() {
-local input_eid="$1"
-local slot_id="$2"
-# default EID to 69  CX8 SMA; slot to 0, MCHP cert chain
-eid=${input_eid:-69} && slot=${slot_id:-0} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
+get_connectx_sma_spdm_certificate_count() {
+    local input_eid="$1"
+    local slot_id="$2"
+    echo $(_log_ get_sma_spdm_certificate_count $input_eid $slot_id)
+}
+
+## NVSwith_SMA Testcases
+# HMC-NVSWITCH-SMA-Security-03
+# Function to get ActiveKeySet from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid ActiveKeySet - Key Set Size (1 Byte)
+get_nvswitch_sma_nsm_active_key_set_nsmtool() {
+    local nvswitch_sma_eid="$1"
+    echo $(_log_ get_sma_nsm_active_key_set_nsmtool $nvswitch_sma_eid)
+}
+
+# HMC-NVSWITCH-SMA-Security-09
+# Function to get BuildType from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid  (BuildType) (0 Development, 1 Release) - Build Type Size (1 Byte)
+get_nvswitch_sma_nsm_build_type_nsmtool() {
+    local nvswitch_sma_eid="$1"
+    echo $(_log_ get_sma_nsm_build_type_nsmtool $nvswitch_sma_eid)
+}
+
+# HMC-NVSWITCH-SMA-Security-10
+# Function to get SigningType from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid  (SigningType) (0 Debug, 1 Production, 2 External, 3 DOT) - Signing Type Size (1 Byte)
+get_nvswitch_sma_nsm_signing_type_nsmtool() {
+    local nvswitch_sma_eid="$1"
+    echo $(_log_ get_sma_nsm_signing_type_nsmtool $nvswitch_sma_eid)
+}
+
+# HMC-NVSWITCH-SMA-Security-14
+# Function to get SigningKeyIndex from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid  (SigningKeyIndex)  (Index key used to sign fw) - Key Index Size (2 Bytes)
+get_nvswitch_sma_nsm_signing_key_index_nsmtool() {
+    local nvswitch_sma_eid="$1"
+    echo $(_log_ get_sma_nsm_signing_key_index_nsmtool $nvswitch_sma_eid)
+}
+
+# HMC-NVSwitch-SMA-IROT-NSM-01
+# Function to get Active Component Security Version Number (SVN) NVSwitch SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Active Component Security Version Number (SVN) of NVSwitch SMA IROT
+get_nvswitch_sma_irot_nsm_svn() {
+    local nvswitch_sma_eid="$1"
+    echo $(_log_ get_sma_irot_nsm_svn $nvswitch_sma_eid)
+}
+
+# HMC-NVSwitch-SMA-IROT-NSM-02
+# Function to get Pending Component Security Version Number (SVN) NVSwitch SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Pending Component Security Version Number (SVN) of NVSwitch SMA IROT
+get_nvswitch_sma_irot_nsm_pending_svn() {
+    local nvswitch_sma_eid="$1"
+    echo $(_log_ get_sma_irot_nsm_pending_svn $nvswitch_sma_eid)
+}
+
+# HMC-NVSwitch-SMA-IROT-NSM-03
+# Function to get Active Component Minimum Security Version Number (MIN_SVN) NVSwitch SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Active Component Minimum Security Version Number (MIN_SVN) of NVSwitch SMA IROT
+get_nvswitch_sma_irot_nsm_min_svn() {
+    local nvswitch_sma_eid="$1"
+    echo $(_log_ get_sma_irot_nsm_min_svn $nvswitch_sma_eid)
+}
+
+# HMC-NVSwitch-SMA-IROT-NSM-04
+# Function to get Pending Component Minimum Security Version Number (MIN_SVN) NVSwitch SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Pending Component Minimum Security Version Number (MIN_SVN) of NVSwitch SMA IROT
+get_nvswitch_sma_irot_nsm_pending_min_svn() {
+    local nvswitch_sma_eid="$1"
+    echo $(_log_ get_sma_irot_nsm_pending_min_svn $nvswitch_sma_eid)
+}
+
+# HMC-NVSwitch-SMA-SPDM-01
+# Function to get SPDM Certificate Count of NVSwitch SMA
+# Arguments:
+#   $1: MCTP EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate Count
+get_nvswitch_sma_spdm_certificate_count() {
+    local input_eid="$1"
+    local slot_id="$2"
+    echo $(_log_ get_sma_spdm_certificate_count $input_eid $slot_id)
+}
+
+## Chassis_SMA Testcases
+# HMC-Chassis-SMA-Security-03
+# Function to get ActiveKeySet from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid ActiveKeySet - Key Set Size (1 Byte)
+get_chassis_sma_nsm_active_key_set_nsmtool() {
+    local chassis_sma_eid="$1"
+    echo $(_log_ get_sma_nsm_active_key_set_nsmtool $chassis_sma_eid)
+}
+
+# HMC-Chassis-SMA-Security-09
+# Function to get BuildType from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid  (BuildType) (0 Development, 1 Release) - Build Type Size (1 Byte)
+get_chassis_sma_nsm_build_type_nsmtool() {
+    local chassis_sma_eid="$1"
+    echo $(_log_ get_sma_nsm_build_type_nsmtool $chassis_sma_eid)
+}
+
+# HMC-Chassis-SMA-Security-10
+# Function to get SigningType from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid  (SigningType) (0 Debug, 1 Production, 2 External, 3 DOT) - Signing Type Size (1 Byte)
+get_chassis_sma_nsm_signing_type_nsmtool() {
+    local chassis_sma_eid="$1"
+    echo $(_log_ get_sma_nsm_signing_type_nsmtool $chassis_sma_eid)
+}
+
+# HMC-Chassis-SMA-Security-14
+# Function to get SigningKeyIndex from the response of Get RoT State Information
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid  (SigningKeyIndex)  (Index key used to sign fw) - Key Index Size (2 Bytes)
+get_chassis_sma_nsm_signing_key_index_nsmtool() {
+    local chassis_sma_eid="$1"
+    echo $(_log_ get_sma_nsm_signing_key_index_nsmtool $chassis_sma_eid)
+}
+
+# HMC-Chassis-SMA-IROT-NSM-01
+# Function to get Active Component Security Version Number (SVN) NVLink SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Active Component Security Version Number (SVN) of NVLink SMA IROT
+get_chassis_sma_irot_nsm_svn() {
+    local chassis_sma_eid="$1"
+    echo $(_log_ get_sma_irot_nsm_svn $chassis_sma_eid)
+}
+
+# HMC-Chassis-SMA-IROT-NSM-02
+# Function to get Pending Component Security Version Number (SVN) NVLink SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Pending Component Security Version Number (SVN) of NVLink SMA IROT
+get_chassis_sma_irot_nsm_pending_svn() {
+    local chassis_sma_eid="$1"
+    echo $(_log_ get_sma_irot_nsm_pending_svn $chassis_sma_eid)
+}
+
+# HMC-Chassis-SMA-IROT-NSM-03
+# Function to get Active Component Minimum Security Version Number (MIN_SVN) NVLink SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Active Component Minimum Security Version Number (MIN_SVN) of NVLink SMA IROT
+get_chassis_sma_irot_nsm_min_svn() {
+    local chassis_sma_eid="$1"
+    echo $(_log_ get_sma_irot_nsm_min_svn $chassis_sma_eid)
+}
+
+# HMC-Chassis-SMA-IROT-NSM-04
+# Function to get Pending Component Minimum Security Version Number (MIN_SVN) NVLink SMA IROT using nsmtool
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid Pending Component Minimum Security Version Number (MIN_SVN) of NVLink SMA IROT
+get_chassis_sma_irot_nsm_pending_min_svn() {
+    local chassis_sma_eid="$1"
+    echo $(_log_ get_sma_irot_nsm_pending_min_svn $chassis_sma_eid)
+}
+
+# HMC-NVSwitch-SMA-SPDM-01
+# Function to get SPDM Certificate Count of NVSwitch SMA
+# Arguments:
+#   $1: MCTP EID
+#   $2: Slot ID
+# Returns:
+#   valid SPDM Certificate Count
+get_nvswitch_sma_spdm_certificate_count() {
+    local input_eid="$1"
+    local slot_id="$2"
+    echo $(_log_ get_sma_spdm_certificate_count $input_eid $slot_id)
 }
 
 # HMC-FPGA-Version-01
@@ -7126,15 +7471,15 @@ local slot_id="$2"
 eid=${input_eid:-54} && slot=${slot_id:-0} && count=$(_log_ spdmtool -e ${eid} get-cert --slot ${slot} | grep -o 'BEGIN CERTIFICATE' | wc -l) && echo $count
 }
 
-# HMC-SMA-PLDM_T5-05
-# Function to get PLDM fw_update PCI Subsystem ID of CX8
+# HMC-ConnectX-PLDM_T5-05
+# Function to get PLDM fw_update PCI Subsystem ID of ConnectX
 # Arguments:
 #   $1: MCTP EID
 # Returns:
 #   valid "PCI Subsystem" ID
-get_cx8_pldm_pci_subsys_id() {
+get_connectx_pldm_pci_subsys_id() {
 local eid="${1:-41}"
-# default EID to 41, CX8-2 IRoT I3C
+# default EID to 41, ConnectX-2 IRoT I3C
 key=${sku_key:-"PCI Subsystem ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
 }
 
@@ -9588,7 +9933,7 @@ else
 fi
 }
 
-# Component-Level Category: SMA #
+# Component-Level Category: SMA Base Testcases #
 ## SMA: Hardware Interface
 
 # HMC-SMA-USB-01
@@ -9768,6 +10113,598 @@ local eid="${1:-40}"
 # default EID to 40, CX8 SMA 1
 key=${sku_key:-"PCI Subsystem ID"} && output=$(_log_ pldmtool fw_update QueryDeviceIdentifiers -m "$eid" | grep -A3 "${key}" | awk '/"Value"/ {getline; print $1}') && echo ${output//\"}
 }
+
+# Component-Level Category: SMA Component Testcases #
+## SXM_SMA: Hardware Interface
+
+# HMC-SXM-SMA-USB-01
+# Function to verify if USB device is operational
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid "yes", "no" otherwise
+is_sxm_sma_usb_operational() {
+    local sxm_sma_usb_port="$1"
+    echo $(_log_ is_sma_usb_operational $sxm_sma_usb_port)
+}
+
+# HMC-SXM-SMA-USB-02
+# Function to get SMA USB Vendor ID
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid USB Vendor ID
+get_sxm_sma_usb_vendor_id() {
+    local sxm_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_vendor_id $sxm_sma_usb_port)
+}
+
+# HMC-SXM-SMA-USB-03
+# Function to get SMA USB Product ID
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid USB Product ID
+get_sxm_sma_usb_product_id() {
+    local sxm_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_product_id $sxm_sma_usb_port)
+}
+
+# HMC-SXM-SMA-USB-04
+# Function to get SMA USB Interface Class
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Interface Class
+get_sxm_sma_usb_interface_class() {
+    local sxm_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_interface_class $sxm_sma_usb_port)
+}
+
+# HMC-SXM-SMA-USB-05
+# Function to get SMA USB Interface SubClass
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Interface SubClass
+get_sxm_sma_usb_interface_subclass() {
+    local sxm_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_interface_subclass $sxm_sma_usb_port)
+}
+
+# HMC-SXM-SMA-USB-06
+# Function to get SMA USB Port Hierarchy
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid USB Port hierarchy
+get_sxm_sma_usb_port_hierarchy() {
+    local sxm_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_port_hierarchy $sxm_sma_usb_port)
+}
+
+# HMC-SXM-SMA-USB-07
+# Function to get SMA USB MCTP VDM Tree EIDs
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid MCTP VDM Tree EIDs
+get_sxm_sma_dbus_mctp_vdm_tree_eids_usb() {
+    local sxm_sma_usb_port_dbus="$1"
+    echo $(_log_ get_sma_dbus_mctp_vdm_tree_eids_usb $sxm_sma_usb_port_dbus)
+}
+
+# Component-Level Category: SMA Component Testcases #
+## SXM_SMA: Firmware Update Protocol
+
+# HMC-SXM-SMA-Version-01
+# Function to get SXM SMA FW version from PLDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid FW version
+get_sxm_sma_fw_version_pldm() {
+    local eid="${1:-40}"
+echo $(_log_ get_sma_fw_version_pldm $eid)
+}
+
+# HMC-SXM-SMA-PLDM_T5-01
+# Function to get PLDM fw_update AP_SKU ID of SXM SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid AP_SKU ID
+get_sxm_sma_pldm_apsku_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_apsku_id $eid)
+}
+
+# HMC-SXM-SMA-PLDM_T5-02
+# Function to get PLDM fw_update PCI Vendor ID of SXM SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Vendor" ID
+get_sxm_sma_pldm_pci_vendor_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_pci_vendor_id $eid)
+}
+
+# HMC-SXM-SMA-PLDM_T5-03
+# Function to get PLDM fw_update PCI Deivce ID of SXM SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Device" ID
+get_sxm_sma_pldm_pci_device_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_pci_device_id $eid)
+}
+
+# HMC-SXM-SMA-PLDM_T5-04
+# Function to get PLDM fw_update PCI Subsystem Vendor ID of SXM SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem Vendor" ID
+get_sxm_sma_pldm_pci_subsys_vendor_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_pci_subsys_vendor_id $eid)
+}
+
+# HMC-SXM-SMA-PLDM_T5-05
+# Function to get PLDM fw_update PCI Subsystem ID of SXM SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem" ID
+get_sxm_sma_pldm_pci_subsys_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_pci_subsys_id $eid)
+}
+
+## ConnectX_SMA: Hardware Interface
+
+# HMC-ConnectX-SMA-USB-01
+# Function to verify if USB device is operational
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid "yes", "no" otherwise
+is_connectx_sma_usb_operational() {
+    local connectx_sma_usb_port="$1"
+    echo $(_log_ is_sma_usb_operational $connectx_sma_usb_port)
+}
+
+
+# HMC-ConnectX-SMA-USB-02
+# Function to get ConnectX SMA USB Vendor ID
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid USB Vendor ID
+get_connectx_sma_usb_vendor_id() {
+    local connectx_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_vendor_id $connectx_sma_usb_port)
+}
+
+# HMC-ConnectX-SMA-USB-03
+# Function to get ConnectX SMA USB Product ID
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid USB Product ID
+get_connectx_sma_usb_product_id() {
+    local connectx_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_product_id $connectx_sma_usb_port)
+}
+
+# HMC-ConnectX-SMA-USB-04
+# Function to get ConnectX SMA USB Interface Class
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Interface Class
+get_connectx_sma_usb_interface_class() {
+    local connectx_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_interface_class $connectx_sma_usb_port)
+}
+
+# HMC-ConnectX-SMA-USB-05
+# Function to get ConnectX SMA USB Interface SubClass
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Interface SubClass
+get_connectx_sma_usb_interface_subclass() {
+    local connectx_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_interface_subclass $connectx_sma_usb_port)
+}
+
+# HMC-ConnectX-SMA-USB-06
+# Function to get ConnectX SMA USB Port Hierarchy
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid USB Port hierarchy
+get_connectx_sma_usb_port_hierarchy() {
+    local connectx_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_port_hierarchy $connectx_sma_usb_port)
+}
+
+# HMC-ConnectX-SMA-USB-07
+# Function to get ConnectX SMA USB MCTP VDM Tree EIDs
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid MCTP VDM Tree EIDs
+get_connectx_sma_dbus_mctp_vdm_tree_eids_usb() {
+    local connectx_sma_usb_port_dbus="$1"
+    echo $(_log_ get_sma_dbus_mctp_vdm_tree_eids_usb $connectx_sma_usb_port_dbus)
+}
+
+## ConnectX_SMA: Firmware Update Protocol
+
+# HMC-ConnectX-SMA-Version-01
+# Function to get ConnectX SMA FW version from PLDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid FW version
+get_connectx_sma_fw_version_pldm() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_fw_version_pldm $eid)
+}
+
+# HMC-ConnectX-SMA-PLDM_T5-01
+# Function to get PLDM fw_update AP_SKU ID of ConnectX SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid AP_SKU ID
+get_connectx_sma_pldm_apsku_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_apsku_id $eid)
+}
+
+# HMC-ConnectX-SMA-PLDM_T5-02
+# Function to get PLDM fw_update PCI Vendor ID of ConnectX SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Vendor" ID
+get_connectx_sma_pldm_pci_vendor_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_pci_vendor_id $eid)
+}
+
+# HMC-ConnectX-SMA-PLDM_T5-03
+# Function to get PLDM fw_update PCI Device ID of ConnectX SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Device" ID
+get_connectx_sma_pldm_pci_device_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_pci_device_id $eid)
+}
+
+# HMC-ConnectX-SMA-PLDM_T5-04
+# Function to get PLDM fw_update PCI Subsystem Vendor ID of ConnectX SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem Vendor" ID
+get_connectx_sma_pldm_pci_subsys_vendor_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_pci_subsys_vendor_id $eid)
+}
+
+# HMC-ConnectX-SMA-PLDM_T5-05
+# Function to get PLDM fw_update PCI Subsystem ID of ConnectX SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem" ID
+get_connectx_sma_pldm_pci_subsys_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_pci_subsys_id $eid)
+}
+
+## NVSwitch_SMA: Hardware Interface
+
+# HMC-NVSwitch-SMA-USB-01
+# Function to verify if USB device is operational
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid "yes", "no" otherwise
+is_nvswitch_sma_usb_operational() {
+    local nvswitch_sma_usb_port="$1"
+    echo $(_log_ is_sma_usb_operational $nvswitch_sma_usb_port)
+}
+
+# HMC-NVSwitch-SMA-USB-02
+# Function to get NVSwitch SMA USB Vendor ID
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid USB Vendor ID
+get_nvswitch_sma_usb_vendor_id() {
+    local nvswitch_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_vendor_id $nvswitch_sma_usb_port)
+}
+
+# HMC-NVSwitch-SMA-USB-03
+# Function to get NVSwitch SMA USB Product ID
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid USB Product ID
+get_nvswitch_sma_usb_product_id() {
+    local nvswitch_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_product_id $nvswitch_sma_usb_port)
+}
+
+# HMC-NVSwitch-SMA-USB-04
+# Function to get NVSwitch SMA USB Interface Class
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Interface Class
+get_nvswitch_sma_usb_interface_class() {
+    local nvswitch_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_interface_class $nvswitch_sma_usb_port)
+}
+
+# HMC-NVSwitch-SMA-USB-05
+# Function to get NVSwitch SMA USB Interface SubClass
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Interface SubClass
+get_nvswitch_sma_usb_interface_subclass() {
+    local nvswitch_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_interface_subclass $nvswitch_sma_usb_port)
+}
+
+# HMC-NVSwitch-SMA-USB-06
+# Function to get NVSwitch SMA USB Port Hierarchy
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid USB Port hierarchy
+get_nvswitch_sma_usb_port_hierarchy() {
+    local nvswitch_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_port_hierarchy $nvswitch_sma_usb_port)
+}
+
+# HMC-NVSwitch-SMA-USB-07
+# Function to get NVSwitch SMA USB MCTP VDM Tree EIDs
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid MCTP VDM Tree EIDs
+get_nvswitch_sma_dbus_mctp_vdm_tree_eids_usb() {
+    local nvswitch_sma_usb_port_dbus="$1"
+    echo $(_log_ get_sma_dbus_mctp_vdm_tree_eids_usb $nvswitch_sma_usb_port_dbus)
+}
+
+## NVSwitch_SMA: Firmware Update Protocol
+
+# HMC-NVSwitch-SMA-Version-01
+# Function to get NVSwitch SMA FW version from PLDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid FW version
+get_nvswitch_sma_fw_version_pldm() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_fw_version_pldm $eid)
+}
+
+# HMC-NVSwitch-SMA-PLDM_T5-01
+# Function to get PLDM fw_update AP_SKU ID of NVSwitch SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid AP_SKU ID
+get_nvswitch_sma_pldm_apsku_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_apsku_id $eid)
+}
+
+# HMC-NVSwitch-SMA-PLDM_T5-02
+# Function to get PLDM fw_update PCI Vendor ID of NVSwitch SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Vendor" ID
+get_nvswitch_sma_pldm_pci_vendor_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_pci_vendor_id $eid)
+}
+
+# HMC-NVSwitch-SMA-PLDM_T5-03
+# Function to get PLDM fw_update PCI Device ID of NVSwitch SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Device" ID
+get_nvswitch_sma_pldm_pci_device_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_pci_device_id $eid)
+}
+
+# HMC-NVSwitch-SMA-PLDM_T5-04
+# Function to get PLDM fw_update PCI Subsystem Vendor ID of NVSwitch SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem Vendor" ID
+get_nvswitch_sma_pldm_pci_subsys_vendor_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_pci_subsys_vendor_id $eid)
+}
+
+# HMC-NVSwitch-SMA-PLDM_T5-05
+# Function to get PLDM fw_update PCI Subsystem ID of NVSwitch SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem" ID
+get_nvswitch_sma_pldm_pci_subsys_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_pci_subsys_id $eid)
+}
+
+# Chassis_SMA: Hardware Interface
+
+# HMC-Chassis-SMA-USB-01
+# Function to verify if USB device is operational
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid "yes", "no" otherwise
+is_chassis_sma_usb_operational() {
+    local chassis_sma_usb_port="$1"
+    echo $(_log_ is_sma_usb_operational $chassis_sma_usb_port)
+}
+
+# HMC-Chassis-SMA-USB-02
+# Function to get NVLink SMA USB Vendor ID
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid USB Vendor ID
+get_chassis_sma_usb_vendor_id() {
+    local chassis_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_vendor_id $chassis_sma_usb_port)
+}
+
+# HMC-Chassis-SMA-USB-03
+# Function to get NVLink SMA USB Product ID
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid USB Product ID
+get_chassis_sma_usb_product_id() {
+    local chassis_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_product_id $chassis_sma_usb_port)
+}
+
+# HMC-Chassis-SMA-USB-04
+# Function to get NVLink SMA USB Interface Class
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Interface Class
+get_chassis_sma_usb_interface_class() {
+    local chassis_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_interface_class $chassis_sma_usb_port)
+}
+
+# HMC-Chassis-SMA-USB-05
+# Function to get NVLink SMA USB Interface SubClass
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid Interface SubClass
+get_chassis_sma_usb_interface_subclass() {
+    local chassis_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_interface_subclass $chassis_sma_usb_port)
+}
+
+# HMC-Chassis-SMA-USB-06
+# Function to get NVLink SMA USB Port Hierarchy
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid USB Port hierarchy
+get_chassis_sma_usb_port_hierarchy() {
+    local chassis_sma_usb_port="$1"
+    echo $(_log_ get_sma_usb_port_hierarchy $chassis_sma_usb_port)
+}
+
+# HMC-Chassis-SMA-USB-07
+# Function to get NVLink SMA USB MCTP VDM Tree EIDs
+# Arguments:
+#   $1: USB device bus-port[.port]
+# Returns:
+#   valid MCTP VDM Tree EIDs
+get_chassis_sma_dbus_mctp_vdm_tree_eids_usb() {
+    local chassis_sma_usb_port_dbus="$1"
+    echo $(_log_ get_sma_dbus_mctp_vdm_tree_eids_usb $chassis_sma_usb_port_dbus)
+}
+
+## Chassis_SMA: Firmware Update Protocol
+
+# HMC-Chassis-SMA-Version-01
+# Function to get NVLink SMA FW version from PLDM
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid FW version
+get_chassis_sma_fw_version_pldm() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_fw_version_pldm $eid)
+}
+
+# HMC-Chassis-SMA-PLDM_T5-01
+# Function to get PLDM fw_update AP_SKU ID of NVLink SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid AP_SKU ID
+get_chassis_sma_pldm_apsku_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_apsku_id $eid)
+}
+
+# HMC-Chassis-SMA-PLDM_T5-02
+# Function to get PLDM fw_update PCI Vendor ID of NVLink SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Vendor" ID
+get_chassis_sma_pldm_pci_vendor_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_pci_vendor_id $eid)
+}
+
+# HMC-Chassis-SMA-PLDM_T5-03
+# Function to get PLDM fw_update PCI Device ID of NVLink SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Device" ID
+get_chassis_sma_pldm_pci_device_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_pci_device_id $eid)
+}
+
+# HMC-Chassis-SMA-PLDM_T5-04
+# Function to get PLDM fw_update PCI Subsystem Vendor ID of NVLink SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem Vendor" ID
+get_chassis_sma_pldm_pci_subsys_vendor_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_pci_subsys_vendor_id $eid)
+}
+
+# HMC-Chassis-SMA-PLDM_T5-05
+# Function to get PLDM fw_update PCI Subsystem ID of NVLink SMA
+# Arguments:
+#   $1: MCTP EID
+# Returns:
+#   valid "PCI Subsystem" ID
+get_chassis_sma_pldm_pci_subsys_id() {
+    local eid="${1:-40}"
+    echo $(_log_ get_sma_pldm_pci_subsys_id $eid)
+}
+
 
 
 <<COMMENT

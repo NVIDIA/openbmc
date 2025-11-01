@@ -30,3 +30,7 @@ WARN_QA:append = "buildpaths"
 
 # From 5.6+ the COPYING file changed
 LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
+
+# Use this file only for Linux kernel version >= 6.5
+require cve-exclusion-aspeed.inc
+

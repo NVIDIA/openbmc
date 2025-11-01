@@ -16,8 +16,8 @@ PV = "0.1"
 LICENSE = "CLOSED"
 LIC_FILES_CHKSUM = ""
 
-SRC_URI = "git://git-master.nvidia.com:12001/tegra/tools/tcu_muxer.git;protocol=ssh;branch=dev-main"
-SRCREV = "f536c843e365f654b4e4bf9b6ff9f37f6672d4d1"
+SRC_URI = "git://github.com/NVIDIA/tcu_muxer;protocol=https;branch=develop"
+SRCREV = "eceba41c7ba16540f83ac7c13405c41eda7f4ea4"
 
 S = "${WORKDIR}/git"
 

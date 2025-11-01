@@ -5,6 +5,7 @@ After=xyz.openbmc_project.State.Host@0.service
 
 [Service]
 Type=oneshot
+ExecStartPre=/bin/sh -c 'rm -f /run/bmc-state/CPU_BOOT_DONE-I'
 ExecStartPre=/bin/sh -c 'control-bios-host-interface.sh boot-undone'
 ExecStart=/usr/bin/env /usr/bin/delete-hi-user.sh
 

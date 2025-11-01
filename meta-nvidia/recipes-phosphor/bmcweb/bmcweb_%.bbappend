@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/bmcweb;protocol=https;branch=develop"
-SRCREV = "2e6c03bc0759dd963a69d509223f8b7619194f4f"
+SRCREV = "2f69be39c0dc5b325c35c53ec0748342ad3dc126"
 
 EXTRA_OEMESON += "-Dredfish-new-powersubsystem-thermalsubsystem=enabled"
 PACKAGECONFIG += "redfish-dbus-log"
@@ -26,16 +26,21 @@ SRC_URI:append:hgxb = " file://hgxb/bmcweb-hgxb.conf \
                        file://hgxb/bmcweb-socket-hgxb.conf"
 SRC_URI:append:hgxb300 = " file://hgxb300/bmcweb-hgxb300.conf \
                            file://hgxb300/bmcweb-socket-hgxb300.conf"
+SRC_URI:append:hgxr = " file://hgxr/bmcweb-hgxr.conf \
+                        file://hgxr/bmcweb-socket-hgxr.conf"
 FILES:${PN}:append:hgx = " ${systemd_system_unitdir}/bmcweb.service.d/bmcweb-hgx.conf \
                             ${systemd_system_unitdir}/bmcweb.socket.d/bmcweb-socket-hgx.conf"
 FILES:${PN}:append:hgxb = " ${systemd_system_unitdir}/bmcweb.service.d/bmcweb-hgxb.conf \
                             ${systemd_system_unitdir}/bmcweb.socket.d/bmcweb-socket-hgxb.conf"
 FILES:${PN}:append:hgxb300 = " ${systemd_system_unitdir}/bmcweb.service.d/bmcweb-hgxb300.conf \
                                ${systemd_system_unitdir}/bmcweb.socket.d/bmcweb-socket-hgxb300.conf"
+FILES:${PN}:append:hgxr = " ${systemd_system_unitdir}/bmcweb.service.d/bmcweb-hgxr.conf \
+                            ${systemd_system_unitdir}/bmcweb.socket.d/bmcweb-socket-hgxr.conf"
 
 SYSTEMD_OVERRIDE:${PN}:hgx += "bmcweb-hgx.conf:bmcweb.service.d/bmcweb-hgx.conf"
 SYSTEMD_OVERRIDE:${PN}:hgxb += "bmcweb-hgxb.conf:bmcweb.service.d/bmcweb-hgxb.conf"
 SYSTEMD_OVERRIDE:${PN}:hgxb300 += "bmcweb-hgxb.conf:bmcweb.service.d/bmcweb-hgxb300.conf"
+SYSTEMD_OVERRIDE:${PN}:hgxr += "bmcweb-hgxr.conf:bmcweb.service.d/bmcweb-hgxr.conf"
 
 DEPENDS += " \
     phosphor-logging \
@@ -62,4 +67,11 @@ do_install:append:hgxb300() {
     install -m 0644 ${UNPACKDIR}/hgxb300/bmcweb-hgxb300.conf ${D}${systemd_system_unitdir}/bmcweb.service.d/
     install -d ${D}${systemd_system_unitdir}/bmcweb.socket.d
     install -m 0644 ${UNPACKDIR}/hgxb300/bmcweb-socket-hgxb300.conf ${D}${systemd_system_unitdir}/bmcweb.socket.d/
+}
+
+do_install:append:hgxr() {
+    install -d ${D}${systemd_system_unitdir}/bmcweb.service.d
+    install -m 0644 ${UNPACKDIR}/hgxr/bmcweb-hgxr.conf ${D}${systemd_system_unitdir}/bmcweb.service.d/
+    install -d ${D}${systemd_system_unitdir}/bmcweb.socket.d
+    install -m 0644 ${UNPACKDIR}/hgxr/bmcweb-socket-hgxr.conf ${D}${systemd_system_unitdir}/bmcweb.socket.d/
 }
