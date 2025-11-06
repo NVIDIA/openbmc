@@ -16,4 +16,5 @@ OBMC_IMAGE_EXTRA_INSTALL:append = " \
                                     nvidia-power-manager \
                                     nvidia-otp-monitor \
                                     nvidia-journal-conf \
+                                    net-tools \
                                   "

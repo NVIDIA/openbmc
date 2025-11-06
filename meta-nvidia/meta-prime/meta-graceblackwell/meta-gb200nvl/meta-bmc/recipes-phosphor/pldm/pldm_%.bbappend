@@ -1,6 +1,7 @@
 RDEPENDS:${PN} += " bash"
 inherit systemd
 EXTRA_OEMESON:append = " -Dsensor-polling-time=999 "
+EXTRA_OEMESON:append = " -Dpldm-package-verification=integrity "
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 

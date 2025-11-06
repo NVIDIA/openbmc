@@ -1,8 +1,8 @@
 # Override some values in linux-aspeed.inc and linux-aspeed_git.bb
 # with specifics of our Git repo, branch names, and Linux version
 #
-LINUX_VERSION = "6.12.9"
-SRCREV="bfb18b4f7fe0424ddbf790e37a854ab25d69e5d0"
+LINUX_VERSION = "6.12.41"
+SRCREV="8d3a4cbe3f39ea40c58820bb270337e1f258ff45"
 KSRC = "git://github.com/NVIDIA/linux;protocol=https;branch=develop-6.12"
 # From 5.10+ the COPYING file changed
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
@@ -21,3 +21,5 @@ do_configure:append() {
 	cp ${UNPACKDIR}/aspeed-bmc-nvidia-gb200nvl-bmc-ut3.dts ${S}/arch/arm/boot/dts/aspeed/
 	cp ${UNPACKDIR}/nvidia-gb200nvl-bmc-core.dtsi ${S}/arch/arm/boot/dts/aspeed/
 }
+
+require linux-aspeed/cve_linux_kernel_6_12_41_exceptions.inc

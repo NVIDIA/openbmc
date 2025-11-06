@@ -85,12 +85,12 @@ RPROVIDES:${PN}-version += " \
     virtual-obmc-image-manager \
 "
 
-FILES:${PN}-version += "${bindir}/phosphor-version-software-manager ${exec_prefix}/lib/tmpfiles.d/software.conf ${bindir}/phosphor-software-manager "
-FILES:${PN}-download-mgr += "${bindir}/phosphor-download-manager"
+FILES:${PN}-version += "${libexecdir}/phosphor-code-mgmt/phosphor-version-software-manager ${exec_prefix}/lib/tmpfiles.d/software.conf ${libexecdir}/phosphor-code-mgmt/phosphor-software-manager "
+FILES:${PN}-download-mgr += "${libexecdir}/phosphor-code-mgmt/phosphor-download-manager"
 FILES:${PN}-download-mgr += "${bindir}/scp-transfer"
 FILES:${PN}-download-mgr += "${bindir}/http-download"
 FILES:${PN}-updater += " \
-    ${bindir}/phosphor-image-updater \
+    ${libexecdir}/phosphor-code-mgmt/phosphor-image-updater \
     ${bindir}/obmc-flash-bmc \
     /usr/local \
     "

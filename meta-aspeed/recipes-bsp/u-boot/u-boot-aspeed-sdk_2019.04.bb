@@ -34,3 +34,5 @@ do_compile:append() {
         ${B}/tools/mkenvimage -r -s ${UBOOT_ENV_SIZE} -o ${B}/${UBOOT_ENV_BINARY} ${UNPACKDIR}/${UBOOT_ENV_TXT}
     fi
 }
+
+require cve-exceptions.inc

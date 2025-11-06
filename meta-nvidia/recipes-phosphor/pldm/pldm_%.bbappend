@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/pldm;protocol=https;branch=develop"
-SRCREV = "9e845546ee89506c11bc4bbadf4a90b6f78f0f74"
+SRCREV = "cf5cc9f3d08ecea40af29ba2e9d31a45700ff2dd"
 
 DEPENDS += "nvidia-tal"
 DEPENDS += "libmctp"
@@ -19,6 +19,6 @@ EXTRA_OEMESON += " \
     -Dfw-update-skip-package-size-check=enabled \
     -Dinstance-id-expiration-interval=15 \
     -Dresponse-time-out=4800 \
-    -Dpldm-package-verification=integrity \
+    -Dpldm-package-verification=disabled \
     "
 EXTRA_OEMESON:append = "${@bb.utils.contains('DISTRO_FEATURES', 'erotless-bmc', ' -Ddebug-token=disabled ', ' -Dfw-debug=enabled ', d)}"

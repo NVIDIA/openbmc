@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI = "git://github.com/NVIDIA/bmcweb;protocol=https;branch=develop"
-SRCREV = "2f69be39c0dc5b325c35c53ec0748342ad3dc126"
+SRCREV = "09a40db8e5d48947b38cacb6c32d2307ae778c6a"
 
 EXTRA_OEMESON += "-Dredfish-new-powersubsystem-thermalsubsystem=enabled"
 PACKAGECONFIG += "redfish-dbus-log"

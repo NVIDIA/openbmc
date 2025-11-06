@@ -27,7 +27,7 @@ EXTRA_OEMESON += " \
 "
 
 SRC_URI = "git://github.com/NVIDIA/nsmd;protocol=https;branch=develop"
-SRCREV = "a2130171e44e2868997788e3b20a0fa4dce851e4"
+SRCREV = "5749f2053f5a0588d9ae2b0728241dcfcb10bc02"
 S = "${WORKDIR}/git"
 
 SYSTEMD_SERVICE:${PN} = "nsmd.service"
