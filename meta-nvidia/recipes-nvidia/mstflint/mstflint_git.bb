@@ -3,17 +3,16 @@ DESCRIPTION = "This package contains a burning tool for Mellanox manufactured HC
 HOMEPAGE = "https://github.com/Mellanox/mstflint"
 
 LICENSE = "GPL-2.0-only"
-LIC_FILES_CHKSUM = "\
+LIC_FILES_CHKSUM = " \
     file://LICENSE;md5=79e20039679d6414176a6a04804e40be \
     file://COPYING;md5=37684ff4dc627e8779d1dba945d8724b \
     file://license_map.yaml;md5=2c3cdef9d92aa3b870a62501f77cbfb7 \
     "
 
-PV = "4.32.0-1"
-
-FILESPATH = "${THISDIR}/files"
-SRC_URI = "git://github.com/Mellanox/mstflint.git;protocol=https;branch=master"
-SRCREV = "d431e08e226be6c04a86e08854ee9062d9127778"
+SRC_URI = " \
+    git://github.com/Mellanox/mstflint.git;protocol=https;branch=master_devel \
+    "
+SRCREV = "e1a89d1555269c9fb12512017f13cf0224f48936"
 
 PACKAGES =+ "${PN}-flint"
 
@@ -31,11 +30,9 @@ inherit autotools pkgconfig
 
 # Keep static libs around because mstflint is compiled statically
 DISABLE_STATIC = ""
-EXTRA_OECONF += "\
+EXTRA_OECONF += " \
     --enable-i2c \
     --disable-inband \
     "
-# HACK: See https://jirasw.nvidia.com/browse/DGXOPENBMC-16931 for removal
-EXTRA_OEMAKE:append = " libresource_dump_common_la_CXXFLAGS+='-I$(top_srcdir)'"
 
 FILES:${PN}-flint = "${bindir}/mstflint"
