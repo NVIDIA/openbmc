@@ -2,7 +2,7 @@ SUMMARY = "Nvidia NVMe Manager"
 DESCRIPTION = "NVMe Services Configured from D-Bus"
 
 SRC_URI = "git://github.com/NVIDIA/nvidia-nvme-manager;protocol=https;branch=develop"
-SRCREV= "e37721a955ab2fcc1d7b57a161ce61ca189013a8"
+SRCREV= "b4733695e78c1c21ecf3cb7b987f59b3f492458e"
 
 
 LICENSE = "CLOSED"
