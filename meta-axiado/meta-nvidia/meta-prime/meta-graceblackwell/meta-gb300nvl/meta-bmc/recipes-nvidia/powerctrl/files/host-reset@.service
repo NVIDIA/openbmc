@@ -1,0 +1,14 @@
+[Unit]
+Description=Reset Host
+Requires=bmc-boot-complete.service
+After=bmc-boot-complete.service
+Before=phosphor-reboot-host@.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/env powerctrl.sh reset
+SyslogIdentifier=powerctrl
+
+[Install]
+RequiredBy=obmc-host-force-warm-reboot@.target
+RequiredBy=obmc-host-warm-reboot@.target

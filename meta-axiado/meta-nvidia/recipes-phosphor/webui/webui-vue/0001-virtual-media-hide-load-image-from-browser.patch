@@ -1,0 +1,68 @@
+From 86cce8ad35ba14bf2c695c5064f9e1bd708b05ae Mon Sep 17 00:00:00 2001
+From: Pooja Patil <axiado-1515@axiado.com>
+Date: Thu, 16 Oct 2025 01:24:51 -0700
+Subject: [PATCH] virtual media hide load image from browser  and thermal,
+ power sensors api fix,
+
+Upstream-Status: Pending
+
+Signed-off-by: Pooja Patil <axiado-1515@axiado.com>
+---
+ src/store/modules/HardwareStatus/SensorsStore.js   | 8 ++++----
+ src/views/Operations/VirtualMedia/VirtualMedia.vue | 5 ++++-
+ 2 files changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/src/store/modules/HardwareStatus/SensorsStore.js b/src/store/modules/HardwareStatus/SensorsStore.js
+index 47115b6..2e3cc0a 100644
+--- a/src/store/modules/HardwareStatus/SensorsStore.js
++++ b/src/store/modules/HardwareStatus/SensorsStore.js
+@@ -80,9 +80,9 @@ const SensorsStore = {
+       });
+     },
+     async getThermalSensors({ commit }, chassis) {
+-      if (!(chassis['Thermal'] && chassis['Thermal']['@odata.id'])) return;
++      if (!(chassis['ThermalSubsystem'] && chassis['ThermalSubsystem']['@odata.id'])) return;
+       return await api
+-        .get(chassis['Thermal']['@odata.id'])
++        .get(chassis['ThermalSubsystem']['@odata.id'])
+         .then(({ data: { Fans = [], Temperatures = [] } }) => {
+           const sensorData = [];
+           Fans.forEach((sensor) => {
+@@ -120,9 +120,9 @@ const SensorsStore = {
+         .catch((error) => console.log(error));
+     },
+     async getPowerSensors({ commit }, chassis) {
+-      if (!(chassis['Power'] && chassis['Power']['@odata.id'])) return;
++      if (!(chassis['PowerSubsystem'] && chassis['PowerSubsystem']['@odata.id'])) return;
+       return await api
+-        .get(chassis['Power']['@odata.id'])
++        .get(chassis['PowerSubsystem']['@odata.id'])
+         .then(({ data: { Voltages = [] } }) => {
+           const sensorData = Voltages.map((sensor) => {
+             return {
+diff --git a/src/views/Operations/VirtualMedia/VirtualMedia.vue b/src/views/Operations/VirtualMedia/VirtualMedia.vue
+index da4d0ec..7f313b1 100644
+--- a/src/views/Operations/VirtualMedia/VirtualMedia.vue
++++ b/src/views/Operations/VirtualMedia/VirtualMedia.vue
+@@ -1,7 +1,7 @@
+ <template>
+   <b-container fluid="xl">
+     <page-title />
+-    <b-row class="mb-4">
++    <b-row v-if="loadImageFromWebBrowser" class="mb-4">
+       <b-col md="12">
+         <page-section
+           :section-title="$t('pageVirtualMedia.virtualMediaSubTitleFirst')"
+@@ -185,6 +185,9 @@ export default {
+     loadImageFromExternalServer() {
+       return this.legacyDevices.length > 0;
+     },
++    loadImageFromWebBrowser() {
++      return this.proxyDevices.length > 1;
++    },
+   },
+   created() {
+     this.$store.dispatch('global/getSystemInfo');
+-- 
+2.25.1
+

@@ -1,0 +1,41 @@
+[Unit]
+Description=MCTP CX7 Static Endpoints
+After=mctpd.service cpu-boot-done.service
+Requires=mctpd.service
+Conflicts=obmc-power-off@0.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+#Environment="MCTP_VERBOSE=1"
+ExecStart=/bin/sh -c ' \
+    retry_busctl() { \
+        local max_attempts=3; \
+        local attempt=1; \
+        while [ $attempt -le $max_attempts ]; do \
+            [ -n "$MCTP_VERBOSE" ] && echo "Attempt $attempt for: busctl $@" >&2; \
+            if busctl "$@"; then \
+                [ -n "$MCTP_VERBOSE" ] && echo "Success on attempt $attempt" >&2; \
+                return 0; \
+            fi; \
+            [ -n "$MCTP_VERBOSE" ] && echo "Failed attempt $attempt" >&2; \
+            if [ $attempt -lt $max_attempts ]; then \
+                sleep 1; \
+            fi; \
+            attempt=$((attempt + 1)); \
+        done; \
+        [ -n "$MCTP_VERBOSE" ] && echo "All 3 attempts failed, continuing anyway" >&2; \
+        return 0; \
+    }; \
+    sleep 4; \
+    retry_busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/interfaces/mctpusb0 au.com.codeconstruct.MCTP.BusOwner1 AssignEndpointStatic ayyyay 0  20 21 0; \
+    sleep 1; \
+    retry_busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/interfaces/mctpusb1 au.com.codeconstruct.MCTP.BusOwner1 AssignEndpointStatic ayyyay 0 30 31 0'
+ExecStop=/bin/sh -c ' \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/20 au.com.codeconstruct.MCTP.Endpoint1 Remove || true; \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/21 au.com.codeconstruct.MCTP.Endpoint1 Remove || true; \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/30 au.com.codeconstruct.MCTP.Endpoint1 Remove || true; \
+    busctl call au.com.codeconstruct.MCTP1 /au/com/codeconstruct/mctp1/networks/1/endpoints/31 au.com.codeconstruct.MCTP.Endpoint1 Remove || true'
+
+[Install]
+WantedBy=cpu-boot-done.service obmc-power-on@0.target

@@ -1,0 +1,45 @@
+From 54c8312727b0478f4efaf60c6f664202d8438b82 Mon Sep 17 00:00:00 2001
+From: Ritzen Yang <ryang@axiado.com>
+Date: Thu, 5 Jun 2025 16:40:49 +0800
+Subject: [PATCH] KWS-6690:use uint32_t instead size_t to phosphor-time-manager
+
+Upstream-Status: Pending
+
+Signed-off-by: Ritzen Yang <ryang@axiado.com>
+---
+ oem/nvidia/mctp_endpoint_discovery.cpp | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/oem/nvidia/mctp_endpoint_discovery.cpp b/oem/nvidia/mctp_endpoint_discovery.cpp
+index 95dcf98..d1387f7 100644
+--- a/oem/nvidia/mctp_endpoint_discovery.cpp
++++ b/oem/nvidia/mctp_endpoint_discovery.cpp
+@@ -141,8 +141,8 @@ void MctpDiscovery<T>::populateMctpInfo(const dbus::InterfaceMap& interfaces,
+             if (intfName == unixSocketIntfName)
+             {
+                 // NOLINTBEGIN
+-                type = std::get<size_t>(properties.at("Type"));
+-                protocol = std::get<size_t>(properties.at("Protocol"));
++                type = std::get<uint32_t>(properties.at("Type"));
++                protocol = std::get<uint32_t>(properties.at("Protocol"));
+                 address =
+                     std::get<std::vector<uint8_t>>(properties.at("Address"));
+                 // NOLINTEND
+@@ -161,12 +161,12 @@ void MctpDiscovery<T>::populateMctpInfo(const dbus::InterfaceMap& interfaces,
+                 properties.contains("SupportedMessageTypes") &&
+                 properties.contains("MediumType"))
+             {
+-                auto eid = std::get<size_t>(properties.at("EID"));
++                auto eid = std::get<uint32_t>(properties.at("EID"));
+                 auto mctpTypes = std::get<std::vector<uint8_t>>(
+                     properties.at("SupportedMessageTypes"));
+                 auto mediumType =
+                     std::get<std::string>(properties.at("MediumType"));
+-                auto networkId = std::get<size_t>(properties.at("NetworkId"));
++                auto networkId = std::get<uint32_t>(properties.at("NetworkId"));
+                 if (std::find(mctpTypes.begin(), mctpTypes.end(),
+                               mctp_vdm::messageType) != mctpTypes.end())
+                 {
+-- 
+2.34.1
+

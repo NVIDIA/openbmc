@@ -1,0 +1,114 @@
+From 250976267553e145d84b71aabb1bd8496d19d52f Mon Sep 17 00:00:00 2001
+From: Praveen Kamma <pkamma@axiado.com>
+Date: Fri, 20 Jun 2025 18:09:20 -0700
+Subject: [PATCH] KWS-6639-RedfishSupportForScreenCapture
+
+Upstream-Status: Pending
+
+---
+ redfish-core/lib/managers.hpp | 69 +++++++++++++++++++++++++++++++++++
+ redfish-core/src/redfish.cpp  |  2 +
+ 2 files changed, 71 insertions(+)
+
+diff --git a/redfish-core/lib/managers.hpp b/redfish-core/lib/managers.hpp
+index 4b5febf8..7e103d31 100644
+--- a/redfish-core/lib/managers.hpp
++++ b/redfish-core/lib/managers.hpp
+@@ -427,6 +427,65 @@ inline void requestRoutesManagerResetToDefaultsAction(App& app)
+     });
+ }
+ 
++inline void requestRoutesManagerScreenCaptureAction(App& app)
++{
++    BMCWEB_ROUTE(app, "/redfish/v1/Managers/<str>/Actions/Oem/axiado.ScreenCapture/")
++        .privileges({{"Login"}})
++        .methods(boost::beast::http::verb::post)(
++            [&app](const crow::Request& req,
++                   const std::shared_ptr<bmcweb::AsyncResp>& asyncResp,
++                   const std::string& managerId) {
++                (void)req;
++
++                if (managerId != BMCWEB_REDFISH_MANAGER_URI_NAME)
++                {
++                    messages::resourceNotFound(asyncResp->res, "Manager", managerId);
++                    return;
++                }
++
++                BMCWEB_LOG_DEBUG("Redfish screen capture action triggered");
++
++                crow::connections::systemBus->async_method_call(
++                    [asyncResp](const boost::system::error_code ec, const std::string& path) {
++                        if (ec)
++                        {
++                            messages::internalError(asyncResp->res);
++                            return;
++                        }
++
++                        asyncResp->res.jsonValue["Status"] = "Screenshot captured";
++                        asyncResp->res.jsonValue["Path"] = path;
++                    },
++                    "xyz.openbmc_project.kvm_service",
++                    "/xyz/openbmc_project/kvm",
++                    "xyz.openbmc_project.kvm_interface",
++                    "Screenshot");
++            });
++}
++
++inline void requestRoutesScreenshotDownload(App& app)
++{
++    BMCWEB_ROUTE(app, "/downloads/<str>")
++        .privileges({{"Login"}})
++        .methods(boost::beast::http::verb::get)(
++            [](const crow::Request&, const std::shared_ptr<bmcweb::AsyncResp>& asyncResp, const std::string& filename) {
++                std::string filePath = "/tmp/" + filename;
++
++                std::ifstream file(filePath, std::ios::binary);
++                if (!file.is_open())
++                {
++                    messages::resourceNotFound(asyncResp->res, "Screenshot", filename);
++                    return;
++                }
++
++                std::vector<char> buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
++                asyncResp->res.addHeader("Content-Type", "image/png");
++                asyncResp->res.addHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
++                asyncResp->res.result(boost::beast::http::status::ok);
++                asyncResp->res.write(std::string(buffer.begin(), buffer.end()));
++            });
++}
++
+ /**
+  * NvidiaManagerResetToDefaultsAction class supports POST method for complete
+  * reset action.
+@@ -3481,6 +3540,16 @@ inline void requestRoutesManager(App& app)
+             nvidia_manager_util::getOemNvidiaOpenOCD(asyncResp);
+         }
+ 
++        // Axiado Screen Capture
++        nlohmann::json& oemAxiadoAction =
++        asyncResp->res.jsonValue["Actions"]["Oem"]["#axiado.ScreenCapture"];
++        oemAxiadoAction["target"] = "/redfish/v1/Managers/" +
++                             std::string(BMCWEB_REDFISH_MANAGER_URI_NAME) +
++                             "/Actions/Oem/axiado.ScreenCapture";
++        oemAxiadoAction["title"] = "Capture IKVM Screenshot";
++
++        requestRoutesScreenshotDownload(app);
++
+         // NvidiaManager
+         nlohmann::json& oemNvidia = oem["Nvidia"];
+         oemNvidia["@odata.type"] = "#NvidiaManager.v1_4_0.NvidiaManager";
+diff --git a/redfish-core/src/redfish.cpp b/redfish-core/src/redfish.cpp
+index 4b2ef497..6eeef612 100644
+--- a/redfish-core/src/redfish.cpp
++++ b/redfish-core/src/redfish.cpp
+@@ -159,6 +159,8 @@ RedfishService::RedfishService(App& app)
+     requestRoutesManagerResetActionInfo(app);
+     requestRoutesManagerResetToDefaultsAction(app);
+     requestRoutesManagerDiagnosticData(app);
++    requestRoutesManagerScreenCaptureAction(app);
++    requestRoutesScreenshotDownload(app);
+     requestRoutesChassisCollection(app);
+     requestRoutesChassis(app);
+ 
+-- 
+2.25.1

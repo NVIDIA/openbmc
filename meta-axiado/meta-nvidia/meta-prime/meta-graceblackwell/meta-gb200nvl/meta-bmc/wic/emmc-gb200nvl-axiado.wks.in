@@ -1,0 +1,31 @@
+# Copyright (c) 2021-24 Axiado Corporation (or its affiliates). All rights reserved.
+#
+# Description: Create an image for eMMC
+#
+#  --- - ----- -------- -------- -------- -------- ------ -------- ----- ------ ---- ----------
+# |GPT| | env | boot-a | boot-b | rofs-a | rofs-b | rwfs | config | fdr | logs | FW | ubootenv |
+#  --- - ----- -------- -------- -------- -------- ------ -------- ----- ------ ---- ----------
+#         1MB    64MB     64MB    384MB    384MB    100MB   768M    3GB   1GB    2GB    64MB
+
+bootloader --ptable gpt
+
+#env
+part --align 4 --fixed-size 1M --source rawcopy --sourceparams="file=${DEPLOY_DIR_IMAGE}/u-boot-env.bin"
+
+#boot a/b
+part --fstype=ext4 --fixed-size 64M --source bootimg-partition --label boot-a
+part --fstype=ext4 --fixed-size 64M --source bootimg-partition --label boot-b
+
+#rofs a/b
+part --fstype=ext4 --fixed-size 384M --source rootfs --label rofs-a
+part --fstype=ext4 --fixed-size 384M --source rootfs --label rofs-b
+
+#rwfs
+part --fstype=ext4 --fixed-size 100M --label rwfs
+
+# Nvidia-specifi partition
+part --fstype=ext4 --fixed-size 100M --label bmc-config
+part --fstype=ext4 --fixed-size 100M --label fdr
+part --fstype=ext4 --fixed-size 100M --label user-logs
+part --fstype=ext4 --fixed-size 100M --label firmware-storage
+part --fstype=ext4 --fixed-size 64M --label uboot-env

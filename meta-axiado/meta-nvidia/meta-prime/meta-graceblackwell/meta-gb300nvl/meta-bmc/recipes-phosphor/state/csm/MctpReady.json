@@ -1,0 +1,30 @@
+{
+    "InterfaceName": "xyz.openbmc_project.State.FeatureReady",
+    "TypeInCategory": "xyz.openbmc_project.State.FeatureReady.FeatureTypes.MCTP",
+    "State": {
+        "State_property": "State",
+        "Default": "xyz.openbmc_project.State.FeatureReady.States.Starting",
+        "States": {
+            "xyz.openbmc_project.State.FeatureReady.States.Enabled": {
+                "Conditions": {
+                    "cond_mctp_spi0": {
+                        "Object": "/xyz/openbmc_project/mctp/SPI0",
+                        "Intf": "xyz.openbmc_project.State.ServiceReady",
+                        "Property": "State",
+                        "Value": "xyz.openbmc_project.State.ServiceReady.States.Enabled"
+                    }
+                }
+            },
+            "xyz.openbmc_project.State.FeatureReady.States.Starting": {
+                "Conditions": {
+                    "cond_mctp_spi0": {
+                        "Object": "/xyz/openbmc_project/mctp/SPI0",
+                        "Intf": "xyz.openbmc_project.State.ServiceReady",
+                        "Property": "State",
+                        "Value": "xyz.openbmc_project.State.ServiceReady.States.Starting"
+                    }
+                }
+            }
+        }
+    }
+}

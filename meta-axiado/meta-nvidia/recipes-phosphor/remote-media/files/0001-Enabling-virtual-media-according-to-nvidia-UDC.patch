@@ -1,0 +1,175 @@
+From 1fdcf8bd4c2b5949ef537ff23c316f1feb81a9e9 Mon Sep 17 00:00:00 2001
+From: Kuan-Jui Chiu <kchiu@axiado.com>
+Date: Mon, 13 Oct 2025 23:10:50 -0700
+Subject: [PATCH] Enabling virtual media according to nvidia UDC
+
+Cherry-pick from http://sourcevault.axiadord:7990/projects/NGRACE/repos/openbmc/commits/056f35df785dc5170e2ae828d243196a8b8bfe86
+
+AXBUGS-1872: [SuperMicro][B303]Virtual media service not working
+
+Upstream-Status: Pending
+---
+ src/system.hpp | 115 ++++++++++++++++++++++++++-----------------------
+ 1 file changed, 61 insertions(+), 54 deletions(-)
+
+diff --git a/src/system.hpp b/src/system.hpp
+index 057be15..02e5061 100644
+--- a/src/system.hpp
++++ b/src/system.hpp
+@@ -514,56 +514,70 @@ struct UsbGadget : private FsHelper
+             return -1;
+         }
+ 
+-        const fs::path gadgetDir =
+-            "/sys/kernel/config/usb_gadget/mass-storage-" + name;
+-        const fs::path funcMassStorageDir =
+-            gadgetDir / "functions/mass_storage.usb0";
++        std::string storageFuncName = "mass_storage." + name;
++        const fs::path gadgetDir = "/sys/kernel/config/usb_gadget/obmc_hid";
++        const fs::path functionsDir = gadgetDir / "functions";
++        const fs::path funcMassStorageDir = functionsDir / storageFuncName;
++        LogMsg(Logger::Debug, "Using Mass Storage Function: ", storageFuncName);
++        LogMsg(Logger::Debug, "Function Path: ", funcMassStorageDir.string());
+         const fs::path stringsDir = gadgetDir / "strings/0x409";
+         const fs::path configDir = gadgetDir / "configs/c.1";
+-        const fs::path massStorageDir = configDir / "mass_storage.usb0";
++        const fs::path massStorageDir = configDir / storageFuncName;
+         const fs::path configStringsDir = configDir / "strings/0x409";
+-        const std::regex gadgetDirRegex("gadget.[0-9]");
+ 
+         if (change == StateChange::inserted)
+         {
+             try
+             {
+-                fs::create_directories(gadgetDir);
+                 echoToFile(gadgetDir / "idVendor", "0x1d6b");
+                 echoToFile(gadgetDir / "idProduct", "0x0104");
+-                fs::create_directories(stringsDir);
++                if (fs::exists(stringsDir))
++                {
++                    std::cout << "StringsDirectory already exists : " << stringsDir
++                              << std::endl;
++                }
++                else
++                {
++                    fs::create_directories(stringsDir);
++                }
+                 echoToFile(stringsDir / "manufacturer", "OpenBMC");
+-                echoToFile(stringsDir / "product", "Virtual Media Device (" + name + ")");
++                echoToFile(stringsDir / "product",
++                std::format("Virtual Media Device ({})", name));
+                 fs::create_directories(configStringsDir);
+                 echoToFile(configStringsDir / "configuration", "config 1");
+                 fs::create_directories(funcMassStorageDir);
+                 fs::create_directories(funcMassStorageDir / "lun.0");
+-                fs::create_directory_symlink(funcMassStorageDir,
+-                                             massStorageDir);
+                 echoToFile(funcMassStorageDir / "lun.0/removable", "1");
+                 echoToFile(funcMassStorageDir / "lun.0/ro", rw ? "0" : "1");
+                 echoToFile(funcMassStorageDir / "lun.0/cdrom", "0");
+                 echoToFile(funcMassStorageDir / "lun.0/file", path);
+ 
+-                for (const auto& port : fs::directory_iterator(
+-                         "/sys/bus/platform/devices/1e6a0000.usb-vhub"))
++                for (const auto &port : fs::directory_iterator("/sys/class/udc"))
+                 {
+-                    if (fs::is_directory(port) && !fs::is_symlink(port))
++                    std::string fullPath = port.path().string();
++                    LogMsg(Logger::Debug, "Checking port path: ", fullPath);
++                    // Extract the UDC ID from the directory name
++                    const std::string portId = port.path().filename();
++
++                    if (portId == "81200000.udc")
+                     {
+-                        for (const auto &dir : fs::directory_iterator(port))
+-                        {
+-                            if (fs::is_directory(dir) &&
+-                                 // In the port directory, check for the gadget directory. Ex: gadget.2
+-                                 std::regex_search(dir.path().filename().string(), gadgetDirRegex) &&
+-                                 !fs::exists(dir.path() / "suspended"))
+-                            {
+-                                const std::string portId = port.path().filename();
+-                                LogMsg(Logger::Debug, "Use port : ", portId);
+-                                echoToFile(gadgetDir / "UDC", portId);
+-                                return 0;
+-                            }
+-                        }
++                        std::cout << "Port ID is already 81200000.udc. Unmounting and "
++                                  << "remounting..." << std::endl;
++                        // Unbind the gadget from the UDC
++                        echoToFile(gadgetDir / "UDC", "");
++                        // Wait for the unbinding to complete (optional, but recommended)
++                        std::this_thread::sleep_for(std::chrono::milliseconds(500));
++                        fs::create_directory_symlink(funcMassStorageDir, massStorageDir);
++                        // Rebind the gadget to the UDC
++                        echoToFile(gadgetDir / "UDC", portId);
+                     }
++                    else
++                    {
++                        // Bind the gadget to the UDC
++                        echoToFile(gadgetDir / "UDC", portId);
++                        std::cout << "Mounted UDC: " << portId << std::endl;
++                    }
++                    return 0;
+                 }
+             }
+             catch (fs::filesystem_error& e)
+@@ -581,35 +595,28 @@ struct UsbGadget : private FsHelper
+         }
+         // StateChange: unknown, notMonitored, inserted were handler
+         // earlier. We'll get here only for removed, or cleanup
+-
+-        const std::string gadgetPath =
+-            "/sys/kernel/config/usb_gadget/mass-storage-" + name;
+-        const std::string removeMassStorageDir =
+-            "rm " + gadgetPath + "/configs/c.1/mass_storage.usb0";
+-        const std::string removeFuncMassStorageDir =
+-            "rmdir " + gadgetPath + "/functions/mass_storage.usb0";
+-        const std::string removeConfigStringsDir =
+-            "rmdir  " + gadgetPath + "/configs/c.1/strings/0x409";
+-        const std::string removeConfigDir =
+-            "rmdir  " + gadgetPath + "/configs/c.1";
+-        const std::string removeStringsDir =
+-            "rmdir  " + gadgetPath + "/strings/0x409";
+-        const std::string removeGadgetDir = "rmdir  " + gadgetPath;
+-
+-        const std::array<const char*, 6> dirs = {
+-            removeMassStorageDir.c_str(),   removeFuncMassStorageDir.c_str(),
+-            removeConfigStringsDir.c_str(), removeConfigDir.c_str(),
+-            removeStringsDir.c_str(),       removeGadgetDir.c_str()};
+-
+-        for (const char* dir : dirs)
++        else if (change == StateChange::removed)
+         {
+-            int ret = 0;
+-            ret = system(dir);
+-            if (ret != 0)
++            const std::string gadgetPath =
++                "/sys/kernel/config/usb_gadget/obmc_hid";
++            const std::string removeMassStorageDir =
++                "rm " + gadgetPath + "/configs/c.1/" + storageFuncName;
++            const std::string removeFuncMassStorageDir =
++                "rmdir " + gadgetPath + "/functions/" + storageFuncName;
++            const std::string removeConfigStringsDir =
++                "rmdir  " + gadgetPath + "/configs/c.1/strings/0x409";
++
++            const std::array<const char *, 3> dirs = {
++                removeMassStorageDir.c_str(), removeFuncMassStorageDir.c_str(),
++                removeConfigStringsDir.c_str()};
++            for (const char *dir : dirs)
+             {
+-                success = false;
+-                LogMsg(Logger::Error,
+-                       "[App]: UsbGadget : Can't remove file or directory");
++                if (system(dir) != 0)
++                {
++                    success = false;
++                    LogMsg(Logger::Error,
++                           "[App]: UsbGadget : Can't remove file or directory");
++                }
+             }
+         }
+ 
+-- 
+2.34.1
+

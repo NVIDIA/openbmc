@@ -1,0 +1,16 @@
+
+[Unit]
+Description=Graceful Power Off Host
+Requires=bmc-boot-complete.service
+After=bmc-boot-complete.service
+Wants=obmc-host-stop-pre@0.target
+Before=obmc-host-stop-pre@0.target
+Conflicts=obmc-host-start@0.target
+Conflicts=obmc-chassis-poweron@%i.target
+
+[Service]
+RemainAfterExit=yes
+Type=oneshot
+ExecStart=/usr/bin/env powerctrl.sh grace_off
+SyslogIdentifier=powerctrl
+

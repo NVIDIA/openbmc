@@ -1,0 +1,3 @@
+# This rules file contains mctp devices related rules needed to work in hand with mctpd
+
+SUBSYSTEM=="net", ACTION=="add", KERNEL=="mctpusb*",NAME="%E{INTERFACE}", PROGRAM="/bin/bash -c 'echo %E{DEVPATH} | sed -E \"s|.*/([^/]+):.*|\\1|\"'", RUN+="/bin/sh -c '/usr/bin/mctp link set $env{INTERFACE} up;  /usr/sbin/ip link property add dev $env{INTERFACE} altname mctpusb%c; /usr/bin/mctp addr add 8 dev $env{INTERFACE}; sleep 5'"

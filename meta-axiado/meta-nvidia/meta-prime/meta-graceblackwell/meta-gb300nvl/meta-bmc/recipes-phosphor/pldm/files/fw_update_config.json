@@ -1,0 +1,434 @@
+{
+    "entries": [
+        {
+            "match": {
+                "Interface":"xyz.openbmc_project.Common.UUID",
+                "Properties":[
+                    {
+                        "Name":"UUID",
+                        "Type":"s",
+                        "Value":"678aac1134244bcc8a750bb622a3cfeb"
+                    }
+                ]
+            },
+            "firmware_inventory": {
+                "create": {
+                    "FW_BMC_0": {
+                        "component_id": 16
+                    }
+                },
+                "update": {
+                    "FW_BMC_0": 16
+                }
+            },
+            "component_info": {
+                "FW_BMC_0": 16
+            }
+        },
+        {
+           "match": {
+              "Interface":"xyz.openbmc_project.Common.UUID",
+               "Properties":[
+                  {
+                     "Name":"UUID",
+                     "Type":"s",
+                     "Value":"f72d6fa0-5675-11ed-9b6a-0242ac120002"
+                  }
+               ]
+           },
+           "firmware_inventory": {
+              "create": {
+                 "FW_RECOVERY_HGX_FW_ERoT_BMC_0": {
+                    "component_id": 65280
+                 },
+                 "FW_RECOVERY_HGX_FW_BMC_0": {
+                    "component_id": 16
+                 }
+              }
+           },
+           "component_info": {
+              "FW_RECOVERY_HGX_FW_ERoT_BMC_0": 65280,
+              "FW_RECOVERY_HGX_FW_BMC_0": 16
+           }
+        },
+        {
+           "match": {
+              "Interface":"xyz.openbmc_project.MCTP.Endpoint",
+              "Properties":[
+                 {
+                    "Name":"EID",
+                    "Type":"u",
+                    "Value":2
+                 }
+              ]
+           },
+           "firmware_inventory": {
+              "create": {
+                 "FW_RECOVERY_HGX_FW_ERoT_FPGA_0": {
+                    "component_id": 65280
+                 }
+              }
+           },
+           "component_info": {
+              "FW_RECOVERY_HGX_FW_ERoT_FPGA_0": 65280
+           }
+        },
+        {
+           "match": {
+              "Interface":"xyz.openbmc_project.MCTP.Endpoint",
+              "Properties":[
+                 {
+                    "Name":"EID",
+                    "Type":"u",
+                    "Value":3
+                 }
+              ]
+           },
+           "firmware_inventory": {
+              "create": {
+                 "FW_RECOVERY_HGX_FW_ERoT_FPGA_1": {
+                    "component_id": 65280
+                 }
+              }
+           },
+           "component_info": {
+              "FW_RECOVERY_HGX_FW_ERoT_FPGA_1": 65280
+           }
+        },
+        {
+           "match":{
+              "Interface":"xyz.openbmc_project.Inventory.Decorator.I2CDevice",
+              "Properties":[
+                 {
+                    "Name":"Address",
+                    "Type":"u",
+                    "Value":50
+                 },
+                 {
+                    "Name":"Bus",
+                    "Type":"u",
+                    "Value":14
+                 }
+              ]
+           },
+           "device_inventory": {
+              "create": {
+                 "object_path": "/xyz/openbmc_project/inventory/system/chassis/IRoT_BF3_0",
+                 "associations": [
+                    {
+                       "forward": "parent_chassis",
+                       "reverse": "all_chassis",
+                       "endpoint": "/xyz/openbmc_project/inventory/system/board/Riser_Slot1_BlueField_3_Card"
+                    },
+                    {
+                       "forward": "inventory",
+                       "reverse": "associated_ROT",
+                       "endpoint": "/xyz/openbmc_project/inventory/system/board/Riser_Slot1_BlueField_3_Card"
+                    },
+                    {
+                       "forward": "inventory_chassis",
+                       "reverse": "associated_chassis",
+                       "endpoint": "/xyz/openbmc_project/inventory/system/chassis/IRoT_BF3_0"
+                    }
+                 ]
+              }
+           },
+           "firmware_inventory":{
+              "create":{
+                 "NIC_0":{
+                    "component_id":1,
+                    "associations":[
+                       {
+                          "forward":"inventory",
+                          "reverse":"activation",
+                          "endpoint":"/xyz/openbmc_project/inventory/system/board/Riser_Slot1_BlueField_3_Card"
+                       }
+                    ]
+                 }
+              }
+           },
+           "component_info":{
+              "NIC_0":1
+           }
+        },
+        {
+           "match":{
+              "Interface":"xyz.openbmc_project.Inventory.Decorator.I2CDevice",
+              "Properties":[
+                 {
+                    "Name":"Address",
+                    "Type":"u",
+                    "Value":50
+                 },
+                 {
+                    "Name":"Bus",
+                    "Type":"u",
+                    "Value":15
+                 }
+              ]
+           },
+           "device_inventory": {
+               "create": {
+                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/IRoT_BF3_1",
+                  "associations": [
+                    {
+                       "forward": "parent_chassis",
+                       "reverse": "all_chassis",
+                       "endpoint": "/xyz/openbmc_project/inventory/system/board/Riser_Slot2_BlueField_3_Card"
+                    },
+                    {
+                       "forward": "inventory",
+                       "reverse": "associated_ROT",
+                       "endpoint": "/xyz/openbmc_project/inventory/system/board/Riser_Slot2_BlueField_3_Card"
+                    },
+                    {
+                       "forward": "inventory_chassis",
+                       "reverse": "associated_chassis",
+                       "endpoint": "/xyz/openbmc_project/inventory/system/chassis/IRoT_BF3_1"
+                    }
+                 ]
+               }
+           },
+           "firmware_inventory":{
+              "create":{
+                 "NIC_1":{
+                    "component_id":1,
+                    "associations":[
+                       {
+                          "forward":"inventory",
+                          "reverse":"activation",
+                          "endpoint":"/xyz/openbmc_project/inventory/system/board/Riser_Slot2_BlueField_3_Card"
+                       }
+                    ]
+                 }
+              }
+           },
+           "component_info":{
+              "NIC_1":1
+           }
+        },
+        {
+            "match":{
+               "Interface":"xyz.openbmc_project.MCTP.Endpoint",
+               "Properties":[
+                  {
+                     "Name":"EID",
+                     "Type":"u",
+                     "Value":21
+                  }
+               ]
+            },
+            "device_inventory": {
+               "create": {
+                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/CX8_0",
+                  "associations": [
+                    {
+                        "forward": "inventory",
+                        "reverse": "associated_ROT",
+                        "endpoint": "/xyz/openbmc_project/inventory/system/chassis/CX8_0"
+                    }
+                  ]
+               }
+            },
+            "firmware_inventory":{
+               "create":{
+                  "CX8_0":{
+                     "component_id":1,
+                     "associations":[
+                        {
+                           "forward":"inventory",
+                           "reverse":"activation",
+                           "endpoint":"/xyz/openbmc_project/inventory/system/networkadapter/IO_Board_0_CX8_0"
+                        }
+                     ]
+                  }
+               }
+            },
+            "component_info":{
+               "CX8_0":1
+            }
+         },
+         {
+            "match":{
+               "Interface":"xyz.openbmc_project.MCTP.Endpoint",
+               "Properties":[
+                  {
+                     "Name":"EID",
+                     "Type":"u",
+                     "Value":23
+                  }
+               ]
+            },
+            "device_inventory": {
+               "create": {
+                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/CX8_1",
+                  "associations": [
+                    {
+                        "forward": "inventory",
+                        "reverse": "associated_ROT",
+                        "endpoint": "/xyz/openbmc_project/inventory/system/chassis/CX8_1"
+                    }
+                  ]
+               }
+            },
+            "firmware_inventory":{
+               "create":{
+                  "CX8_1":{
+                     "component_id":1,
+                     "associations":[
+                        {
+                           "forward":"inventory",
+                           "reverse":"activation",
+                           "endpoint":"/xyz/openbmc_project/inventory/system/networkadapter/IO_Board_0_CX8_1"
+                        }
+                     ]
+                  }
+               }
+            },
+            "component_info":{
+               "CX8_1":1
+            }
+         },
+         {
+            "match":{
+               "Interface":"xyz.openbmc_project.MCTP.Endpoint",
+               "Properties":[
+                  {
+                     "Name":"EID",
+                     "Type":"u",
+                     "Value":31
+                  }
+               ]
+            },
+            "device_inventory": {
+               "create": {
+                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/CX8_2",
+                  "associations": [
+                    {
+                        "forward": "inventory",
+                        "reverse": "associated_ROT",
+                        "endpoint": "/xyz/openbmc_project/inventory/system/chassis/CX8_2"
+                    }
+                  ]
+               }
+            },
+            "firmware_inventory":{
+               "create":{
+                  "CX8_2":{
+                     "component_id":1,
+                     "associations":[
+                        {
+                           "forward":"inventory",
+                           "reverse":"activation",
+                           "endpoint":"/xyz/openbmc_project/inventory/system/networkadapter/IO_Board_1_CX8_0"
+                        }
+                     ]
+                  }
+               }
+            },
+            "component_info":{
+               "CX8_2":1
+            }
+         },
+         {
+            "match":{
+               "Interface":"xyz.openbmc_project.MCTP.Endpoint",
+               "Properties":[
+                  {
+                     "Name":"EID",
+                     "Type":"u",
+                     "Value":33
+                  }
+               ]
+            },
+            "device_inventory": {
+               "create": {
+                  "object_path": "/xyz/openbmc_project/inventory/system/chassis/CX8_3",
+                  "associations": [
+                    {
+                        "forward": "inventory",
+                        "reverse": "associated_ROT",
+                        "endpoint": "/xyz/openbmc_project/inventory/system/chassis/CX8_3"
+                    }
+                  ]
+               }
+            },
+            "firmware_inventory":{
+               "create":{
+                  "CX8_3":{
+                     "component_id":1,
+                     "associations":[
+                        {
+                           "forward":"inventory",
+                           "reverse":"activation",
+                           "endpoint":"/xyz/openbmc_project/inventory/system/networkadapter/IO_Board_1_CX8_1"
+                        }
+                     ]
+                  }
+               }
+            },
+            "component_info":{
+               "CX8_3":1
+            }
+         },
+         {
+            "match": {
+                "Interface":"xyz.openbmc_project.MCTP.Endpoint",
+                "Properties":[
+                    {
+                        "Name":"EID",
+                        "Type":"u",
+                        "Value":20
+                    }
+                ]
+            },
+            "firmware_inventory":{
+               "create":{
+                  "SMA_0":{
+                     "component_id":65282,
+                     "associations":[
+                        {
+                           "forward":"inventory",
+                           "reverse":"activation",
+                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/SMA_0"
+                        }
+                     ]
+                  }
+               }
+            },
+            "component_info":{
+               "SMA_0":68282
+            }
+         },
+        {
+            "match": {
+                "Interface":"xyz.openbmc_project.MCTP.Endpoint",
+                "Properties":[
+                    {
+                        "Name":"EID",
+                        "Type":"u",
+                        "Value":30
+                    }
+                ]
+            },
+            "firmware_inventory":{
+               "create":{
+                  "SMA_1":{
+                     "component_id":65282,
+                     "associations":[
+                        {
+                           "forward":"inventory",
+                           "reverse":"activation",
+                           "endpoint":"/xyz/openbmc_project/inventory/system/chassis/SMA_1"
+                        }
+                     ]
+                  }
+               }
+            },
+            "component_info":{
+               "SMA_1":68282
+            }
+         }
+
+    ]
+}

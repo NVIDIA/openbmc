@@ -1,0 +1,30 @@
+From 31cd709db7c86fa07e0161dc9b8d16a5f0d9deb5 Mon Sep 17 00:00:00 2001
+From: Kuan-Jui Chiu <kchiu@axiado.com>
+Date: Tue, 28 Oct 2025 20:57:11 -0700
+Subject: [PATCH] Hotfix for power-led-controller
+
+power-led would have exception error while querying post code from phosphor-post-code-manager
+The root cause is the postcode_t is different between power-led and phosphor-post-code-manager
+According to suggestion from Nvidia Taiwan, we should use the definition from upstream instead
+
+Upstream-Status: Pending
+---
+ power-led/power-led-match.hpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/power-led/power-led-match.hpp b/power-led/power-led-match.hpp
+index c7c0a07..45602a2 100644
+--- a/power-led/power-led-match.hpp
++++ b/power-led/power-led-match.hpp
+@@ -3,7 +3,7 @@
+ #include <sdbusplus/server.hpp>
+ #include <xyz/openbmc_project/State/Host/server.hpp>
+ 
+-using primarycode_t = uint64_t;
++using primarycode_t = std::vector<uint8_t>;
+ using secondarycode_t = std::vector<uint8_t>;
+ using postcode_t = std::tuple<primarycode_t, secondarycode_t>;
+ namespace StateServer = sdbusplus::xyz::openbmc_project::State::server;
+-- 
+2.34.1
+

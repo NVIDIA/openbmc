@@ -1,0 +1,46 @@
+From 70145465e602b583629a7fddeeb19e0dd77a2daa Mon Sep 17 00:00:00 2001
+From: Ritzen Yang <ryang@axiado.com>
+Date: Fri, 6 Jun 2025 10:25:44 +0800
+Subject: [PATCH] KWS-6690:use uint32_t instead size_t to nvidia-nvme-manager
+
+Upstream-Status: Pending
+
+Signed-off-by: Ritzen Yang <ryang@axiado.com>
+---
+ src/NVMeDeviceMain.cpp | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/NVMeDeviceMain.cpp b/src/NVMeDeviceMain.cpp
+index 7898128..f758922 100644
+--- a/src/NVMeDeviceMain.cpp
++++ b/src/NVMeDeviceMain.cpp
+@@ -12,7 +12,7 @@
+ #ifdef INKERNEL_MCTP
+ using eid_t = uint8_t;
+ #else
+-using eid_t = size_t;
++using eid_t = uint32_t;
+ #endif
+ 
+ const constexpr char* mctpEpsPath = "/xyz/openbmc_project/mctp";
+@@ -275,7 +275,7 @@ static void interfaceRemoved(sdbusplus::message::message& message)
+     }
+ 
+     std::string objectName;
+-    boost::container::flat_map<std::string, std::variant<size_t>> values;
++    boost::container::flat_map<std::string, std::variant<uint32_t>> values;
+ 
+     try
+     {
+@@ -285,7 +285,7 @@ static void interfaceRemoved(sdbusplus::message::message& message)
+         if (findEid != values.end())
+         {
+             auto obj = findEid->second;
+-            auto eid = std::get<size_t>(obj);
++            auto eid = std::get<uint32_t>(obj);
+             lg2::info("Remove Drive:{EID}.", "EID", eid);
+             // Todo: implement it for drive hotplug.
+         }
+-- 
+2.34.1
+

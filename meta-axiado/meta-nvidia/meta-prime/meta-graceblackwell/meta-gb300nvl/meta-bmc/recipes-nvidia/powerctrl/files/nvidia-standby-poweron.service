@@ -1,0 +1,25 @@
+[Unit]
+Description=NVIDIA Standby Power On
+Requires=bmc-boot-complete.service
+
+#
+# Make this run After so that bmc-boot-complete.service
+# activation is completed before standby power on is considered complete.
+#
+After=bmc-boot-complete.service
+
+[Service]
+RemainAfterExit=yes
+Type=oneshot
+
+#
+# Stop this here because a "Conflicts" statement is 2-way.
+# See nvidia-standby-poweroff.service for explanation
+#
+ExecStart=/usr/bin/env systemctl stop nvidia-standby-poweroff.service
+#
+# All the real work to enable standby power is in bmc-boot-complete.service (bmc_ready.sh)
+#
+SyslogIdentifier=stbypowerctrl
+
+[Install]

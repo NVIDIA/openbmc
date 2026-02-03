@@ -1,0 +1,7 @@
+{
+    "POST_start": ["0x05", "0x00", "0x01", "0xC1"],
+    "POST_end": ["0x19", "0x10", "0x10", "0x03"],
+    "BMC_booted_group": "bmc_booted",
+    "POST_active_group": "post_active",
+    "fully_powered_on_group": "powered_on"
+}

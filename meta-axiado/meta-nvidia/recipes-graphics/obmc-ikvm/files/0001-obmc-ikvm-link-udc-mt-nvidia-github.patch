@@ -1,0 +1,101 @@
+From 9b9216fb09e2ec7a131d3c97d7554241312fecea Mon Sep 17 00:00:00 2001
+From: Kuan-Jui Chiu <kchiu@axiado.com>
+Date: Tue, 14 Oct 2025 01:21:54 -0700
+Subject: [PATCH] obmc ikvm link udc mt nvidia for github
+
+Cherry-pick from http://sourcevault.axiadord:7990/projects/NGRACE/repos/openbmc/pull-requests/418/overview
+
+KWS-7069: KVM: require revisit the implementation
+
+Upstream-Status: Pending
+---
+ create_usbhid.sh | 23 +++++++++++++++++++++++
+ ikvm_input.cpp   |  4 ++++
+ ikvm_input.hpp   |  2 +-
+ 3 files changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/create_usbhid.sh b/create_usbhid.sh
+index 58e4034..7f03863 100644
+--- a/create_usbhid.sh
++++ b/create_usbhid.sh
+@@ -3,6 +3,13 @@
+ hid_conf_directory="/sys/kernel/config/usb_gadget/obmc_hid"
+ dev_name="1e6a0000.usb-vhub"
+ 
++axiado_dev_name="81200000.usb"
++# Get current power state via D-Bus
++power_state=$(busctl get-property xyz.openbmc_project.State.Chassis \
++    /xyz/openbmc_project/state/chassis0 \
++    xyz.openbmc_project.State.Chassis \
++    CurrentPowerState | awk '{print $2}' | tr -d '"')
++
+ create_hid() {
+     # create gadget
+     mkdir "${hid_conf_directory}"
+@@ -138,12 +145,28 @@ connect_hid() {
+         done
+         echo "${dev_name}:p${port}" > UDC
+     fi
++
++    if ! grep -q "${axiado_dev_name}" UDC; then
++        if [[ "$power_state" == *".PowerState.On" ]]; then
++            echo "" > UDC
++            echo "${axiado_dev_name}" > UDC
++            echo "UDC KVM connect" > /dev/console
++        fi
++    fi
+ }
+ 
+ disconnect_hid() {
+     if grep -q "${dev_name}:p" UDC; then
+         echo "" > UDC
+     fi
++
++    if ! grep -q "${axiado_dev_name}" UDC; then
++        if [[ "$power_state" == *".PowerState.On" ]]; then
++            echo "" > UDC
++            echo "${axiado_dev_name}" > UDC
++            echo "UDC KVM disconnect" > /dev/console
++        fi
++    fi
+ }
+ 
+ if [ ! -e "${hid_conf_directory}" ]; then
+diff --git a/ikvm_input.cpp b/ikvm_input.cpp
+index 8cdefe4..95efbc2 100644
+--- a/ikvm_input.cpp
++++ b/ikvm_input.cpp
+@@ -56,6 +56,9 @@ void Input::connect()
+             bool found = false;
+             for (const auto& port : fs::directory_iterator(usbVirtualHubPath))
+             {
++                if (std::string(port.path().c_str()).compare(
++                    "/sys/bus/platform/devices/81200000.usb") == 0)
++                {
+                 // /sys/bus/platform/devices/1e6a0000.usb-vhub/1e6a0000.usb-vhub:pX
+                 if (fs::is_directory(port) && !fs::is_symlink(port))
+                 {
+@@ -78,6 +81,7 @@ void Input::connect()
+                         }
+                     }
+                 }
++                }
+                 if (found)
+                 {
+                     break;
+diff --git a/ikvm_input.hpp b/ikvm_input.hpp
+index 00d8e7f..7b5d1e0 100644
+--- a/ikvm_input.hpp
++++ b/ikvm_input.hpp
+@@ -83,7 +83,7 @@ class Input
+         "/sys/kernel/config/usb_gadget/obmc_hid/UDC";
+     /* @brief Path to the USB virtual hub */
+     static constexpr const char* usbVirtualHubPath =
+-        "/sys/bus/platform/devices/1e6a0000.usb-vhub";
++        "/sys/bus/platform/devices";
+     /* @brief Retry limit for writing an HID report */
+     static constexpr int HID_REPORT_RETRY_MAX = 5;
+     /*
+-- 
+2.34.1
+

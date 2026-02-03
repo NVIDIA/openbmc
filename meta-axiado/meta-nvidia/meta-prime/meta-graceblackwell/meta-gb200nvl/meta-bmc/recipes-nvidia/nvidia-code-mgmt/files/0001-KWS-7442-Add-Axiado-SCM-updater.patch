@@ -1,0 +1,485 @@
+From 376451ed7daadd636dd57293cd50fd9a3aea5218 Mon Sep 17 00:00:00 2001
+From: Kuan-Jui Chiu <kchiu@axiado.com>
+Date: Mon, 1 Sep 2025 19:35:59 -0700
+Subject: [PATCH] KWS-7442: Add Axiado SCM updater
+
+Upstream-Status: Pending
+---
+ meson.build                                 |   9 +
+ meson_options.txt                           |   5 +
+ scm-update.sh                               |  90 ++++++++++
+ services/com.Axiado.SCM.Updater.bmc.service |  16 ++
+ services/meson.build                        |  15 ++
+ services/scm-update@.service                |   9 +
+ src/axiado_updater.cpp                      |  35 ++++
+ src/axiado_updater.hpp                      | 173 ++++++++++++++++++++
+ src/main.cpp                                |  10 ++
+ src/meson.build                             |   4 +
+ 10 files changed, 366 insertions(+)
+ create mode 100644 scm-update.sh
+ create mode 100644 services/com.Axiado.SCM.Updater.bmc.service
+ create mode 100644 services/scm-update@.service
+ create mode 100644 src/axiado_updater.cpp
+ create mode 100644 src/axiado_updater.hpp
+
+diff --git a/meson.build b/meson.build
+index 887f173..395387d 100644
+--- a/meson.build
++++ b/meson.build
+@@ -278,6 +278,15 @@ if get_option('MTD_UPDATER_SUPPORT').enabled()
+     cdata.set('MTD_UPDATE_TIMEOUT', get_option('MTD_UPDATE_TIMEOUT'))
+ endif
+ 
++if get_option('AXIADO_UPDATER_SUPPORT').enabled()
++  add_project_arguments('-DAXIADO_SUPPORT', language : ['c','cpp'])
++  cdata.set_quoted('BMC_INVENTORY_IFACE', 'xyz.openbmc_project.Inventory.Decorator.Asset')
++  cdata.set_quoted('BMC_BUSNAME_UPDATER_BASE', 'com.Axiado.SCM.Updater.')
++  cdata.set_quoted('BMC_BUSNAME_INVENTORY_BASE', 'com.Axiado.SCM.')
++  cdata.set_quoted('BMC_UPDATE_SERVICE', 'scm-update@.service')
++  cdata.set('BMC_UPDATE_TIMEOUT', get_option('NON_PLDM_DEFAULT_TIMEOUT'))
++endif
++
+ if get_option('SWITCHTEC_FUSE_SUPPORT').enabled()
+     add_project_arguments('-DSWITCHTEC_FUSE_SUPPORT', language: ['c', 'cpp'])
+     cdata.set_quoted(
+diff --git a/meson_options.txt b/meson_options.txt
+index 6066aec..ad73e4a 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -181,6 +181,11 @@ option('MTD_UPDATER_SUPPORT',
+        value: 'disabled',
+        description: 'Enables MTD update support. It takes 1 min to update fpga and 4 min to update BMC.')
+ 
++option('AXIADO_UPDATER_SUPPORT',
++       type: 'feature',
++       value: 'disabled',
++       description: 'Enables Axiado update support.')
++
+ option('SWITCHTEC_FUSE_SUPPORT',
+        type: 'feature',
+        value: 'disabled',
+diff --git a/scm-update.sh b/scm-update.sh
+new file mode 100644
+index 0000000..bbf26e1
+--- /dev/null
++++ b/scm-update.sh
+@@ -0,0 +1,90 @@
++#!/bin/bash
++set -eo pipefail
++
++# Set the requested version as primary for the BMC to boot from upon reboot.
++function mmc_setprimary() {
++    # Point root to the flashid of the requested BMC rootfs.
++    fw_setenv bootside "${label}"
++}
++
++# The eMMC partition labels for the kernel and rootfs are boot-a/b and rofs-a/b.
++# Return the label (a or b) for the running partition.
++function mmc_get_primary_label() {
++    # Get root device /dev/mmcblkpX
++    rootmatch=" on / "
++    root="$(mount | grep "${rootmatch}")"
++    # shellcheck disable=SC2295
++    root="${root%${rootmatch}*}"
++
++    # Find the device label
++    if [[ $(readlink -f /dev/disk/by-partlabel/rofs-a) == "${root}" ]]; then
++        echo "a"
++    elif [[ $(readlink -f /dev/disk/by-partlabel/rofs-b) == "${root}" ]]; then
++        echo "b"
++    else
++        echo ""
++    fi
++}
++
++# The eMMC partition labels for the kernel and rootfs are boot-a/b and rofs-a/b.
++# Return the label (a or b) for the non-running partition.
++function mmc_get_secondary_label() {
++    root="$(mmc_get_primary_label)"
++    if [[ "${root}" == "a" ]]; then
++        echo "b"
++    elif [[ "${root}" == "b" ]]; then
++        echo "a"
++    else
++        echo ""
++    fi
++}
++
++
++function mmc_update() {
++    # Untar tarball extracted by pldmd
++    tmpPath="/tmp/untar"
++    mkdir -p ${tmpPath}
++    tar -xvf ${imgPath} -C ${tmpPath} > /dev/null
++
++    # Update u-boot within NOR flash
++    cp ${tmpPath}/image-u-boot ${tmpPath}/FLASH_UPDATE.bin
++    ax3000-fw-update -t ${tmpPath}
++
++    # Update the secondary (non-running) boot and rofs partitions.
++    label="$(mmc_get_secondary_label)"
++
++    # Update the boot and rootfs partitions, restore their labels after the update
++    # by getting the partition number mmcblk0pX from their label.
++    zstd -d -c "${tmpPath}"/image-kernel | dd of="/dev/disk/by-partlabel/boot-${label}"
++    number="$(readlink -f /dev/disk/by-partlabel/boot-"${label}")"
++    number="${number##*mmcblk0p}"
++    sgdisk --change-name="${number}":boot-"${label}" /dev/mmcblk0 1>/dev/null
++
++    zstd -d -c "${tmpPath}"/image-rofs | dd of="/dev/disk/by-partlabel/rofs-${label}"
++    number="$(readlink -f /dev/disk/by-partlabel/rofs-"${label}")"
++    number="${number##*mmcblk0p}"
++    sgdisk --change-name="${number}":rofs-"${label}" /dev/mmcblk0 1>/dev/null
++
++    # Run this after sgdisk for labels to take effect.
++    partprobe
++
++    # Clean image-*
++    rm -rf ${tmpPath}
++
++    mmc_setprimary
++}
++
++case "$1" in
++    mmc)
++        imgPath="$2"
++        mmc_update
++        ;;
++    mmc-setprimary)
++        label="$2"
++        mmc_setprimary
++        ;;
++    *)
++        echo "Invalid argument"
++        exit 1
++        ;;
++esac
+diff --git a/services/com.Axiado.SCM.Updater.bmc.service b/services/com.Axiado.SCM.Updater.bmc.service
+new file mode 100644
+index 0000000..3b5224c
+--- /dev/null
++++ b/services/com.Axiado.SCM.Updater.bmc.service
+@@ -0,0 +1,16 @@
++[Unit]
++Description=Axiado BMC Code Manager
++Wants=pldmd.service
++After=pldmd.service
++Wants=obmc-mapper.target
++After=obmc-mapper.target
++
++[Service]
++ExecStart=/usr/bin/code-manager -u TCU -i bmc -m BMC_MODEL
++Restart=always
++Type=dbus
++BusName=com.Axiado.SCM.Updater.bmc
++
++[Install]
++WantedBy=multi-user.target
++
+diff --git a/services/meson.build b/services/meson.build
+index 5c7cb10..5ea1df0 100644
+--- a/services/meson.build
++++ b/services/meson.build
+@@ -147,6 +147,21 @@ if get_option('MTD_UPDATER_SUPPORT').enabled()
+     )
+ endif
+ 
++if get_option('AXIADO_UPDATER_SUPPORT').enabled()
++
++    unit_files = unit_files + ['scm-update@.service']
++
++    bmc_model = get_option('BMC_SUPPORTED_MODEL')
++
++    if (bmc_model != '')
++        unit_files = unit_files + ['com.Axiado.SCM.Updater.bmc.service']
++        bmc_sed_arg = 's/BMC_MODEL/'
++        bmc_sed_arg +=bmc_model
++        bmc_sed_arg += '/g'
++        run_command('sed', '-i', bmc_sed_arg, 'com.Axiado.SCM.Updater.bmc.service', check: true)
++    endif
++endif
++
+ if get_option('SWITCHTEC_FUSE_SUPPORT').enabled()
+     unit_files = unit_files + [
+         'com.Nvidia.Switchtec.Fuse.service',
+diff --git a/services/scm-update@.service b/services/scm-update@.service
+new file mode 100644
+index 0000000..bf04e98
+--- /dev/null
++++ b/services/scm-update@.service
+@@ -0,0 +1,9 @@
++[Unit]
++Description=Update Axiado BMC
++
++[Service]
++Type=oneshot
++RemainAfterExit=no
++Environment="ARGS=%I"
++ExecStart=scm-update.sh $ARGS
++
+diff --git a/src/axiado_updater.cpp b/src/axiado_updater.cpp
+new file mode 100644
+index 0000000..b55c0f7
+--- /dev/null
++++ b/src/axiado_updater.cpp
+@@ -0,0 +1,35 @@
++#include "config.h"
++
++#include "axiado_updater.hpp"
++
++#include <boost/algorithm/string.hpp>
++#include <boost/format.hpp>
++
++#include <filesystem>
++
++namespace nvidia
++{
++namespace software
++{
++namespace updater
++{
++std::string TCUItemUpdater::getVersion(
++    [[maybe_unused]] const std::string& inventoryPath) const
++{
++    return "";
++}
++
++std::string TCUItemUpdater::getManufacturer(
++    [[maybe_unused]] const std::string& inventoryPath) const
++{
++    return manufacturer;
++}
++
++std::string TCUItemUpdater::getModel(
++    [[maybe_unused]] const std::string& inventoryPath) const
++{
++    return "BMC";
++}
++} // namespace updater
++} // namespace software
++} // namespace nvidia
+diff --git a/src/axiado_updater.hpp b/src/axiado_updater.hpp
+new file mode 100644
+index 0000000..f1d0851
+--- /dev/null
++++ b/src/axiado_updater.hpp
+@@ -0,0 +1,173 @@
++#pragma once
++#include "config.h"
++
++#include "base_item_updater.hpp"
++
++// Add the Asset interface definition
++using AssetObject = sdbusplus::server::object::object<
++    sdbusplus::xyz::openbmc_project::Inventory::Decorator::server::Asset>;
++
++namespace nvidia
++{
++namespace software
++{
++namespace updater
++{
++
++class TCUItemUpdater : public BaseItemUpdater
++{
++    std::string name;
++    std::unique_ptr<SoftwareVersion> softwareVersionObj;
++    std::unique_ptr<SoftwareSettings> softwareSettingsObj;
++    std::string manufacturer = "AXIADO";
++    std::unique_ptr<AssetObject> assetObject;
++
++  public:
++    TCUItemUpdater(sdbusplus::bus::bus& bus, std::string name,
++                   std::string modelName) :
++        BaseItemUpdater(bus, modelName, BMC_INVENTORY_IFACE, "BMC",
++                        BMC_BUSNAME_UPDATER_BASE + name, BMC_UPDATE_SERVICE,
++                        false, BMC_BUSNAME_INVENTORY_BASE + name),
++        name(name)
++    {
++        try
++        {
++            auto objPath = std::string(SOFTWARE_OBJPATH) + "/BMC";
++            softwareVersionObj =
++                std::make_unique<SoftwareVersion>(bus, objPath);
++            getVersion("");
++            softwareSettingsObj =
++                std::make_unique<SoftwareSettings>(bus, objPath);
++
++            // Create Asset object with Manufacturer property
++            std::cout << "Creating Asset object at path: " << objPath
++                      << " with Manufacturer: " << manufacturer << std::endl;
++
++            // Create the Asset interface using AssetObject with the correct
++            // constructor
++            assetObject = std::make_unique<AssetObject>(bus, objPath.c_str());
++
++            // Set the properties after creation
++            if (assetObject)
++            {
++                assetObject->manufacturer(manufacturer);
++                std::cout
++                    << "Asset object created successfully with manufacturer: "
++                    << manufacturer << std::endl;
++            }
++            else
++            {
++                std::cerr << "Failed to create Asset object" << std::endl;
++            }
++        }
++        catch (const std::exception& e)
++        {
++            std::cerr << e.what() << std::endl;
++        }
++    }
++    /**
++     * @brief Get the Version object
++     *
++     * @param inventoryPath
++     * @return std::string
++     */
++    std::string getVersion(
++        [[maybe_unused]] const std::string& inventoryPath) const override;
++
++    /**
++     * @brief Get the Manufacturer object
++     *
++     * @param inventoryPath
++     * @return std::string
++     */
++    std::string getManufacturer(
++        [[maybe_unused]] const std::string& inventoryPath) const override;
++
++    /**
++     * @brief Get the Model object
++     *
++     * @param inventoryPath
++     * @return std::string
++     */
++    std::string getModel(
++        [[maybe_unused]] const std::string& inventoryPath) const override;
++
++    /**
++     * @brief Get the Service Args object
++     *
++     * @param inventoryPath
++     * @param imagePath
++     * @param version
++     * @param targetFilter
++     * @return std::string
++     */
++    virtual std::string getServiceArgs(
++        [[maybe_unused]] const std::string& inventoryPath,
++        const std::string& imagePath,
++        [[maybe_unused]] const std::string& version,
++        [[maybe_unused]] const TargetFilter& targetFilter) const override
++    {
++        std::string args = "";
++        args += "\\x20";
++        args += "mmc";
++        args += "\\x20";
++        args += imagePath;
++        std::replace(args.begin(), args.end(), '/', '-');
++        return args;
++    }
++
++    /**
++     * @brief Get the Item Updater Inventory Paths object
++     *
++     * @return std::vector<std::string>
++     */
++    std::vector<std::string> getItemUpdaterInventoryPaths() override
++    {
++        std::vector<std::string> ret;
++        std::string invPath = std::string(SOFTWARE_OBJPATH) + "/" + name;
++        ret.emplace_back(invPath);
++        return ret;
++    }
++
++    /**
++     * @brief Get timeout from config file for retimer
++     *
++     * @return uint32_t
++     */
++    uint32_t getTimeout() override
++    {
++        return BMC_UPDATE_TIMEOUT;
++    }
++
++    /**
++     * @brief method to check if inventory is supported, if inventory is not
++     * supported then D-Bus calls to check compatibility can be ignored
++     *
++     * @return false - for mtd inventory check is not required
++     */
++    bool inventorySupported() override
++    {
++        return false; // default is supported
++    }
++
++    /**
++     * @brief method to clean up image dirs. Use this method to update
++     * fw inventory version
++     */
++    void cleanupImageUploadDir(const std::filesystem::path& path,
++                               Version* version) const override
++    {
++        BaseItemUpdater::cleanupImageUploadDir(path, version);
++        getVersion("");
++    }
++
++    virtual bool needVerify() const override
++    {
++        return !publicKey.empty() &&
++               std::filesystem::exists("/var/check_signature");
++    }
++};
++
++} // namespace updater
++} // namespace software
++} // namespace nvidia
+diff --git a/src/main.cpp b/src/main.cpp
+index 20b9a5d..08f5032 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -55,6 +55,9 @@
+ #if MTD_SUPPORT
+ #include "mtd_updater.hpp"
+ #endif
++#if AXIADO_SUPPORT
++#include "axiado_updater.hpp"
++#endif
+ #if SWITCHTEC_FUSE_SUPPORT
+ #include "switchtec_fuse.hpp"
+ #endif
+@@ -228,6 +231,13 @@ int main(int argc, char** argv)
+             std::make_unique<MTDItemUpdater>(bus, targetName, modelName);
+     }
+ #endif
++#if AXIADO_SUPPORT
++    if (updater == "TCU")
++    {
++        itemUpdater =
++            std::make_unique<TCUItemUpdater>(bus, targetName, modelName);
++    }
++#endif
+ #if SWITCHTEC_FUSE_SUPPORT
+     if (updater == "SWITCHTEC")
+     {
+diff --git a/src/meson.build b/src/meson.build
+index cdfbea0..876b626 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -65,6 +65,10 @@ if get_option('MTD_UPDATER_SUPPORT').enabled()
+     source_files += 'mtd_updater.cpp'
+ endif
+ 
++if get_option('AXIADO_UPDATER_SUPPORT').enabled()
++    source_files += 'axiado_updater.cpp'
++endif
++
+ if get_option('SWITCHTEC_FUSE_SUPPORT').enabled()
+     source_files += 'switchtec_fuse.cpp'
+ endif
+-- 
+2.34.1
+

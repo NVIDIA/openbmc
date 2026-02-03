@@ -1,0 +1,153 @@
+From 49ad23958991b359d8dcdb9a4d116932a94dfc92 Mon Sep 17 00:00:00 2001
+From: vchandran <vchandran@axiado.com>
+Date: Thu, 10 Apr 2025 00:21:58 -0700
+Subject: [PATCH] Reuse DHCP IP when transitioning to Static IP
+
+when BMC Ip source is changed from DHCP to static, the existing
+DHCP-assigned IP address typically goes down, making the BMC
+unreachable over out-of-band access.
+
+This change ensures that during transition from DHCP to static mode,
+the current DHCP IP address is reused as the static IP address. This
+allows the user to retain connectivity to the BMC without interruption.
+Later if needed, the user can update the static IP using
+`ipmitool lan set addr <new-ip>` .
+
+Tested and Verified in GH-200:
+1. trigger lan print command
+vchandran@vm-swbuild06:~$ ipmitool -H 10.4.10.130 -U root -P 0penBmc -I lanplus -C 17 lan print 2
+Set in Progress         : Set Complete
+Auth Type Support       :
+Auth Type Enable        : Callback :
+                        : User     :
+                        : Operator :
+                        : Admin    :
+                        : OEM      :
+IP Address Source       : DHCP Address
+IP Address              : 10.4.10.130
+Subnet Mask             : 255.255.255.0
+MAC Address             : 00:fb:f9:ac:72:4d
+Default Gateway IP      : 10.4.10.1
+Default Gateway MAC     : 00:00:00:00:00:00
+802.1q VLAN ID          : Disabled
+RMCP+ Cipher Suites     : 17
+Cipher Suite Priv Max   : aaaaaaaaaaaaaaa
+                        :     X=Cipher Suite Unused
+                        :     c=CALLBACK
+                        :     u=USER
+                        :     o=OPERATOR
+                        :     a=ADMIN
+                        :     O=OEM
+2. Change IP Source to Static:
+vchandran@vm-swbuild06:~$ ipmitool -H 10.4.10.130 -U root -P 0penBmc -I lanplus -C 17 lan set 2 ipsrc static
+
+3. Confirm Ip Source is updated to Static:
+vchandran@vm-swbuild06:~$ ipmitool -H 10.4.10.130 -U root -P 0penBmc -I lanplus -C 17 lan print 2
+Set in Progress         : Set Complete
+Auth Type Support       :
+Auth Type Enable        : Callback :
+                        : User     :
+                        : Operator :
+                        : Admin    :
+                        : OEM      :
+IP Address Source       : Static Address
+IP Address              : 10.4.10.130
+Subnet Mask             : 255.255.255.0
+MAC Address             : 00:fb:f9:ac:72:4d
+Default Gateway IP      : 10.4.10.1
+Default Gateway MAC     : 00:00:00:00:00:00
+802.1q VLAN ID          : Disabled
+RMCP+ Cipher Suites     : 17
+Cipher Suite Priv Max   : aaaaaaaaaaaaaaa
+                        :     X=Cipher Suite Unused
+                        :     c=CALLBACK
+                        :     u=USER
+                        :     o=OPERATOR
+                        :     a=ADMIN
+                        :     O=OEM
+Bad Password Threshold  : Not Available
+vchandran@vm-swbuild06:~$
+
+3. Assign new static ip:
+vchandran@vm-swbuild06:~$ ipmitool -H 10.4.10.130 -U root -P 0penBmc -I lanplus -C 17 lan set 2 ipaddr 10.4.10.132
+Setting LAN IP Address to 10.4.10.132
+vchandran@vm-swbuild06:~$
+
+4. Confirm New IP is working:
+vchandran@vm-swbuild06:~$ ipmitool -H 10.4.10.132 -U root -P 0penBmc -I lanplus -C 17 lan print 2
+Set in Progress         : Set Complete
+Auth Type Support       :
+Auth Type Enable        : Callback :
+                        : User     :
+                        : Operator :
+                        : Admin    :
+                        : OEM      :
+IP Address Source       : Static Address
+IP Address              : 10.4.10.132
+Subnet Mask             : 255.255.255.0
+MAC Address             : 00:fb:f9:ac:72:4d
+Default Gateway IP      : 10.4.10.1
+Default Gateway MAC     : 00:00:00:00:00:00
+802.1q VLAN ID          : Disabled
+RMCP+ Cipher Suites     : 17
+Cipher Suite Priv Max   : aaaaaaaaaaaaaaa
+                        :     X=Cipher Suite Unused
+                        :     c=CALLBACK
+                        :     u=USER
+                        :     o=OPERATOR
+                        :     a=ADMIN
+                        :     O=OEM
+Bad Password Threshold  : Not Available
+
+5. Updated netmask and defaultGW:
+vchandran@vm-swbuild06:~$ ipmitool -H 10.4.10.132 -U root -P 0penBmc -I lanplus -C 17 lan set 2 defgw ipaddr 10.4.10.1
+Setting LAN Default Gateway IP to 10.4.10.1
+vchandran@vm-swbuild06:~$
+vchandran@vm-swbuild06:~$ ipmitool -H 10.4.10.132 -U root -P 0penBmc -I lanplus -C 17 lan print 2
+Set in Progress         : Set Complete
+Auth Type Support       :
+Auth Type Enable        : Callback :
+                        : User     :
+                        : Operator :
+                        : Admin    :
+                        : OEM      :
+IP Address Source       : Static Address
+IP Address              : 10.4.10.132
+Subnet Mask             : 255.255.255.0
+MAC Address             : 00:fb:f9:ac:72:4d
+Default Gateway IP      : 10.4.10.1
+Default Gateway MAC     : 00:00:00:00:00:00
+802.1q VLAN ID          : Disabled
+RMCP+ Cipher Suites     : 17
+Cipher Suite Priv Max   : aaaaaaaaaaaaaaa
+                        :     X=Cipher Suite Unused
+                        :     c=CALLBACK
+                        :     u=USER
+                        :     o=OPERATOR
+                        :     a=ADMIN
+                        :     O=OEM
+Bad Password Threshold  : Not Available
+
+Upstream-Status: Pending
+
+Signed-off-by: vipin chandran <vchandran@axiado.com>
+---
+ transporthandler.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/transporthandler.cpp b/transporthandler.cpp
+index d49c94c..18f23af 100644
+--- a/transporthandler.cpp
++++ b/transporthandler.cpp
+@@ -842,6 +842,8 @@ RspType<> setLanInt(Context::ptr ctx, uint4_t channelBits, uint4_t reserved1,
+                     return responseInvalidFieldRequest();
+                 case IPSrc::Static:
+                     channelCall<setEthProp<bool>>(channel, "DHCP4", false);
++                    channelCall<reconfigureIfAddr4>(channel, std::nullopt,
++                                                    std::nullopt);
+                     return responseSuccess();
+                 case IPSrc::BIOS:
+                 case IPSrc::BMC:
+-- 
+2.25.1
+

@@ -1,0 +1,8 @@
+[Unit]
+Description=NVIDIA CPU boots good checker service
+Requires=nvidia-power-monitor.service
+After=nvidia-power-monitor.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/env check_cpu_boot_status.sh

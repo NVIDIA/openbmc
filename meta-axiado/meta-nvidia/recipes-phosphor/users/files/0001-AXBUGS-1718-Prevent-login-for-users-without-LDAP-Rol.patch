@@ -1,0 +1,27 @@
+From 9a67cf5f15d1062aa254c0b8e6a8788409c25a4b Mon Sep 17 00:00:00 2001
+From: Sammai Chakravarthy <schakravarthy@axiado.com>
+Date: Tue, 24 Jun 2025 03:14:19 -0700
+Subject: [PATCH] AXBUGS-1718-Prevent-login-for-users-without-LDAP-Role
+
+Upstream-Status: Pending
+
+---
+ user_mgr.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/user_mgr.cpp b/user_mgr.cpp
+index 8ede849..21fe941 100644
+--- a/user_mgr.cpp
++++ b/user_mgr.cpp
+@@ -1458,7 +1458,7 @@ UserInfoMap UserMgr::getUserInfo(std::string userName)
+             {
+                 lg2::warning("LDAP group privilege mapping does not exist, "
+                              "default \"priv-user\" is used");
+-                userInfo.emplace("UserPrivilege", "priv-user");
++                userInfo.emplace("UserPrivilege", "priv-noaccess");
+             }
+         }
+         catch (const std::bad_variant_access& e)
+-- 
+2.25.1
+

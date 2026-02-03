@@ -1,0 +1,47 @@
+bmc_booted:
+    power_led:
+        Action: 'Blink'
+        DutyOn: 50
+        Period: 1000
+        Priority: 'On'
+dc_scm_bmc_booted:
+    dc_scm_power_led:
+        Action: 'Blink'
+        DutyOn: 50
+        Period: 1000
+        Priority: 'On'
+post_active:
+    power_led:
+       Action: 'Blink'
+       DutyOn: 50
+       Period: 250
+       Priority: 'On'
+dc_scm_post_active:
+    dc_scm_power_led:
+       Action: 'Blink'
+       DutyOn: 50
+       Period: 250
+       Priority: 'On'
+powered_on:
+    power_led:
+       Action: 'On'
+       Priority: 'On'
+dc_scm_powered_on:
+    dc_scm_power_led:
+       Action: 'On'
+       Priority: 'On'
+enclosure_identify:
+    uid_led:
+        Action: 'Blink'
+        DutyOn: 50
+        Period: 1000
+        Priority: 'On'
+dc_scm_enclosure_identify:
+    dc_scm_uid_led:
+        Action: 'Blink'
+        DutyOn: 50
+        Period: 1000
+        Priority: 'On'
+
+# Intentionally empty
+power_on:

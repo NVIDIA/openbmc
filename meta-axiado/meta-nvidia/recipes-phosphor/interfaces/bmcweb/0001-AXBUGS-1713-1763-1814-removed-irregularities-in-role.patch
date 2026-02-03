@@ -1,0 +1,91 @@
+From 5cae8a5a66f7ebff2ee7d10d93a980952e7f3ca9 Mon Sep 17 00:00:00 2001
+From: Sammai Chakravarthy <schakravarthy@axiado.com>
+Date: Mon, 23 Jun 2025 23:18:14 -0700
+Subject: [PATCH] AXBUGS-1713-1763-1814 removed irregularities in role group
+
+Upstream-Status: Pending
+
+---
+ redfish-core/lib/account_service.hpp | 44 ++++++++++++++++++++++++----
+ 1 file changed, 39 insertions(+), 5 deletions(-)
+
+diff --git a/redfish-core/lib/account_service.hpp b/redfish-core/lib/account_service.hpp
+index 74159f2d..b625d421 100644
+--- a/redfish-core/lib/account_service.hpp
++++ b/redfish-core/lib/account_service.hpp
+@@ -383,6 +383,9 @@ inline void handleRoleMapPatch(
+     const std::string& serverType,
+     std::vector<std::variant<nlohmann::json::object_t, std::nullptr_t>>& input)
+ {
++    // Prevents duplicate (RemoteGroup, Privilege) entries in the same request.
++    std::set<std::pair<std::string, std::string>> seenMappings;
++
+     for (size_t index = 0; index < input.size(); index++)
+     {
+         std::variant<nlohmann::json::object_t, std::nullptr_t>& thisJson =
+@@ -439,17 +442,47 @@ inline void handleRoleMapPatch(
+                 continue;
+             }
+ 
++            std::string privilege = getPrivilegeFromRoleId(*localRole);
++
++            auto key = std::make_pair(*remoteGroup, privilege);
++
++            if (!seenMappings.insert(key).second)
++            {
++                // Duplicate found for group + privilege combination
++                BMCWEB_LOG_WARNING(
++                    "Duplicate mapping detected for group='{}', role='{}'",
++                    *remoteGroup, *localRole);
++                messages::resourceAlreadyExists(asyncResp->res,
++                                                "RemoteRoleMapping",
++                                                "RemoteGroup", *remoteGroup);
++                return;
++            }
++
++            auto existing = std::find_if(
++                roleMapObjData.begin(), roleMapObjData.end(),
++                [&](const std::pair<std::string, LDAPRoleMapData>& p) {
++                return p.second.groupName == *remoteGroup;
++                });
++
+             // Update existing RoleMapping Object
+-            if (index < roleMapObjData.size())
++            if (existing != roleMapObjData.end())
+             {
+                 BMCWEB_LOG_DEBUG("Update Role Map Object");
+                 // If "RemoteGroup" info is provided
++
++                std::string dbusPath = existing->first;
++                std::size_t lastSlash = dbusPath.find_last_of('/');
++                std::string pathIndex = (lastSlash != std::string::npos)
++                                            ? dbusPath.substr(lastSlash + 1)
++                                            : "unknown";
++
+                 if (remoteGroup)
+                 {
+                     setDbusProperty(
+                         asyncResp,
+-                        std::format("RemoteRoleMapping/{}/RemoteGroup", index),
+-                        ldapDbusService, roleMapObjData[index].first,
++                        std::format("RemoteRoleMapping/{}/RemoteGroup",
++                                    pathIndex),
++                        ldapDbusService, existing->first,
+                         "xyz.openbmc_project.User.PrivilegeMapperEntry",
+                         "GroupName", *remoteGroup);
+                 }
+@@ -468,8 +501,9 @@ inline void handleRoleMapPatch(
+                     }
+                     setDbusProperty(
+                         asyncResp,
+-                        std::format("RemoteRoleMapping/{}/LocalRole", index),
+-                        ldapDbusService, roleMapObjData[index].first,
++                        std::format("RemoteRoleMapping/{}/LocalRole",
++                                    pathIndex),
++                        ldapDbusService, existing->first,
+                         "xyz.openbmc_project.User.PrivilegeMapperEntry",
+                         "Privilege", priv);
+                 }
+-- 
+2.34.1
+

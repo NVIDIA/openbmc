@@ -1,0 +1,1138 @@
+// SPDX-License-Identifier: GPL-2.0+
+/*
+ * Copyright (c) 2021-25 Axiado Corporation (or its affiliates).
+ */
+
+/dts-v1/;
+
+#include "mt2.dts"
+#include <dt-bindings/gpio/gpio.h>
+
+/ {
+	model = "Axiado SCM3000 mini Tahoe2 - GB300NVL BMC";
+	aliases {
+		i2c0 = &i3c0;
+		i2c1 = &i3c1;
+		i2c2 = &mfd_i2c6;
+		i2c3 = &i3c16;
+		i2c4 = &i3c8;
+		i2c5 = &mfd_i2c2;
+		i2c6 = &mfd_i2c3;
+		i2c7 = &i3c3;
+		i2c8 = &i3c15;
+		i2c9 = &i3c11;
+		i2c10 = &i3c7;
+		i2c11 = &i3c5;
+		i2c12 = &i3c12;
+		i2c13 = &i3c13;
+		i2c14 = &i3c6;
+		i2c15 = &mfd_i2c5;
+		i2c16 = &imux16;
+		i2c17 = &imux17;
+		i2c18 = &imux18;
+		i2c19 = &imux19;
+		i2c20 = &imux20;
+		i2c21 = &imux21;
+		i2c22 = &imux22;
+		i2c23 = &imux23;
+		i2c24 = &imux24;
+		i2c25 = &imux25;
+		i2c26 = &imux26;
+		i2c27 = &imux27;
+		i2c28 = &imux28;
+		i2c29 = &imux29;
+		i2c30 = &imux30;
+		i2c31 = &imux31;
+		i2c32 = &imux32;
+		i2c33 = &imux33;
+		i2c34 = &imux34;
+		i2c35 = &imux35;
+		i2c36 = &imux36;
+		i2c37 = &imux37;
+		i2c38 = &imux38;
+		i2c39 = &imux39;
+		i2c40 = &e1si2c0;
+		i2c41 = &e1si2c1;
+		i2c42 = &e1si2c2;
+		i2c43 = &e1si2c3;
+		i2c44 = &e1si2c4;
+		i2c45 = &e1si2c5;
+		i2c46 = &e1si2c6;
+		i2c47 = &e1si2c7;
+		i2c52 = &imux52;
+		i2c53 = &imux53;
+		i2c54 = &imux54;
+		i2c55 = &imux55;
+	};
+	iio-hwmon {
+		compatible = "iio-hwmon";
+		io-channels = <&saradc 0>, <&saradc 1>, <&saradc 2>,
+			<&saradc 3>, <&saradc 4>, <&saradc 5>, <&saradc 6>,
+			<&saradc 7>, <&saradc 8>, <&saradc 9>, <&saradc 10>,
+			<&saradc 11>, <&saradc 12>, <&saradc 13>, <&saradc 14>,
+			<&saradc 15>;
+	};
+	leds {
+		compatible = "gpio-leds";
+		uid_led {
+			gpios = <&iobexp 4 GPIO_ACTIVE_LOW>;
+		};
+		power_led {
+			gpios = <&iobexp 7 GPIO_ACTIVE_LOW>;
+		};
+		// Non-LEDs:
+		//   BMC_READY-O GPIO pin (not an LED) is being bound to the GPIO LED driver.
+		// Notes:
+		// * This is a workaround and leverages the GPIO LED driver to enable control of
+		//   reset tolerance and still allow the GPIO to be controlled from user space.
+		// * The standard Linux GPIO driver allows control of reset tolerance, however
+		//   does not expose user space APIs for user space control of the GPIO pin.
+		// * GPIO_TRANSITORY = reset tolerance is disabled
+		// * Any non-leds should be added below this line.
+		bmc_ready_noled {
+			gpios = <&gpio3 17 (GPIO_ACTIVE_HIGH|GPIO_TRANSITORY)>;
+		};
+	};
+	buttons {
+		uid-btn {
+			gpio = <&iobexp 5 GPIO_ACTIVE_LOW>;
+		};
+		power-btn {
+			gpio = <&iobexp 8 GPIO_ACTIVE_LOW>;
+		};
+	};
+};
+
+&gpio2 {
+	gpio-line-names =
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"BMC_EP_PERST_EN-O",	/* GPIO_71 - PEX_FPGA_RST_L */
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"PCB_TEMP_ALERT-I",	/* GPIO_86 - PCB_TEMP_ALERT*/
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"BMC_FRU_WP-O",		/* GPIO_94 - FRU_EEPROM_WP */
+		"";
+};
+
+&gpio3 {
+	gpio-line-names =
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"BMC_READY-O",	/* GPIO_113 - TCU_SPI_SS_1 */
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"";
+};
+
+&gpio4 {
+	gpio-line-names =
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"HMC_RESET_L-O",	/* GPIO_138 - SCM_HPM_STBY_RST_N*/
+		"",
+		"CHASSIS_INTRUSION",	/* GPIO140 - HPM_SCM_INTRUSION_N*/
+		"",
+		"",
+		"STBY_POWER_PG-I",	/* GPIO_143 - HPM_SCM_STBY_RDY */
+		"STBY_POWER_EN-O",	/* GPIO_144 - SCM_HPM_STBY_EN */
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"";
+};
+
+&pcie_x1 {
+	device_class = "vga";
+};
+
+&usb2_1 {
+	status = "okay";
+};
+
+&mfd_sgpio0 {
+	status = "okay";
+
+	gpio-line-names =
+		"",
+		"RSVD_SGPIO_O_CRC[0]",
+		"",
+		"RSVD_SGPIO_O_CRC[1]",
+		"",
+		"RSVD_SGPIO_O_CRC[2]",
+		"",
+		"RSVD_SGPIO_O_CRC[3]",
+		"",
+		"RSVD_SGPIO_O_CRC[4]",
+		"",
+		"RSVD_SGPIO_O_CRC[5]",
+		"",
+		"RSVD_SGPIO_O_CRC[6]",
+		"",
+		"RSVD_SGPIO_O_CRC[7]",
+		"BMC_I2C0_FPGA_ALERT_L-I",
+		"",
+		"BMC_I2C1_FPGA_ALERT_L-I",
+		"",
+		"SHDN_OK_L-I",
+		"",
+		"L2_RST_REQ_OUT_L-I",
+		"",
+		"L0L1_RST_REQ_OUT_L-I",
+		"",
+		"SYS_RST_OUT_L-I",
+		"",
+		"RUN_POWER_PG-I",
+		"",
+		"RUN_POWER_FAULT_L-I",
+		"",
+		"THERM_BB_OVERT_L-I",
+		"",
+		"THERM_BB_WARN_L-I",
+		"",
+		"SPI_BMC_FPGA_INT_L-I",
+		"",
+		"CPU_BOOT_DONE-I",
+		"",
+		"FPGA_RSVD_FFU0-I",
+		"",
+		"FPGA_RSVD_FFU1-I",
+		"",
+		"FPGA_RSVD_FFU2-I",
+		"",
+		"FPGA_RSVD_FFU3-I",
+		"",
+		"CPU0_UPHY0_PRSNT0_L-I",
+		"",
+		"CPU0_UPHY0_PRSNT1_L-I",
+		"",
+		"CPU0_UPHY1_PRSNT0_L-I",
+		"",
+		"CPU0_UPHY1_PRSNT1_L-I",
+		"",
+		"CPU0_UPHY2_PRSNT0_L-I",
+		"",
+		"CPU0_UPHY2_PRSNT1_L-I",
+		"",
+		"CPU0_UPHY3_PRSNT0_L-I",
+		"",
+		"CPU0_UPHY3_PRSNT1_L-I",
+		"",
+		"CPU1_UPHY0_PRSNT0_L-I",
+		"",
+		"CPU1_UPHY0_PRSNT1_L-I",
+		"",
+		"CPU1_UPHY1_PRSNT0_L-I",
+		"",
+		"CPU1_UPHY1_PRSNT1_L-I",
+		"",
+		"CPU1_UPHY2_PRSNT0_L-I",
+		"",
+		"CPU1_UPHY2_PRSNT1_L-I",
+		"",
+		"CPU1_UPHY3_PRSNT0_L-I",
+		"",
+		"CPU1_UPHY3_PRSNT1_L-I",
+		"",
+		"CPU0_UPHY4_PRSNT0_L-I",
+		"",
+		"CPU1_UPHY4_PRSNT1_L-I",
+		"",
+		"M2_0_PRSNT_L-I",
+		"",
+		"M2_1_PRSNT_L-I",
+		"",
+		"IPEX_CABLE_PRSNT_L-I",
+		"",
+		"",
+		"",
+		"FAN0_PRESENT_L-I",
+		"",
+		"FAN1_PRESENT_L-I",
+		"",
+		"FAN2_PRESENT_L-I",
+		"",
+		"FAN3_PRESENT_L-I",
+		"",
+		"FAN4_PRESENT_L-I",
+		"",
+		"FAN5_PRESENT_L-I",
+		"",
+		"FAN6_PRESENT_L-I",
+		"",
+		"FAN7_PRESENT_L-I",
+		"",
+		"I2C_RTC_ALERT_L-I",
+		"",
+		"",
+		"",
+		"FAN_FAIL_IN_L-I",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"IOBRD0_PWR_GOOD-I",
+		"",
+		"IOBRD1_PWR_GOOD-I",
+		"",
+		"IOBRD0_PRSNT_L-I",
+		"",
+		"IOBRD1_PRSNT_L-I",
+		"",
+		"IOBRD0_IOX_INT_L-I",
+		"",
+		"IOBRD1_IOX_INT_L-I",
+		"",
+		"",
+		"",
+		"CHASSIS_PWR_BRK_L-I",
+		"",
+		"",
+		"",
+		"PDB_CABLE_PRESENT_L-I",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"PSU_SMB_ALERT_L-I",
+		"",
+		"PWR_BTN_L-I",
+		"",
+		"UID_BTN_N-I",
+		"",
+		"TRAY_FAST_SHDN_L-I",
+		"",
+		"I2C_M20_ALERT_L-I",
+		"",
+		"I2C_M21_ALERT_L-I",
+		"",
+		"PCIE_WAKE_L-I",
+		"",
+		"10GBE_SMBALRT_L-I",
+		"",
+		"NODE_LOC_ID[5]-I",
+		"",
+		"NODE_LOC_ID[4]-I",
+		"",
+		"NODE_LOC_ID[3]-I",
+		"",
+		"NODE_LOC_ID[2]-I",
+		"",
+		"NODE_LOC_ID[1]-I",
+		"",
+		"NODE_LOC_ID[0]-I",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"FPGA0_READY_HMC-I",
+		"",
+		"HMC_I2C2_FPGA_ALERT_L-I",
+		"",
+		"HMC_I2C3_FPGA_ALERT_L-I",
+		"",
+		"DP_HPD-I",
+		"",
+		"FPGA1_READY_HMC-I",
+		"",
+		"FAN8_PRESENT_L-I",
+		"",
+		"FAN9_PRESENT_L-I",
+		"HMC_EROT_MUX_STATUS",
+		"FAN10_PRESENT_L-I",
+		"",
+		"FAN11_PRESENT_L-I",
+		"SPI1_INT_L-O",
+		"MOD1_CLINK_CABLE_PRESENT_L-I",
+		"RSVD_NV_PLT_DETECT-O",
+		"MOD1_B2B_CABLE_PRESENT_L-I",
+		"FPGA_RSVD_FFU7-O",
+		"LEAK_DETECT_ALERT_L-I",
+		"FPGA_RSVD_FFU6-O",
+		"",
+		"FPGA_RSVD_FFU5-O",
+		"",
+		"FPGA_RSVD_FFU4-O",
+		"",
+		"IOBRD1_RUN_POWER_EN-O",
+		"",
+		"IOBRD0_RUN_POWER_EN-O",
+		"",
+		"",
+		"",
+		"UART_MUX_SEL-O",
+		"",
+		"RTC_CLR_L-O",
+		"",
+		"JTAG_MUX_SELECT-O",
+		"",
+		"BMC_I2C_SSIF_ALERT_L-O",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"PWR_LED_N-O",
+		"",
+		"SYS_FAULT_LED_N-O",
+		"",
+		"UID_LED_N-O",
+		"",
+		"SHDN_REQ_L-O",
+		"",
+		"SHDN_FORCE_L-O",
+		"",
+		"RUN_POWER_EN-O",
+		"",
+		"PWR_BRAKE_L-O",
+		"",
+		"SYS_RST_IN_L-O",
+		"RSVD_SGPIO_IN_CRC[7]",
+		"",
+		"RSVD_SGPIO_IN_CRC[6]",
+		"",
+		"RSVD_SGPIO_IN_CRC[5]",
+		"",
+		"RSVD_SGPIO_IN_CRC[4]",
+		"",
+		"RSVD_SGPIO_IN_CRC[3]",
+		"",
+		"RSVD_SGPIO_IN_CRC[2]",
+		"",
+		"RSVD_SGPIO_IN_CRC[1]",
+		"",
+		"RSVD_SGPIO_IN_CRC[0]",
+		"";
+};
+
+// i2c-0
+&i3c0 {
+	status = "disabled";
+};
+
+// i2c-1
+&i3c1 {
+	enable-repeated-start;
+
+	/* FPGA regbtl (readonly) */
+	dummy2@0b {
+		compatible = "dummydev";
+		reg = <0x0B 0x0 0x50>;
+	};
+	/* FPGA regtbl (multipage read) */
+	dummy3@11 {
+		compatible = "dummydev";
+		reg = <0x11 0x0 0x50>;
+	};
+	/* MCTP bridge */
+	dummy4@14 {
+		compatible = "dummydev";
+		reg = <0x14 0x0 0x50>;
+	};
+	dummy5@4c {
+		compatible = "dummydev";
+		reg = <0x4c 0x0 0x50>;
+	};
+	dummy6@4d {
+		compatible = "dummydev";
+		reg = <0x4d 0x0 0x50>;
+	};
+	dummy7@52 {
+		compatible = "dummydev";
+		reg = <0x52 0x0 0x50>;
+	};
+	/* FPGA SMBPI */
+	dummy1@60 {
+		compatible = "dummydev";
+		reg = <0x60 0x0 0x50>;
+	};
+	// ES.1 Backplane FRU EEPROM - 16 KByte (128 KBit)
+	eeprom@56 {
+		compatible = "atmel,24c128";
+		reg = <0x56 0x0 0x50>;
+		pagesize = <64>;
+	};
+	//E1.S drive slot 0-3
+	i2c-switch@74 {
+		compatible = "nxp,pca9546";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x74 0x0 0x50>;
+		i2c-mux-idle-disconnect;
+
+		e1si2c0: i2c@0 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <0>;
+		};
+		e1si2c1: i2c@1 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <1>;
+		};
+		e1si2c2: i2c@2 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <2>;
+		};
+		e1si2c3: i2c@3 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <3>;
+		};
+	};
+};
+
+&i3c2 {
+	status = "disabled";
+};
+
+// i2c-7
+&i3c3 {
+	enable-repeated-start;
+
+	// ES.1 Backplane FRU EEPROM - 16 KByte (128 KBit)
+	eeprom@56 {
+		compatible = "atmel,24c128";
+		reg = <0x56 0x0 0x50>;
+		pagesize = <64>;
+	};
+	//E1.S drive slot 4-7
+	i2c-switch@74 {
+		compatible = "nxp,pca9546";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x74 0x0 0x50>;
+		i2c-mux-idle-disconnect;
+
+		e1si2c4: i2c@0 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <0>;
+		};
+		e1si2c5: i2c@1 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <1>;
+		};
+		e1si2c6: i2c@2 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <2>;
+		};
+		e1si2c7: i2c@3 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <3>;
+		};
+	};
+};
+
+&i3c4 {
+	status = "disabled";
+};
+
+// i2c-11
+&i3c5 {
+	status = "disabled";
+};
+
+&i3c9 {
+	status = "disabled";
+};
+
+&i3c10 {
+	status = "disabled";
+};
+
+// i2c-9
+&i3c11 {
+
+	pca9555@20 {
+		compatible = "nxp,pca9555";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x20 0x0 0x50>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupt-parent = <&gpio0>;
+		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;	/* <GPIO0_17 B18 on DC-SCM */
+		gpio-line-names =
+			"FPGA_THERM_OVERT_L-I",
+			"FPGA_READY_BMC-I",
+			"HMC_BMC_DETECT-O",
+			"HMC_PGOOD-O",
+			"",
+			"BMC_STBY_CYCLE-O",
+			"FPGA_EROT_FATAL_ERROR_L-I",
+			"WP_HW_EXT_CTRL_L-O",
+			"EROT_FPGA_RST_L-O",
+			"FPGA_EROT_RECOVERY_L-O",
+			"BMC_EROT_FPGA_SPI_MUX_SEL-O",
+			"USB2_HUB_RST_L-O",
+			"",
+			"SGPIO_EN_L-O",
+			"B2B_IOEXP_INT_L-I",
+			"I2C_BUS_MUX_RESET_L-O";
+	};
+	pca9555@21 {
+		compatible = "nxp,pca9555";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x21 0x0 0x50>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupt-parent = <&gpio0>;
+		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;	/* <GPIO0_17 B18 on DC-SCM */
+		gpio-line-names =
+			"USB_MUX_SEL_N-O",
+			"",
+			"MCIO_PCIE_DISABLE_L-O",
+			"USB_PCIE_DISABLE_L-O",
+			"PEX_SW_PCIE_DISABLE_L-O",
+			"HSC_CARD_PRSNT_N-I",
+			"TPM_MUX_3V3_SEL_OUT_N-O",
+			"USB2_HUB4_RST_L-O",
+			"PCI_MUX_SEL-O",
+			"TPM_MUX_SEL-O",
+			"IOEXP_BMC_PHY_RST_N-O",
+			"IOEXP_RTC_CLR_L-O",
+			"BMC_12V_CTRL-O",
+			"PS_RUN_IO0_PG-I",
+			"",
+			"";
+	};
+	pca9555@27 {
+		compatible = "nxp,pca9555";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x27 0x0 0x50>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupt-parent = <&gpio0>;
+		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;	/* <GPIO0_17 B18 on DC-SCM */
+		gpio-line-names =
+			"HMC_PRSNT_L-I",
+			"HMC_READY-I",
+			"HMC_EROT_FATAL_ERROR_L-I",
+			"I2C_MUX_SEL-O",
+			"HMC_EROT_SPI_MUX_SEL-O",
+			"HMC_EROT_RECOVERY_L-O",
+			"HMC_EROT_RST_L-O",
+			"GLOBAL_WP_HMC-O",
+			"FPGA_RST_L-O",
+			"USB2_HUB_RST-O",
+			"CPU_UART_MUX_SEL-O",
+			"",
+			"",
+			"",
+			"",
+			"";
+	};
+	iobexp: pca9539@74 {
+		compatible = "nxp,pca9539";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x74 0x0 0x50>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupt-parent = <&gpio0>;
+		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;	/* <GPIO0_17 B18 on DC-SCM */
+		gpio-line-names =
+			"IOB_PRSNT_L-I",
+			"IOB_DP_HPD-O",
+			"IOX_BMC_RESET-O",
+			"IOB_IOEXP_INT_L-I",
+			"IOB_UID_LED_L-O",
+			"IOB_UID_BTN_L-I",
+			"",
+			"IOB_PWR_LED_L-O",
+			"IOB_PWR_BTN_L-I",
+			"IOB_PHY_RST-O",
+			"CPLD_JTAG_MUX_SEL-O",
+			"STATUS_AMBER_LED_N-O",
+			"P3V3_AUX_IOX_EN-O",
+			"P1V05_USB_AUX_IOX_EN-O",
+			"I2C4_TMP_ALERT_L-I",
+			"USB_POWER_GOOD-I";
+	};
+	pca9539@75 {
+		compatible = "nxp,pca9539";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x75 0x0 0x50>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupt-parent = <&gpio0>;
+		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;	/* <GPIO0_17 B18 on DC-SCM */
+		gpio-line-names =
+			"INT_PS_RUN_IO1_PG-I",
+			"INT_PS_RUN_IO1_EN-I",
+			"FAN_POWER_FABLE_PRSNT1_L-I",
+			"FAN_POWER_CABLE_PRSNT2_L-I",
+			"FAN_SIGNAL_CABLE_PRSNT_L-I",
+			"I2C_ALERT_FAN_FAIL_L-I",
+			"RST_STBY_L-O",
+			"PDB_CABLE_PRSNT_L-I",
+			"INT_RTC_ALERT_L-I",
+			"INT_RTC_CLR_L-O",
+			"BF3_PRESENCE_L-I",
+			"PDB_RUN_POWER_EN_N-O",
+			"",
+			"",
+			"",
+			"";
+	};
+	i2c9eeprom@50 {
+		compatible = "atmel,24c64";
+		reg = <0x50 0x0 0x50>;
+		pagesize = <32>;
+		status = "okay";
+	};
+	i2c-switch@71 {
+		compatible = "nxp,pca9546";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x71 0x0 0x50>;
+		i2c-mux-idle-disconnect;
+
+		i2c@0 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <0>;
+		};
+		i2c@1 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <1>;
+		};
+		i2c@2 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <2>;
+		};
+		i2c@3 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <3>;
+		};
+	};
+};
+
+// i2c-12
+&i3c12 {
+	status = "disabled";
+};
+
+// i2c-13
+&i3c13 {
+	status = "disabled";
+};
+
+&i3c14 {
+	status = "disabled";
+};
+
+// i2c-8
+&i3c15 {
+	enable-repeated-start;
+
+	eeprom15@50 {
+		compatible = "atmel,24c02";
+		reg = <0x50 0x0 0x50>;
+	};
+};
+
+// i2c-3
+&i3c16 {
+	analogix_i2c@28{
+		compatible = "analogix,anx7688";
+		reg = <0x28 0x0 0x50>;
+		pwren-gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
+	};
+	analogix_i2c1@2c {
+		compatible = "dummy";
+		reg = <0x2c 0x0 0x50>;
+	};
+};
+
+// i2c-5
+&mfd_i2c2 {
+	status = "okay";
+	clock-frequency = <400000>;
+
+	i2c-switch@71 {
+		compatible = "nxp,pca9546";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x71>;
+		i2c-mux-idle-disconnect;
+
+		imux16: i2c@0 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <0>;
+		};
+		imux17: i2c@1 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <1>;
+		};
+		imux18: i2c@2 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <2>;
+		};
+		imux19: i2c@3 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <3>;
+		};
+	};
+	i2c-switch@72 {
+		compatible = "nxp,pca9546";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x72>;
+		i2c-mux-idle-disconnect;
+
+		imux20: i2c@0 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <0>;
+		};
+		imux21: i2c@1 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <1>;
+
+			pca9555@21 {
+				compatible = "nxp,pca9555";
+				reg = <0x21>;
+				gpio-controller;
+				#gpio-cells = <2>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+				gpio-line-names =
+					"RST_CX_0_L-O",
+					"RST_CX_1_L-O",
+					"CX0_SSD0_PRSNT_L-I",
+					"CX1_SSD1_PRSNT_L-I",
+					"CX_BOOT_CMPLT_CX0-I",
+					"CX_BOOT_CMPLT_CX1-I",
+					"CX_TWARN_CX0_L-I",
+					"CX_TWARN_CX1_L-I",
+					"CX_OVT_SHDN_CX0-I",
+					"CX_OVT_SHDN_CX1-I",
+					"FNP_L_CX0-O",
+					"FNP_L_CX1-O",
+					"",
+					"MCU_GPIO-I",
+					"MCU_RST_N-O",
+					"MCU_RECOVERY_N-O";
+			};
+		};
+		imux22: i2c@2 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <2>;
+		};
+		imux23: i2c@3 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <3>;
+		};
+	};
+	i2c-switch@73 {
+		compatible = "nxp,pca9546";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x73>;
+		i2c-mux-idle-disconnect;
+
+		imux24: i2c@0 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <0>;
+		};
+		imux25: i2c@1 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <1>;
+			i2c-mux-idle-disconnect;
+
+			i2c-switch@70 {
+				compatible = "nxp,pca9546";
+				#address-cells = <1>;
+				#size-cells = <0>;
+				reg = <0x70>;
+				i2c-mux-idle-disconnect;
+
+				imux52: i2c@0 {
+					#address-cells = <1>;
+					#size-cells = <0>;
+					reg = <0>;
+				};
+				imux53: i2c@1 {
+					#address-cells = <1>;
+					#size-cells = <0>;
+					reg = <1>;
+				};
+				imux54: i2c@2 {
+					#address-cells = <1>;
+					#size-cells = <0>;
+					reg = <2>;
+				};
+				imux55: i2c@3 {
+					#address-cells = <1>;
+					#size-cells = <0>;
+					reg = <3>;
+				};
+			};
+		};
+		imux26: i2c@2 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <2>;
+		};
+		imux27: i2c@3 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <3>;
+		};
+	};
+	i2c-switch@75 {
+		compatible = "nxp,pca9546";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x75>;
+		i2c-mux-idle-disconnect;
+
+		imux28: i2c@0 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <0>;
+		};
+		imux29: i2c@1 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <1>;
+		};
+		imux30: i2c@2 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <2>;
+		};
+		imux31: i2c@3 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <3>;
+		};
+	};
+	i2c-switch@76 {
+		compatible = "nxp,pca9546";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x76>;
+		i2c-mux-idle-disconnect;
+
+		imux32: i2c@0 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <0>;
+		};
+		imux33: i2c@1 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <1>;
+
+			pca9555@21 {
+				compatible = "nxp,pca9555";
+				reg = <0x21>;
+				gpio-controller;
+				#gpio-cells = <2>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+				gpio-line-names =
+					"SEC_RST_CX_0_L-O",
+					"SEC_RST_CX_1_L-O",
+					"SEC_CX0_SSD0_PRSNT_L-I",
+					"SEC_CX1_SSD1_PRSNT_L-I",
+					"SEC_CX_BOOT_CMPLT_CX0-I",
+					"SEC_CX_BOOT_CMPLT_CX1-I",
+					"SEC_CX_TWARN_CX0_L-I",
+					"SEC_CX_TWARN_CX1_L-I",
+					"SEC_CX_OVT_SHDN_CX0-I",
+					"SEC_CX_OVT_SHDN_CX1-I",
+					"SEC_FNP_L_CX0-O",
+					"SEC_FNP_L_CX1-O",
+					"",
+					"SEC_MCU_GPIO-I",
+					"SEC_MCU_RST_N-O",
+					"SEC_MCU_RECOVERY_N-O";
+			};
+		};
+		imux34: i2c@2 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <2>;
+		};
+		imux35: i2c@3 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <3>;
+		};
+	};
+	i2c-switch@77 {
+		compatible = "nxp,pca9546";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x77>;
+		i2c-mux-idle-disconnect;
+
+		imux36: i2c@0 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <0>;
+		};
+		imux37: i2c@1 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <1>;
+		};
+		imux38: i2c@2 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <2>;
+		};
+		imux39: i2c@3 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <3>;
+		};
+	};
+};
+
+// i2c-6
+&mfd_i2c3 {
+	status = "okay";
+
+	hsc@12 {
+		compatible = "ti,lm5066i";
+		reg = <0x12>;
+		shunt-resistor-micro-ohms = <190>;
+		status = "okay";
+	};
+	hsc@14 {
+		compatible = "ti,lm5066i";
+		reg = <0x14>;
+		shunt-resistor-micro-ohms = <190>;
+		status = "okay";
+	};
+	max31790_1@20 {
+		compatible = "max31790";
+		reg = <0x20>;
+	};
+	max31790_2@23 {
+		compatible = "max31790";
+		reg = <0x23>;
+	};
+};
+
+// i2c-15
+&mfd_i2c5 {
+	status = "okay";
+};
+
+// i2c-2
+&mfd_i2c6 {
+	status = "okay";
+	clock-frequency = <400000>;
+};

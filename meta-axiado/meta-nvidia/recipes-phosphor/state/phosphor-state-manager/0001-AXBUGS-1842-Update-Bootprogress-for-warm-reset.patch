@@ -1,0 +1,38 @@
+From b95b6949e70483988813ca1120de5693b761d9a8 Mon Sep 17 00:00:00 2001
+From: Vipin Chandran <vchandran@axiado.com>
+Date: Wed, 4 Jun 2025 05:12:28 -0700
+Subject: [PATCH] AXBUGS-1842: Update Bootprogress for warm reset
+
+The current support dosen't handle the resetting boot progress
+property when host undergoes warm reset. The commit ensure that
+boot progress property is updated even during warm reset.
+
+Tested and verified in Supermicro servers
+
+Upstream-Status: Pending
+
+---
+ host_state_manager.cpp | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/host_state_manager.cpp b/host_state_manager.cpp
+index ec06436..a9b97ee 100644
+--- a/host_state_manager.cpp
++++ b/host_state_manager.cpp
+@@ -366,6 +366,13 @@ void Host::sysStateChangeJobNew(sdbusplus::message_t& msg)
+         // count
+         decrementRebootCount();
+     }
++    if (newStateUnit == getTarget(server::Host::Transition::ForceWarmReboot) ||
++        newStateUnit == getTarget(server::Host::Transition::GracefulWarmReboot))
++    {
++        // During Warm reboot, reset BootProgress properties
++        this->bootProgress(bootprogress::Progress::ProgressStages::Unspecified);
++        this->bootProgressLastUpdate(0);
++    }
+ }
+ 
+ uint32_t Host::decrementRebootCount()
+-- 
+2.25.1
+

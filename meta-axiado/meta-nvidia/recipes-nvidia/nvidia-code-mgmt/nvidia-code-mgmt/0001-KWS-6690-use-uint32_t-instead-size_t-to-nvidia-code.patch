@@ -1,0 +1,64 @@
+From 80cfcd88d4ca5f3333ead5df4a9e5ee76305cd8e Mon Sep 17 00:00:00 2001
+From: Ritzen Yang <ryang@axiado.com>
+Date: Thu, 5 Jun 2025 18:26:12 +0800
+Subject: [PATCH] KWS-6690:use uint32_t instead size_t to nvidia-code-mgmt
+
+Upstream-Status: Pending
+
+Signed-off-by: Ritzen Yang <ryang@axiado.com>
+---
+ debug_token/update_debug_token.cpp              |  2 +-
+ fw-status/mctp_util/mctp_endpoint_discovery.cpp | 10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/debug_token/update_debug_token.cpp b/debug_token/update_debug_token.cpp
+index 2fcda6a..f1a35ba 100644
+--- a/debug_token/update_debug_token.cpp
++++ b/debug_token/update_debug_token.cpp
+@@ -1368,4 +1368,4 @@ void UpdateDebugToken::createMessageRegistryResourceErrors(
+                         entry("DeviceName: %s", deviceName.c_str()));
+     }
+     return;
+-}
+\ No newline at end of file
++}
+diff --git a/fw-status/mctp_util/mctp_endpoint_discovery.cpp b/fw-status/mctp_util/mctp_endpoint_discovery.cpp
+index 7090c86..2d73edd 100644
+--- a/fw-status/mctp_util/mctp_endpoint_discovery.cpp
++++ b/fw-status/mctp_util/mctp_endpoint_discovery.cpp
+@@ -118,8 +118,8 @@ void MctpDiscovery<T>::populateMctpInfo(const dbus::InterfaceMap& interfaces,
+ 
+             if (intfName == unixSocketIntfName)
+             {
+-                type = std::get<uint8_t>(properties.at("Type"));
+-                protocol = std::get<size_t>(properties.at("Protocol"));
++                type = std::get<uint32_t>(properties.at("Type"));
++                protocol = std::get<uint32_t>(properties.at("Protocol"));
+                 address =
+                     std::get<std::vector<uint8_t>>(properties.at("Address"));
+             }
+@@ -137,12 +137,12 @@ void MctpDiscovery<T>::populateMctpInfo(const dbus::InterfaceMap& interfaces,
+                 properties.contains("SupportedMessageTypes") &&
+                 properties.contains("MediumType"))
+             {
+-                auto eid = std::get<size_t>(properties.at("EID"));
++                auto eid = std::get<uint32_t>(properties.at("EID"));
+                 auto mctpTypes = std::get<std::vector<uint8_t>>(
+                     properties.at("SupportedMessageTypes"));
+                 auto mediumType =
+                     std::get<std::string>(properties.at("MediumType"));
+-                auto networkId = std::get<size_t>(properties.at("NetworkId"));
++                auto networkId = std::get<uint32_t>(properties.at("NetworkId"));
+                 if (std::find(mctpTypes.begin(), mctpTypes.end(),
+                               mctp_vdm::MessageType) != mctpTypes.end())
+                 {
+@@ -193,4 +193,4 @@ using TRequest = mctp_vdm::requester::InKernelRequest;
+ using TRequest = mctp_vdm::requester::DaemonRequest;
+ #endif
+ 
+-template class mctp_vdm::MctpDiscovery<TRequest>;
+\ No newline at end of file
++template class mctp_vdm::MctpDiscovery<TRequest>;
+-- 
+2.34.1
+

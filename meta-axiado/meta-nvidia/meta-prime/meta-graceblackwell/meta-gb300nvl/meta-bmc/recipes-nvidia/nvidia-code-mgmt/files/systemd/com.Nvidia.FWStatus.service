@@ -1,0 +1,15 @@
+[Unit]
+Description=Nvidia FW Status service
+Requires=xyz.openbmc_project.EntityManager
+After=xyz.openbmc_project.EntityManager
+
+[Service]
+Type=dbus
+BusName=com.Nvidia.FWStatus
+Restart=always
+ExecStart=/usr/bin/fw-status
+ExecStartPre=/bin/sh -c 'sleep 20; /usr/bin/fw_status_precheck.sh'
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

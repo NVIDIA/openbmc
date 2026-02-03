@@ -1,0 +1,811 @@
+[
+    {
+        "Exposes": [
+            {
+                "Class": "Gpio",
+                "GpioPolarity": "Low",
+                "Name": "Chassis Intrusion Sensor",
+                "Type": "ChassisIntrusionSensor"
+            },
+            {
+                "Address": "0x4d",
+                "Bus": 3,
+                "Name": "Chassis_0_Front_IO_Temp_0",
+                "EntityId": 66,
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 45
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 3,
+                        "Value": 43
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 40
+                    }
+                ],
+                "Type": "TMP75"
+            },
+            {
+                "Device": [
+                    {
+                        "Address": "0x34",
+                        "Bus": 6,
+                        "Channel": "0",
+                        "DeviceType": "MAX1363"
+                    }
+                ],
+                "LeakThresholdVolts": 1.65,
+                "MaxValidVolts": 1.815,
+                "MinValidVolts": 0.165,
+                "Name": "Chassis_0_LeakDetector_0_ColdPlate",
+                "ShutdownDelaySeconds": 0,
+                "ShutdownOnLeak": false,
+                "Type": "VoltageLeakDetector"
+            },
+            {
+                "Device": [
+                    {
+                        "Address": "0x34",
+                        "Bus": 6,
+                        "Channel": "1",
+                        "DeviceType": "MAX1363"
+                    }
+                ],
+                "LeakThresholdVolts": 1.65,
+                "MaxValidVolts": 1.815,
+                "MinValidVolts": 0.165,
+                "Name": "Chassis_0_LeakDetector_0_Manifold",
+                "ShutdownDelaySeconds": 0,
+                "ShutdownOnLeak": false,
+                "Type": "VoltageLeakDetector"
+            },
+            {
+                "Device": [
+                    {
+                        "Address": "0x35",
+                        "Bus": 6,
+                        "Channel": "0",
+                        "DeviceType": "MAX1363"
+                    }
+                ],
+                "LeakThresholdVolts": 1.65,
+                "MaxValidVolts": 1.815,
+                "MinValidVolts": 0.165,
+                "Name": "Chassis_0_LeakDetector_1_ColdPlate",
+                "ShutdownDelaySeconds": 0,
+                "ShutdownOnLeak": false,
+                "Type": "VoltageLeakDetector"
+            },
+            {
+                "Device": [
+                    {
+                        "Address": "0x35",
+                        "Bus": 6,
+                        "Channel": "1",
+                        "DeviceType": "MAX1363"
+                    }
+                ],
+                "LeakThresholdVolts": 1.65,
+                "MaxValidVolts": 1.815,
+                "MinValidVolts": 0.165,
+                "Name": "Chassis_0_LeakDetector_1_Manifold",
+                "ShutdownDelaySeconds": 0,
+                "ShutdownOnLeak": false,
+                "Type": "VoltageLeakDetector"
+            },
+            {
+                "Name": "Chassis_0_TotalHSC_Power_0",
+                "SensorsToSum": [
+                    "PDB_0_HSC_0_Pwr_0",
+                    "PDB_0_HSC_1_Pwr_0"
+                ],
+                "Type": "SummationSensor"
+            },
+            {
+                "GpioLine": "GLOBAL_WP_BMC-O",
+                "Name": "GLOBAL_WP_BMC",
+                "Polarity": "active_high",
+                "Type": "WriteProtect"
+            },
+            {
+                "GpioLine": "GLOBAL_WP_HMC-O",
+                "Name": "GLOBAL_WP_HMC",
+                "Polarity": "active_high",
+                "Type": "WriteProtect"
+            },
+            {
+                "GpioLine": "WP_HW_EXT_CTRL_L-O",
+                "Name": "WP_HW_EXT_CTRL",
+                "Polarity": "active_low",
+                "Type": "WriteProtect"
+            },
+            {
+                "GpioLine": "BMC_FRU_WP-O",
+                "Name": "BMC_FRU_WP",
+                "Polarity": "active_high",
+                "Type": "WriteProtect"
+            },
+            {
+                "Address": "$address",
+                "Bus": "$bus",
+                "Name": "Chassis_0"
+            },
+            {
+                "Address": "0x20",
+                "Bus": 6,
+                "Connector": {
+                    "Pwm": 0,
+                    "PwmName": "Chassis_0_FAN_1_PWM"
+                },
+                "Index": 0,
+                "Name": "Chassis_0_FAN_1_FRONT",
+                "MaxReading": 37400,
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 2204
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Address": "0x20",
+                "Bus": 6,
+                "Connector": {
+                    "Pwm": 0,
+                    "PwmName": "Chassis_0_FAN_1_PWM"
+                },
+                "Index": 1,
+                "Name": "Chassis_0_FAN_1_REAR",
+                "MaxReading": 37400,
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 2204
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Address": "0x20",
+                "Bus": 6,
+                "Connector": {
+                    "Pwm": 1,
+                    "PwmName": "Chassis_0_FAN_2_PWM"
+                },
+                "Index": 2,
+                "Name": "Chassis_0_FAN_2_FRONT",
+                "MaxReading": 37400,
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 2204
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Address": "0x20",
+                "Bus": 6,
+                "Connector": {
+                    "Pwm": 1,
+                    "PwmName": "Chassis_0_FAN_2_PWM"
+                },
+                "Index": 3,
+                "Name": "Chassis_0_FAN_2_REAR",
+                "MaxReading": 37400,
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 2204
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Address": "0x20",
+                "Bus": 6,
+                "Connector": {
+                    "Pwm": 2,
+                    "PwmName": "Chassis_0_FAN_3_PWM"
+                },
+                "Index": 4,
+                "Name": "Chassis_0_FAN_3_FRONT",
+                "MaxReading": 37400,
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 2204
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Address": "0x20",
+                "Bus": 6,
+                "Connector": {
+                    "Pwm": 2,
+                    "PwmName": "Chassis_0_FAN_3_PWM"
+                },
+                "Index": 5,
+                "Name": "Chassis_0_FAN_3_REAR",
+                "MaxReading": 37400,
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 2204
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Address": "0x20",
+                "Bus": 6,
+                "Connector": {
+                    "Pwm": 3,
+                    "PwmName": "Chassis_0_FAN_4_PWM"
+                },
+                "Index": 10,
+                "Name": "Chassis_0_FAN_4_FRONT",
+                "MaxReading": 37400,
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 2204
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Address": "0x20",
+                "Bus": 6,
+                "Connector": {
+                    "Pwm": 3,
+                    "PwmName": "Chassis_0_FAN_4_PWM"
+                },
+                "Index": 11,
+                "Name": "Chassis_0_FAN_4_REAR",
+                "MaxReading": 37400,
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 2204
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Address": "0x23",
+                "Bus": 6,
+                "Connector": {
+                    "Pwm": 0,
+                    "PwmName": "Chassis_0_FAN_5_PWM"
+                },
+                "Index": 0,
+                "Name": "Chassis_0_FAN_5_FRONT",
+                "MaxReading": 37400,
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 2204
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Address": "0x23",
+                "Bus": 6,
+                "Connector": {
+                    "Pwm": 0,
+                    "PwmName": "Chassis_0_FAN_5_PWM"
+                },
+                "Index": 1,
+                "Name": "Chassis_0_FAN_5_REAR",
+                "MaxReading": 37400,
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 2204
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Address": "0x23",
+                "Bus": 6,
+                "Connector": {
+                    "Pwm": 1,
+                    "PwmName": "Chassis_0_FAN_6_PWM"
+                },
+                "Index": 2,
+                "Name": "Chassis_0_FAN_6_FRONT",
+                "MaxReading": 37400,
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 2204
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Address": "0x23",
+                "Bus": 6,
+                "Connector": {
+                    "Pwm": 1,
+                    "PwmName": "Chassis_0_FAN_6_PWM"
+                },
+                "Index": 3,
+                "Name": "Chassis_0_FAN_6_REAR",
+                "MaxReading": 37400,
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 2204
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Address": "0x23",
+                "Bus": 6,
+                "Connector": {
+                    "Pwm": 2,
+                    "PwmName": "Chassis_0_FAN_7_PWM"
+                },
+                "Index": 4,
+                "Name": "Chassis_0_FAN_7_FRONT",
+                "MaxReading": 37400,
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 2204
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Address": "0x23",
+                "Bus": 6,
+                "Connector": {
+                    "Pwm": 2,
+                    "PwmName": "Chassis_0_FAN_7_PWM"
+                },
+                "Index": 5,
+                "Name": "Chassis_0_FAN_7_REAR",
+                "MaxReading": 37400,
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 2204
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Address": "0x23",
+                "Bus": 6,
+                "Connector": {
+                    "Pwm": 3,
+                    "PwmName": "Chassis_0_FAN_8_PWM"
+                },
+                "Index": 10,
+                "Name": "Chassis_0_FAN_8_FRONT",
+                "MaxReading": 37400,
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 2204
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Address": "0x23",
+                "Bus": 6,
+                "Connector": {
+                    "Pwm": 3,
+                    "PwmName": "Chassis_0_FAN_8_PWM"
+                },
+                "Index": 11,
+                "Name": "Chassis_0_FAN_8_REAR",
+                "MaxReading": 37400,
+                "PowerState": "On",
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 2204
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Class": "fan",
+                "FFGainCoefficient": 1,
+                "FFOffCoefficient": 0,
+                "ICoefficient": 0,
+                "ILimitMax": 0,
+                "ILimitMin": 0,
+                "Inputs": [
+                    "Chassis_0_FAN_1_FRONT",
+                    "Chassis_0_FAN_1_REAR"
+                ],
+                "Name": "NODE_FAN_1",
+                "NegativeHysteresis": 0,
+                "OutLimitMax": 80,
+                "OutLimitMin": 80,
+                "Outputs": [
+                    "Chassis_0_FAN_1_PWM"
+                ],
+                "PCoefficient": 0,
+                "PositiveHysteresis": 0,
+                "SlewNeg": 0,
+                "SlewPos": 0,
+                "Type": "Pid",
+                "Zones": [
+                    "Zone0"
+                ]
+            },
+            {
+                "Class": "fan",
+                "FFGainCoefficient": 1,
+                "FFOffCoefficient": 0,
+                "ICoefficient": 0,
+                "ILimitMax": 0,
+                "ILimitMin": 0,
+                "Inputs": [
+                    "Chassis_0_FAN_2_FRONT",
+                    "Chassis_0_FAN_2_REAR"
+                ],
+                "Name": "NODE_FAN_2",
+                "NegativeHysteresis": 0,
+                "OutLimitMax": 80,
+                "OutLimitMin": 80,
+                "Outputs": [
+                    "Chassis_0_FAN_2_PWM"
+                ],
+                "PCoefficient": 0,
+                "PositiveHysteresis": 0,
+                "SlewNeg": 0,
+                "SlewPos": 0,
+                "Type": "Pid",
+                "Zones": [
+                    "Zone0"
+                ]
+            },
+            {
+                "Class": "fan",
+                "FFGainCoefficient": 1,
+                "FFOffCoefficient": 0,
+                "ICoefficient": 0,
+                "ILimitMax": 0,
+                "ILimitMin": 0,
+                "Inputs": [
+                    "Chassis_0_FAN_3_FRONT",
+                    "Chassis_0_FAN_3_REAR"
+                ],
+                "Name": "NODE_FAN_3",
+                "NegativeHysteresis": 0,
+                "OutLimitMax": 80,
+                "OutLimitMin": 80,
+                "Outputs": [
+                    "Chassis_0_FAN_3_PWM"
+                ],
+                "PCoefficient": 0,
+                "PositiveHysteresis": 0,
+                "SlewNeg": 0,
+                "SlewPos": 0,
+                "Type": "Pid",
+                "Zones": [
+                    "Zone0"
+                ]
+            },
+            {
+                "Class": "fan",
+                "FFGainCoefficient": 1,
+                "FFOffCoefficient": 0,
+                "ICoefficient": 0,
+                "ILimitMax": 0,
+                "ILimitMin": 0,
+                "Inputs": [
+                    "Chassis_0_FAN_4_FRONT",
+                    "Chassis_0_FAN_4_REAR"
+                ],
+                "Name": "NODE_FAN_4",
+                "NegativeHysteresis": 0,
+                "OutLimitMax": 80,
+                "OutLimitMin": 80,
+                "Outputs": [
+                    "Chassis_0_FAN_4_PWM"
+                ],
+                "PCoefficient": 0,
+                "PositiveHysteresis": 0,
+                "SlewNeg": 0,
+                "SlewPos": 0,
+                "Type": "Pid",
+                "Zones": [
+                    "Zone0"
+                ]
+            },
+            {
+                "Class": "fan",
+                "FFGainCoefficient": 1,
+                "FFOffCoefficient": 0,
+                "ICoefficient": 0,
+                "ILimitMax": 0,
+                "ILimitMin": 0,
+                "Inputs": [
+                    "Chassis_0_FAN_5_FRONT",
+                    "Chassis_0_FAN_5_REAR"
+                ],
+                "Name": "NODE_FAN_5",
+                "NegativeHysteresis": 0,
+                "OutLimitMax": 80,
+                "OutLimitMin": 80,
+                "Outputs": [
+                    "Chassis_0_FAN_5_PWM"
+                ],
+                "PCoefficient": 0,
+                "PositiveHysteresis": 0,
+                "SlewNeg": 0,
+                "SlewPos": 0,
+                "Type": "Pid",
+                "Zones": [
+                    "Zone0"
+                ]
+            },
+            {
+                "Class": "fan",
+                "FFGainCoefficient": 1,
+                "FFOffCoefficient": 0,
+                "ICoefficient": 0,
+                "ILimitMax": 0,
+                "ILimitMin": 0,
+                "Inputs": [
+                    "Chassis_0_FAN_6_FRONT",
+                    "Chassis_0_FAN_6_REAR"
+                ],
+                "Name": "NODE_FAN_6",
+                "NegativeHysteresis": 0,
+                "OutLimitMax": 80,
+                "OutLimitMin": 80,
+                "Outputs": [
+                    "Chassis_0_FAN_6_PWM"
+                ],
+                "PCoefficient": 0,
+                "PositiveHysteresis": 0,
+                "SlewNeg": 0,
+                "SlewPos": 0,
+                "Type": "Pid",
+                "Zones": [
+                    "Zone0"
+                ]
+            },
+            {
+                "Class": "fan",
+                "FFGainCoefficient": 1,
+                "FFOffCoefficient": 0,
+                "ICoefficient": 0,
+                "ILimitMax": 0,
+                "ILimitMin": 0,
+                "Inputs": [
+                    "Chassis_0_FAN_7_FRONT",
+                    "Chassis_0_FAN_7_REAR"
+                ],
+                "Name": "NODE_FAN_7",
+                "NegativeHysteresis": 0,
+                "OutLimitMax": 80,
+                "OutLimitMin": 80,
+                "Outputs": [
+                    "Chassis_0_FAN_7_PWM"
+                ],
+                "PCoefficient": 0,
+                "PositiveHysteresis": 0,
+                "SlewNeg": 0,
+                "SlewPos": 0,
+                "Type": "Pid",
+                "Zones": [
+                    "Zone0"
+                ]
+            },
+            {
+                "Class": "fan",
+                "FFGainCoefficient": 1,
+                "FFOffCoefficient": 0,
+                "ICoefficient": 0,
+                "ILimitMax": 0,
+                "ILimitMin": 0,
+                "Inputs": [
+                    "Chassis_0_FAN_8_FRONT",
+                    "Chassis_0_FAN_8_REAR"
+                ],
+                "Name": "NODE_FAN_8",
+                "NegativeHysteresis": 0,
+                "OutLimitMax": 80,
+                "OutLimitMin": 80,
+                "Outputs": [
+                    "Chassis_0_FAN_8_PWM"
+                ],
+                "PCoefficient": 0,
+                "PositiveHysteresis": 0,
+                "SlewNeg": 0,
+                "SlewPos": 0,
+                "Type": "Pid",
+                "Zones": [
+                    "Zone0"
+                ]
+            },
+            {
+                "CycleIntervalTimeMS": 100,
+                "FailSafePercent": 100,
+                "MinThermalOutput": 30,
+                "Name": "Zone0",
+                "Type": "Pid.Zone",
+                "UpdateThermalsTimeMS": 100
+            }
+        ],
+        "Name": "Chassis_0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA'})",
+        "Type": "Chassis",
+        "xyz.openbmc_project.Association.Definitions": {
+            "Associations": [
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/PDB_Chassis_FRU_Assembly0"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/PDB_Board_FRU_Assembly1"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/assembly/PDB_Product_FRU_Assembly2"
+                ]
+            ]
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "ChassisPartNumber": "$CHASSIS_PART_NUMBER",
+            "ChassisSerial": "$CHASSIS_SERIAL_NUMBER",
+            "ChassisType": "$CHASSIS_TYPE",
+            "Manufacturer": "NVIDIA",
+            "Model": "GB300 NVL",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.AssetTag": {
+            "AssetTag": "$PRODUCT_ASSET_TAG"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+            "Address": "$address",
+            "Bus": "$bus",
+            "Name": "Chassis_0"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Backplane"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationCode": {
+            "LocationCode": "Chassis_0"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.LocationContext": {
+            "LocationContext": ""
+        },
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Shelf"
+        },
+        "xyz.openbmc_project.Inventory.Item.System": {}
+    },
+    {
+        "Name": "PDB Chassis FRU Assembly0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "NVIDIA",
+            "Model": "GB300 NVL",
+            "PartNumber": "$CHASSIS_PART_NUMBER",
+            "SerialNumber": "$CHASSIS_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "PDB Board FRU Assembly1",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "BuildDate": "$BOARD_MANUFACTURE_DATE",
+            "Manufacturer": "$BOARD_MANUFACTURER",
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "PDB Product FRU Assembly2",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 6, 'ADDRESS': 80, 'BOARD_MANUFACTURER': 'NVIDIA'})",
+        "Type": "Assembly",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "$PRODUCT_MANUFACTURER",
+            "Model": "$PRODUCT_PRODUCT_NAME",
+            "PartNumber": "$PRODUCT_PART_NUMBER",
+            "SerialNumber": "$PRODUCT_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Revision": {
+            "Version": "$PRODUCT_VERSION"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    }
+]

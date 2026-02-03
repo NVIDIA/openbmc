@@ -1,0 +1,24 @@
+/xyz/openbmc_project/Control/Diag:
+    - Interface: xyz.openbmc_project.Control.Diag
+      Properties:
+          DiagMode:
+             Default: 0
+             persistence: true
+          DiagSystemConfig:
+             type: string
+             Default: >
+                  "[]"
+             persistence: true
+          DiagConfig:
+             type: string
+             Default: >
+                  "[]"
+             persistence: true
+          DiagResult:
+             type: string
+             Default: >
+                  "[]"
+             persistence: true
+          DiagStatus:
+             Default: 0x4
+             persistence: true

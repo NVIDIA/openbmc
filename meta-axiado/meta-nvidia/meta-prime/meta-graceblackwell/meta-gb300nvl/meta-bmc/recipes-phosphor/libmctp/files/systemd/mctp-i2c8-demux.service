@@ -1,0 +1,15 @@
+[Unit]
+Description=MCTP I2C 8 demultiplexer daemon
+Wants=mctp-i2c8-demux.socket
+Conflicts=obmc-power-off@0.target
+Requires=cpu-boot-done.service
+After=cpu-boot-done.service
+
+[Service]
+Type=notify
+Restart=always
+ExecStart=/usr/bin/mctp-demux-daemon smbus i2c_bus=8 i2c_config_file=/usr/share/mctp/mctp_cfg_smbus8.json
+SyslogIdentifier=mctp-i2c8-demux
+
+[Install]
+WantedBy=cpu-boot-done.service

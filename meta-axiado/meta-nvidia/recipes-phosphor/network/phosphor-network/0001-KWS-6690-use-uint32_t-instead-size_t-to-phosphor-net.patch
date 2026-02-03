@@ -1,0 +1,36 @@
+From 0f900c82142be4102c2f907db3f32eb890159fe8 Mon Sep 17 00:00:00 2001
+From: Ritzen Yang <ryang@axiado.com>
+Date: Thu, 5 Jun 2025 19:10:55 +0800
+Subject: [PATCH] KWS-6690:use uint32_t instead size_t to phosphor-network
+
+Upstream-Status: Pending
+
+Signed-off-by: Ritzen Yang <ryang@axiado.com>
+---
+ src/ncsi_mctp_util.cpp | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/ncsi_mctp_util.cpp b/src/ncsi_mctp_util.cpp
+index e3fb66b..450cab6 100644
+--- a/src/ncsi_mctp_util.cpp
++++ b/src/ncsi_mctp_util.cpp
+@@ -125,16 +125,16 @@ std::tuple<int, int, std::vector<uint8_t>> getMctpSockInfo(uint8_t remoteEID)
+                     {
+                         const auto& mctpProperties =
+                             interfaces.at(mctpEndpointIntfName);
+-                        auto eid = std::get<size_t>(mctpProperties.at("EID"));
++                        auto eid = std::get<uint32_t>(mctpProperties.at("EID"));
+                         if (remoteEID == eid)
+                         {
+                             if (interfaces.contains(unixSocketIntfName))
+                             {
+                                 const auto& properties =
+                                     interfaces.at(unixSocketIntfName);
+-                                type = std::get<size_t>(properties.at("Type"));
++                                type = std::get<uint32_t>(properties.at("Type"));
+                                 protocol =
+-                                    std::get<size_t>(properties.at("Protocol"));
++                                    std::get<uint32_t>(properties.at("Protocol"));
+                                 address = std::get<std::vector<uint8_t>>(
+                                     properties.at("Address"));
+                                 if (address.empty() || !type)

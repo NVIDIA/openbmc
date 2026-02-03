@@ -1,0 +1,3 @@
+define KFEATURE_DESCRIPTION "Enable USB network support"
+
+kconf non-hardware usb-net.cfg

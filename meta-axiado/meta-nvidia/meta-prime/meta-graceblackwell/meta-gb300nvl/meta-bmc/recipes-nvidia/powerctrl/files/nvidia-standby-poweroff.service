@@ -1,0 +1,22 @@
+[Unit]
+Description=NVIDIA Standby Power Off
+
+[Service]
+RemainAfterExit=yes
+Type=oneshot
+
+#
+# Check to see if its OK to disable standby power
+# Verifies run power is already off
+#
+ExecCondition=/usr/bin/env stbypowerctrl.sh ok_to_power_off
+
+#
+# Stop this here because a "Conflicts" statement still shuts down
+# nvidia-standby-poweron.service even if ExecCondition fails
+#
+ExecStart=/usr/bin/env systemctl stop nvidia-standby-poweron.service
+ExecStart=/usr/bin/env stbypowerctrl.sh power_off_internal
+SyslogIdentifier=stbypowerctrl
+
+[Install]

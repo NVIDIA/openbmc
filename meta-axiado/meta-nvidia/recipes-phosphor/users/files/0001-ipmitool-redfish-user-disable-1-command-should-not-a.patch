@@ -1,0 +1,40 @@
+From 4cb65bd6e24e4353171d09cb41befb56a8a31bb1 Mon Sep 17 00:00:00 2001
+From: Sammai Chakravarthy <schakravarthy@axiado.com>
+Date: Fri, 25 Apr 2025 02:33:35 -0700
+Subject: [PATCH] ipmitool/redfish user disable 1" command should not allow
+ disabling the root account
+
+Upstream-Status: Pending
+
+Signed-off-by: Sammai Chakravarthy <schakravarthy@axiado.com>
+---
+ user_mgr.cpp | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/user_mgr.cpp b/user_mgr.cpp
+index 43d5e75..8ede849 100644
+--- a/user_mgr.cpp
++++ b/user_mgr.cpp
+@@ -1756,7 +1756,18 @@ void UserMgr::executeUserModify(const char* userName, const char* newGroups,
+ 
+ void UserMgr::executeUserModifyUserEnable(const char* userName, bool enabled)
+ {
+-    // set EXPIRE_DATE to 0 to disable user, PAM takes 0 as expire on
++
++    // Prevent disabling the root account
++    if (strcmp(userName, "root") == 0 && !enabled)
++    {
++        // Log an error or handle the case appropriately
++
++        lg2::error("Error: Cannot disable the root account.");
++        elog<InternalFailure>();
++        return;
++    }
++
++    // Set EXPIRE_DATE to 0 to disable user, PAM takes 0 as expire on
+     // 1970-01-01, that's an implementation-defined behavior
+     executeCmd("/usr/sbin/usermod", userName, "-e",
+                (enabled ? "" : "1970-01-01"));
+-- 
+2.25.1
+

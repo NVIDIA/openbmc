@@ -1,0 +1,31 @@
+From 4f0f1d00d3806ba94bab3af03628618f0bbd3ab3 Mon Sep 17 00:00:00 2001
+From: Sammai Chakravarthy <schakravarthy@axiado.com>
+Date: Tue, 25 Nov 2025 23:23:10 -0800
+Subject: [PATCH] KWS-7656 enable factory reset feature
+Upstream-Status: Pending
+---
+ inventory_manager.hpp | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/inventory_manager.hpp b/inventory_manager.hpp
+index a655178..ef00cbe 100644
+--- a/inventory_manager.hpp
++++ b/inventory_manager.hpp
+@@ -117,7 +117,13 @@ class InventoryManager :
+     {
+         constexpr auto setFactoryResetWait = std::chrono::seconds(3);
+         // Mark the read-write partition for recreation upon reboot.
+-        utils::execute("/sbin/fw_setenv", "openbmconce", "factory-reset");
++	#ifdef MMC_LAYOUT
++	    // eMMC platform: correct behavior
++	    utils::execute("/sbin/fw_setenv", "rwreset", "true");
++	#else
++	    // NOR/SPI-NOR platform: original upstream behavior
++	    utils::execute("/sbin/fw_setenv", "openbmconce", "factory-reset");
++	#endif
+ 
+         // used to create a RF log upon reboot
+         utils::execute("/sbin/fw_setenv", "openbmclog", "factory-reset");
+-- 
+2.25.1
+

@@ -1,0 +1,10 @@
+[Unit]
+Description=GB300NVL HMC Not Ready Service
+Requires=hmc-recovery.target
+StartLimitIntervalSec=1
+
+[Service]
+Restart=no
+Type=simple
+ExecStart=/bin/echo "Starting HMC AP Recovery Target"
+SyslogIdentifier=gb300nvl-hmc-notready

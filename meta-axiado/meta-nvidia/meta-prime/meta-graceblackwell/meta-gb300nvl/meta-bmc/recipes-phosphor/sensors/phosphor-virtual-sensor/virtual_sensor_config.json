@@ -1,0 +1,90 @@
+[
+    {
+        "Desc": {
+            "Name": "Total_Module_Power",
+            "SensorType": "power"
+        },
+        "Associations": [
+            [
+                "chassis",
+                "all_sensors",
+                "/xyz/openbmc_project/inventory/system/board/chassis"
+            ]
+        ],
+        "Params": {
+            "DbusParam": [
+                {
+                    "ParamName": "P1",
+                    "Desc": {
+                        "Name": "HGX_GPU_0_DRAM_0_Power_0",
+                        "SensorType": "power"
+                    }
+                },
+                {
+                    "ParamName": "P2",
+                    "Desc": {
+                        "Name": "HGX_GPU_0_Power_0",
+                        "SensorType": "power"
+                    }
+                },
+                {
+                    "ParamName": "P3",
+                    "Desc": {
+                        "Name": "HGX_GPU_1_DRAM_0_Power_0",
+                        "SensorType": "power"
+                    }
+                },
+                {
+                    "ParamName": "P4",
+                    "Desc": {
+                        "Name": "HGX_GPU_1_Power_0",
+                        "SensorType": "power"
+                    }
+                },
+                {
+                    "ParamName": "P5",
+                    "Desc": {
+                        "Name": "HGX_GPU_2_DRAM_0_Power_0",
+                        "SensorType": "power"
+                    }
+                },
+                {
+                    "ParamName": "P6",
+                    "Desc": {
+                        "Name": "HGX_GPU_2_Power_0",
+                        "SensorType": "power"
+                    }
+                },
+                {
+                    "ParamName": "P7",
+                    "Desc": {
+                        "Name": "HGX_GPU_3_DRAM_0_Power_0",
+                        "SensorType": "power"
+                    }
+                },
+                {
+                    "ParamName": "P8",
+                    "Desc": {
+                        "Name": "HGX_GPU_3_Power_0",
+                        "SensorType": "power"
+                    }
+                },
+                {
+                    "ParamName": "P9",
+                    "Desc": {
+                        "Name": "M0_CPU_Power0",
+                        "SensorType": "power"
+                    }
+                },
+                {
+                    "ParamName": "P10",
+                    "Desc": {
+                        "Name": "M1_CPU_Power0",
+                        "SensorType": "power"
+                    }
+                }
+            ]
+        },
+        "Expression": "(P1 > 0 ? P1:0) + (P2 > 0 ? P2:0) + (P3 > 0 ? P3:0) + (P4 > 0 ? P4:0) + (P5 > 0 ? P5:0) + (P6 > 0 ? P6:0) + (P7 > 0 ? P7:0) + (P8 > 0 ? P8:0) + (P9 > 0 ? P9:0) + (P10 > 0 ? P10:0)"
+    }
+]

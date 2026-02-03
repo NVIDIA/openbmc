@@ -1,0 +1,11 @@
+[Unit]
+Description=GB300NVL HMC Ready Service
+Conflicts=hmc-recovery.target
+StartLimitIntervalSec=1
+
+[Service]
+Restart=no
+Type=simple
+ExecStartPre=/bin/bash -c '/usr/bin/set-hmc-mux.sh FPGA; sleep 1'
+ExecStart=/bin/echo "Stopping HMC AP Recovery Target"
+SyslogIdentifier=gb300nvl-hmc-ready

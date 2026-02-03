@@ -1,0 +1,123 @@
+[
+    {
+        "Exposes": [
+            {
+                "Address": "$address",
+                "Bus": "$bus",
+                "Name": "$bus BMC_FRU",
+                "Type": "EEPROM_24C02"
+            },
+            {
+                "Address": "0x48",
+                "Bus": 10,
+                "Name": "BMC_0_Temp_0",
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non recoverable",
+                        "Severity": 4,
+                        "Value": 95
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper  critical",
+                        "Severity": 3,
+                        "Value": 93
+                    },
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper non critical",
+                        "Severity": 0,
+                        "Value": 90
+                    },
+                    {
+                        "Direction": "less than",
+                        "Name": "lower non critical",
+                        "Severity": 0,
+                        "Value": 5
+                    }
+                ],
+                "Type": "TMP75C"
+            }
+        ],
+        "Name": "BMC_0",
+        "Parent_Chassis": "/xyz/openbmc_project/inventory/system/chassis/Chassis_0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 10, 'ADDRESS': 80})",
+        "Type": "BMC",
+        "xyz.openbmc_project.Association.Definitions": {
+            "Associations": [
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/bmc/BMC_Board_FRU_Assembly0"
+                ],
+                [
+                    "assembly",
+                    "parent_chassis",
+                    "/xyz/openbmc_project/inventory/system/bmc/BMC_Product_FRU_Assembly1"
+                ]
+            ]
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "$BOARD_MANUFACTURER",
+            "Model": "GB BMC",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER",
+            "SKU": ""
+        },
+        "xyz.openbmc_project.Inventory.Decorator.I2CDevice": {
+            "Address": "$address",
+            "Bus": "$bus",
+            "Name": "BMC_FRU"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.Inventory.Item.Chassis": {
+            "Type": "xyz.openbmc_project.Inventory.Item.Chassis.ChassisType.Component"
+        },
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "BMC Board FRU Assembly0",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 10, 'ADDRESS': 80})",
+        "Type": "BMC",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "BuildDate": "$BOARD_MANUFACTURE_DATE",
+            "Manufacturer": "$BOARD_MANUFACTURER",
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.Inventory.Item.Assembly": {},
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    },
+    {
+        "Name": "BMC Product FRU Assembly1",
+        "Probe": "xyz.openbmc_project.FruDevice({'BUS': 10, 'ADDRESS': 80})",
+        "Type": "BMC",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "$PRODUCT_MANUFACTURER",
+            "Model": "$PRODUCT_PRODUCT_NAME",
+            "PartNumber": "$PRODUCT_PART_NUMBER",
+            "SerialNumber": "$PRODUCT_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Location": {
+            "LocationType": "xyz.openbmc_project.Inventory.Decorator.Location.LocationTypes.Embedded"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.Revision": {
+            "Version": "$PRODUCT_VERSION"
+        },
+        "xyz.openbmc_project.Inventory.Item.Assembly": {},
+        "xyz.openbmc_project.State.Decorator.Health": {
+            "Health": "xyz.openbmc_project.State.Decorator.Health.HealthType.OK"
+        }
+    }
+]

@@ -1,0 +1,8 @@
+[Unit]
+Description=Overtemp service
+
+Wants=obmc-chassis-hard-poweroff@0.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/env error_log.sh overtemp %I

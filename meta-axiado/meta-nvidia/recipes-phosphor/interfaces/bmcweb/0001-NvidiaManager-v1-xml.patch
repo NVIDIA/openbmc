@@ -1,0 +1,94 @@
+diff --git a/redfish-core/schema/oem/nvidia/csdl/NvidiaManager_v1.xml b/redfish-core/schema/oem/nvidia/csdl/NvidiaManager_v1.xml
+index 60527c39..3702eab8 100644
+--- a/redfish-core/schema/oem/nvidia/csdl/NvidiaManager_v1.xml
++++ b/redfish-core/schema/oem/nvidia/csdl/NvidiaManager_v1.xml
+@@ -344,6 +344,88 @@
+         </Property>
+       </ComplexType>
+     </Schema>
+-
++<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="NvidiaManager.v1_4_0">
++      <Annotation Term="Redfish.OwningEntity" String="NVIDIA"/>
++      <ComplexType Name="NvidiaManager" BaseType="NvidiaManager.v1_3_0.NvidiaManager">
++        <Property Name="OpenOCD" Type="NvidiaManager.v1_4_0.OpenOCD">
++          <Annotation Term="OData.Description" String="The settings of OpenOCD service attached to this manager."/>
++          <Annotation Term="OData.LongDescription" String="The property shall contain the settings of OpenOCD service attached to this manager."/>
++        </Property>
++        <Property Name="UptimeSeconds" Type="Edm.Decimal">
++          <Annotation Term="OData.Permissions" EnumMember="OData.Permission/Read"/>
++          <Annotation Term="OData.Description" String="The wall-clock time this process has been running in seconds."/>
++          <Annotation Term="OData.LongDescription" String="This property shall contain the wall-clock time this process has been running in seconds."/>
++        </Property>
++      </ComplexType>
++      <ComplexType Name="OpenOCD">
++        <Property Name="Status" Type="Resource.Status" Nullable="false"/>
++        <Property Name="Enable" Type="Edm.Boolean" Nullable="false">
++          <Annotation Term="OData.Permissions" EnumMember="OData.Permission/ReadWrite"/>
++          <Annotation Term="OData.Description" String="An indication of whether OpenOCD service is enabled."/>
++          <Annotation Term="OData.LongDescription" String="This property shall indicate whether OpenOCD service is enabled.  The default value is `false`."/>
++        </Property>
++      </ComplexType>
++      <ComplexType Name="NvidiaFabricManager">
++        <Property Name="FabricManagerState" Type="NvidiaManager.v1_4_0.FabricManagerState">
++          <Annotation Term="OData.Permissions" EnumMember="OData.Permission/Read"/>
++          <Annotation Term="OData.Description" String="Fabric Manager state."/>
++          <Annotation Term="OData.LongDescription" String="This property shall contain the fabric manager state."/>
++        </Property>
++        <Property Name="ReportStatus" Type="NvidiaManager.v1_4_0.ReportStatus">
++          <Annotation Term="OData.Permissions" EnumMember="OData.Permission/Read"/>
++          <Annotation Term="OData.Description" String="The report status."/>
++          <Annotation Term="OData.LongDescription" String="This property shall contain the status for a report received from the fabric manager."/>
++        </Property>
++        <Property Name="DurationSinceLastRestartSeconds" Type="Edm.Int64">
++          <Annotation Term="OData.Permissions" EnumMember="OData.Permission/Read"/>
++          <Annotation Term="OData.Description" String="The time passed since last restart, in seconds."/>
++          <Annotation Term="OData.LongDescription" String="This property shall contain the time passed since last restart, in seconds."/>
++          <Annotation Term="Validation.Minimum" Int="0"/>
++          <Annotation Term="Measures.Unit" String="s"/>
++        </Property>
++      </ComplexType>
++      <EnumType Name="FabricManagerState">
++        <Member Name="Offline">
++          <Annotation Term="OData.Description" String="Fabric Manager is at init stage, before the Fabric Manager can start sending telemetry."/>
++        </Member>
++        <Member Name="Standby">
++          <Annotation Term="OData.Description" String="Fabric Manager init is done, waiting for Subnet Manager to finish init."/>
++        </Member>
++        <Member Name="Configured">
++          <Annotation Term="OData.Description" String="Fabric Manager and Subnet Manager init are complete."/>
++        </Member>
++        <Member Name="Error">
++          <Annotation Term="OData.Description" String="Error occurs in Fabric Manager or Subnet Manager."/>
++        </Member>
++        <Member Name="Unknown">
++          <Annotation Term="OData.Description" String="An unknown state."/>
++        </Member>
++      </EnumType>
++      <EnumType Name="ReportStatus">
++        <Member Name="Pending">
++          <Annotation Term="OData.Description" String="The report has not been received."/>
++        </Member>
++        <Member Name="Received">
++          <Annotation Term="OData.Description" String="The report has been received."/>
++        </Member>
++        <Member Name="Timeout">
++          <Annotation Term="OData.Description" String="The report has timed out."/>
++        </Member>
++        <Member Name="Unknown">
++          <Annotation Term="OData.Description" String="An unknown state."/>
++        </Member>
++      </EnumType>
++      <EnumType Name="SWEIJRequestType">
++        <Member Name="Setup">
++          <Annotation Term="OData.Description" String="Set up environment for performing software error injections."/>
++        </Member>
++        <Member Name="Cleanup">
++          <Annotation Term="OData.Description" String="Clean up environment for performing software error injections."/>
++        </Member>
++        <Member Name="Injection">
++          <Annotation Term="OData.Description" String="Perform software error injections."/>
++        </Member>
++      </EnumType>
++    </Schema>
+   </edmx:DataServices>
+ </edmx:Edmx>

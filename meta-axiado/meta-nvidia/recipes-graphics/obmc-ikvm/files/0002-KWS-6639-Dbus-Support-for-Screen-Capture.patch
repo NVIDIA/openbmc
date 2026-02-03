@@ -1,0 +1,327 @@
+From 3695a53fd36e94e03c36a3653fea38b46897b0ac Mon Sep 17 00:00:00 2001
+From: Praveen Kamma <pkamma@axiado.com>
+Date: Tue, 10 Jun 2025 21:49:38 -0700
+Subject: [PATCH] KWS-6639-Dbus-Support-for-Screen-Capture
+
+Upstream-Status: Pending
+
+Signed-off-by: Praveen Kamma <pkamma@axiado.com>
+---
+ ikvm_manager.cpp | 70 +++++++++++++++++++++++++++----------------
+ ikvm_manager.hpp |  5 ++++
+ ikvm_video.cpp   | 78 +++++++++++++++++++++++++++++++++++++++++++++++-
+ ikvm_video.hpp   |  2 ++
+ meson.build      |  4 +++
+ obmc-ikvm.cpp    | 34 +++++++++++++++++++++
+ 6 files changed, 166 insertions(+), 27 deletions(-)
+
+diff --git a/ikvm_manager.cpp b/ikvm_manager.cpp
+index 2f66fd5..f7a673a 100644
+--- a/ikvm_manager.cpp
++++ b/ikvm_manager.cpp
+@@ -15,46 +15,64 @@ Manager::Manager(const Args& args) :
+ void Manager::run()
+ {
+     std::thread run(serverThread, this);
++    std::thread runStatus(statusThread, this); // Thread for handling screenshot capture
+ 
+-    while (continueExecuting)
++    io.run(); // Required by sdbusplus::asio
++    run.join();
++    runStatus.join();
++}
++
++void Manager::serverThread(Manager* manager)
++{
++    while (manager->continueExecuting)
++    {
++        manager->server.run();
++        manager->setServerDone();
++        manager->waitVideo();
++    }
++}
++
++void Manager::statusThread(Manager* manager)
++{
++    while (manager->continueExecuting)
+     {
+-        if (server.wantsFrame())
++        if (manager->server.wantsFrame() || manager->shotFlag.load())
+         {
+-            video.start();
+-            video.getFrame();
+-            server.sendFrame();
++            manager->video.start();
++            manager->video.getFrame();
++
++            if (manager->server.wantsFrame())
++            {
++                manager->server.sendFrame();
++            }
++
++            if (manager->shotFlag.load())
++            {
++                manager->video.writeFile(manager->shotPath);
++                manager->shotFlag.store(false);
++            }
+         }
+         else
+         {
+-            video.stop();
++            manager->video.stop();
+         }
+ 
+-        if (video.needsResize())
++        if (manager->video.needsResize())
+         {
+-            videoDone = false;
+-            waitServer();
+-            video.resize();
+-            server.resize();
+-            setVideoDone();
++            manager->videoDone = false;
++            manager->waitServer();
++
++            manager->video.resize();
++
++            manager->server.resize();
++            manager->setVideoDone();
+         }
+         else
+         {
+-            setVideoDone();
+-            waitServer();
++            manager->setVideoDone();
++            manager->waitServer();
+         }
+     }
+-
+-    run.join();
+-}
+-
+-void Manager::serverThread(Manager* manager)
+-{
+-    while (manager->continueExecuting)
+-    {
+-        manager->server.run();
+-        manager->setServerDone();
+-        manager->waitVideo();
+-    }
+ }
+ 
+ void Manager::setServerDone()
+diff --git a/ikvm_manager.hpp b/ikvm_manager.hpp
+index c6750e6..d020ac2 100644
+--- a/ikvm_manager.hpp
++++ b/ikvm_manager.hpp
+@@ -5,6 +5,7 @@
+ #include "ikvm_server.hpp"
+ #include "ikvm_video.hpp"
+ 
++#include <boost/asio.hpp>
+ #include <condition_variable>
+ #include <mutex>
+ 
+@@ -31,7 +32,10 @@ class Manager
+     Manager& operator=(Manager&&) = default;
+ 
+     /* @brief Begins operation of the VNC server */
++    boost::asio::io_context io;
+     void run();
++    std::atomic<bool> shotFlag;
++    std::string shotPath;
+ 
+   private:
+     /*
+@@ -40,6 +44,7 @@ class Manager
+      * @param[in] manager - Pointer to the Manager object
+      */
+     static void serverThread(Manager* manager);
++    static void statusThread(Manager* manager);
+ 
+     /* @brief Notifies thread waiters that RFB operations are complete */
+     void setServerDone();
+diff --git a/ikvm_video.cpp b/ikvm_video.cpp
+index 3445715..4ee83b2 100644
+--- a/ikvm_video.cpp
++++ b/ikvm_video.cpp
+@@ -12,7 +12,10 @@
+ #include <sys/time.h>
+ #include <sys/types.h>
+ #include <unistd.h>
+-
++#include <png.h>
++#include <cstdio>
++#include <cstdint>
++#include <cstring>
+ #include <phosphor-logging/elog-errors.hpp>
+ #include <phosphor-logging/elog.hpp>
+ #include <phosphor-logging/log.hpp>
+@@ -51,6 +54,79 @@ char* Video::getData()
+     return nullptr;
+ }
+ 
++void Video::writeFile(const std::string& filePath)
++{
++    if (lastFrameIndex < 0 || buffers[lastFrameIndex].data == nullptr)
++    {
++        return;
++    }
++
++    const size_t width = 640;
++    const size_t height = 480;
++    const size_t bytesPerPixel = 4; // RGB888: R, G, B, unused padding
++
++    FILE* fp = fopen(filePath.c_str(), "wb");
++    if (!fp)
++    {
++        return;
++    }
++
++    png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
++    if (!png)
++    {
++        fclose(fp);
++        return;
++    }
++
++    png_infop info = png_create_info_struct(png);
++    if (!info)
++    {
++        png_destroy_write_struct(&png, nullptr);
++        fclose(fp);
++        return;
++    }
++
++    if (setjmp(png_jmpbuf(png)))
++    {
++        png_destroy_write_struct(&png, &info);
++        fclose(fp);
++        return;
++    }
++
++    png_init_io(png, fp);
++
++    png_set_IHDR(
++        png,
++        info,
++        width,
++        height,
++        8,
++        PNG_COLOR_TYPE_RGB, // Not RGBA
++        PNG_INTERLACE_NONE,
++        PNG_COMPRESSION_TYPE_DEFAULT,
++        PNG_FILTER_TYPE_DEFAULT);
++
++    png_write_info(png, info);
++
++    const uint8_t* data = static_cast<const uint8_t*>(buffers[lastFrameIndex].data);
++    for (size_t y = 0; y < height; ++y)
++    {
++        static std::vector<uint8_t> row;
++        row.resize(width * 3);
++        for (size_t x = 0; x < width; ++x)
++        {
++            size_t idx = (y * width + x) * bytesPerPixel;
++            row[x * 3 + 0] = data[idx + 0]; // R
++            row[x * 3 + 1] = data[idx + 1]; // G
++            row[x * 3 + 2] = data[idx + 2]; // B
++        }
++        png_write_row(png, row.data());
++    }
++
++    png_write_end(png, nullptr);
++    png_destroy_write_struct(&png, &info);
++    fclose(fp);
++}
+ void Video::getFrame()
+ {
+     int rc(0);
+diff --git a/ikvm_video.hpp b/ikvm_video.hpp
+index 449f57e..42d3291 100644
+--- a/ikvm_video.hpp
++++ b/ikvm_video.hpp
+@@ -38,6 +38,8 @@ class Video
+     char* getData();
+     /* @brief Performs read to grab latest video frame */
+     void getFrame();
++    /* @Save current frame to file */
++    void writeFile(const std::string& filePath);
+     /*
+      * @brief Gets whether or not the video frame needs to be resized
+      *
+diff --git a/meson.build b/meson.build
+index 3f08d17..815ec7b 100644
+--- a/meson.build
++++ b/meson.build
+@@ -10,6 +10,8 @@ project(
+     meson_version: '>=0.57.0',
+ )
+ 
++libpng_dep = dependency('libpng', required: true)
++
+ install_data(
+     'create_usbhid.sh',
+     install_mode: 'rwxr-xr-x',
+@@ -32,6 +34,8 @@ executable(
+         dependency('phosphor-dbus-interfaces'),
+         dependency('sdbusplus'),
+         dependency('threads'),
++        dependency('sdbusplus'),
++        libpng_dep,
+     ],
+     install: true
+ )
+diff --git a/obmc-ikvm.cpp b/obmc-ikvm.cpp
+index 271857b..ff7fea0 100644
+--- a/obmc-ikvm.cpp
++++ b/obmc-ikvm.cpp
+@@ -1,11 +1,45 @@
+ #include "ikvm_args.hpp"
+ #include "ikvm_manager.hpp"
++#include <sdbusplus/asio/connection.hpp>
++#include <sdbusplus/asio/object_server.hpp>
++
++#include <chrono>
++#include <iomanip>
++#include <sstream>
++auto getTimestampedFilename()
++{
++    auto now = std::chrono::system_clock::now();
++    std::time_t t = std::chrono::system_clock::to_time_t(now);
++    std::tm tm = *std::localtime(&t);
++    std::ostringstream oss;
++    oss << "/tmp/screenshot_"
++        << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".png";
++    return oss.str();
++}
+ 
+ int main(int argc, char* argv[])
+ {
+     ikvm::Args args(argc, argv);
+     ikvm::Manager manager(args);
++    std::atomic_init(&manager.shotFlag, false);
++    auto bus = std::make_shared<sdbusplus::asio::connection>(manager.io);
++    sdbusplus::asio::object_server kvmServer(bus);
++
++    auto interface = kvmServer.add_interface(
++        "/xyz/openbmc_project/kvm", "xyz.openbmc_project.kvm_interface");
++
++    interface->register_method("Screenshot", [&manager]() {
++        if (!manager.shotFlag.load())
++        {
++            manager.shotPath = getTimestampedFilename();
++            manager.shotFlag.store(true);
++            return manager.shotPath;  // return full timestamped path
++        }
++        return std::string("Screenshot busy");
++    });
+ 
++    interface->initialize();
++    bus->request_name("xyz.openbmc_project.kvm_service");
+     manager.run();
+ 
+     return 0;
+-- 
+2.25.1
+

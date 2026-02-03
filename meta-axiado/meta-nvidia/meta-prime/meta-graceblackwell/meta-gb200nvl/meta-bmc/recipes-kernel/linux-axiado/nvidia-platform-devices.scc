@@ -1,0 +1,3 @@
+define KFEATURE_DESCRIPTION "Enable device driver for Nvidia platform"
+
+kconf non-hardware nvidia-platform-devices.cfg
